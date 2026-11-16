@@ -11,20 +11,41 @@ For page-level responsive techniques (dynamic viewport units, aspect ratios, and
 Make every control at least 24×24 CSS pixels (WCAG 2.5.8), and at least 44×44 on touch screens, where a fingertip is less precise than a mouse pointer (WCAG 2.5.5). Links inside sentences are exempt. For checkboxes and radios, wrap the input in its `<label>` and size the label. To keep small icons visually compact, extend their hit area with a pseudo-element. Leave enough space around controls so extended hit areas do not overlap each other or reach past the edge of the screen.
 
 ```css
-:root { --target-size: 24px; }
+:root {
+	--target-size: 24px;
+}
 @media (pointer: coarse) {
-  :root { --target-size: 44px; }
+	:root {
+		--target-size: 44px;
+	}
 }
-:where(button, select, textarea, input:not([type="checkbox"], [type="radio"]), [role="button"], nav a, label:has(input[type="checkbox"], input[type="radio"])) {
-  min-block-size: var(--target-size);
-  min-inline-size: var(--target-size);
+:where(
+	button,
+	select,
+	textarea,
+	input:not([type="checkbox"], [type="radio"]),
+	[role="button"],
+	nav a,
+	label:has(input[type="checkbox"], input[type="radio"])
+) {
+	min-block-size: var(--target-size);
+	min-inline-size: var(--target-size);
 }
-:where([role="button"], nav a, label:has(input[type="checkbox"], input[type="radio"])) { display: inline-flex; align-items: center; }
-.icon-button { position: relative; }
+:where(
+	[role="button"],
+	nav a,
+	label:has(input[type="checkbox"], input[type="radio"])
+) {
+	display: inline-flex;
+	align-items: center;
+}
+.icon-button {
+	position: relative;
+}
 .icon-button::after {
-  content: "";
-  position: absolute;
-  inset: -10px;
+	content: "";
+	position: absolute;
+	inset: -10px;
 }
 ```
 
@@ -34,12 +55,15 @@ Use container queries instead of viewport-width media queries for component layo
 
 ```css
 .product-list {
-  /* Name containers so queries inside nested containers target the right ancestor. */
-  container: products / inline-size;
+	/* Name containers so queries inside nested containers target the right ancestor. */
+	container: products / inline-size;
 }
 /* A container query styles the container's descendants, never the container itself. */
 @container products (inline-size > 40rem) {
-  .product-card { display: grid; grid-template-columns: 10rem 1fr; }
+	.product-card {
+		display: grid;
+		grid-template-columns: 10rem 1fr;
+	}
 }
 ```
 
@@ -54,13 +78,13 @@ When drawing edge to edge with `<meta name="viewport" content="width=device-widt
 
 ```css
 .bottom-bar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
-  padding-left: max(0.75rem, env(safe-area-inset-left, 0px));
-  padding-right: max(0.75rem, env(safe-area-inset-right, 0px));
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+	padding-left: max(0.75rem, env(safe-area-inset-left, 0px));
+	padding-right: max(0.75rem, env(safe-area-inset-right, 0px));
 }
 ```
 
@@ -70,7 +94,7 @@ Fixed bars cover the content that scrolls under them, so a focused element can e
 
 ```css
 html {
-  scroll-padding-bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+	scroll-padding-bottom: calc(3.5rem + env(safe-area-inset-bottom, 0px));
 }
 ```
 
@@ -88,16 +112,32 @@ Ensure text and controls are never clipped, squished to zero dimensions, or over
 
 ```css
 /* Media never overflows its column. */
-img, video { max-inline-size: 100%; block-size: auto; }
+img,
+video {
+	max-inline-size: 100%;
+	block-size: auto;
+}
 /* Long words and URLs wrap instead of widening the page. */
-body { overflow-wrap: break-word; }
+body {
+	overflow-wrap: break-word;
+}
 /* Long URLs and code also wrap inside flex items and table cells. */
-:where(a, code) { overflow-wrap: anywhere; }
+:where(a, code) {
+	overflow-wrap: anywhere;
+}
 /* Flex and grid items don't shrink below their content by default. Let non-control items shrink so controls keep their minimum size. */
-:where(.toolbar > :not(button, input, select, textarea, a, [role="button"], label)) { min-inline-size: 0; }
-.toolbar { display: flex; }
+:where(
+	.toolbar > :not(button, input, select, textarea, a, [role="button"], label)
+) {
+	min-inline-size: 0;
+}
+.toolbar {
+	display: flex;
+}
 /* The target-size minimum lets controls in a crowded row shrink below their text, so let nav bars and toolbars that are already rows wrap. */
-:where(nav, nav ul, .toolbar) { flex-wrap: wrap; }
+:where(nav, nav ul, .toolbar) {
+	flex-wrap: wrap;
+}
 ```
 
 - Use `min-block-size` instead of a fixed `height` on anything that contains text.

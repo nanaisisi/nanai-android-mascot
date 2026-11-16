@@ -22,14 +22,14 @@ Customize the control's highlight color using `accent-color` (see `brand-consist
 
 ```css
 input[type="checkbox"][switch] {
-  accent-color: var(--accent-color, #1769e0);
-  margin: 0;
-  cursor: pointer;
+	accent-color: var(--accent-color, #1769e0);
+	margin: 0;
+	cursor: pointer;
 }
 
 input[type="checkbox"][switch]:focus-visible {
-  outline: 3px solid var(--focus-color, #d35400);
-  outline-offset: 4px;
+	outline: 3px solid var(--focus-color, #d35400);
+	outline-offset: 4px;
 }
 ```
 
@@ -46,8 +46,8 @@ If your Baseline target does not support `<input type="checkbox" switch>`, load 
 Use the package-loading approach appropriate to your project. The example below assumes your setup can resolve module specifiers:
 
 ```javascript
-if (!('switch' in HTMLInputElement.prototype)) {
-  import('input-switch-polyfill');
+if (!("switch" in HTMLInputElement.prototype)) {
+	import("input-switch-polyfill");
 }
 ```
 

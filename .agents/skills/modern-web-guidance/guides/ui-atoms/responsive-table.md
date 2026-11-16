@@ -45,78 +45,85 @@ Give the wrapper a `role="region"` attribute to communicate its purpose. Provide
 ```
 
 ### 2. Configure Sticky Headers
+
 Enable scrolling and make headers sticky. Use logical properties and explicit z-index values to manage the stacking order.
 
 ```css
 .table-wrapper {
-  overflow: auto;
-  max-inline-size: 100%;
-  max-block-size: min(500px, 80vh);
-  container-type: inline-size;
+	overflow: auto;
+	max-inline-size: 100%;
+	max-block-size: min(500px, 80vh);
+	container-type: inline-size;
 }
 
 table {
-  border-collapse: separate;
-  border-spacing: 0;
+	border-collapse: separate;
+	border-spacing: 0;
 }
 
 /* Sticky column headers (desktop) */
 thead {
-  position: sticky;
-  inset-block-start: 0;
-  z-index: 1; /* Above sticky row headers */
+	position: sticky;
+	inset-block-start: 0;
+	z-index: 1; /* Above sticky row headers */
 }
 
 /* Sticky row headers (desktop) */
 tbody th {
-  position: sticky;
-  inset-inline-start: 0;
-  background: white; /* Required to cover background during scroll */
+	position: sticky;
+	inset-inline-start: 0;
+	background: white; /* Required to cover background during scroll */
 }
 ```
 
 ### 3. Responsive Stacked Layout
+
 When space is limited, hide the original header row and transform the table into cards. Inject labels using pseudo-elements. Only provide alternative text for non-text content, otherwise this may result in both the text content and accessible name being announced by screen readers.
 
 ```css
 @container (width < 600px) {
-  table, thead, tbody, tr, th, td {
-    display: block;
-  }
+	table,
+	thead,
+	tbody,
+	tr,
+	th,
+	td {
+		display: block;
+	}
 
-  thead {
-    /* MANDATORY: Hide column header from layout and screen readers. */
-    display: none
-  }
+	thead {
+		/* MANDATORY: Hide column header from layout and screen readers. */
+		display: none;
+	}
 
-  tr {
-    margin-block-end: 1.5rem;
-    border: 1px solid #ccc;
-  }
+	tr {
+		margin-block-end: 1.5rem;
+		border: 1px solid #ccc;
+	}
 
-  /* Sticky row headers at the top of each block/card */
-  tbody th {
-    position: sticky;
-    inset-block-start: 0;
-    z-index: 2;
-    background: #eee;
-  }
+	/* Sticky row headers at the top of each block/card */
+	tbody th {
+		position: sticky;
+		inset-block-start: 0;
+		z-index: 2;
+		background: #eee;
+	}
 
-  /* Define column labels as CSS variables (often set via JS) */
-  table {
-    --label-1: "Employee";
-    --label-2: "Role";
-    --label-3: "Status";
-  }
+	/* Define column labels as CSS variables (often set via JS) */
+	table {
+		--label-1: "Employee";
+		--label-2: "Role";
+		--label-3: "Status";
+	}
 
-  /* Inject labels */
-  td:nth-child(2)::before {
-    /* MANDATORY: If using non-text content, provide the accessible name (after the /) which ensures screen readers hear the text alternative. */
-    content: var(--label-2) ": ";
-  }
-  /* MANDATORY: Map the label for each column */
-  td:nth-child(3)::before {
-    content: var(--label-3) ": ";
-  }
+	/* Inject labels */
+	td:nth-child(2)::before {
+		/* MANDATORY: If using non-text content, provide the accessible name (after the /) which ensures screen readers hear the text alternative. */
+		content: var(--label-2) ": ";
+	}
+	/* MANDATORY: Map the label for each column */
+	td:nth-child(3)::before {
+		content: var(--label-3) ": ";
+	}
 }
 ```

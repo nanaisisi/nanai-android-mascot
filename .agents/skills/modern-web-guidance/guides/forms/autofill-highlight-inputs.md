@@ -12,9 +12,9 @@ It never matches checkbox, radio, file, or button inputs, form-associated custom
 
 ```css
 input:autofill {
-  /* Non-color indicator without layout shift: a thicker inset ring */
-  box-shadow: inset 0 0 0 2px var(--autofill-ring-color);
-  border-color: var(--autofill-ring-color);
+	/* Non-color indicator without layout shift: a thicker inset ring */
+	box-shadow: inset 0 0 0 2px var(--autofill-ring-color);
+	border-color: var(--autofill-ring-color);
 }
 ```
 
@@ -27,14 +27,14 @@ If your design requires it:
 
 ```css
 input:autofill {
-  /* Fill: an inset box-shadow paints over the UA's `!important` background */
-  box-shadow:
-    inset 0 0 0 2px var(--autofill-ring-color),
-    inset 0 0 0 100vmax var(--autofill-background-color);
-  /* Text color: -webkit-text-fill-color is not set by the UA */
-  -webkit-text-fill-color: var(--autofill-text-color);
-  /* The caret still follows the UA's `color`, so set it explicitly */
-  caret-color: var(--autofill-text-color);
+	/* Fill: an inset box-shadow paints over the UA's `!important` background */
+	box-shadow:
+		inset 0 0 0 2px var(--autofill-ring-color),
+		inset 0 0 0 100vmax var(--autofill-background-color);
+	/* Text color: -webkit-text-fill-color is not set by the UA */
+	-webkit-text-fill-color: var(--autofill-text-color);
+	/* The caret still follows the UA's `color`, so set it explicitly */
+	caret-color: var(--autofill-text-color);
 }
 ```
 
@@ -56,7 +56,7 @@ Chrome before 110 and Safari before 15 only support `:-webkit-autofill`. If they
 
 ```css
 input:is(:autofill, :-webkit-autofill) {
-  /* same declarations as above */
+	/* same declarations as above */
 }
 ```
 

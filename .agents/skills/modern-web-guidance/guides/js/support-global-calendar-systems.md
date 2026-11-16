@@ -18,25 +18,27 @@ To support global calendar systems using Temporal:
 ```javascript
 // 1. Helper to check calendar support
 function isCalendarSupported(calendarId) {
-  try {
-    return Intl.supportedValuesOf('calendar').includes(calendarId);
-  } catch {
-    // Fallback for environments where supportedValuesOf is not available
-    return false;
-  }
+	try {
+		return Intl.supportedValuesOf("calendar").includes(calendarId);
+	} catch {
+		// Fallback for environments where supportedValuesOf is not available
+		return false;
+	}
 }
 
 // 2. Get current date in default ISO 8601 calendar
 const isoDate = Temporal.Now.plainDateISO();
 
 // 3. Convert to Hebrew calendar if supported
-const calendarId = 'hebrew';
-const targetDate = isCalendarSupported(calendarId) 
-  ? isoDate.withCalendar(calendarId)
-  : isoDate; // Fallback to ISO if not supported
+const calendarId = "hebrew";
+const targetDate = isCalendarSupported(calendarId)
+	? isoDate.withCalendar(calendarId)
+	: isoDate; // Fallback to ISO if not supported
 
 if (targetDate.calendarId !== calendarId) {
-  console.warn(`Calendar ${calendarId} not supported; falling back to ISO 8601`);
+	console.warn(
+		`Calendar ${calendarId} not supported; falling back to ISO 8601`,
+	);
 }
 
 // 4. Log properties specific to the calendar
@@ -46,22 +48,27 @@ console.log(`Month Code: ${targetDate.monthCode}`); // Stable across leap years
 
 // 5. Safely iterate through months in the current year
 for (let m = 1; m <= targetDate.monthsInYear; m++) {
-  console.log(`Month ${m} has ${targetDate.with({ month: m }).daysInMonth} days.`);
+	console.log(
+		`Month ${m} has ${targetDate.with({ month: m }).daysInMonth} days.`,
+	);
 }
 
 // 6. Compare dates within the same calendar
 const today = Temporal.Now.plainDateISO().withCalendar(targetDate.calendarId);
 const comparison = Temporal.PlainDate.compare(targetDate, today);
-const relative = comparison < 0 ? 'Past' : comparison > 0 ? 'Future' : 'Today';
+const relative = comparison < 0 ? "Past" : comparison > 0 ? "Future" : "Today";
 console.log(`Timeline: ${relative}`);
 
 // 7. Format for display using toLocaleString (including era for era-based calendars like 'japanese')
-const localizedDisplay = targetDate.toLocaleString(`en-u-ca-${targetDate.calendarId}`, {
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-  era: 'long'
-});
+const localizedDisplay = targetDate.toLocaleString(
+	`en-u-ca-${targetDate.calendarId}`,
+	{
+		day: "numeric",
+		month: "long",
+		year: "numeric",
+		era: "long",
+	},
+);
 ```
 
 ## Strategic Implementation & Best Practices
@@ -91,13 +98,13 @@ Note that importing `temporal-polyfill` does not automatically assign the `Tempo
 ```javascript
 // Check if Temporal is supported natively
 (async () => {
-  if (typeof Temporal === 'undefined') {
-    // Load the polyfill conditionally
-    const module = await import('https://esm.sh/temporal-polyfill');
-    globalThis.Temporal = module.Temporal;
-    // Extend Date.prototype if needed
-    Date.prototype.toTemporalInstant = module.toTemporalInstant;
-  }
-  initializeApp();
+	if (typeof Temporal === "undefined") {
+		// Load the polyfill conditionally
+		const module = await import("https://esm.sh/temporal-polyfill");
+		globalThis.Temporal = module.Temporal;
+		// Extend Date.prototype if needed
+		Date.prototype.toTemporalInstant = module.toTemporalInstant;
+	}
+	initializeApp();
 })();
 ```

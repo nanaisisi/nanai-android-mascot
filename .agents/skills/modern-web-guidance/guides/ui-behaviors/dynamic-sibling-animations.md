@@ -8,11 +8,11 @@ Use the `sibling-index()` function on the `animation-delay` property so that the
 
 ```css
 #stagger-list > .item {
-  --stagger-time: 0.1s; /* Example step delay */
-  /* Hold initial keyframe during each sibling's stagger delay */
-  animation: fade-in 0.4s both;
-  /* Offset each sibling's delay by its 1-based index */
-  animation-delay: calc(sibling-index() * var(--stagger-time));
+	--stagger-time: 0.1s; /* Example step delay */
+	/* Hold initial keyframe during each sibling's stagger delay */
+	animation: fade-in 0.4s both;
+	/* Offset each sibling's delay by its 1-based index */
+	animation-delay: calc(sibling-index() * var(--stagger-time));
 }
 ```
 
@@ -20,10 +20,10 @@ Use the `sibling-index()` function on the `animation-delay` property so that the
 
 ```css
 @media (prefers-reduced-motion: reduce) {
-  /* Disable animation for users who prefer reduced motion. */
-  #stagger-list > .item {
-    animation: none;
-  }
+	/* Disable animation for users who prefer reduced motion. */
+	#stagger-list > .item {
+		animation: none;
+	}
 }
 ```
 
@@ -37,11 +37,11 @@ If your Baseline target does not support `sibling-index()`, feature-detect suppo
 For dynamic lists (or new implementations), use JavaScript to set a 1-based `--sibling-index` custom property on each child element. **MANDATORY:** Wrap this in a `!CSS.supports('animation-delay: calc(sibling-index() * 0.1s)')` check to avoid running unnecessary JavaScript in supporting browsers.
 
 ```js
-if (!CSS.supports('animation-delay: calc(sibling-index() * 0.1s)')) {
-  const staggerList = document.getElementById('stagger-list');
-  [...staggerList.children].forEach((el, index) => {
-    el.style.setProperty('--sibling-index', index + 1);
-  });
+if (!CSS.supports("animation-delay: calc(sibling-index() * 0.1s)")) {
+	const staggerList = document.getElementById("stagger-list");
+	[...staggerList.children].forEach((el, index) => {
+		el.style.setProperty("--sibling-index", index + 1);
+	});
 }
 ```
 
@@ -49,16 +49,16 @@ Set the base `animation-delay` using `var(--sibling-index)`, and **MANDATORY:** 
 
 ```css
 #stagger-list > .item {
-  --stagger-time: 0.1s; /* Example step delay */
-  animation: fade-in 0.4s both;
-  animation-delay: calc(var(--sibling-index) * var(--stagger-time));
+	--stagger-time: 0.1s; /* Example step delay */
+	animation: fade-in 0.4s both;
+	animation-delay: calc(var(--sibling-index) * var(--stagger-time));
 }
 
 /* MANDATORY: Gate sibling-index() in @supports using a literal time unit */
 @supports (animation-delay: calc(sibling-index() * 0.1s)) {
-  #stagger-list > .item {
-    animation-delay: calc(sibling-index() * var(--stagger-time));
-  }
+	#stagger-list > .item {
+		animation-delay: calc(sibling-index() * var(--stagger-time));
+	}
 }
 ```
 
@@ -66,21 +66,27 @@ When refactoring an existing `:nth-child()` stagger stylesheet in an environment
 
 ```css
 #stagger-list > .item {
-  --stagger-time: 0.1s; /* Example step delay */
-  animation: fade-in 0.4s both;
+	--stagger-time: 0.1s; /* Example step delay */
+	animation: fade-in 0.4s both;
 }
 
 /* Literal time in @supports avoids var() always-true parsing */
 @supports (animation-delay: calc(sibling-index() * 0.1s)) {
-  #stagger-list > .item {
-    animation-delay: calc(sibling-index() * var(--stagger-time));
-  }
+	#stagger-list > .item {
+		animation-delay: calc(sibling-index() * var(--stagger-time));
+	}
 }
 
 /* Gate :nth-child() so its higher specificity doesn't override sibling-index() */
 @supports not (animation-delay: calc(sibling-index() * 0.1s)) {
-  #stagger-list > .item:nth-child(1) { animation-delay: 0.1s; }
-  #stagger-list > .item:nth-child(2) { animation-delay: 0.2s; }
-  #stagger-list > .item:nth-child(3) { animation-delay: 0.3s; }
+	#stagger-list > .item:nth-child(1) {
+		animation-delay: 0.1s;
+	}
+	#stagger-list > .item:nth-child(2) {
+		animation-delay: 0.2s;
+	}
+	#stagger-list > .item:nth-child(3) {
+		animation-delay: 0.3s;
+	}
 }
 ```

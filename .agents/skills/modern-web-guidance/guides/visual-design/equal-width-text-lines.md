@@ -65,30 +65,32 @@ Forced lines have a short, faithful fallback: measure each line at its base size
 
 ```css
 @supports not (text-fit: grow) {
-  .lockup > span {
-    /* Shrink-wrap each line so its width is the text width */
-    width: fit-content;
-    /* --text-fit-scale is measured by the script; the cap mirrors the text-fit percentage */
-    font-size: min(var(--text-fit-scale, 1) * 1em, 300%);
-  }
+	.lockup > span {
+		/* Shrink-wrap each line so its width is the text width */
+		width: fit-content;
+		/* --text-fit-scale is measured by the script; the cap mirrors the text-fit percentage */
+		font-size: min(var(--text-fit-scale, 1) * 1em, 300%);
+	}
 }
 ```
 
 ```js
-if (!CSS.supports('text-fit', 'grow per-line-all')) {
-  const fit = lockup => {
-    const lines = [...lockup.querySelectorAll(':scope > span')];
-    // Unscale first: on a refit, offsetWidth would otherwise include the previous scale
-    for (const line of lines) line.style.removeProperty('--text-fit-scale');
-    // MANDATORY: all reads, then all writes. Interleaving them (e.g. reading
-    // lockup.clientWidth inside the write loop) forces one reflow per line.
-    const scales = lines.map(line => lockup.clientWidth / line.offsetWidth);
-    lines.forEach((line, i) => line.style.setProperty('--text-fit-scale', scales[i]));
-  };
-  // Refit on resize and font load
-  for (const lockup of document.querySelectorAll('.lockup')) {
-    new ResizeObserver(() => fit(lockup)).observe(lockup);
-  }
+if (!CSS.supports("text-fit", "grow per-line-all")) {
+	const fit = (lockup) => {
+		const lines = [...lockup.querySelectorAll(":scope > span")];
+		// Unscale first: on a refit, offsetWidth would otherwise include the previous scale
+		for (const line of lines) line.style.removeProperty("--text-fit-scale");
+		// MANDATORY: all reads, then all writes. Interleaving them (e.g. reading
+		// lockup.clientWidth inside the write loop) forces one reflow per line.
+		const scales = lines.map((line) => lockup.clientWidth / line.offsetWidth);
+		lines.forEach((line, i) =>
+			line.style.setProperty("--text-fit-scale", scales[i]),
+		);
+	};
+	// Refit on resize and font load
+	for (const lockup of document.querySelectorAll(".lockup")) {
+		new ResizeObserver(() => fit(lockup)).observe(lockup);
+	}
 }
 ```
 

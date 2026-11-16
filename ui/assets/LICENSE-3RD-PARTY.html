@@ -1784,7 +1784,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
                 <p><strong>利用しているパッケージ (Used by):</strong></p>
                 <ul class="license-used-by">
                     <li><a href="https://github.com/dropbox/rust-alloc-no-stdlib" target="_blank" rel="noopener">alloc-no-stdlib v3.0.0</a></li>
-                    <li><a href="https://github.com/dropbox/rust-brotli" target="_blank" rel="noopener">brotli v9.1.1</a></li>
+                    <li><a href="https://github.com/dropbox/rust-brotli" target="_blank" rel="noopener">brotli v9.1.3</a></li>
                 </ul>
                 <pre class="license-text">Copyright (c) 2016 Dropbox, Inc.
 All rights reserved.
@@ -2021,7 +2021,7 @@ insights.
                 <p><strong>利用しているパッケージ (Used by):</strong></p>
                 <ul class="license-used-by">
                     <li><a href="https://github.com/nagisa/rust_libloading/" target="_blank" rel="noopener">libloading v0.7.4</a></li>
-                    <li><a href="https://github.com/nagisa/rust_libloading/" target="_blank" rel="noopener">libloading v0.9.0</a></li>
+                    <li><a href="https://github.com/nagisa/rust_libloading/" target="_blank" rel="noopener">libloading v0.9.1</a></li>
                 </ul>
                 <pre class="license-text">Copyright © 2015, Simonas Kazlauskas
 
@@ -2443,7 +2443,7 @@ DEALINGS IN THE SOFTWARE.
                 <h3 id="MIT">MIT License</h3>
                 <p><strong>利用しているパッケージ (Used by):</strong></p>
                 <ul class="license-used-by">
-                    <li><a href="https://github.com/dropbox/rust-brotli" target="_blank" rel="noopener">brotli v9.1.1</a></li>
+                    <li><a href="https://github.com/dropbox/rust-brotli" target="_blank" rel="noopener">brotli v9.1.3</a></li>
                 </ul>
                 <pre class="license-text">Copyright (c) 2009, 2010, 2013-2016 by the Brotli Authors.
 
@@ -2689,7 +2689,7 @@ DEALINGS IN THE SOFTWARE.
                 <h3 id="MIT">MIT License</h3>
                 <p><strong>利用しているパッケージ (Used by):</strong></p>
                 <ul class="license-used-by">
-                    <li><a href="https://github.com/tokio-rs/mio" target="_blank" rel="noopener">mio v1.2.4</a></li>
+                    <li><a href="https://github.com/tokio-rs/mio" target="_blank" rel="noopener">mio v1.2.5</a></li>
                 </ul>
                 <pre class="license-text">Copyright (c) 2014 Carl Lerche and other MIO contributors
 
@@ -3751,6 +3751,7 @@ THE SOFTWARE.
                 <p><strong>利用しているパッケージ (Used by):</strong></p>
                 <ul class="license-used-by">
                     <li><a href="https://github.com/RustCrypto/hashes" target="_blank" rel="noopener">md-5 v0.11.0</a></li>
+                    <li><a href="https://github.com/RustCrypto/hashes" target="_blank" rel="noopener">sha2 v0.11.1</a></li>
                 </ul>
                 <pre class="license-text">Copyright (c) 2016-2026 The RustCrypto Project Developers
 Copyright (c) 2016 Artyom Pavlov
@@ -4873,7 +4874,7 @@ DEALINGS IN THE SOFTWARE.
                 <h3 id="MIT">MIT License</h3>
                 <p><strong>利用しているパッケージ (Used by):</strong></p>
                 <ul class="license-used-by">
-                    <li><a href="https://github.com/fitzgen/bumpalo" target="_blank" rel="noopener">bumpalo v3.20.3</a></li>
+                    <li><a href="https://github.com/fitzgen/bumpalo" target="_blank" rel="noopener">bumpalo v3.20.4</a></li>
                 </ul>
                 <pre class="license-text">Copyright (c) 2019 Nick Fitzgerald
 
@@ -5204,6 +5205,7 @@ DEALINGS IN THE SOFTWARE.
                 <p><strong>利用しているパッケージ (Used by):</strong></p>
                 <ul class="license-used-by">
                     <li><a href="https://github.com/RustCrypto/formats" target="_blank" rel="noopener">const-oid v0.10.3</a></li>
+                    <li><a href="https://github.com/RustCrypto/utils" target="_blank" rel="noopener">cpufeatures v0.3.1</a></li>
                 </ul>
                 <pre class="license-text">Copyright (c) 2020-2026 The RustCrypto Project Developers
 
@@ -6113,13 +6115,13 @@ SOFTWARE.
                 <h3 id="MIT">MIT License</h3>
                 <p><strong>利用しているパッケージ (Used by):</strong></p>
                 <ul class="license-used-by">
-                    <li><a href="https://github.com/tauri-apps/tauri" target="_blank" rel="noopener">tauri-build v2.7.4</a></li>
-                    <li><a href="https://github.com/tauri-apps/tauri" target="_blank" rel="noopener">tauri-codegen v2.7.4</a></li>
-                    <li><a href="https://github.com/tauri-apps/tauri" target="_blank" rel="noopener">tauri-macros v2.7.4</a></li>
-                    <li><a href="https://github.com/tauri-apps/tauri" target="_blank" rel="noopener">tauri-runtime-wry v2.12.3</a></li>
-                    <li><a href="https://github.com/tauri-apps/tauri" target="_blank" rel="noopener">tauri-runtime v2.12.2</a></li>
-                    <li><a href="https://github.com/tauri-apps/tauri" target="_blank" rel="noopener">tauri-utils v2.10.2</a></li>
-                    <li><a href="https://github.com/tauri-apps/tauri" target="_blank" rel="noopener">tauri v2.12.5</a></li>
+                    <li><a href="https://github.com/tauri-apps/tauri" target="_blank" rel="noopener">tauri-build v2.7.5</a></li>
+                    <li><a href="https://github.com/tauri-apps/tauri" target="_blank" rel="noopener">tauri-codegen v2.7.5</a></li>
+                    <li><a href="https://github.com/tauri-apps/tauri" target="_blank" rel="noopener">tauri-macros v2.7.5</a></li>
+                    <li><a href="https://github.com/tauri-apps/tauri" target="_blank" rel="noopener">tauri-runtime-wry v2.12.4</a></li>
+                    <li><a href="https://github.com/tauri-apps/tauri" target="_blank" rel="noopener">tauri-runtime v2.12.3</a></li>
+                    <li><a href="https://github.com/tauri-apps/tauri" target="_blank" rel="noopener">tauri-utils v2.10.3</a></li>
+                    <li><a href="https://github.com/tauri-apps/tauri" target="_blank" rel="noopener">tauri v2.12.6</a></li>
                 </ul>
                 <pre class="license-text">MIT License
 
@@ -6264,11 +6266,8 @@ SOFTWARE.
                 <h3 id="MIT">MIT License</h3>
                 <p><strong>利用しているパッケージ (Used by):</strong></p>
                 <ul class="license-used-by">
-                    <li><a href="https://github.com/TedDriggs/darling" target="_blank" rel="noopener">darling v0.23.0</a></li>
                     <li><a href="https://github.com/TedDriggs/darling" target="_blank" rel="noopener">darling v0.24.1</a></li>
-                    <li><a href="https://github.com/TedDriggs/darling" target="_blank" rel="noopener">darling_core v0.23.0</a></li>
                     <li><a href="https://github.com/TedDriggs/darling" target="_blank" rel="noopener">darling_core v0.24.1</a></li>
-                    <li><a href="https://github.com/TedDriggs/darling" target="_blank" rel="noopener">darling_macro v0.23.0</a></li>
                     <li><a href="https://github.com/TedDriggs/darling" target="_blank" rel="noopener">darling_macro v0.24.1</a></li>
                 </ul>
                 <pre class="license-text">MIT License
@@ -7203,6 +7202,35 @@ SOFTWARE.
                 <h3 id="MIT">MIT License</h3>
                 <p><strong>利用しているパッケージ (Used by):</strong></p>
                 <ul class="license-used-by">
+                    <li><a href="https://github.com/specta-rs/tauri-specta" target="_blank" rel="noopener">tauri-specta v2.0.0-rc.29</a></li>
+                </ul>
+                <pre class="license-text">MIT License
+
+Copyright (c) 2022 Oscar Beaumont
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+</pre>
+            </li>
+            <li class="license">
+                <h3 id="MIT">MIT License</h3>
+                <p><strong>利用しているパッケージ (Used by):</strong></p>
+                <ul class="license-used-by">
                     <li><a href="https://github.com/sarah-ek/aligned-vec/" target="_blank" rel="noopener">aligned-vec v0.6.4</a></li>
                 </ul>
                 <pre class="license-text">MIT License
@@ -7423,7 +7451,7 @@ SOFTWARE.
                     <li><a href="https://crates.io/crates/nanai-android-mascot-ui" target="_blank" rel="noopener">nanai-android-mascot-ui v0.1.0</a></li>
                     <li><a href="https://crates.io/crates/nanai-android-mascot" target="_blank" rel="noopener">nanai-android-mascot v0.1.0</a></li>
                     <li><a href="https://github.com/madsmtm/objc2" target="_blank" rel="noopener">block2 v0.6.2</a></li>
-                    <li><a href="https://github.com/dropbox/rust-brotli-decompressor" target="_blank" rel="noopener">brotli-decompressor v6.3.1</a></li>
+                    <li><a href="https://github.com/dropbox/rust-brotli-decompressor" target="_blank" rel="noopener">brotli-decompressor v6.3.2</a></li>
                     <li><a href="https://gitlab.com/lib.rs/cargo_toml" target="_blank" rel="noopener">cargo_toml v1.0.1</a></li>
                     <li><a href="https://github.com/emk/cesu8-rs" target="_blank" rel="noopener">cesu8 v1.1.0</a></li>
                     <li><a href="https://github.com/chronotope/chrono" target="_blank" rel="noopener">chrono v0.4.45</a></li>
@@ -7463,17 +7491,16 @@ SOFTWARE.
                     <li><a href="https://github.com/longbridge/rust-i18n" target="_blank" rel="noopener">rust-i18n-support v4.2.4</a></li>
                     <li><a href="https://github.com/rustls/rustls-platform-verifier" target="_blank" rel="noopener">rustls-platform-verifier-android v0.2.0</a></li>
                     <li><a href="https://github.com/lu-zero/simd_helpers" target="_blank" rel="noopener">simd_helpers v0.1.0</a></li>
-                    <li><a href="https://github.com/specta-rs/specta" target="_blank" rel="noopener">specta-macros v2.0.0-rc.25</a></li>
-                    <li><a href="https://github.com/specta-rs/specta" target="_blank" rel="noopener">specta-serde v0.0.12</a></li>
-                    <li><a href="https://github.com/specta-rs/specta" target="_blank" rel="noopener">specta-typescript v0.0.12</a></li>
-                    <li><a href="https://github.com/specta-rs/specta" target="_blank" rel="noopener">specta-util v0.0.12</a></li>
-                    <li><a href="https://github.com/specta-rs/specta" target="_blank" rel="noopener">specta v2.0.0-rc.25</a></li>
+                    <li><a href="https://github.com/specta-rs/specta" target="_blank" rel="noopener">specta-macros v2.0.0-rc.28</a></li>
+                    <li><a href="https://github.com/specta-rs/specta" target="_blank" rel="noopener">specta-serde v0.0.15</a></li>
+                    <li><a href="https://github.com/specta-rs/specta" target="_blank" rel="noopener">specta-typescript v0.0.15</a></li>
+                    <li><a href="https://github.com/specta-rs/specta" target="_blank" rel="noopener">specta-util v0.0.15</a></li>
+                    <li><a href="https://github.com/specta-rs/specta" target="_blank" rel="noopener">specta v2.0.0-rc.28</a></li>
                     <li><a href="https://github.com/tauri-apps/plugins-workspace" target="_blank" rel="noopener">tauri-plugin-dialog v2.8.4</a></li>
                     <li><a href="https://github.com/tauri-apps/plugins-workspace" target="_blank" rel="noopener">tauri-plugin-fs v2.7.1</a></li>
                     <li><a href="https://github.com/tauri-apps/plugins-workspace" target="_blank" rel="noopener">tauri-plugin-opener v2.7.3</a></li>
-                    <li><a href="https://github.com/tauri-apps/tauri" target="_blank" rel="noopener">tauri-plugin v2.7.2</a></li>
-                    <li><a href="https://github.com/specta-rs/tauri-specta" target="_blank" rel="noopener">tauri-specta-macros v2.0.0-rc.25</a></li>
-                    <li><a href="https://github.com/specta-rs/tauri-specta" target="_blank" rel="noopener">tauri-specta v2.0.0-rc.25</a></li>
+                    <li><a href="https://github.com/tauri-apps/tauri" target="_blank" rel="noopener">tauri-plugin v2.7.3</a></li>
+                    <li><a href="https://github.com/specta-rs/tauri-specta" target="_blank" rel="noopener">tauri-specta-macros v2.0.0-rc.29</a></li>
                     <li><a href="https://github.com/madonoharu/tsify" target="_blank" rel="noopener">tsify-macros v0.5.8</a></li>
                     <li><a href="https://github.com/madonoharu/tsify" target="_blank" rel="noopener">tsify v0.5.8</a></li>
                     <li><a href="https://github.com/wravery/webview2-rs" target="_blank" rel="noopener">webview2-com-macros v0.8.1</a></li>
@@ -8070,7 +8097,8 @@ SOFTWARE.
                 <h3 id="MIT">MIT License</h3>
                 <p><strong>利用しているパッケージ (Used by):</strong></p>
                 <ul class="license-used-by">
-                    <li><a href="https://github.com/mmastrac/linktime" target="_blank" rel="noopener">ctor v1.0.13</a></li>
+                    <li><a href="https://github.com/mmastrac/linktime" target="_blank" rel="noopener">ctor v1.0.14</a></li>
+                    <li><a href="https://github.com/mmastrac/linktime" target="_blank" rel="noopener">link-section v0.19.4</a></li>
                 </ul>
                 <pre class="license-text">Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
@@ -8174,7 +8202,7 @@ SOFTWARE.
                 <p><strong>利用しているパッケージ (Used by):</strong></p>
                 <ul class="license-used-by">
                     <li><a href="https://github.com/tokio-rs/tracing" target="_blank" rel="noopener">tracing-core v0.1.36</a></li>
-                    <li><a href="https://github.com/zip-rs/zip2" target="_blank" rel="noopener">zip v9.5.1</a></li>
+                    <li><a href="https://github.com/zip-rs/zip2" target="_blank" rel="noopener">zip v9.6.0</a></li>
                 </ul>
                 <pre class="license-text">The MIT License (MIT)
 
@@ -8334,7 +8362,7 @@ THE SOFTWARE.
                 <h3 id="MIT">MIT License</h3>
                 <p><strong>利用しているパッケージ (Used by):</strong></p>
                 <ul class="license-used-by">
-                    <li><a href="https://github.com/nix-rust/nix" target="_blank" rel="noopener">nix v0.31.3</a></li>
+                    <li><a href="https://github.com/nix-rust/nix" target="_blank" rel="noopener">nix v0.32.0</a></li>
                 </ul>
                 <pre class="license-text">The MIT License (MIT)
 

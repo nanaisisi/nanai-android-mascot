@@ -10,32 +10,32 @@ Toast notifications must be used to provide non-critical, supplemental informati
 
 Prefer persistent toast notifications that remain present until they are dismissed, except for frequent, low importance events, where the friction persistence creates outweighs the value of the information provided. In those cases, do evaluate whether toasts actually add to the user experience in general — in some cases it may be preferable to not have them at all. If using a pattern that does dismiss toasts after a short period of time, check whether focus is on a control in the toast before dismissal. If the user is focused on a control inside the toast, pause dismissal until focus has left the toast.
 
-* **MANDATORY:** Use popover="manual" so the notification stays visible until explicitly closed or timed out by a script.
-* **MANDATORY:** Ensure that the information in the toast can be identified by other means, so that if it is part of a pattern that disappears after a short period of time, people can still identify the information without the toast being present.
-* **DO** use a container to manage the stacking of multiple toasts. Since popovers in the Top Layer ignore parent z-index, you must position them individually or within a common layout group.
-* **DO** add toast notifications consistently to the same container in the page, so that people using assistive technologies can consistently locate them.
-* **DO** make the container a region, with an accessible name, so that it can be easily identified using a screen reader. For example: `<div role="region" aria-label="Notifications"></div>`.
-* **DO** use `ariaNotify()` to announce the content present in toasts that are displayed. This ensures that people using screen readers, who cannot see the screen, are aware of the presence of toast messages
-* **DO** ensure that only the toast's visible text is announced as part of the `ariaNotify()` and not the names of any controls. If actions are available in the toast (aside from a close control), append "Actions available" to the end of the announcement.
-* **DO** provide an explicit "Close" button within the toast using popovertargetaction="hide".
-* **DO** ensure that a toast's dismiss button is keyboard-focusable (without automatically stealing focus when the toast appears), so keyboard users can navigate to the toast region and dismiss notifications.
-* **DO** manage focus when a user manually dismisses a currently focused toast: move focus to the next remaining toast in the stack, or—if no toasts remain—return focus to the user's prior focus location (or the control that triggered the toast).
-* **DO** declare `transition-behavior: allow-discrete` as a separate property after `transition` (rather than inside the `transition` shorthand) to animate entry and exit from the Top Layer without older browsers ignoring the `transition` declaration.
-* **DO** provide a non-animated version using the `prefers-reduced-motion` media query
-* **DO** ensure that toast messages scale in size, and that all toast content remains visible when resizing text up to 200% to adhere to WCAG 1.4.4 Resize Text (Level AA)
-* **DO** ensure that all toast content remains visible when adjusting text styling and spacing with CSS to adhere to 1.4.12 Text Spacing (Level AA)
-* **DO** ensure that all toast content remains visible, or can be accessed still, when using a viewport sized to 320 by 256 CSS pixels to adhere to 1.4.10 Reflow (Level AA)
+- **MANDATORY:** Use popover="manual" so the notification stays visible until explicitly closed or timed out by a script.
+- **MANDATORY:** Ensure that the information in the toast can be identified by other means, so that if it is part of a pattern that disappears after a short period of time, people can still identify the information without the toast being present.
+- **DO** use a container to manage the stacking of multiple toasts. Since popovers in the Top Layer ignore parent z-index, you must position them individually or within a common layout group.
+- **DO** add toast notifications consistently to the same container in the page, so that people using assistive technologies can consistently locate them.
+- **DO** make the container a region, with an accessible name, so that it can be easily identified using a screen reader. For example: `<div role="region" aria-label="Notifications"></div>`.
+- **DO** use `ariaNotify()` to announce the content present in toasts that are displayed. This ensures that people using screen readers, who cannot see the screen, are aware of the presence of toast messages
+- **DO** ensure that only the toast's visible text is announced as part of the `ariaNotify()` and not the names of any controls. If actions are available in the toast (aside from a close control), append "Actions available" to the end of the announcement.
+- **DO** provide an explicit "Close" button within the toast using popovertargetaction="hide".
+- **DO** ensure that a toast's dismiss button is keyboard-focusable (without automatically stealing focus when the toast appears), so keyboard users can navigate to the toast region and dismiss notifications.
+- **DO** manage focus when a user manually dismisses a currently focused toast: move focus to the next remaining toast in the stack, or—if no toasts remain—return focus to the user's prior focus location (or the control that triggered the toast).
+- **DO** declare `transition-behavior: allow-discrete` as a separate property after `transition` (rather than inside the `transition` shorthand) to animate entry and exit from the Top Layer without older browsers ignoring the `transition` declaration.
+- **DO** provide a non-animated version using the `prefers-reduced-motion` media query
+- **DO** ensure that toast messages scale in size, and that all toast content remains visible when resizing text up to 200% to adhere to WCAG 1.4.4 Resize Text (Level AA)
+- **DO** ensure that all toast content remains visible when adjusting text styling and spacing with CSS to adhere to 1.4.12 Text Spacing (Level AA)
+- **DO** ensure that all toast content remains visible, or can be accessed still, when using a viewport sized to 320 by 256 CSS pixels to adhere to 1.4.10 Reflow (Level AA)
 
-* **DON'T** surface toasts in scenarios where focus redirection may be used at the same time. The focus redirection may cancel out the toast announcements, resulting in people missing information.
-* **DON'T** use toasts in modal dialogs. Content outside of the dialog will be inert and unavailable to assistive technologies. Placing the toast in a modal dialog, separate from the existing toast container makes it difficult to locate, and may lead to people not being able to locate it.
-* **DON'T** surface toast notifications in the background while a modal dialog is open. It's likely the notification will be missed. Instead, suppress the notification until the modal dialog is dismissed.
-* **DON'T** include controls in toast notifications that perform actions not already permanently available outside the toast notifications. Controls in toasts should be used sparingly, and only provided as a shortcut for actions already available via the UI.
+- **DON'T** surface toasts in scenarios where focus redirection may be used at the same time. The focus redirection may cancel out the toast announcements, resulting in people missing information.
+- **DON'T** use toasts in modal dialogs. Content outside of the dialog will be inert and unavailable to assistive technologies. Placing the toast in a modal dialog, separate from the existing toast container makes it difficult to locate, and may lead to people not being able to locate it.
+- **DON'T** surface toast notifications in the background while a modal dialog is open. It's likely the notification will be missed. Instead, suppress the notification until the modal dialog is dismissed.
+- **DON'T** include controls in toast notifications that perform actions not already permanently available outside the toast notifications. Controls in toasts should be used sparingly, and only provided as a shortcut for actions already available via the UI.
 
 ## Optional: Usability & accessibility improvements
 
-* **Surface previous toasts**: Provide a way for people to access a list of past toast messages. This can help people who may encounter difficulty in remembering what the toast informed them, or reduce anxiety for people who inadvertently dismissed a toast message.
-* **Customize toast notifications**: Provide a way for people to customize which toast notifications are provided. This can help to ensure that information provided to people is relevant, reducing distractions and confusion.
-* **Use an alternative way to communicate toasts are present**: It is recommended that there are multiple ways to communicate that a toast has been made visible. An example of this may be a brief sound effect (which could be turned off). This will help people using screen magnification software, who may otherwise find it difficult to identify that toasts are present.
+- **Surface previous toasts**: Provide a way for people to access a list of past toast messages. This can help people who may encounter difficulty in remembering what the toast informed them, or reduce anxiety for people who inadvertently dismissed a toast message.
+- **Customize toast notifications**: Provide a way for people to customize which toast notifications are provided. This can help to ensure that information provided to people is relevant, reducing distractions and confusion.
+- **Use an alternative way to communicate toasts are present**: It is recommended that there are multiple ways to communicate that a toast has been made visible. An example of this may be a brief sound effect (which could be turned off). This will help people using screen magnification software, who may otherwise find it difficult to identify that toasts are present.
 
 ## Fallback strategies
 
@@ -53,7 +53,7 @@ With a bundler or import map:
 ```js
 // MANDATORY: Feature detect 'popover' on HTMLElement.prototype.
 if (!Object.hasOwn(HTMLElement.prototype, "popover")) {
-  import("@oddbird/popover-polyfill");
+	import("@oddbird/popover-polyfill");
 }
 ```
 
@@ -65,7 +65,7 @@ Caveats when using the polyfill:
 
 ```css
 [popover]:is(:popover-open, .\:popover-open) {
-  display: block;
+	display: block;
 }
 ```
 
@@ -113,7 +113,7 @@ With a bundler or import map:
 ```js
 // MANDATORY: Feature-detect anchor positioning support before loading the polyfill.
 if (!CSS.supports("anchor-name: --a")) {
-  import("@oddbird/css-anchor-positioning");
+	import("@oddbird/css-anchor-positioning");
 }
 ```
 
@@ -135,17 +135,17 @@ Without a bundler, import from a CDN inside a `<script type="module">`:
 
 ```css
 .trigger {
-  /* MANDATORY: Each trigger and positioned element pair must share a unique anchor name. */
-  anchor-name: --my-trigger;
+	/* MANDATORY: Each trigger and positioned element pair must share a unique anchor name. */
+	anchor-name: --my-trigger;
 }
 
 [popover].anchored-overlay {
-  position-anchor: --my-trigger;
-  /* MANDATORY: Use anchor() on inset properties rather than position-area when using the polyfill on elements needing position-try-fallbacks. */
-  inset: auto;
-  top: anchor(bottom);
-  left: anchor(left);
-  margin: 0;
+	position-anchor: --my-trigger;
+	/* MANDATORY: Use anchor() on inset properties rather than position-area when using the polyfill on elements needing position-try-fallbacks. */
+	inset: auto;
+	top: anchor(bottom);
+	left: anchor(left);
+	margin: 0;
 }
 ```
 
@@ -157,29 +157,32 @@ Instead, gate `inset: auto` and `margin: 0` inside `@supports` for the specific 
 
 ```css
 @supports (position-area: block-end) {
-  [popover].anchored-overlay {
-    inset: auto;
-    margin: 0;
-    position-area: block-end span-inline-end;
-    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
-  }
+	[popover].anchored-overlay {
+		inset: auto;
+		margin: 0;
+		position-area: block-end span-inline-end;
+		position-try-fallbacks:
+			flip-block,
+			flip-inline,
+			flip-block flip-inline;
+	}
 }
 
 @supports not (position-area: block-end) {
-  /* Optional: override default popover centering with a fixed bottom bar */
-  [popover].anchored-overlay {
-    position: fixed;
-    inset: auto 0 0 0;
-    width: auto;
-    margin: 0;
-  }
+	/* Optional: override default popover centering with a fixed bottom bar */
+	[popover].anchored-overlay {
+		position: fixed;
+		inset: auto 0 0 0;
+		width: auto;
+		margin: 0;
+	}
 }
 ```
 
 #### sibling-index()
 
-* **Guidance:** If sibling-index() is not supported, use the `+` operator to add margin manually. I.e. `popover + popover { margin-top: 1rem }`
+- **Guidance:** If sibling-index() is not supported, use the `+` operator to add margin manually. I.e. `popover + popover { margin-top: 1rem }`
 
 #### transition-behavior
 
-* **Guidance:** If transition-behavior is not supported, use JavaScript to add animation via classes as the toast element transitions in and out.
+- **Guidance:** If transition-behavior is not supported, use JavaScript to add animation via classes as the toast element transitions in and out.

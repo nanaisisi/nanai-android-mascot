@@ -10,37 +10,41 @@ Set line, style, color, and thickness with the `text-decoration` shorthand, and 
 
 ```css
 :where(.decorated) {
-  /* Thickness is relative to the font size (0.08em is an example value), so the line is not too heavy
+	/* Thickness is relative to the font size (0.08em is an example value), so the line is not too heavy
      on small text or too light on large text, and max() keeps it at least 1px so it never disappears. */
-  text-decoration: underline solid currentColor max(1px, 0.08em);
-  /* Use em so the gap scales with the font size. 0.2em clears most descenders; example value. */
-  text-underline-offset: 0.2em;
+	text-decoration: underline solid currentColor max(1px, 0.08em);
+	/* Use em so the gap scales with the font size. 0.2em clears most descenders; example value. */
+	text-underline-offset: 0.2em;
 }
 
 /* Example hover state: a softer line that firms up on hover and focus. The 50% mix and
    0.12em thickness are example values. */
 :where(.decorated) {
-  text-decoration-color: color-mix(in srgb, currentColor, transparent);
+	text-decoration-color: color-mix(in srgb, currentColor, transparent);
 }
 
 :where(.decorated:is(:hover, :focus-visible)) {
-  text-decoration-color: currentColor;
-  text-decoration-thickness: max(1px, 0.12em);
+	text-decoration-color: currentColor;
+	text-decoration-thickness: max(1px, 0.12em);
 }
 
 /* Other lines are a different text-decoration-line on the same properties */
-.decorated-over    { text-decoration-line: overline; }
-.decorated-through { text-decoration-line: line-through; }
+.decorated-over {
+	text-decoration-line: overline;
+}
+.decorated-through {
+	text-decoration-line: line-through;
+}
 ```
 
 `text-decoration-style` accepts `solid`, `double`, `dotted`, `dashed`, and `wavy`. `text-underline-offset` applies to underlines only.
 
 Starting points for the design:
 
-* **Thickness:** about `0.06em` to `0.1em` for body text. Go thicker (`0.1em` to `0.15em`) for headings and emphasized states.
-* **Offset:** about `0.15em` to `0.25em`. Dotted and wavy lines need a little more room than solid ones, so raise the offset for them.
-* **Color:** `currentColor` keeps the line matched to the text. A softer mix of the text color that firms up on hover keeps long runs of links calm.
-* **Style:** `solid` for links, `dotted` for terms and abbreviations, and `wavy` for annotations such as errors.
+- **Thickness:** about `0.06em` to `0.1em` for body text. Go thicker (`0.1em` to `0.15em`) for headings and emphasized states.
+- **Offset:** about `0.15em` to `0.25em`. Dotted and wavy lines need a little more room than solid ones, so raise the offset for them.
+- **Color:** `currentColor` keeps the line matched to the text. A softer mix of the text color that firms up on hover keeps long runs of links calm.
+- **Style:** `solid` for links, `dotted` for terms and abbreviations, and `wavy` for annotations such as errors.
 
 ## Control where the line is skipped
 
@@ -50,15 +54,15 @@ By default, underlines and overlines break around glyph parts that cross them, s
 
 ```css
 .decorated {
-  /* auto: skip ink for most scripts (default). none: draw straight through.
+	/* auto: skip ink for most scripts (default). none: draw straight through.
      all: also skip ink in scripts where auto does not, such as Japanese or Chinese. */
-  text-decoration-skip-ink: all;
+	text-decoration-skip-ink: all;
 }
 ```
 
-* Keep `auto` for Latin text, and do not declare it: it is the default.
-* Use `all` when the underline sits close enough to the baseline to cross ideographic glyphs, or when mixed-script text must look consistent.
-* Use `none` for a very thick line, or a deliberately decorative one, where gaps would look like breaks.
+- Keep `auto` for Latin text, and do not declare it: it is the default.
+- Use `all` when the underline sits close enough to the baseline to cross ideographic glyphs, or when mixed-script text must look consistent.
+- Use `none` for a very thick line, or a deliberately decorative one, where gaps would look like breaks.
 
 
 #### Skip spaces
@@ -67,12 +71,12 @@ By default, underlines and overlines break around glyph parts that cross them, s
 
 ```css
 .decorated {
-  /* Spaces collapse by default, so there is nothing to skip. Preserve them when the
+	/* Spaces collapse by default, so there is nothing to skip. Preserve them when the
      leading or trailing spaces are meaningful, such as padded input values. */
-  white-space: pre;
-  /* none: decorate every space. all: skip every space, so each word is underlined separately.
+	white-space: pre;
+	/* none: decorate every space. all: skip every space, so each word is underlined separately.
      start | end | start end: skip only leading, trailing, or both. */
-  text-decoration-skip-spaces: all;
+	text-decoration-skip-spaces: all;
 }
 ```
 
@@ -85,30 +89,34 @@ Do not declare `text-decoration-skip-spaces` unless the decoration should visibl
 ```css
 /* Small insets soften the ends of the line; larger ones read as a deliberately short line.
    Both values are examples. */
-.trimmed  { text-decoration-inset: var(--deco-inset, 0.1em); }
-.extended { text-decoration-inset: calc(var(--deco-inset, 0.1em) * -1); }
+.trimmed {
+	text-decoration-inset: var(--deco-inset, 0.1em);
+}
+.extended {
+	text-decoration-inset: calc(var(--deco-inset, 0.1em) * -1);
+}
 ```
 
 To reveal an underline on hover without a border or background gradient, trim the end by 100% and transition it back to 0:
 
 ```css
 .reveal {
-  text-decoration: underline; /* Always visible, including for reduced motion */
+	text-decoration: underline; /* Always visible, including for reduced motion */
 }
 
 /* Only hide and animate the line when the user has not asked for reduced motion. */
 @media (prefers-reduced-motion: no-preference) {
-  .reveal {
-    /* Trim the end by the full inline size so the line starts with zero length. */
-    text-decoration-inset: 0 100%;
-    /* 150ms to 300ms feels responsive without lagging; ease-out starts quickly. Example values. */
-    transition: text-decoration-inset var(--reveal-duration, 0.25s) ease-out;
-  }
+	.reveal {
+		/* Trim the end by the full inline size so the line starts with zero length. */
+		text-decoration-inset: 0 100%;
+		/* 150ms to 300ms feels responsive without lagging; ease-out starts quickly. Example values. */
+		transition: text-decoration-inset var(--reveal-duration, 0.25s) ease-out;
+	}
 
-  /* Include :focus-visible so keyboard users get the same reveal as pointer users. */
-  .reveal:is(:hover, :focus-visible) {
-    text-decoration-inset: 0 0;
-  }
+	/* Include :focus-visible so keyboard users get the same reveal as pointer users. */
+	.reveal:is(:hover, :focus-visible) {
+		text-decoration-inset: 0 0;
+	}
 }
 ```
 
@@ -122,43 +130,47 @@ Use a pseudo-element when the line must be a shape `text-decoration` cannot draw
 
 ```css
 .draw {
-  position: relative;
-  display: inline-block;
-  color: inherit;
-  text-decoration: none;
-  padding-block-end: 0.4em; /* Space for the line below the text; example value */
+	position: relative;
+	display: inline-block;
+	color: inherit;
+	text-decoration: none;
+	padding-block-end: 0.4em; /* Space for the line below the text; example value */
 }
 
 .draw::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 0 0;
-  block-size: 0.4em; /* Height of the squiggle; example value */
-  pointer-events: none;
-  border: var(--deco-thickness, max(1px, 0.08em)) solid var(--deco-color, currentColor);
-  /* A single shape strokes along its path, using the border width as the stroke. Example squiggle. */
-  border-shape: shape(from 0% 50%,
-    curve to 20% 50% with 5% 0% / 15% 100%,
-    smooth to 40% 50% with 35% 100%,
-    smooth to 60% 50% with 55% 100%,
-    smooth to 80% 50% with 75% 100%,
-    smooth to 100% 50% with 95% 100%);
+	content: "";
+	position: absolute;
+	inset: auto 0 0 0;
+	block-size: 0.4em; /* Height of the squiggle; example value */
+	pointer-events: none;
+	border: var(--deco-thickness, max(1px, 0.08em)) solid
+		var(--deco-color, currentColor);
+	/* A single shape strokes along its path, using the border width as the stroke. Example squiggle. */
+	border-shape: shape(
+		from 0% 50%,
+		curve to 20% 50% with 5% 0% /
+		15% 100%,
+		smooth to 40% 50% with 35% 100%,
+		smooth to 60% 50% with 55% 100%,
+		smooth to 80% 50% with 75% 100%,
+		smooth to 100% 50% with 95% 100%
+	);
 }
 
 /* Only hide and animate the line when the user has not asked for reduced motion;
    otherwise it stays fully drawn. */
 @media (prefers-reduced-motion: no-preference) {
-  .draw::after {
-    /* Clip the line away from the right edge. The negative block insets keep the stroke
+	.draw::after {
+		/* Clip the line away from the right edge. The negative block insets keep the stroke
        from being cut off vertically. */
-    clip-path: inset(-1em 100% -1em 0);
-    /* A slightly slower draw than a hover reveal reads as drawing; example duration. */
-    transition: clip-path var(--draw-duration, 0.6s) ease-out;
-  }
+		clip-path: inset(-1em 100% -1em 0);
+		/* A slightly slower draw than a hover reveal reads as drawing; example duration. */
+		transition: clip-path var(--draw-duration, 0.6s) ease-out;
+	}
 
-  .draw:is(:hover, :focus-visible)::after {
-    clip-path: inset(-1em 0 -1em 0); /* Fully drawn */
-  }
+	.draw:is(:hover, :focus-visible)::after {
+		clip-path: inset(-1em 0 -1em 0); /* Fully drawn */
+	}
 }
 ```
 
@@ -169,22 +181,28 @@ Two box properties decorate text by outlining it rather than running a line alon
 ```css
 /* Gradient outline with a see-through middle */
 .ring {
-  padding: 0.2em 0.75em; /* Example values: enough room that the outline does not touch the text */
-  /* The border width is the visible outline thickness. Relative to the font size, with a 2px
+	padding: 0.2em 0.75em; /* Example values: enough room that the outline does not touch the text */
+	/* The border width is the visible outline thickness. Relative to the font size, with a 2px
      minimum so it stays visible on small text; example value. */
-  border: var(--ring-width, max(2px, 0.12em)) solid transparent;
-  background: linear-gradient(135deg, var(--ring-start, #2563eb), var(--ring-end, #db2777)) border-box;
-  /* Paint the background only under the border, so the inside stays transparent. */
-  background-clip: border-area;
+	border: var(--ring-width, max(2px, 0.12em)) solid transparent;
+	background: linear-gradient(
+			135deg,
+			var(--ring-start, #2563eb),
+			var(--ring-end, #db2777)
+		)
+		border-box;
+	/* Paint the background only under the border, so the inside stays transparent. */
+	background-clip: border-area;
 }
 
 /* Border that follows a shape that border-radius cannot draw, such as a tag with a pointed end */
 .tag {
-  padding: 0.2em 1.5em 0.2em 0.9em; /* Example values: extra room at the point so the text is not clipped */
-  border: var(--shape-stroke, max(2px, 0.08em)) solid var(--shape-color, currentColor); /* Example stroke width */
-  /* A single shape strokes along its path. Two shapes fill the area between them.
+	padding: 0.2em 1.5em 0.2em 0.9em; /* Example values: extra room at the point so the text is not clipped */
+	border: var(--shape-stroke, max(2px, 0.08em)) solid
+		var(--shape-color, currentColor); /* Example stroke width */
+	/* A single shape strokes along its path. Two shapes fill the area between them.
      This polygon is an example; use shape() for curves. */
-  border-shape: polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%);
+	border-shape: polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%);
 }
 ```
 
@@ -194,21 +212,22 @@ When only the corners need a different shape, such as a beveled, scooped, or not
 
 ```css
 .label {
-  padding: 0.2em 0.9em; /* Example values */
-  border: var(--shape-stroke, max(2px, 0.08em)) solid var(--shape-color, currentColor);
-  border-radius: 0.6em; /* Corner size; example value */
-  corner-shape: bevel; /* round (default) | scoop | bevel | notch | square | squircle */
+	padding: 0.2em 0.9em; /* Example values */
+	border: var(--shape-stroke, max(2px, 0.08em)) solid
+		var(--shape-color, currentColor);
+	border-radius: 0.6em; /* Corner size; example value */
+	corner-shape: bevel; /* round (default) | scoop | bevel | notch | square | squircle */
 }
 ```
 
 ## Choose a technique
 
-* **`text-decoration`** (line, ink skipping, spaces, inset): the line should run along the text, wrap with it, and follow its font metrics. This is the default choice.
-* **Pseudo-element with `border-shape` and `clip-path`**: the line is a custom shape or needs a draw-on animation. Choose it only when `text-decoration-style` cannot produce the look, because it needs extra positioning.
-* **`background-clip: border-area`**: the text needs a gradient outline. Use plain `border-color` when a solid outline is enough.
-* **`corner-shape`**: only the corners need a different shape, such as beveled, scooped, or notched. Pair it with `border-radius`, which sets the corner size.
-* **`border-shape`**: the outline needs a shape `border-radius` cannot draw, such as a tag or arrow. Use `border-radius` when rounded corners are enough.
-* **Inset hover reveal**: worth adding when a link needs a hover affordance beyond a color change. Skip it for text that is not interactive.
+- **`text-decoration`** (line, ink skipping, spaces, inset): the line should run along the text, wrap with it, and follow its font metrics. This is the default choice.
+- **Pseudo-element with `border-shape` and `clip-path`**: the line is a custom shape or needs a draw-on animation. Choose it only when `text-decoration-style` cannot produce the look, because it needs extra positioning.
+- **`background-clip: border-area`**: the text needs a gradient outline. Use plain `border-color` when a solid outline is enough.
+- **`corner-shape`**: only the corners need a different shape, such as beveled, scooped, or notched. Pair it with `border-radius`, which sets the corner size.
+- **`border-shape`**: the outline needs a shape `border-radius` cannot draw, such as a tag or arrow. Use `border-radius` when rounded corners are enough.
+- **Inset hover reveal**: worth adding when a link needs a hover affordance beyond a color change. Skip it for text that is not interactive.
 
 ## Fallback Strategies
 
@@ -245,18 +264,28 @@ Use an opaque layer when the element's background is a known flat color. Paint t
 
 ```css
 .ring {
-  border: var(--ring-width, max(2px, 0.12em)) solid transparent; /* Example width */
-  /* Fallback: an opaque surface layer hides the gradient inside the border. */
-  background:
-    linear-gradient(var(--surface, canvas) 0 100%) padding-box,
-    linear-gradient(135deg, var(--ring-start, #2563eb), var(--ring-end, #db2777)) border-box;
+	border: var(--ring-width, max(2px, 0.12em)) solid transparent; /* Example width */
+	/* Fallback: an opaque surface layer hides the gradient inside the border. */
+	background:
+		linear-gradient(var(--surface, canvas) 0 100%) padding-box,
+		linear-gradient(
+			135deg,
+			var(--ring-start, #2563eb),
+			var(--ring-end, #db2777)
+		)
+		border-box;
 }
 
 @supports (background-clip: border-area) {
-  .ring {
-    background: linear-gradient(135deg, var(--ring-start, #2563eb), var(--ring-end, #db2777)) border-box;
-    background-clip: border-area; /* The inside stays transparent */
-  }
+	.ring {
+		background: linear-gradient(
+				135deg,
+				var(--ring-start, #2563eb),
+				var(--ring-end, #db2777)
+			)
+			border-box;
+		background-clip: border-area; /* The inside stays transparent */
+	}
 }
 ```
 
@@ -264,23 +293,32 @@ Use a masked pseudo-element when the inside must stay transparent. The pseudo-el
 
 ```css
 @supports not (background-clip: border-area) {
-  .ring {
-    position: relative;
-    border-color: transparent;
-  }
+	.ring {
+		position: relative;
+		border-color: transparent;
+	}
 
-  .ring::before {
-    content: "";
-    position: absolute;
-    inset: calc(var(--ring-width, max(2px, 0.12em)) * -1); /* Cover the border box */
-    padding: var(--ring-width, max(2px, 0.12em)); /* Ring thickness */
-    border-radius: inherit;
-    background: linear-gradient(135deg, var(--ring-start, #2563eb), var(--ring-end, #db2777));
-    /* Keep only the area between the content box and the border box. */
-    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    mask-composite: exclude;
-    pointer-events: none;
-  }
+	.ring::before {
+		content: "";
+		position: absolute;
+		inset: calc(
+			var(--ring-width, max(2px, 0.12em)) *
+			-1
+		); /* Cover the border box */
+		padding: var(--ring-width, max(2px, 0.12em)); /* Ring thickness */
+		border-radius: inherit;
+		background: linear-gradient(
+			135deg,
+			var(--ring-start, #2563eb),
+			var(--ring-end, #db2777)
+		);
+		/* Keep only the area between the content box and the border box. */
+		mask:
+			linear-gradient(#000 0 0) content-box,
+			linear-gradient(#000 0 0);
+		mask-composite: exclude;
+		pointer-events: none;
+	}
 }
 ```
 
@@ -296,36 +334,42 @@ Draw the outline with a clipped pseudo-element. Keep a transparent border so the
 
 ```css
 .tag {
-  --stroke: max(2px, 0.08em); /* Example stroke width */
-  position: relative;
-  padding: 0.2em 1.5em 0.2em 0.9em; /* Example values */
-  border: var(--stroke) solid transparent;
+	--stroke: max(2px, 0.08em); /* Example stroke width */
+	position: relative;
+	padding: 0.2em 1.5em 0.2em 0.9em; /* Example values */
+	border: var(--stroke) solid transparent;
 }
 
 @supports not (border-shape: circle(50%)) {
-  .tag::before {
-    content: "";
-    position: absolute;
-    inset: calc(var(--stroke) * -1); /* Cover the border box */
-    background: var(--shape-color, currentColor);
-    pointer-events: none;
-    /* Outer shape, then the inner shape inset by the stroke. The inner points are approximate on
+	.tag::before {
+		content: "";
+		position: absolute;
+		inset: calc(var(--stroke) * -1); /* Cover the border box */
+		background: var(--shape-color, currentColor);
+		pointer-events: none;
+		/* Outer shape, then the inner shape inset by the stroke. The inner points are approximate on
        diagonal edges, so the stroke looks slightly thinner there. */
-    clip-path: polygon(evenodd,
-      0 0, 85% 0, 100% 50%, 85% 100%, 0 100%,
-      var(--stroke) var(--stroke),
-      calc(85% - var(--stroke)) var(--stroke),
-      calc(100% - var(--stroke) * 2) 50%,
-      calc(85% - var(--stroke)) calc(100% - var(--stroke)),
-      var(--stroke) calc(100% - var(--stroke)));
-  }
+		clip-path: polygon(
+			evenodd,
+			0 0,
+			85% 0,
+			100% 50%,
+			85% 100%,
+			0 100%,
+			var(--stroke) var(--stroke),
+			calc(85% - var(--stroke)) var(--stroke),
+			calc(100% - var(--stroke) * 2) 50%,
+			calc(85% - var(--stroke)) calc(100% - var(--stroke)),
+			var(--stroke) calc(100% - var(--stroke))
+		);
+	}
 }
 
 @supports (border-shape: circle(50%)) {
-  .tag {
-    border-color: var(--shape-color, currentColor);
-    border-shape: polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%);
-  }
+	.tag {
+		border-color: var(--shape-color, currentColor);
+		border-shape: polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%);
+	}
 }
 ```
 

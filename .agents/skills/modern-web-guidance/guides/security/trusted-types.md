@@ -18,24 +18,24 @@ To use Trusted Types, follow four main steps:
 A policy is a set of rules for sanitizing content. You create it using `trustedTypes.createPolicy()`, typically delegating to a sanitizer library such as DOMPurify or your application's HTML escaping rules:
 
 ```javascript
-import DOMPurify from 'dompurify';
+import DOMPurify from "dompurify";
 
-const myPolicy = trustedTypes.createPolicy('sanitize-html', {
-  createHTML: (input) =>
-    // Return a sanitized string; createPolicy() wraps it in a TrustedHTML object.
-    // Example using DOMPurify:
-    DOMPurify.sanitize(input, { RETURN_TRUSTED_TYPE: false }),
+const myPolicy = trustedTypes.createPolicy("sanitize-html", {
+	createHTML: (input) =>
+		// Return a sanitized string; createPolicy() wraps it in a TrustedHTML object.
+		// Example using DOMPurify:
+		DOMPurify.sanitize(input, { RETURN_TRUSTED_TYPE: false }),
 });
 
 // Example using HTML escaping (for environments without third-party sanitizers):
-const escapePolicy = trustedTypes.createPolicy('escape-html', {
-  createHTML: (input) =>
-    String(input)
-      .replaceAll('&', '&amp;')
-      .replaceAll('<', '&lt;')
-      .replaceAll('>', '&gt;')
-      .replaceAll('"', '&quot;')
-      .replaceAll("'", '&#39;'),
+const escapePolicy = trustedTypes.createPolicy("escape-html", {
+	createHTML: (input) =>
+		String(input)
+			.replaceAll("&", "&amp;")
+			.replaceAll("<", "&lt;")
+			.replaceAll(">", "&gt;")
+			.replaceAll('"', "&quot;")
+			.replaceAll("'", "&#39;"),
 });
 ```
 
@@ -47,7 +47,8 @@ const escapePolicy = trustedTypes.createPolicy('escape-html', {
 Instead of passing a string directly to a sink, you call the policy's creation method.
 
 ```javascript
-const untrustedInput = '<p>Hello, <strong>world</strong>!</p><img src="x" onerror="alert(1)">';
+const untrustedInput =
+	'<p>Hello, <strong>world</strong>!</p><img src="x" onerror="alert(1)">';
 
 // In an enforced environment, this would throw a TypeError:
 // element.innerHTML = untrustedInput;
@@ -63,10 +64,10 @@ Update each instance where you write to a sink to first convert it to a Trusted 
 
 ```javascript
 trustedTypes.createPolicy("default", {
-  createHTML(value) {
-    console.warn("String passed instead of Trusted Type.");
-    return DOMPurify.sanitize(value, { RETURN_TRUSTED_TYPE: false });
-  },
+	createHTML(value) {
+		console.warn("String passed instead of Trusted Type.");
+		return DOMPurify.sanitize(value, { RETURN_TRUSTED_TYPE: false });
+	},
 });
 ```
 
@@ -94,6 +95,7 @@ Trusted Types should be rolled out incrementally to avoid breaking your applicat
 #### Rollout Strategy
 
 1.  **Report-Only**: First, roll out using the `Content-Security-Policy-Report-Only` header. This will log violations to your reporting endpoint without actually blocking the writes.
+
     ```http
     Content-Security-Policy-Report-Only: require-trusted-types-for 'script';
     ```
@@ -130,9 +132,9 @@ For browsers that do not yet support Trusted Types, you can use a minimal "tinyf
 
 ```javascript
 if (!window.trustedTypes) {
-  window.trustedTypes = {
-    createPolicy: (name, rules) => rules,
-  };
+	window.trustedTypes = {
+		createPolicy: (name, rules) => rules,
+	};
 }
 ```
 

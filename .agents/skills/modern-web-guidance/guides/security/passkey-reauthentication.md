@@ -17,19 +17,19 @@ Create an endpoint that populates the allowed credentials parameters specificall
 ```javascript
 // Node.js step-up options generation example
 router.post("/api/reauth/options", enforceActiveSession, async (req, res) => {
-  const userPasskeys = await db.findCredentialsByUserId(req.user.id);
+	const userPasskeys = await db.findCredentialsByUserId(req.user.id);
 
-  const options = {
-    challenge: serverGeneratedBase64UrlChallenge, // Random challenge stored in user session
-    rpId: "example.com",
-    // Enforce allowance strictly limited to the user's credentials list
-    allowCredentials: userPasskeys.map((cred) => ({
-      type: "public-key",
-      id: cred.id,
-      transports: cred.transports, // Speeds up resolution by indicating platform transports
-    })),
-  };
-  return res.json(options);
+	const options = {
+		challenge: serverGeneratedBase64UrlChallenge, // Random challenge stored in user session
+		rpId: "example.com",
+		// Enforce allowance strictly limited to the user's credentials list
+		allowCredentials: userPasskeys.map((cred) => ({
+			type: "public-key",
+			id: cred.id,
+			transports: cred.transports, // Speeds up resolution by indicating platform transports
+		})),
+	};
+	return res.json(options);
 });
 ```
 
@@ -55,50 +55,53 @@ Trigger reauthentication when a user presses a "Verify Identity" or "Proceed wit
 let reauthAbortController = new AbortController();
 
 async function triggerButtonReauth() {
-  // Abort any background suggestion flows to avoid passkey prompt collisions
-  reauthAbortController.abort();
-  reauthAbortController = new AbortController();
+	// Abort any background suggestion flows to avoid passkey prompt collisions
+	reauthAbortController.abort();
+	reauthAbortController = new AbortController();
 
-  const optionsResponse = await fetch("/api/reauth/options", {
-    method: "POST",
-  });
-  const optionsJSON = await optionsResponse.json();
-  const publicKey =
-    PublicKeyCredential.parseRequestOptionsFromJSON(optionsJSON);
+	const optionsResponse = await fetch("/api/reauth/options", {
+		method: "POST",
+	});
+	const optionsJSON = await optionsResponse.json();
+	const publicKey =
+		PublicKeyCredential.parseRequestOptionsFromJSON(optionsJSON);
 
-  try {
-    const credential = await navigator.credentials.get({
-      publicKey,
-      signal: reauthAbortController.signal,
-    });
+	try {
+		const credential = await navigator.credentials.get({
+			publicKey,
+			signal: reauthAbortController.signal,
+		});
 
-    if (credential) {
-      const encodedCredential = credential.toJSON();
-      const verifyResponse = await fetch("/api/reauth/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(encodedCredential),
-      });
+		if (credential) {
+			const encodedCredential = credential.toJSON();
+			const verifyResponse = await fetch("/api/reauth/verify", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify(encodedCredential),
+			});
 
-      if (verifyResponse.ok) {
-        showTransactionSuccessUI();
-      } else if (verifyResponse.status === 404 && PublicKeyCredential.signalUnknownCredential) {
-        await PublicKeyCredential.signalUnknownCredential({
-          rpId: publicKey.rpId, // Always use the server-provided rpId; DO NOT use window.location.hostname
-          credentialId: encodedCredential.id
-        });
-      }
-    }
-  } catch (err) {
-    if (err.name === "NotAllowedError") {
-      console.log("User cancelled reauthentication.");
-    }
-  }
+			if (verifyResponse.ok) {
+				showTransactionSuccessUI();
+			} else if (
+				verifyResponse.status === 404 &&
+				PublicKeyCredential.signalUnknownCredential
+			) {
+				await PublicKeyCredential.signalUnknownCredential({
+					rpId: publicKey.rpId, // Always use the server-provided rpId; DO NOT use window.location.hostname
+					credentialId: encodedCredential.id,
+				});
+			}
+		}
+	} catch (err) {
+		if (err.name === "NotAllowedError") {
+			console.log("User cancelled reauthentication.");
+		}
+	}
 }
 
 document
-  .getElementById("reauth-btn")
-  .addEventListener("click", triggerButtonReauth);
+	.getElementById("reauth-btn")
+	.addEventListener("click", triggerButtonReauth);
 ```
 
 ## Fallback Strategies
@@ -112,7 +115,7 @@ Load `webauthn-polyfills` so `PublicKeyCredential.getClientCapabilities()` is av
 
 ```js
 // With a bundler (`npm install webauthn-polyfills`):
-import 'webauthn-polyfills';
+import "webauthn-polyfills";
 ```
 
 Without a bundler, serve the package from your own origin, or import it from a CDN such as `https://esm.sh/webauthn-polyfills@0.1.7` (pin the exact version). For third-party URLs, add Subresource Integrity: the `integrity` attribute on the `<script>` tag, or an import map's `integrity` field for `import` statements.
@@ -136,7 +139,7 @@ Load `webauthn-polyfills` so `PublicKeyCredential.parseRequestOptionsFromJSON()`
 
 ```js
 // With a bundler (`npm install webauthn-polyfills`):
-import 'webauthn-polyfills';
+import "webauthn-polyfills";
 ```
 
 Without a bundler, serve the package from your own origin, or import it from a CDN such as `https://esm.sh/webauthn-polyfills@0.1.7` (pin the exact version). For third-party URLs, add Subresource Integrity: the `integrity` attribute on the `<script>` tag, or an import map's `integrity` field for `import` statements.

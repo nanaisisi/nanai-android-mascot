@@ -28,8 +28,8 @@ If neither applies, default to a shadow for vertical scrollers and a fade for ho
 
 ```css
 .scroller {
-  overflow-y: auto;
-  container-type: scroll-state;
+	overflow-y: auto;
+	container-type: scroll-state;
 }
 ```
 
@@ -40,30 +40,38 @@ DO NOT add indicator elements to the markup. The scroller's own `::before` and `
 ```css
 .scroller::before,
 .scroller::after {
-  content: "";
-  display: block;
-  position: sticky;
-  /* Example value: how far the shadow reaches into the content */
-  block-size: .75rem;
-  /* Paint above positioned content */
-  z-index: 1;
-  /* Let clicks through to the content underneath */
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity .2s;
+	content: "";
+	display: block;
+	position: sticky;
+	/* Example value: how far the shadow reaches into the content */
+	block-size: 0.75rem;
+	/* Paint above positioned content */
+	z-index: 1;
+	/* Let clicks through to the content underneath */
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 0.2s;
 }
 
 /* Radial, so the shadow curves and tapers off at the sides. Keep it subtle: it should not compete with the content. */
 .scroller::before {
-  inset-block-start: 0;
-  margin-block-end: -.75rem;
-  background: radial-gradient(farthest-side at 50% 0, rgb(0 0 0 / .15), transparent);
+	inset-block-start: 0;
+	margin-block-end: -0.75rem;
+	background: radial-gradient(
+		farthest-side at 50% 0,
+		rgb(0 0 0 / 0.15),
+		transparent
+	);
 }
 
 .scroller::after {
-  inset-block-end: 0;
-  margin-block-start: -.75rem;
-  background: radial-gradient(farthest-side at 50% 100%, rgb(0 0 0 / .15), transparent);
+	inset-block-end: 0;
+	margin-block-start: -0.75rem;
+	background: radial-gradient(
+		farthest-side at 50% 100%,
+		rgb(0 0 0 / 0.15),
+		transparent
+	);
 }
 ```
 
@@ -75,15 +83,15 @@ Pseudo-elements can query their own originating element, so the scroller's `::be
 
 ```css
 @container scroll-state(scrollable: block-start) {
-  .scroller::before {
-    opacity: 1;
-  }
+	.scroller::before {
+		opacity: 1;
+	}
 }
 
 @container scroll-state(scrollable: block-end) {
-  .scroller::after {
-    opacity: 1;
-  }
+	.scroller::after {
+		opacity: 1;
+	}
 }
 ```
 
@@ -93,51 +101,57 @@ Fade the content with a mask on the scroller itself: an opaque layer minus a gra
 
 ```css
 @property --fade-start {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0px;
 }
 
 @property --fade-end {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0px;
 }
 
 .scroller {
-  overflow-x: auto;
-  /* Example value: how far each fade reaches */
-  --fade-size: 3rem;
-  /* Gradient directions and positions are physical, so flip them for right-to-left content */
-  --fade-dir: right;
-  --fade-start-pos: 0;
-  --fade-end-pos: 100%;
-  mask:
-    linear-gradient(black, black) no-clip subtract,
-    linear-gradient(to var(--fade-dir), black, transparent) var(--fade-start-pos) 0 / var(--fade-start) 100% no-repeat no-clip,
-    linear-gradient(to var(--fade-dir), transparent, black) var(--fade-end-pos) 0 / var(--fade-end) 100% no-repeat no-clip;
-  animation: reveal-fade-start linear both, hide-fade-end linear both;
-  animation-timeline: scroll(self inline);
-  /* Each fade animates over the first or last --fade-size of scrolling */
-  animation-range: 0 var(--fade-size), calc(100% - var(--fade-size)) 100%;
+	overflow-x: auto;
+	/* Example value: how far each fade reaches */
+	--fade-size: 3rem;
+	/* Gradient directions and positions are physical, so flip them for right-to-left content */
+	--fade-dir: right;
+	--fade-start-pos: 0;
+	--fade-end-pos: 100%;
+	mask:
+		linear-gradient(black, black) no-clip subtract,
+		linear-gradient(to var(--fade-dir), black, transparent)
+		var(--fade-start-pos) 0 / var(--fade-start) 100% no-repeat no-clip,
+		linear-gradient(to var(--fade-dir), transparent, black) var(--fade-end-pos)
+		0 / var(--fade-end) 100% no-repeat no-clip;
+	animation:
+		reveal-fade-start linear both,
+		hide-fade-end linear both;
+	animation-timeline: scroll(self inline);
+	/* Each fade animates over the first or last --fade-size of scrolling */
+	animation-range:
+		0 var(--fade-size),
+		calc(100% - var(--fade-size)) 100%;
 
-  &:dir(rtl) {
-    --fade-dir: left;
-    --fade-start-pos: 100%;
-    --fade-end-pos: 0;
-  }
+	&:dir(rtl) {
+		--fade-dir: left;
+		--fade-start-pos: 100%;
+		--fade-end-pos: 0;
+	}
 }
 
 @keyframes reveal-fade-start {
-  to {
-    --fade-start: var(--fade-size);
-  }
+	to {
+		--fade-start: var(--fade-size);
+	}
 }
 
 @keyframes hide-fade-end {
-  from {
-    --fade-end: var(--fade-size);
-  }
+	from {
+		--fade-end: var(--fade-size);
+	}
 }
 ```
 
@@ -164,27 +178,27 @@ Without scroll-state queries, the shadows stay hidden. Show them with a scroll-d
 
 ```css
 @supports not (container-type: scroll-state) {
-  .scroller::before,
-  .scroller::after {
-    animation: show-shadow linear both;
-    animation-timeline: scroll();
-  }
+	.scroller::before,
+	.scroller::after {
+		animation: show-shadow linear both;
+		animation-timeline: scroll();
+	}
 
-  .scroller::before {
-    /* Example value: how much scrolling it takes to fully show the shadow */
-    animation-range: 0 2rem;
-  }
+	.scroller::before {
+		/* Example value: how much scrolling it takes to fully show the shadow */
+		animation-range: 0 2rem;
+	}
 
-  .scroller::after {
-    animation-direction: reverse;
-    animation-range: calc(100% - 2rem) 100%;
-  }
+	.scroller::after {
+		animation-direction: reverse;
+		animation-range: calc(100% - 2rem) 100%;
+	}
 }
 
 @keyframes show-shadow {
-  to {
-    opacity: 1;
-  }
+	to {
+		opacity: 1;
+	}
 }
 ```
 
@@ -205,17 +219,24 @@ Each shadow has a cover: a `local` background in the scroller's own color, which
 At either end of the content its cover sits on top of its shadow and hides it; once the user scrolls away from that end, the cover moves away and the shadow shows.
 
 ```css
-@supports not ((container-type: scroll-state) or (animation-timeline: scroll())) {
-  .scroller {
-    background:
+@supports not (
+		(container-type: scroll-state) or
+		(animation-timeline: scroll())
+	) {
+	.scroller {
+		background:
       /* Covers: scroll with the content. Must use the scroller's own background color. */
-      linear-gradient(var(--surface) 30%, transparent) top / 100% 2.5rem no-repeat local,
-      linear-gradient(transparent, var(--surface) 70%) bottom / 100% 2.5rem no-repeat local,
-      /* Shadows: stay at the edges of the scrollport */
-      radial-gradient(farthest-side at 50% 0, rgb(0 0 0 / .15), transparent) top / 100% .75rem no-repeat,
-      radial-gradient(farthest-side at 50% 100%, rgb(0 0 0 / .15), transparent) bottom / 100% .75rem no-repeat,
-      var(--surface);
-  }
+			linear-gradient(var(--surface) 30%, transparent) top / 100% 2.5rem
+			no-repeat local,
+			linear-gradient(transparent, var(--surface) 70%) bottom / 100% 2.5rem
+			no-repeat local,
+			/* Shadows: stay at the edges of the scrollport */
+			radial-gradient(farthest-side at 50% 0, rgb(0 0 0 / 0.15), transparent)
+			top / 100% 0.75rem no-repeat,
+			radial-gradient(farthest-side at 50% 100%, rgb(0 0 0 / 0.15), transparent)
+			bottom / 100% 0.75rem no-repeat,
+			var(--surface);
+	}
 }
 ```
 
@@ -226,19 +247,28 @@ The shadows paint behind the content, so content with its own opaque background 
 Use an `IntersectionObserver` to mark which edges have more content, and show the hints from those attributes. Observe the scroller's first and last children, with the scroller as the root and `threshold: 1`: a child that is not fully visible means there is more content beyond it.
 
 ```js
-if (!CSS.supports('animation-timeline', 'scroll()')) {
-  for (const scroller of document.querySelectorAll('.scroller')) {
-    const [first, last] = [scroller.firstElementChild, scroller.lastElementChild];
-    // rootMargin: without it, sub-pixel widths can leave an edge child a fraction of a pixel short of fully visible
-    const observer = new IntersectionObserver(entries => {
-      for (const { target, intersectionRatio } of entries) {
-        scroller.classList.toggle(target === first ? 'more-start' : 'more-end', intersectionRatio < 1);
-      }
-    }, { root: scroller, threshold: 1, rootMargin: '1px' });
+if (!CSS.supports("animation-timeline", "scroll()")) {
+	for (const scroller of document.querySelectorAll(".scroller")) {
+		const [first, last] = [
+			scroller.firstElementChild,
+			scroller.lastElementChild,
+		];
+		// rootMargin: without it, sub-pixel widths can leave an edge child a fraction of a pixel short of fully visible
+		const observer = new IntersectionObserver(
+			(entries) => {
+				for (const { target, intersectionRatio } of entries) {
+					scroller.classList.toggle(
+						target === first ? "more-start" : "more-end",
+						intersectionRatio < 1,
+					);
+				}
+			},
+			{ root: scroller, threshold: 1, rootMargin: "1px" },
+		);
 
-    observer.observe(first);
-    observer.observe(last);
-  }
+		observer.observe(first);
+		observer.observe(last);
+	}
 }
 ```
 
@@ -246,20 +276,22 @@ if (!CSS.supports('animation-timeline', 'scroll()')) {
 /* Shadows */
 .scroller.more-start::before,
 .scroller.more-end::after {
-  opacity: 1;
+	opacity: 1;
 }
 
 /* Fades */
 .scroller {
-  transition: --fade-start .2s, --fade-end .2s;
+	transition:
+		--fade-start 0.2s,
+		--fade-end 0.2s;
 
-  &.more-start {
-    --fade-start: var(--fade-size);
-  }
+	&.more-start {
+		--fade-start: var(--fade-size);
+	}
 
-  &.more-end {
-    --fade-end: var(--fade-size);
-  }
+	&.more-end {
+		--fade-end: var(--fade-size);
+	}
 }
 ```
 
@@ -267,10 +299,13 @@ If a single child can be larger than the scroller (e.g. one long article), it is
 
 ```js
 // Must be valid children of the scroller (e.g. <li aria-hidden="true"> in a list)
-const [start, end] = [document.createElement('div'), document.createElement('div')];
+const [start, end] = [
+	document.createElement("div"),
+	document.createElement("div"),
+];
 for (const sentinel of [start, end]) {
-  // A zero-size sentinel at the very edge never counts as intersecting
-  sentinel.style.cssText = 'min-inline-size: 1px; min-block-size: 1px';
+	// A zero-size sentinel at the very edge never counts as intersecting
+	sentinel.style.cssText = "min-inline-size: 1px; min-block-size: 1px";
 }
 scroller.prepend(start);
 scroller.append(end);

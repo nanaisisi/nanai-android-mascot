@@ -10,11 +10,11 @@ MANDATORY: Set the `color` property using the `contrast-color()` function, passi
 
 ```css
 .badge {
-  /* Define the background color as a custom property */
-  --badge-bg: #e02424;
-  background-color: var(--badge-bg);
-  /* MANDATORY: Dynamic contrasting color */
-  color: contrast-color(var(--badge-bg));
+	/* Define the background color as a custom property */
+	--badge-bg: #e02424;
+	background-color: var(--badge-bg);
+	/* MANDATORY: Dynamic contrasting color */
+	color: contrast-color(var(--badge-bg));
 }
 ```
 
@@ -28,18 +28,18 @@ DO: Reference shared background variables inside `contrast-color()` to guarantee
 
 ```css
 .theme-card {
-  background-color: var(--theme-surface-color);
-  color: contrast-color(var(--theme-surface-color));
+	background-color: var(--theme-surface-color);
+	color: contrast-color(var(--theme-surface-color));
 }
 
 .theme-container[data-theme="light"] {
-  --theme-surface-color: #f4f4f4;
+	--theme-surface-color: #f4f4f4;
 }
 .theme-container[data-theme="dark"] {
-  --theme-surface-color: #1a1a1a;
+	--theme-surface-color: #1a1a1a;
 }
 .theme-container[data-theme="custom"] {
-  --theme-surface-color: var(--user-custom-theme);
+	--theme-surface-color: var(--user-custom-theme);
 }
 ```
 
@@ -52,13 +52,13 @@ Supported by: Chrome 147 (Apr 2026), Edge 147 (Apr 2026), Firefox 146 (Dec 2025)
 
 To support browsers without `contrast-color()`, you must provide a fallback. If the background color is known and fixed, use a hard-coded contrasting color. For variable background colors (such as theme custom properties where the runtime color is unknown), choose one of the five fallback strategies from the table below based on your UI requirements and browser support targets.
 
-| Strategy | Best For... | Considerations |
-| :--- | :--- | :--- |
-| **Calculate contrast with `color(xyz)`** | Automated, CSS-only contrast calculation, ensures compliance with WCAG 1.4.3 Contrast (Minimum). | Highest quality CSS-only fallback. |
-| **Text Shadow** | Quick readability boost on any background. | Can look "dirty" or "glowy"; may not fit all designs. |
-| **Text Stroke** | Preserving font weight while ensuring edge contrast. | Use `paint-order` to avoid thinning letterforms, if available. |
-| **Translucent Overlay** | Ensuring a minimum contrast area behind the text. | Changes the look of the background color under the text, requires a separate text element. |
-| **SVG Filters** | Reactive contrast that updates as the background changes. | Requires a separate text element; hacky implementation. |
+| Strategy                                 | Best For...                                                                                      | Considerations                                                                             |
+| :--------------------------------------- | :----------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------- |
+| **Calculate contrast with `color(xyz)`** | Automated, CSS-only contrast calculation, ensures compliance with WCAG 1.4.3 Contrast (Minimum). | Highest quality CSS-only fallback.                                                         |
+| **Text Shadow**                          | Quick readability boost on any background.                                                       | Can look "dirty" or "glowy"; may not fit all designs.                                      |
+| **Text Stroke**                          | Preserving font weight while ensuring edge contrast.                                             | Use `paint-order` to avoid thinning letterforms, if available.                             |
+| **Translucent Overlay**                  | Ensuring a minimum contrast area behind the text.                                                | Changes the look of the background color under the text, requires a separate text element. |
+| **SVG Filters**                          | Reactive contrast that updates as the background changes.                                        | Requires a separate text element; hacky implementation.                                    |
 
 ### Recommended: Calculate contrast with `color(xyz)`
 
@@ -79,15 +79,15 @@ DO: Select the fallback that best matches your design constraints if RCS is not 
 
 #### Option 1: Text Stroke
 
-Baseline status for Text stroke and fill  (compatibility prefixes): Widely available. It's been Baseline since 2017-04-05.
+Baseline status for Text stroke and fill (compatibility prefixes): Widely available. It's been Baseline since 2017-04-05.
 Supported by: Chrome 4 (Jan 2010), Edge 15 (Apr 2017), Firefox 49 (Sep 2016), Safari 3 (Oct 2007), and Safari iOS 2 (Jul 2008).
 
 ```css
 .badge--stroke {
-  -webkit-text-stroke: 4px black;
+	-webkit-text-stroke: 4px black;
 }
 ```
-  
+
 #### Option 2: Text Stroke with `paint-order` to preserve letterforms
 
 Baseline status for paint-order: Widely available. It's been Baseline since 2024-03-22.
@@ -95,8 +95,8 @@ Supported by: Chrome 123 (Mar 2024), Edge 123 (Mar 2024), Firefox ≤66, and Saf
 
 ```css
 .badge--stroke {
-  -webkit-text-stroke: 4px black;
-  paint-order: stroke fill;
+	-webkit-text-stroke: 4px black;
+	paint-order: stroke fill;
 }
 ```
 
@@ -104,20 +104,20 @@ Supported by: Chrome 123 (Mar 2024), Edge 123 (Mar 2024), Firefox ≤66, and Saf
 
 ```css
 .badge--overlay {
-  position: relative;
-  color: #fff;
-  overflow: hidden;
+	position: relative;
+	color: #fff;
+	overflow: hidden;
 }
 .badge--overlay::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-color: rgb(0 0 0 / 0.4);
-  z-index: 0;
+	content: "";
+	position: absolute;
+	inset: 0;
+	background-color: rgb(0 0 0 / 0.4);
+	z-index: 0;
 }
 .badge--overlay span {
-  position: relative;
-  z-index: 1;
+	position: relative;
+	z-index: 1;
 }
 ```
 
@@ -125,7 +125,7 @@ Supported by: Chrome 123 (Mar 2024), Edge 123 (Mar 2024), Firefox ≤66, and Saf
 
 ```css
 .badge--shadow {
-  text-shadow: 0 1px 3px rgb(0 0 0 / 0.8);
+	text-shadow: 0 1px 3px rgb(0 0 0 / 0.8);
 }
 ```
 
@@ -169,8 +169,8 @@ Supported by: Chrome 5 (May 2010), Edge 12 (Jul 2015), Firefox 3 (Jun 2008), and
 3. Apply the filter to the `<span>`.
 
 ```css
-.badge--svg span{
-  color: var(--badge-bg);
-  filter: url(#contrast-filter);
+.badge--svg span {
+	color: var(--badge-bg);
+	filter: url(#contrast-filter);
 }
 ```

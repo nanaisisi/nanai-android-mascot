@@ -30,14 +30,14 @@ MANDATORY: Both the source and destination pages must include the `@view-transit
   (link clicks, form submissions, back/forward).
 */
 @view-transition {
-  navigation: auto;
+	navigation: auto;
 }
 
 /* MANDATORY Copy-Paste Safety: Disable cross-document view transitions for users requesting reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  @view-transition {
-    navigation: none;
-  }
+	@view-transition {
+		navigation: none;
+	}
 }
 ```
 
@@ -198,38 +198,38 @@ If `view-transition-name` values are assigned statically in CSS, or if you are o
 
 ```javascript
 // transition-setup.js
-window.addEventListener('pagereveal', async (event) => {
-  if (!event.viewTransition) return;
+window.addEventListener("pagereveal", async (event) => {
+	if (!event.viewTransition) return;
 
-  const from = navigation.activation?.from;
-  if (!from) return;
+	const from = navigation.activation?.from;
+	if (!from) return;
 
-  const fromUrl = new URL(from.url);
+	const fromUrl = new URL(from.url);
 
-  // DO: Assign view-transition-name based on navigation context.
-  // This enables a morph animation from the product card on the
-  // list page to the heading on the detail page.
-  if (fromUrl.pathname === '/products/') {
-    const heading = document.querySelector('main h1');
-    if (!heading) return;
+	// DO: Assign view-transition-name based on navigation context.
+	// This enables a morph animation from the product card on the
+	// list page to the heading on the detail page.
+	if (fromUrl.pathname === "/products/") {
+		const heading = document.querySelector("main h1");
+		if (!heading) return;
 
-    heading.style.viewTransitionName = 'product-title';
+		heading.style.viewTransitionName = "product-title";
 
-    try {
-      await event.viewTransition.ready;
-    } catch (error) {
-      // Skipped view transitions reject `ready` with InvalidStateError.
-      if (error.name !== 'InvalidStateError') {
-        throw error;
-      }
-    } finally {
-      // MANDATORY: Remove the temporary name after the transition
-      // finishes. Stale names interfere with subsequent navigations
-      // and prevent the page from entering the bfcache.
-      await event.viewTransition.finished;
-      heading.style.viewTransitionName = '';
-    }
-  }
+		try {
+			await event.viewTransition.ready;
+		} catch (error) {
+			// Skipped view transitions reject `ready` with InvalidStateError.
+			if (error.name !== "InvalidStateError") {
+				throw error;
+			}
+		} finally {
+			// MANDATORY: Remove the temporary name after the transition
+			// finishes. Stale names interfere with subsequent navigations
+			// and prevent the page from entering the bfcache.
+			await event.viewTransition.finished;
+			heading.style.viewTransitionName = "";
+		}
+	}
 });
 ```
 

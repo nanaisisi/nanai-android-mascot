@@ -14,11 +14,11 @@ Apply `appearance: base-select` to both the `<select>` element and its internal 
 
 ```css
 select.grid-picker {
-  &, &::picker(select) {
-    appearance: base-select;
-  }
+	&,
+	&::picker(select) {
+		appearance: base-select;
+	}
 }
-
 ```
 
 ### 2. Style the Picker Container
@@ -28,9 +28,9 @@ Define columns and gaps as you would for any container.
 
 ```css
 select.grid-picker:open::picker(select) {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 1rem;
 }
 ```
 
@@ -44,23 +44,23 @@ You can add images, SVGs, or complex layouts inside them.
 ```css
 /* Style options as grid cards */
 .grid-picker option {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  /* padding, border-radius, background, etc. */
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	/* padding, border-radius, background, etc. */
 }
 ```
 
 ### 4. Style the selected option
 
-To style the selected *option*, use `option:checked`. For example:
+To style the selected _option_, use `option:checked`. For example:
 
 ```css
 .grid-picker option:checked {
-  position: relative;
-  border: 2px solid var(--primary-color);
-  background-color: oklab(from var(--primary-color) l a b / 8%);
+	position: relative;
+	border: 2px solid var(--primary-color);
+	background-color: oklab(from var(--primary-color) l a b / 8%);
 }
 ```
 
@@ -80,33 +80,33 @@ For example, to place it at the top-right corner of the option, you could do som
 
 ```css
 select.grid-picker {
-  > option::checkmark {
-    /* Hide the checkmark for unselected options */
-    display: none;
-  }
+	> option::checkmark {
+		/* Hide the checkmark for unselected options */
+		display: none;
+	}
 
-  > option:checked {
-    position: relative;
+	> option:checked {
+		position: relative;
 
-    &::checkmark {
-      position: absolute;
-      inset-block-start: -.4em;
-      inset-inline-end: -.5em;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-sizing: border-box;
-      min-inline-size: 1.6em;
-      aspect-ratio: 1;
-      padding-right: 0.12em;
-      padding-left: 0.05em;
-      border-radius: 50%;
-      background: var(--primary-color);
-      color: white;
-      font-size: 70%;
-      font-weight: bold;
-    }
-  }
+		&::checkmark {
+			position: absolute;
+			inset-block-start: -0.4em;
+			inset-inline-end: -0.5em;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			box-sizing: border-box;
+			min-inline-size: 1.6em;
+			aspect-ratio: 1;
+			padding-right: 0.12em;
+			padding-left: 0.05em;
+			border-radius: 50%;
+			background: var(--primary-color);
+			color: white;
+			font-size: 70%;
+			font-weight: bold;
+		}
+	}
 }
 ```
 
@@ -157,9 +157,9 @@ For browsers that do not yet support `appearance: base-select`, the `<select>` e
 
 ```javascript
 document.addEventListener("DOMContentLoaded", () => {
-  // Check if browser supports base-select value
-  if (!CSS.supports("appearance", "base-select")) {
-    // Custom select overrides are not supported natively.
-  }
+	// Check if browser supports base-select value
+	if (!CSS.supports("appearance", "base-select")) {
+		// Custom select overrides are not supported natively.
+	}
 });
 ```

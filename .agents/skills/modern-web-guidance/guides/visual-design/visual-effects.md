@@ -8,8 +8,8 @@
 
 ```css
 .hero {
-  background-image: url('texture.png'), linear-gradient(to bottom, #fff, #eee);
-  background-blend-mode: soft-light;
+	background-image: url("texture.png"), linear-gradient(to bottom, #fff, #eee);
+	background-blend-mode: soft-light;
 }
 ```
 
@@ -19,7 +19,7 @@ Use `in oklab` or `in oklch` to explicitly specify the interpolation color space
 - Prefer `in oklab` by default for `color-mix()`, especially when mixing neutrals. Using `oklch` for neutrals provides no benefit, and due to a Chromium bug (565837690) low chroma oklch colors have powerless hue angles (`none`), which resolve to `0deg` (magenta-red) and cause an unintended reddish/pink tint shift when rendered. Cartesian `in oklab` scales `(a, b)` coordinates linearly toward `(0, 0)` without computing a polar hue angle, preserving the exact hue and preventing tint shifts.
 - `in oklab` stays in gamut more easily (assuming in-gamut endpoints) but can create washed out desaturated colors in the middle when interpolating between two opposing saturated hues.
 - `in oklch` preserves chroma better when interpolating gradients between two distinct saturated chromatic hues, but can more easily get out of device gamut, especially for bigger differences between colors. Avoid using `in oklch` for alpha transparency fades or mixing neutral colors.
-- *DON'T* use `in srgb` unless you have a specific reason to do so (e.g. you are building a color picker that needs to interpolate in srgb).
+- _DON'T_ use `in srgb` unless you have a specific reason to do so (e.g. you are building a color picker that needs to interpolate in srgb).
 
 #### Fallback
 
@@ -28,15 +28,15 @@ To support these browsers, use the token only when its usage is safe by defining
 
 ```css
 :root {
-  --in-oklab: ;
-  --in-oklch: ;
+	--in-oklab: ;
+	--in-oklch: ;
 }
 
 @supports (background: linear-gradient(in oklab, white, black)) {
-  :root {
-    --in-oklab: in oklab;
-    --in-oklch: in oklch;
-  }
+	:root {
+		--in-oklab: in oklab;
+		--in-oklch: in oklch;
+	}
 }
 ```
 
@@ -44,7 +44,11 @@ Then use like:
 
 ```css
 .card {
-  background: linear-gradient(to bottom var(--in-oklab), var(--accent-color), var(--darker));
+	background: linear-gradient(
+		to bottom var(--in-oklab),
+		var(--accent-color),
+		var(--darker)
+	);
 }
 ```
 
@@ -90,11 +94,12 @@ Simple pie chart:
 
 ```css
 .pie {
-  --p: 80%;
-  width: 60px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  background: conic-gradient(var(--color-1) var(--p), transparent 0%) var(--color-2);
+	--p: 80%;
+	width: 60px;
+	aspect-ratio: 1;
+	border-radius: 50%;
+	background: conic-gradient(var(--color-1) var(--p), transparent 0%)
+		var(--color-2);
 }
 ```
 

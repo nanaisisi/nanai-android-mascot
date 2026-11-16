@@ -145,7 +145,7 @@ pub fn evaluate_property_query_full(
     if let Some(val) = evaluate_static_property(&q) {
         val
     } else {
-        evaluate_dynamic_property(&q, query, monitors)
+        evaluate_dynamic_property(&q, query, monitors, window_mode)
     }
 }
 

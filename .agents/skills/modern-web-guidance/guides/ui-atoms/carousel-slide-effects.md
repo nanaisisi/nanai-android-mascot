@@ -60,30 +60,30 @@ This code animates the carousel items of a horizontal scroller on scroll using a
 ```css
 /* Scale values are examples; customize with performant properties such as transform, scale, or opacity */
 @keyframes animate {
-  0% {
-    scale: 0.5;
-  }
+	0% {
+		scale: 0.5;
+	}
 
-  50% {
-    scale: 1;
-  }
+	50% {
+		scale: 1;
+	}
 
-  100% {
-    scale: 0.5;
-  }
+	100% {
+		scale: 0.5;
+	}
 }
 
 /* Only runs the effect when the user has no reduced-motion preference */
 @media (prefers-reduced-motion: no-preference) {
-  /* Include (animation-range: entry) to exclude browsers with partial scroll-driven animation support */
-  @supports ((animation-timeline: view()) and (animation-range: entry)) {
-    .scroller > * {
-      /* Applies the animation using an `auto` duration */
-      animation: animate auto linear both;
-      /* Sets the animation timeline to use an anonymous view progress timeline, tracking the element's progress through the scroller on the inline axis */
-      animation-timeline: view(inline);
-    }
-  }
+	/* Include (animation-range: entry) to exclude browsers with partial scroll-driven animation support */
+	@supports ((animation-timeline: view()) and (animation-range: entry)) {
+		.scroller > * {
+			/* Applies the animation using an `auto` duration */
+			animation: animate auto linear both;
+			/* Sets the animation timeline to use an anonymous view progress timeline, tracking the element's progress through the scroller on the inline axis */
+			animation-timeline: view(inline);
+		}
+	}
 }
 ```
 
@@ -92,33 +92,33 @@ This code animates the carousel items of a horizontal scroller on scroll using a
 ```css
 /* Scale values are examples; customize with performant properties such as transform, scale, or opacity */
 @keyframes animate {
-  0% {
-    scale: 0.5;
-  }
+	0% {
+		scale: 0.5;
+	}
 
-  50% {
-    scale: 1;
-  }
+	50% {
+		scale: 1;
+	}
 
-  100% {
-    scale: 0.5;
-  }
+	100% {
+		scale: 0.5;
+	}
 }
 
 /* Only runs the effect when the user has no reduced-motion preference */
 @media (prefers-reduced-motion: no-preference) {
-  /* Include (animation-range: entry) to exclude browsers with partial scroll-driven animation support */
-  @supports ((animation-timeline: view()) and (animation-range: entry)) {
-    /* This creates a named view-timeline on each carousel item. The timeline is used to drive the animation that is applied on the same element. */
-    .scroller > * {
-      /* Applies the animation using an `auto` duration */
-      animation: animate auto linear both;
-      /* Defines a named view progress timeline, tracking the element's progress through the scroller on the inline axis */
-      view-timeline: --item inline;
-      /* Sets the animation timeline to use the named view progress timeline defined above */
-      animation-timeline: --item;
-    }
-  }
+	/* Include (animation-range: entry) to exclude browsers with partial scroll-driven animation support */
+	@supports ((animation-timeline: view()) and (animation-range: entry)) {
+		/* This creates a named view-timeline on each carousel item. The timeline is used to drive the animation that is applied on the same element. */
+		.scroller > * {
+			/* Applies the animation using an `auto` duration */
+			animation: animate auto linear both;
+			/* Defines a named view progress timeline, tracking the element's progress through the scroller on the inline axis */
+			view-timeline: --item inline;
+			/* Sets the animation timeline to use the named view progress timeline defined above */
+			animation-timeline: --item;
+		}
+	}
 }
 ```
 
@@ -132,7 +132,7 @@ When using scroll-driven animations, it's important to follow a few best practic
   - If the animation is only considered to be decorative, opt for Progressive Enhancement and **DO NOT** provide a fallback.
 - **DO** respect user preferences: Some users prefer to have less motion on the web. Use the `prefers-reduced-motion` media query to disable or reduce your animations for these users.
 - **DO** try to animate only performant CSS properties: For the smoothest animations, stick to animating properties that can be handled by the browser's compositor thread, such as `transform` and `opacity`. Animating other properties like `width` or `height` can lead to performance issues.
-- **DO** use the correct declaration order: When using the `animation` shorthand property, declare `animation-timeline` and `animation-range` *after* it to prevent the shorthand from resetting the timeline.
+- **DO** use the correct declaration order: When using the `animation` shorthand property, declare `animation-timeline` and `animation-range` _after_ it to prevent the shorthand from resetting the timeline.
 
 Use an anonymous `view()` timeline by default when the animated element is the same element being tracked, so you do not have to name every individual timeline. Use a named `view-timeline` instead when multiple elements reuse a single timeline (avoiding duplicate timelines) or when reaching across the DOM (such as animating descendants or non-ancestors via `timeline-scope` when `view()` or `scroll(nearest)` does not suffice).
 
@@ -164,44 +164,48 @@ For this use-case specifically, the following script applies the fallback for br
 ```js
 // Fallback for browsers that don't support scroll-driven animations
 // Like the CSS, it only runs when the user has no reduced-motion preference.
-if (!CSS.supports('(animation-timeline: view()) and (animation-range: entry)') &&
-    matchMedia('(prefers-reduced-motion: no-preference)').matches) {
-  const scroller = document.querySelector('.scroller');
-  const entries = document.querySelectorAll('.entry');
+if (
+	!CSS.supports("(animation-timeline: view()) and (animation-range: entry)") &&
+	matchMedia("(prefers-reduced-motion: no-preference)").matches
+) {
+	const scroller = document.querySelector(".scroller");
+	const entries = document.querySelectorAll(".entry");
 
-  // Create a map to store animations
-  const animations = new Map();
+	// Create a map to store animations
+	const animations = new Map();
 
-  entries.forEach(entry => {
-    const animation = entry.animate(
-      {
-        scale: ['0.5', '1', '0.5']
-      },
-      {
-        duration: 1, // We'll control the time ourselves
-        fill: 'both'
-      }
-    );
-    animation.pause();
-    animations.set(entry, animation);
-  });
+	entries.forEach((entry) => {
+		const animation = entry.animate(
+			{
+				scale: ["0.5", "1", "0.5"],
+			},
+			{
+				duration: 1, // We'll control the time ourselves
+				fill: "both",
+			},
+		);
+		animation.pause();
+		animations.set(entry, animation);
+	});
 
-  // Update animations on scroll
-  const tick = () => {
-    const scrollerRect = scroller.getBoundingClientRect();
+	// Update animations on scroll
+	const tick = () => {
+		const scrollerRect = scroller.getBoundingClientRect();
 
-    entries.forEach(entry => {
-      const animation = animations.get(entry);
-      if (!animation) return;
+		entries.forEach((entry) => {
+			const animation = animations.get(entry);
+			if (!animation) return;
 
-      const entryRect = entry.getBoundingClientRect();
-      const progress = (entryRect.left + entryRect.width / 2 - scrollerRect.left) / scrollerRect.width;
+			const entryRect = entry.getBoundingClientRect();
+			const progress =
+				(entryRect.left + entryRect.width / 2 - scrollerRect.left) /
+				scrollerRect.width;
 
-      animation.currentTime = progress;
-    });
-  };
-    
-  scroller.addEventListener('scroll', tick);
-  tick();
+			animation.currentTime = progress;
+		});
+	};
+
+	scroller.addEventListener("scroll", tick);
+	tick();
 }
 ```

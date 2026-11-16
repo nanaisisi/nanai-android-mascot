@@ -5,22 +5,24 @@ Synchronizing UI state with a scrollable container's snap position traditionally
 ## Implementation
 
 ### 1. Configure Scroll Snap in CSS
+
 The container must have `scroll-snap-type` defined, and have children with `scroll-snap-align` for the browser to track snap targets. In a long article with a table of contents, you can use this to snap section headers to the top of the viewport.
 
 ```css
 main {
-  /* Enable scroll snapping on the container */
-  scroll-snap-type: y proximity;
-  overflow-y: auto;
+	/* Enable scroll snapping on the container */
+	scroll-snap-type: y proximity;
+	overflow-y: auto;
 }
 
 h2 {
-  /* Define how headers align when snapped */
-  scroll-snap-align: start;
+	/* Define how headers align when snapped */
+	scroll-snap-align: start;
 }
 ```
 
 ### 2. Listen for Snap Changes
+
 Use the `scrollsnapchange` event on the scroll container to react when the user finishes scrolling and the browser snaps to a new element, such as highlighting the active link in a table of contents.
 
 ```html
@@ -34,27 +36,27 @@ Use the `scrollsnapchange` event on the scroll container to react when the user 
 ```
 
 ```javascript
-const main = document.getElementById('main');
-const links = document.querySelectorAll('nav a');
+const main = document.getElementById("main");
+const links = document.querySelectorAll("nav a");
 
 function setActiveLink(id) {
-  for (const link of links) {
-    if (link.getAttribute('href') === `#${id}`) {
-      link.setAttribute('aria-current', 'location');
-    } else {
-      link.removeAttribute('aria-current');
-    }
-  }
+	for (const link of links) {
+		if (link.getAttribute("href") === `#${id}`) {
+			link.setAttribute("aria-current", "location");
+		} else {
+			link.removeAttribute("aria-current");
+		}
+	}
 }
 
 // The event fires when the scroller settles on a new snap target
-main.addEventListener('scrollsnapchange', (event) => {
-  // Use snapTargetBlock for vertical or snapTargetInline for horizontal
-  const snappedHeader = event.snapTargetBlock;
+main.addEventListener("scrollsnapchange", (event) => {
+	// Use snapTargetBlock for vertical or snapTargetInline for horizontal
+	const snappedHeader = event.snapTargetBlock;
 
-  if (snappedHeader) {
-    setActiveLink(snappedHeader.id);
-  }
+	if (snappedHeader) {
+		setActiveLink(snappedHeader.id);
+	}
 });
 ```
 
@@ -88,36 +90,35 @@ If `scrollsnapchange` is not supported, use `IntersectionObserver` to detect whi
 
 ```javascript
 // Feature detect support for scroll snap events
-if (!('onscrollsnapchange' in HTMLElement.prototype)) {
-  const headers = main.querySelectorAll('h2');
-  const observer = new IntersectionObserver(
-    () => {
-      // Account for any top border on the scroll container so scrollportTop
-      // matches the IntersectionObserver root's padding-box top.
-      const scrollportTop =
-        main.getBoundingClientRect().top + main.clientTop;
-      const topEntry = [...headers].reduce((currentTop, header) => {
-        // Use the bottom to handle scrolling up, when the top is still offscreen
-        const { bottom } = header.getBoundingClientRect();
-        // Exclude targets whose bottom has scrolled past the 1px top rootMargin
-        if (bottom <= scrollportTop + 1) return currentTop;
-        if (!currentTop) return header;
-        return bottom < currentTop.getBoundingClientRect().bottom
-          ? header
-          : currentTop;
-      }, undefined);
-      if (topEntry) setActiveLink(topEntry.id);
-    },
-    {
-      root: main,
-      // Inset top by 1px so adjacent sections stop intersecting when snapped to start
-      rootMargin: '-1px 0px 0px 0px',
-      // Fire both when a target exits/enters (0) and when a heading settles into view (0.9)
-      threshold: [0, 0.9],
-    },
-  );
+if (!("onscrollsnapchange" in HTMLElement.prototype)) {
+	const headers = main.querySelectorAll("h2");
+	const observer = new IntersectionObserver(
+		() => {
+			// Account for any top border on the scroll container so scrollportTop
+			// matches the IntersectionObserver root's padding-box top.
+			const scrollportTop = main.getBoundingClientRect().top + main.clientTop;
+			const topEntry = [...headers].reduce((currentTop, header) => {
+				// Use the bottom to handle scrolling up, when the top is still offscreen
+				const { bottom } = header.getBoundingClientRect();
+				// Exclude targets whose bottom has scrolled past the 1px top rootMargin
+				if (bottom <= scrollportTop + 1) return currentTop;
+				if (!currentTop) return header;
+				return bottom < currentTop.getBoundingClientRect().bottom
+					? header
+					: currentTop;
+			}, undefined);
+			if (topEntry) setActiveLink(topEntry.id);
+		},
+		{
+			root: main,
+			// Inset top by 1px so adjacent sections stop intersecting when snapped to start
+			rootMargin: "-1px 0px 0px 0px",
+			// Fire both when a target exits/enters (0) and when a heading settles into view (0.9)
+			threshold: [0, 0.9],
+		},
+	);
 
-  // Observe all snap targets (e.g., section headers)
-  headers.forEach((header) => observer.observe(header));
+	// Observe all snap targets (e.g., section headers)
+	headers.forEach((header) => observer.observe(header));
 }
 ```

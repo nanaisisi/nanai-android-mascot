@@ -65,18 +65,18 @@ The track is a flex row that scrolls on the inline axis and snaps to slides. Eac
 
 ```css
 .carousel-track {
-  display: flex;
-  gap: 1rem; /* example value */
-  overflow-x: auto;
-  /* mandatory so the track always rests on a slide, which the settled-scroll status relies on */
-  scroll-snap-type: x mandatory;
-  /* keep a scroll that reaches either end on the carousel; only the scrolling axis, so the page still scrolls the other way */
-  overscroll-behavior-x: contain;
+	display: flex;
+	gap: 1rem; /* example value */
+	overflow-x: auto;
+	/* mandatory so the track always rests on a slide, which the settled-scroll status relies on */
+	scroll-snap-type: x mandatory;
+	/* keep a scroll that reaches either end on the carousel; only the scrolling axis, so the page still scrolls the other way */
+	overscroll-behavior-x: contain;
 }
 
 .carousel-track > * {
-  flex: 0 0 100%; /* one slide per view; use a smaller basis for a peek layout */
-  scroll-snap-align: center;
+	flex: 0 0 100%; /* one slide per view; use a smaller basis for a peek layout */
+	scroll-snap-align: center;
 }
 ```
 
@@ -86,7 +86,7 @@ Position the Previous and Next buttons over the track's start and end edges (a `
 
 ```css
 .carousel-markers button[aria-current="true"] {
-  background: #0a5; /* example color; any clear contrast with the other markers works */
+	background: #0a5; /* example color; any clear contrast with the other markers works */
 }
 ```
 
@@ -146,14 +146,19 @@ Do not wrap the parking rules in `@supports`.
 
 ```css
 .carousel-track > :first-child {
-  /* --children-count is only set where sibling-count() is unsupported */
-  order: clamp(0, var(--current) - (var(--children-count, sibling-count()) - 3), 1);
+	/* --children-count is only set where sibling-count() is unsupported */
+	order: clamp(
+		0,
+		var(--current) -
+		(var(--children-count, sibling-count()) - 3),
+		1
+	);
 }
 ```
 
 ```js
 if (!CSS.supports("order: sibling-count()")) {
-  track.style.setProperty("--children-count", track.children.length);
+	track.style.setProperty("--children-count", track.children.length);
 }
 ```
 
@@ -194,12 +199,12 @@ Loop previous and next navigation from the last slide to the first and back by k
 ```css
 /* The first slide parks after the last while --current is the last or second-to-last index. */
 .carousel-track > :first-child {
-  order: clamp(0, var(--current) - (sibling-count() - 3), 1);
+	order: clamp(0, var(--current) - (sibling-count() - 3), 1);
 }
 
 /* The last slide parks before the first while --current is 0 or 1. */
 .carousel-track > :last-child {
-  order: calc(-1 * clamp(0, 2 - var(--current), 1));
+	order: calc(-1 * clamp(0, 2 - var(--current), 1));
 }
 ```
 

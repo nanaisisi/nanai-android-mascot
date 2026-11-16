@@ -39,11 +39,11 @@ WARNING: Certain properties (e.g. `border-radius`, `background`, `border`) will 
 
 ```css
 progress {
-  /* Reset default browser styles */
-  appearance: none;
-  border: 0 solid;
-  /* Clip bar to element’s border-radius  */
-  overflow: clip;
+	/* Reset default browser styles */
+	appearance: none;
+	border: 0 solid;
+	/* Clip bar to element’s border-radius  */
+	overflow: clip;
 }
 ```
 
@@ -57,31 +57,31 @@ progress {
 
 ```css
 progress {
-  --progress-bar-radius: 1e5px;
-  border-radius: var(--progress-bar-radius);
-  /* Apply color for custom progress track (background) */
-  background: var(--progress-bar-track, var(--color-neutral-90));
-  /* Subtle depth on the empty part of the track */
-  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
+	--progress-bar-radius: 1e5px;
+	border-radius: var(--progress-bar-radius);
+	/* Apply color for custom progress track (background) */
+	background: var(--progress-bar-track, var(--color-neutral-90));
+	/* Subtle depth on the empty part of the track */
+	box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1);
 }
 
 /* Let <progress> styling show through */
 progress::-webkit-progress-bar {
-  background: transparent;
+	background: transparent;
 }
 
 /* Webkit, Chrome */
 progress::-webkit-progress-value {
-  background: var(--progress-bar-fill, var(--accent-color));
-  border-radius: var(--progress-bar-radius);
-  transition: inline-size 0.3s;
+	background: var(--progress-bar-fill, var(--accent-color));
+	border-radius: var(--progress-bar-radius);
+	transition: inline-size 0.3s;
 }
 
 /* Firefox */
 progress::-moz-progress-bar {
-  background: var(--progress-bar-fill, var(--accent-color));
-  border-radius: var(--progress-bar-radius);
-  transition: inline-size 0.3s;
+	background: var(--progress-bar-fill, var(--accent-color));
+	border-radius: var(--progress-bar-radius);
+	transition: inline-size 0.3s;
 }
 ```
 
@@ -101,7 +101,8 @@ progress::-moz-progress-bar {
 
 ```css
 progress:dir(rtl) {
-  --progress-bar-indeterminate-animation: progress-bar-indeterminate var(--progress-bar-indeterminate-animation-duration) infinite linear reverse;
+	--progress-bar-indeterminate-animation: progress-bar-indeterminate
+		var(--progress-bar-indeterminate-animation-duration) infinite linear reverse;
 }
 ```
 
@@ -112,54 +113,60 @@ progress:dir(rtl) {
 
 ```css
 progress {
-  /* Lets the fill position itself in track units (cqi) */
-  container-type: inline-size;
-  /* Segment length relative to the track */
-  --progress-bar-indeterminate-size: 30%;
-  --progress-bar-indeterminate-animation-duration: 1.5s;
+	/* Lets the fill position itself in track units (cqi) */
+	container-type: inline-size;
+	/* Segment length relative to the track */
+	--progress-bar-indeterminate-size: 30%;
+	--progress-bar-indeterminate-animation-duration: 1.5s;
 
-  /* Respect prefers-reduced-motion */
-  @media (prefers-reduced-motion: reduce) {
-    --progress-bar-indeterminate-animation-duration: 10s;
-  }
+	/* Respect prefers-reduced-motion */
+	@media (prefers-reduced-motion: reduce) {
+		--progress-bar-indeterminate-animation-duration: 10s;
+	}
 }
 
 progress:indeterminate {
-  --progress-bar-animation: var(
-      --progress-bar-indeterminate-animation,
-      progress-bar-indeterminate var(--progress-bar-indeterminate-animation-duration) infinite linear
-    );
+	--progress-bar-animation: var(
+		--progress-bar-indeterminate-animation,
+		progress-bar-indeterminate
+			var(--progress-bar-indeterminate-animation-duration) infinite linear
+	);
 }
 
 /* Add to the existing pseudo-element rules */
 progress::-webkit-progress-value {
-  animation: var(--progress-bar-animation, revert-rule);
+	animation: var(--progress-bar-animation, revert-rule);
 }
 
 progress::-moz-progress-bar {
-  animation: var(--progress-bar-animation, revert-rule);
+	animation: var(--progress-bar-animation, revert-rule);
 }
 
 /* Physical: left to right regardless of direction (reverse under :dir(rtl) to mirror). */
 @keyframes progress-bar-indeterminate {
-  from, to {
-    inline-size: var(--progress-bar-indeterminate-size);
-    /* Pin to the physical left; Chromium would otherwise lay the fill out at the inline start */
-    margin-right: auto;
-  }
-  from { translate: -100%; } /* Own width: fully outside the left edge */
-  to { translate: 100cqi; }  /* Track width: fully outside the right edge */
+	from,
+	to {
+		inline-size: var(--progress-bar-indeterminate-size);
+		/* Pin to the physical left; Chromium would otherwise lay the fill out at the inline start */
+		margin-right: auto;
+	}
+	from {
+		translate: -100%;
+	} /* Own width: fully outside the left edge */
+	to {
+		translate: 100cqi;
+	} /* Track width: fully outside the right edge */
 }
 ```
 
 ### Additional Accessibility Considerations
 
 In addition to the guidelines mentioned above:
-* **Announce completion without stealing focus**: Do not set `tabindex` or call `.focus()` on `<progress>`, as it is non-interactive and moving focus to it disrupts keyboard users. To announce when a background task finishes, update a polite status element (`role="status"` or `aria-live="polite"`).
-* **Do not add fallback text inside `<progress>`**: Text inside `<progress>` is ignored by modern browsers and is not used by assistive technologies.
-* Avoid `aria-busy` + `aria-describedby` on an unlabeled generic `<div>`. `aria-busy` has inconsistent screen reader support, and `aria-describedby` on an unnamed `<div>` without a role is ignored by assistive technologies. If a region's content is not ready while loading, hide it with `hidden` or `aria-hidden="true"`.
-* **DO** ensure proper contrast between the progress bar and track when adding custom styles.
-* **Consider alternatives to represent indeterminate state**: Indeterminate progress bar animations displayed in parallel to other content can be considered distracting for some users.
+- **Announce completion without stealing focus**: Do not set `tabindex` or call `.focus()` on `<progress>`, as it is non-interactive and moving focus to it disrupts keyboard users. To announce when a background task finishes, update a polite status element (`role="status"` or `aria-live="polite"`).
+- **Do not add fallback text inside `<progress>`**: Text inside `<progress>` is ignored by modern browsers and is not used by assistive technologies.
+- Avoid `aria-busy` + `aria-describedby` on an unlabeled generic `<div>`. `aria-busy` has inconsistent screen reader support, and `aria-describedby` on an unnamed `<div>` without a role is ignored by assistive technologies. If a region's content is not ready while loading, hide it with `hidden` or `aria-hidden="true"`.
+- **DO** ensure proper contrast between the progress bar and track when adding custom styles.
+- **Consider alternatives to represent indeterminate state**: Indeterminate progress bar animations displayed in parallel to other content can be considered distracting for some users.
 
 ## Fallback strategies
 

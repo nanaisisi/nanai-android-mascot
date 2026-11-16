@@ -36,23 +36,23 @@ The following is a basic example of the above implementation steps.
 
 ```css
 .features {
-  --density: spacious;
+	--density: spacious;
 }
 
 .bugs {
-  --density: compact;
+	--density: compact;
 }
 
 @container style(--density: compact) {
-  .card {
-    padding: 8px;
-  }
+	.card {
+		padding: 8px;
+	}
 }
 
 @container style(--density: spacious) {
-  .card {
-    padding: 24px;
-  }
+	.card {
+		padding: 24px;
+	}
 }
 ```
 
@@ -83,11 +83,11 @@ For core features, an alternate approach using selectors should be used. This ex
 ```css
 /* This example uses `:where()` to avoid increasing specificity */
 :where([data-density="compact"]) .card {
-  padding: var(--card-padding-compact);
+	padding: var(--card-padding-compact);
 }
 
 :where([data-density="spacious"]) .card {
-  padding: var(--card-padding-spacious);
+	padding: var(--card-padding-spacious);
 }
 ```
 
@@ -99,30 +99,30 @@ While it’s NOT RECOMMENDED, if you want to use style queries as a progressive 
 
 ```css
 .card {
-  --card-padding-compact: 8px;
-  --card-padding-spacious: 24px;
+	--card-padding-compact: 8px;
+	--card-padding-spacious: 24px;
 }
 
 :where([data-density="compact"]) .card {
-  padding: var(--card-padding-compact);
+	padding: var(--card-padding-compact);
 }
 
 :where([data-density="spacious"]) .card {
-  padding: var(--card-padding-spacious);
+	padding: var(--card-padding-spacious);
 }
 
 /* Use style queries as a progressive enhancement: same specificity, so order of appearance is used */
 
 @container style(--density: compact) {
-  .card {
-    padding: var(--card-padding-compact);
-  }
+	.card {
+		padding: var(--card-padding-compact);
+	}
 }
 
 @container style(--density: spacious) {
-  .card {
-    padding: var(--card-padding-spacious);
-  }
+	.card {
+		padding: var(--card-padding-spacious);
+	}
 }
 ```
 
@@ -154,23 +154,26 @@ This example uses a custom property as it will have no visual effect:
 
 ```css
 :root {
-  --style-queries-supported: check;
+	--style-queries-supported: check;
 }
 
 @container style(--style-queries-supported: check) {
-  body {
-    --style-queries-supported: yes;
-  }
+	body {
+		--style-queries-supported: yes;
+	}
 }
 ```
 
 Then check the computed value in JavaScript like this:
 
 ```js
-if (getComputedStyle(document.body).getPropertyValue("--style-queries-supported") === "yes") {
-  // Use container style queries
+if (
+	getComputedStyle(document.body).getPropertyValue(
+		"--style-queries-supported",
+	) === "yes"
+) {
+	// Use container style queries
 } else {
-  // Use fallback strategy
+	// Use fallback strategy
 }
 ```
-

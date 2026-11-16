@@ -16,7 +16,7 @@ HTML:
 CSS:
 ```css
 button.save::before {
-  content: url(cloud.svg) / "Save";
+	content: url(cloud.svg) / "Save";
 }
 ```
 
@@ -31,10 +31,10 @@ If your Baseline target includes browsers that do not support the `/` alternativ
 
 ```css
 .more-link::after {
-  /* Fallback: render the glyph in browsers without `/` support
+	/* Fallback: render the glyph in browsers without `/` support
      (screen readers there will still announce it) */
-  content: " →";
-  content: " →" / "";
+	content: " →";
+	content: " →" / "";
 }
 ```
 

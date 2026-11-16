@@ -24,7 +24,7 @@ If each item needs its own heading, build a custom accordion instead (see below)
 Accessibility notes:
 - Do not wrap every small accordion in a landmark or `region`; that adds navigation noise for screen reader users.
 - Do not add arrow key navigation, roving `tabindex`, or `Home`/`End` handling.
-Accordion contents are often long enough to need scrolling, and arrow keys on a focused trigger are how keyboard users scroll.
+  Accordion contents are often long enough to need scrolling, and arrow keys on a focused trigger are how keyboard users scroll.
 - If a heading for the entire accordion is not desirable, use an `aria-label` on the container element to provide an accessible name for the group.
 
 ## Exclusive accordions
@@ -73,15 +73,22 @@ To require that one item is always open, stop the open item’s `summary` from c
 
 ```javascript
 // Enter and Space on a summary also dispatch click, so this covers keyboard too
-document.addEventListener("click", event => {
-	if (event.target.closest(".accordion.always-open details[open] > summary")) event.preventDefault();
+document.addEventListener("click", (event) => {
+	if (event.target.closest(".accordion.always-open details[open] > summary"))
+		event.preventDefault();
 });
 
 // toggle does not bubble, hence capture
-document.addEventListener("toggle", event => {
-	if (!event.target.matches(".accordion.always-open details")) return;
-	event.target.querySelector(":scope > summary").setAttribute("aria-disabled", event.target.open);
-}, { capture: true });
+document.addEventListener(
+	"toggle",
+	(event) => {
+		if (!event.target.matches(".accordion.always-open details")) return;
+		event.target
+			.querySelector(":scope > summary")
+			.setAttribute("aria-disabled", event.target.open);
+	},
+	{ capture: true },
+);
 ```
 
 Keep the disabled `summary` focusable so focus is not lost when the item a user just opened becomes disabled, but exclude it from hover and pointer styles so it does not look clickable:
@@ -123,26 +130,37 @@ Mark it expanded only once every item is open; in a mixed state it reads "Expand
 ```
 
 ```javascript
-document.addEventListener("command", event => {
-	if (event.command !== "--toggle-all") return;
-	const expand = event.source.getAttribute("aria-expanded") !== "true";
+document.addEventListener(
+	"command",
+	(event) => {
+		if (event.command !== "--toggle-all") return;
+		const expand = event.source.getAttribute("aria-expanded") !== "true";
 
-	// Command events fire on the commandfor target
-	for (const details of event.target.querySelectorAll(":scope > details")) {
-		details.open = expand;
-	}
-}, { capture: true }); // Command events do not bubble, hence capture
+		// Command events fire on the commandfor target
+		for (const details of event.target.querySelectorAll(":scope > details")) {
+			details.open = expand;
+		}
+	},
+	{ capture: true },
+); // Command events do not bubble, hence capture
 
 // Items also open and close individually, so derive the button state from them
-document.addEventListener("toggle", event => {
-	if (!event.target.matches(".accordion > details")) return;
-	const accordion = event.target.parentElement;
-	const button = accordion.querySelector(':scope > [command="--toggle-all"]');
-	if (!button) return;
+document.addEventListener(
+	"toggle",
+	(event) => {
+		if (!event.target.matches(".accordion > details")) return;
+		const accordion = event.target.parentElement;
+		const button = accordion.querySelector(':scope > [command="--toggle-all"]');
+		if (!button) return;
 
-	const items = accordion.querySelectorAll(":scope > details");
-	button.setAttribute("aria-expanded", Array.prototype.every.call(items, details => details.open));
-}, { capture: true }); // toggle does not bubble, hence capture
+		const items = accordion.querySelectorAll(":scope > details");
+		button.setAttribute(
+			"aria-expanded",
+			Array.prototype.every.call(items, (details) => details.open),
+		);
+	},
+	{ capture: true },
+); // toggle does not bubble, hence capture
 ```
 
 Separate buttons are also possible and improve discoverability, at the cost of _feedback_: there are states where one of the buttons will produce no visible result, and disabling it accessibly introduces challenges and increases complexity.
@@ -271,17 +289,23 @@ Hide the content with `hidden="until-found"` so it stays findable, or with plain
 ```
 
 ```javascript
-document.addEventListener("command", event => {
-	if (event.command !== "--toggle") return;
-	const content = event.target;
+document.addEventListener(
+	"command",
+	(event) => {
+		if (event.command !== "--toggle") return;
+		const content = event.target;
 
-	content.hidden = content.hidden ? false : "until-found";
-	event.source.setAttribute("aria-expanded", !content.hidden);
-}, { capture: true }); // Command events do not bubble, hence capture
+		content.hidden = content.hidden ? false : "until-found";
+		event.source.setAttribute("aria-expanded", !content.hidden);
+	},
+	{ capture: true },
+); // Command events do not bubble, hence capture
 
 // Find-in-page reveals the content directly, so mirror that into the trigger
-document.addEventListener("beforematch", event => {
-	document.querySelector(`[commandfor="${CSS.escape(event.target.id)}"]`)?.setAttribute("aria-expanded", "true");
+document.addEventListener("beforematch", (event) => {
+	document
+		.querySelector(`[commandfor="${CSS.escape(event.target.id)}"]`)
+		?.setAttribute("aria-expanded", "true");
 });
 ```
 
@@ -301,15 +325,26 @@ If the exclusivity is crucial to the user experience, you can implement a fallba
 ```javascript
 // Only needed where the name attribute is unsupported
 if (!Object.hasOwn(HTMLDetailsElement.prototype, "name")) {
-	document.addEventListener("toggle", event => {
-		const details = event.target;
-		if (!(details instanceof HTMLDetailsElement) || !details.open || !details.hasAttribute("name")) return;
+	document.addEventListener(
+		"toggle",
+		(event) => {
+			const details = event.target;
+			if (
+				!(details instanceof HTMLDetailsElement) ||
+				!details.open ||
+				!details.hasAttribute("name")
+			)
+				return;
 
-		const name = CSS.escape(details.getAttribute("name"));
-		for (const other of document.querySelectorAll(`details[name="${name}"]`)) {
-			if (other !== details) other.open = false;
-		}
-	}, { capture: true }); // toggle does not bubble, hence capture
+			const name = CSS.escape(details.getAttribute("name"));
+			for (const other of document.querySelectorAll(
+				`details[name="${name}"]`,
+			)) {
+				if (other !== details) other.open = false;
+			}
+		},
+		{ capture: true },
+	); // toggle does not bubble, hence capture
 }
 ```
 

@@ -29,14 +29,14 @@ Different fonts have different amounts of built-in spacing above and below the t
 
 ```css
 .badge {
-  padding: 10px;
-  background: hotpink;
-  border-radius: 10px;
-  /* 
+	padding: 10px;
+	background: hotpink;
+	border-radius: 10px;
+	/* 
     Trims the top to the cap-height and 
     the bottom to the alphabetic baseline.
   */
-  text-box: trim-both cap alphabetic;
+	text-box: trim-both cap alphabetic;
 }
 ```
 
@@ -46,19 +46,19 @@ When using Flexbox to align text and icons, the "ghost space" often makes the te
 
 ```css
 .button {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px; 
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
 }
 /* 
   text-box does NOT inherit, and must be applied directly to the text element.
 */
-.button-text{
-  /* 
+.button-text {
+	/* 
     The flex container now centers against the 
     visible letters, not the invisible font box.
   */
-  text-box: trim-both cap alphabetic;
+	text-box: trim-both cap alphabetic;
 }
 ```
 
@@ -68,13 +68,13 @@ To align a heading perfectly with the top of an adjacent image or decorative ele
 
 ```css
 .hero {
-  display: flex;
-  align-items: flex-start;
+	display: flex;
+	align-items: flex-start;
 }
 
 h1 {
-  /* MANDATORY: The bottom edge must also be defined, even though only the top is trimmed. */
-  text-box: trim-start cap alphabetic;
+	/* MANDATORY: The bottom edge must also be defined, even though only the top is trimmed. */
+	text-box: trim-start cap alphabetic;
 }
 ```
 

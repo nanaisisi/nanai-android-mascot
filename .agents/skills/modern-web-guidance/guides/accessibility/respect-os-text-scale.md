@@ -32,15 +32,15 @@ Use relative units for margins and padding where the spacing is coupled to text 
 
 ```css
 body {
-  font-family: system-ui, sans-serif;
-  /* Inherits the root font-size, which scales automatically with the OS setting */
-  line-height: 1.5;      /* Unitless so it scales proportionally with computed font-size */
-  padding: 1.5rem;       /* Scales proportionally to prevent dense crowding at larger scales */
+	font-family: system-ui, sans-serif;
+	/* Inherits the root font-size, which scales automatically with the OS setting */
+	line-height: 1.5; /* Unitless so it scales proportionally with computed font-size */
+	padding: 1.5rem; /* Scales proportionally to prevent dense crowding at larger scales */
 }
 
 h1 {
-  font-size: 2.25rem;    /* Scales proportionally to the root base */
-  margin-bottom: 1rem;
+	font-size: 2.25rem; /* Scales proportionally to the root base */
+	margin-bottom: 1rem;
 }
 ```
 
@@ -55,7 +55,7 @@ Avoid sizing text exclusively with viewport units:
 ```css
 /* ❌ DO NOT DO THIS: The font size does not respond fully to user text scaling */
 .heading {
-  font-size: 5vw;
+	font-size: 5vw;
 }
 ```
 
@@ -63,7 +63,7 @@ Instead, combine a font-relative value with viewport-relative scaling and use re
 
 ```css
 .heading {
-  font-size: clamp(2rem, 1.25rem + 2vw, 4rem);
+	font-size: clamp(2rem, 1.25rem + 2vw, 4rem);
 }
 ```
 
@@ -79,18 +79,18 @@ Test responsive layouts with operating system text scaling and browser zoom enab
 
 When text scales up, elements require more vertical and horizontal space to prevent truncation or overlap. To keep your components robust, design your layouts to expand dynamically around the content rather than forcing rigid coordinates:
 
-* **Allow Text Containers to Grow**: Text-containing components and containers MUST be able to grow to accommodate scaled text. Avoid fixed `height` or `block-size` values and restrictive `max-height` or `max-block-size` values that can cause clipping or overflow. Prefer content-driven sizing; use `min-height` or `min-block-size` only when a minimum size is needed.
-* **Allow Natural Wrapping**: Do not restrict inline-axis text wrapping with `white-space: nowrap` on blocks that contain sentences. Let text reflow to new lines naturally.
-* **Employ Flexible Flexbox & Grid wrapping (Optional Example)**: For multi-column card galleries, use reflowing columns like `repeat(auto-fit, minmax(min(100%, 16rem), 1fr))` so items stack vertically if their relative width thresholds are crossed:
+- **Allow Text Containers to Grow**: Text-containing components and containers MUST be able to grow to accommodate scaled text. Avoid fixed `height` or `block-size` values and restrictive `max-height` or `max-block-size` values that can cause clipping or overflow. Prefer content-driven sizing; use `min-height` or `min-block-size` only when a minimum size is needed.
+- **Allow Natural Wrapping**: Do not restrict inline-axis text wrapping with `white-space: nowrap` on blocks that contain sentences. Let text reflow to new lines naturally.
+- **Employ Flexible Flexbox & Grid wrapping (Optional Example)**: For multi-column card galleries, use reflowing columns like `repeat(auto-fit, minmax(min(100%, 16rem), 1fr))` so items stack vertically if their relative width thresholds are crossed:
 
 ```css
 /* Card container using min-height to ensure expansion and auto-fit to reflow if needed */
 .card {
-  padding: 1.5rem;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  /* Use min-height so the box expands vertically when the font is enlarged */
-  min-height: 10rem;
+	padding: 1.5rem;
+	border: 1px solid #ccc;
+	border-radius: 8px;
+	/* Use min-height so the box expands vertically when the font is enlarged */
+	min-height: 10rem;
 }
 ```
 
@@ -103,7 +103,7 @@ For example, do not override the root font size with a fixed value:
 ```css
 /* ❌ DO NOT DO THIS: This can prevent the browser from applying text scaling */
 html {
-  font-size: 16px;
+	font-size: 16px;
 }
 ```
 
@@ -112,7 +112,7 @@ Do not combine the `<meta name="text-scale" content="scale">` opt-in with `env(p
 ```css
 /* ❌ DO NOT DO THIS: The meta opt-in already applies the operating system text scale */
 :root {
-  font-size: calc(1rem * env(preferred-text-scale));
+	font-size: calc(1rem * env(preferred-text-scale));
 }
 ```
 

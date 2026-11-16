@@ -66,15 +66,15 @@ Modern browser-native selectors reduce the need for preprocessors and complex st
 ```css
 /* BAD: duplicate rules instead of using `:where()` */
 [popover]:popover-open {
-  /* styles for native popovers */
+	/* styles for native popovers */
 }
 [popover].\:popover-open {
-  /* same styles again, for polyfilled popovers */
+	/* same styles again, for polyfilled popovers */
 }
 
 /* GOOD */
 [popover]:where(:popover-open, .\:popover-open) {
-  /* same styles in one rule */
+	/* same styles in one rule */
 }
 ```
 
@@ -92,11 +92,11 @@ For example, to apply bottom borders between list items, don't do this:
 
 ```css
 .fancy-list li {
-  border-bottom: 1px solid silver;
+	border-bottom: 1px solid silver;
 }
 
 .fancy-list li:last-child {
-  border-bottom: none;
+	border-bottom: none;
 }
 ```
 
@@ -105,7 +105,7 @@ The actual intent was to only apply the bottom border to the non-last `li`s. The
 
 ```css
 .fancy-list li:not(:last-child) {
-  border-bottom: 1px solid silver;
+	border-bottom: 1px solid silver;
 }
 ```
 
@@ -113,11 +113,11 @@ Similarly, don't do this:
 
 ```css
 button:hover {
-  background: var(--color-blue);
+	background: var(--color-blue);
 }
 
 button:disabled {
-  background: var(--color-neutral);
+	background: var(--color-neutral);
 }
 ```
 
@@ -126,11 +126,11 @@ Instead, do this:
 
 ```css
 button:hover:not(:disabled) {
-  background: var(--color-blue);
+	background: var(--color-blue);
 }
 
 button:disabled {
-  background: var(--color-neutral);
+	background: var(--color-neutral);
 }
 ```
 
@@ -147,7 +147,7 @@ For example, `.card :not(.content *)` will not work as expected for nested cards
 
 ```css
 @scope (.card) to (.content) {
-  /* styles for elements inside .card but not inside .content */
+	/* styles for elements inside .card but not inside .content */
 }
 ```
 
@@ -159,11 +159,11 @@ This is fine:
 
 ```css
 button {
-  background: var(--color-neutral);
+	background: var(--color-neutral);
 }
 
 button.primary {
-  background: var(--color-blue);
+	background: var(--color-blue);
 }
 ```
 
@@ -181,8 +181,12 @@ Prefer `@scope` over nesting when proximity should matter more than pure specifi
 
 For example this will not work as expected:
 ```css
-.dark .invert { color-scheme: light }
-.light .invert { color-scheme: dark }
+.dark .invert {
+	color-scheme: light;
+}
+.light .invert {
+	color-scheme: dark;
+}
 ```
 
 If `.invert` is nested within _both_ `.dark` and `.light`, it will always resolve to dark mode as both rules have the same specificity.
@@ -190,11 +194,15 @@ Using `@scope` fixes this:
 
 ```css
 @scope (.dark) {
-  .invert { color-scheme: light }
+	.invert {
+		color-scheme: light;
+	}
 }
 
 @scope (.light) {
-  .invert { color-scheme: dark }
+	.invert {
+		color-scheme: dark;
+	}
 }
 ```
 
@@ -246,5 +254,5 @@ See `visual-effects` (via `npx -y modern-web-guidance@latest retrieve "visual-ef
 See `motion` (via `npx -y modern-web-guidance@latest retrieve "motion"`). For rendering performance (`content-visibility`, containment), see `performance` (via `npx -y modern-web-guidance@latest retrieve "performance"`).
 
 ## 11. Generated content
-See `accessible-generated-content` (via `npx -y modern-web-guidance@latest retrieve "accessible-generated-content"`) for adding decorative or supplementary content with CSS without breaking screen readers or copy-paste.
 
+See `accessible-generated-content` (via `npx -y modern-web-guidance@latest retrieve "accessible-generated-content"`) for adding decorative or supplementary content with CSS without breaking screen readers or copy-paste.

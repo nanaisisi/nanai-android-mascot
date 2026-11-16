@@ -20,16 +20,15 @@ Traditionally, the scrollspy pattern required JavaScript and the `IntersectionOb
 This example highlights the active link in a fixed navigation menu as the user scrolls through sections.
 
 ```css
-
 /* MANDATORY: The container of markers must have scroll-target-group: auto */
 nav {
-  /* Enables automatic tracking of fragment links */
-  scroll-target-group: auto;
+	/* Enables automatic tracking of fragment links */
+	scroll-target-group: auto;
 }
 /* MANDATORY: Use :target-current to style the link whose target is in view. */
 nav a:target-current {
-  color: var(--accent, #007bff);
-  border-bottom-color: var(--accent, #007bff);
+	color: var(--accent, #007bff);
+	border-bottom-color: var(--accent, #007bff);
 }
 ```
 

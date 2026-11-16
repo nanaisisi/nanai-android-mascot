@@ -13,20 +13,19 @@ Unlike Diffie-Hellman key agreement (`deriveKey()`), where both parties combine 
 
 Use **`'MLKEM768-X25519'`** by default: it combines post-quantum ML-KEM (standardized in NIST FIPS 203) with classical `'X25519'` so the shared secret remains secure as long as either algorithm holds. Choose standalone `'ML-KEM-768'` when a policy requires pure FIPS 203 output without a hybrid component, or `'ML-KEM-1024'` when a policy requires NIST Category 5 (CNSA 2.0) compliance.
 
-| Algorithm name | Security level & use case | Public key (`'raw-public'`) | Private seed (`'raw-seed'`) | Ciphertext size |
-|---|---|---|---|---|
-| **`'MLKEM768-X25519'`** | **Hybrid post-quantum (`'ML-KEM-768'`) + classical (`'X25519'`); recommended default** | 1216 bytes | 32 bytes | 1120 bytes |
-| `'ML-KEM-768'` | NIST Category 3 (~192-bit security); standalone post-quantum KEM | 1184 bytes | 64 bytes | 1088 bytes |
-| `'ML-KEM-1024'` | NIST Category 5 (~256-bit security); highest security margin | 1568 bytes | 64 bytes | 1568 bytes |
-
+| Algorithm name          | Security level & use case                                                              | Public key (`'raw-public'`) | Private seed (`'raw-seed'`) | Ciphertext size |
+| ----------------------- | -------------------------------------------------------------------------------------- | --------------------------- | --------------------------- | --------------- |
+| **`'MLKEM768-X25519'`** | **Hybrid post-quantum (`'ML-KEM-768'`) + classical (`'X25519'`); recommended default** | 1216 bytes                  | 32 bytes                    | 1120 bytes      |
+| `'ML-KEM-768'`          | NIST Category 3 (~192-bit security); standalone post-quantum KEM                       | 1184 bytes                  | 64 bytes                    | 1088 bytes      |
+| `'ML-KEM-1024'`         | NIST Category 5 (~256-bit security); highest security margin                           | 1568 bytes                  | 64 bytes                    | 1568 bytes      |
 - Pass `'MLKEM768-X25519'`, `'ML-KEM-768'`, or `'ML-KEM-1024'` as the algorithm name (aliases such as `'X-Wing'` or `'X25519MLKEM768'`, as well as `'ML-KEM-512'`, throw `NotSupportedError`).
 - Pass `extractable: false` and `['encapsulateKey', 'decapsulateKey']` (or `['encapsulateBits', 'decapsulateBits']`) when generating a KEM key pair. Non-extractable `CryptoKey` and `CryptoKeyPair` objects can be persisted across sessions directly in IndexedDB via structured cloning (`objectStore.put(recipientKeyPair, 'recipient-kem-key')`) without ever exporting the private key bytes:
 
 ```javascript
 const recipientKeyPair = await crypto.subtle.generateKey(
-  'MLKEM768-X25519',
-  false,
-  ['encapsulateKey', 'decapsulateKey'],
+	"MLKEM768-X25519",
+	false,
+	["encapsulateKey", "decapsulateKey"],
 );
 ```
 
@@ -43,17 +42,17 @@ Export the recipient's public key with `'raw-public'` so the public key bytes ca
 ```javascript
 // Export the recipient's public key bytes
 const recipientPublicKeyBytes = await crypto.subtle.exportKey(
-  'raw-public',
-  recipientKeyPair.publicKey,
+	"raw-public",
+	recipientKeyPair.publicKey,
 );
 
 // Import the recipient's public key on the sender (usage must be ['encapsulateKey'])
 const importedPublicKey = await crypto.subtle.importKey(
-  'raw-public',
-  recipientPublicKeyBytes,
-  'MLKEM768-X25519',
-  true,
-  ['encapsulateKey'],
+	"raw-public",
+	recipientPublicKeyBytes,
+	"MLKEM768-X25519",
+	true,
+	["encapsulateKey"],
 );
 ```
 
@@ -61,8 +60,8 @@ If you only hold a private `CryptoKey` (even with `extractable: false`) and need
 
 ```javascript
 const publicKey = await crypto.subtle.getPublicKey(
-  recipientKeyPair.privateKey,
-  ['encapsulateKey'],
+	recipientKeyPair.privateKey,
+	["encapsulateKey"],
 );
 ```
 
@@ -73,22 +72,22 @@ const publicKey = await crypto.subtle.getPublicKey(
 ```javascript
 // Sender encapsulates a 256-bit AEAD key and produces a ciphertext capsule
 const { sharedKey: senderKey, ciphertext: encapsulatedCiphertext } =
-  await crypto.subtle.encapsulateKey(
-    'MLKEM768-X25519',
-    importedPublicKey,
-    'ChaCha20-Poly1305', // Or 'AES-GCM'
-    false,
-    ['encrypt', 'decrypt'],
-  );
+	await crypto.subtle.encapsulateKey(
+		"MLKEM768-X25519",
+		importedPublicKey,
+		"ChaCha20-Poly1305", // Or 'AES-GCM'
+		false,
+		["encrypt", "decrypt"],
+	);
 
 // Recipient decapsulates the ciphertext capsule to recover the identical AEAD key
 const recipientKey = await crypto.subtle.decapsulateKey(
-  'MLKEM768-X25519',
-  recipientKeyPair.privateKey,
-  encapsulatedCiphertext,
-  'ChaCha20-Poly1305',
-  false,
-  ['encrypt', 'decrypt'],
+	"MLKEM768-X25519",
+	recipientKeyPair.privateKey,
+	encapsulatedCiphertext,
+	"ChaCha20-Poly1305",
+	false,
+	["encrypt", "decrypt"],
 );
 ```
 
@@ -97,25 +96,26 @@ const recipientKey = await crypto.subtle.decapsulateKey(
 To bind the shared key to a specific protocol context (`info` and `salt`) or derive multiple subkeys from a single encapsulation, pass `'HKDF'` as `sharedKeyAlgorithm` with `['deriveKey']` usage, then call `crypto.subtle.deriveKey()`:
 
 ```javascript
-const { sharedKey: hkdfBaseKey, ciphertext } = await crypto.subtle.encapsulateKey(
-  'MLKEM768-X25519',
-  importedPublicKey,
-  'HKDF',
-  false,
-  ['deriveKey'],
-);
+const { sharedKey: hkdfBaseKey, ciphertext } =
+	await crypto.subtle.encapsulateKey(
+		"MLKEM768-X25519",
+		importedPublicKey,
+		"HKDF",
+		false,
+		["deriveKey"],
+	);
 
 const aeadKey = await crypto.subtle.deriveKey(
-  {
-    name: 'HKDF',
-    hash: 'SHA-256',
-    salt: new Uint8Array(32),
-    info: new TextEncoder().encode('envelope-v1'),
-  },
-  hkdfBaseKey,
-  { name: 'AES-GCM', length: 256 },
-  false,
-  ['encrypt', 'decrypt'],
+	{
+		name: "HKDF",
+		hash: "SHA-256",
+		salt: new Uint8Array(32),
+		info: new TextEncoder().encode("envelope-v1"),
+	},
+	hkdfBaseKey,
+	{ name: "AES-GCM", length: 256 },
+	false,
+	["encrypt", "decrypt"],
 );
 ```
 
@@ -134,22 +134,26 @@ Encrypt payload data with an AEAD algorithm (`'ChaCha20-Poly1305'` or `'AES-GCM'
  * @param {string} plaintext
  * @param {Uint8Array} [additionalData]
  */
-export async function encryptMessage(key, plaintext, additionalData = new Uint8Array(0)) {
-  // Always generate a fresh 12-byte (96-bit) IV per message
-  const iv = crypto.getRandomValues(new Uint8Array(12));
-  const encoded = new TextEncoder().encode(plaintext);
+export async function encryptMessage(
+	key,
+	plaintext,
+	additionalData = new Uint8Array(0),
+) {
+	// Always generate a fresh 12-byte (96-bit) IV per message
+	const iv = crypto.getRandomValues(new Uint8Array(12));
+	const encoded = new TextEncoder().encode(plaintext);
 
-  const ciphertextBuffer = await crypto.subtle.encrypt(
-    {
-      name: key.algorithm.name,
-      iv,
-      additionalData,
-    },
-    key,
-    encoded,
-  );
+	const ciphertextBuffer = await crypto.subtle.encrypt(
+		{
+			name: key.algorithm.name,
+			iv,
+			additionalData,
+		},
+		key,
+		encoded,
+	);
 
-  return { iv, ciphertext: new Uint8Array(ciphertextBuffer) };
+	return { iv, ciphertext: new Uint8Array(ciphertextBuffer) };
 }
 
 /**
@@ -159,18 +163,23 @@ export async function encryptMessage(key, plaintext, additionalData = new Uint8A
  * @param {Uint8Array} ciphertext
  * @param {Uint8Array} [additionalData]
  */
-export async function decryptMessage(key, iv, ciphertext, additionalData = new Uint8Array(0)) {
-  const plaintextBuffer = await crypto.subtle.decrypt(
-    {
-      name: key.algorithm.name,
-      iv,
-      additionalData,
-    },
-    key,
-    ciphertext,
-  );
+export async function decryptMessage(
+	key,
+	iv,
+	ciphertext,
+	additionalData = new Uint8Array(0),
+) {
+	const plaintextBuffer = await crypto.subtle.decrypt(
+		{
+			name: key.algorithm.name,
+			iv,
+			additionalData,
+		},
+		key,
+		ciphertext,
+	);
 
-  return new TextDecoder().decode(plaintextBuffer);
+	return new TextDecoder().decode(plaintextBuffer);
 }
 ```
 
@@ -190,113 +199,148 @@ If your Baseline target does not yet support `SubtleCrypto.supports()`, `encapsu
 
 ```javascript
 const KEM_PUBLIC_KEY_ALGORITHMS = {
-  1184: 'ML-KEM-768',
-  1216: 'MLKEM768-X25519',
-  1568: 'ML-KEM-1024',
+	1184: "ML-KEM-768",
+	1216: "MLKEM768-X25519",
+	1568: "ML-KEM-1024",
 };
 
 export function supportsPostQuantumEnvelope() {
-  return (
-    typeof globalThis.SubtleCrypto?.supports === 'function' &&
-    SubtleCrypto.supports('encapsulateKey', 'MLKEM768-X25519', 'ChaCha20-Poly1305')
-  );
+	return (
+		typeof globalThis.SubtleCrypto?.supports === "function" &&
+		SubtleCrypto.supports(
+			"encapsulateKey",
+			"MLKEM768-X25519",
+			"ChaCha20-Poly1305",
+		)
+	);
 }
 
 export async function generateRecipientKeys() {
-  if (supportsPostQuantumEnvelope()) {
-    const keyPair = await crypto.subtle.generateKey(
-      'MLKEM768-X25519',
-      false,
-      ['encapsulateKey', 'decapsulateKey'],
-    );
-    const publicKeyBytes = new Uint8Array(
-      await crypto.subtle.exportKey('raw-public', keyPair.publicKey),
-    );
-    return { suite: 'MLKEM768-X25519+ChaCha20-Poly1305', keyPair, publicKeyBytes };
-  }
+	if (supportsPostQuantumEnvelope()) {
+		const keyPair = await crypto.subtle.generateKey("MLKEM768-X25519", false, [
+			"encapsulateKey",
+			"decapsulateKey",
+		]);
+		const publicKeyBytes = new Uint8Array(
+			await crypto.subtle.exportKey("raw-public", keyPair.publicKey),
+		);
+		return {
+			suite: "MLKEM768-X25519+ChaCha20-Poly1305",
+			keyPair,
+			publicKeyBytes,
+		};
+	}
 
-  // Classical fallback: X25519 key agreement + HKDF + AES-GCM
-  const keyPair = await crypto.subtle.generateKey('X25519', false, ['deriveBits']);
-  const publicKeyBytes = new Uint8Array(
-    await crypto.subtle.exportKey('raw', keyPair.publicKey),
-  );
-  return { suite: 'X25519+HKDF+AES-GCM', keyPair, publicKeyBytes };
+	// Classical fallback: X25519 key agreement + HKDF + AES-GCM
+	const keyPair = await crypto.subtle.generateKey("X25519", false, [
+		"deriveBits",
+	]);
+	const publicKeyBytes = new Uint8Array(
+		await crypto.subtle.exportKey("raw", keyPair.publicKey),
+	);
+	return { suite: "X25519+HKDF+AES-GCM", keyPair, publicKeyBytes };
 }
 
-async function deriveFallbackAesKey(privateKey, peerPublicKey, infoBytes = new Uint8Array(0)) {
-  const sharedSecret = await crypto.subtle.deriveBits(
-    { name: 'X25519', public: peerPublicKey },
-    privateKey,
-    256,
-  );
-  const hkdfKey = await crypto.subtle.importKey('raw', sharedSecret, 'HKDF', false, ['deriveKey']);
-  return crypto.subtle.deriveKey(
-    {
-      name: 'HKDF',
-      hash: 'SHA-256',
-      salt: new Uint8Array(32),
-      info: infoBytes,
-    },
-    hkdfKey,
-    { name: 'AES-GCM', length: 256 },
-    false,
-    ['encrypt', 'decrypt'],
-  );
+async function deriveFallbackAesKey(
+	privateKey,
+	peerPublicKey,
+	infoBytes = new Uint8Array(0),
+) {
+	const sharedSecret = await crypto.subtle.deriveBits(
+		{ name: "X25519", public: peerPublicKey },
+		privateKey,
+		256,
+	);
+	const hkdfKey = await crypto.subtle.importKey(
+		"raw",
+		sharedSecret,
+		"HKDF",
+		false,
+		["deriveKey"],
+	);
+	return crypto.subtle.deriveKey(
+		{
+			name: "HKDF",
+			hash: "SHA-256",
+			salt: new Uint8Array(32),
+			info: infoBytes,
+		},
+		hkdfKey,
+		{ name: "AES-GCM", length: 256 },
+		false,
+		["encrypt", "decrypt"],
+	);
 }
 
 export async function encapsulateEnvelopeKey(
-  recipientPublicKeyOrBytes,
-  infoBytes = new Uint8Array(0),
+	recipientPublicKeyOrBytes,
+	infoBytes = new Uint8Array(0),
 ) {
-  const pubKey =
-    recipientPublicKeyOrBytes instanceof CryptoKey
-      ? recipientPublicKeyOrBytes
-      : await (() => {
-          const bytes =
-            recipientPublicKeyOrBytes instanceof Uint8Array
-              ? recipientPublicKeyOrBytes
-              : new Uint8Array(recipientPublicKeyOrBytes);
-          const kemName = KEM_PUBLIC_KEY_ALGORITHMS[bytes.byteLength];
-          return kemName
-            ? crypto.subtle.importKey('raw-public', bytes, kemName, true, ['encapsulateKey'])
-            : crypto.subtle.importKey('raw', bytes, 'X25519', true, []);
-        })();
+	const pubKey =
+		recipientPublicKeyOrBytes instanceof CryptoKey
+			? recipientPublicKeyOrBytes
+			: await (() => {
+					const bytes =
+						recipientPublicKeyOrBytes instanceof Uint8Array
+							? recipientPublicKeyOrBytes
+							: new Uint8Array(recipientPublicKeyOrBytes);
+					const kemName = KEM_PUBLIC_KEY_ALGORITHMS[bytes.byteLength];
+					return kemName
+						? crypto.subtle.importKey("raw-public", bytes, kemName, true, [
+								"encapsulateKey",
+							])
+						: crypto.subtle.importKey("raw", bytes, "X25519", true, []);
+				})();
 
-  if (pubKey.algorithm.name !== 'X25519') {
-    const { sharedKey, ciphertext } = await crypto.subtle.encapsulateKey(
-      pubKey.algorithm.name,
-      pubKey,
-      'ChaCha20-Poly1305',
-      false,
-      ['encrypt', 'decrypt'],
-    );
-    return { sharedKey, capsuleBytes: new Uint8Array(ciphertext) };
-  }
+	if (pubKey.algorithm.name !== "X25519") {
+		const { sharedKey, ciphertext } = await crypto.subtle.encapsulateKey(
+			pubKey.algorithm.name,
+			pubKey,
+			"ChaCha20-Poly1305",
+			false,
+			["encrypt", "decrypt"],
+		);
+		return { sharedKey, capsuleBytes: new Uint8Array(ciphertext) };
+	}
 
-  // Classical fallback: generate ephemeral X25519 key pair and send ephemeral public key as capsule
-  const ephemeral = await crypto.subtle.generateKey('X25519', false, ['deriveBits']);
-  const capsuleBytes = new Uint8Array(await crypto.subtle.exportKey('raw', ephemeral.publicKey));
-  const sharedKey = await deriveFallbackAesKey(ephemeral.privateKey, pubKey, infoBytes);
-  return { sharedKey, capsuleBytes };
+	// Classical fallback: generate ephemeral X25519 key pair and send ephemeral public key as capsule
+	const ephemeral = await crypto.subtle.generateKey("X25519", false, [
+		"deriveBits",
+	]);
+	const capsuleBytes = new Uint8Array(
+		await crypto.subtle.exportKey("raw", ephemeral.publicKey),
+	);
+	const sharedKey = await deriveFallbackAesKey(
+		ephemeral.privateKey,
+		pubKey,
+		infoBytes,
+	);
+	return { sharedKey, capsuleBytes };
 }
 
 export async function decapsulateEnvelopeKey(
-  recipientPrivateKey,
-  capsuleBytes,
-  infoBytes = new Uint8Array(0),
+	recipientPrivateKey,
+	capsuleBytes,
+	infoBytes = new Uint8Array(0),
 ) {
-  if (recipientPrivateKey.algorithm.name !== 'X25519') {
-    return crypto.subtle.decapsulateKey(
-      recipientPrivateKey.algorithm.name,
-      recipientPrivateKey,
-      capsuleBytes,
-      'ChaCha20-Poly1305',
-      false,
-      ['encrypt', 'decrypt'],
-    );
-  }
+	if (recipientPrivateKey.algorithm.name !== "X25519") {
+		return crypto.subtle.decapsulateKey(
+			recipientPrivateKey.algorithm.name,
+			recipientPrivateKey,
+			capsuleBytes,
+			"ChaCha20-Poly1305",
+			false,
+			["encrypt", "decrypt"],
+		);
+	}
 
-  const ephemeralPubKey = await crypto.subtle.importKey('raw', capsuleBytes, 'X25519', true, []);
-  return deriveFallbackAesKey(recipientPrivateKey, ephemeralPubKey, infoBytes);
+	const ephemeralPubKey = await crypto.subtle.importKey(
+		"raw",
+		capsuleBytes,
+		"X25519",
+		true,
+		[],
+	);
+	return deriveFallbackAesKey(recipientPrivateKey, ephemeralPubKey, infoBytes);
 }
 ```

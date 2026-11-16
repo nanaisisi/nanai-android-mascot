@@ -30,32 +30,32 @@ Because a 2D panning surface often lacks focusable child controls (for example, 
 
 ```css
 .pan-viewport {
-  /* Example viewport dimensions; adjust to fit your layout. */
-  inline-size: 100%;
-  block-size: 500px;
+	/* Example viewport dimensions; adjust to fit your layout. */
+	inline-size: 100%;
+	block-size: 500px;
 
-  /* MANDATORY: Establish a scroll container that can overflow on both axes. */
-  overflow: auto;
+	/* MANDATORY: Establish a scroll container that can overflow on both axes. */
+	overflow: auto;
 
-  /* MANDATORY: Prevent browser scroll axis-locking ("railing") from kicking in
+	/* MANDATORY: Prevent browser scroll axis-locking ("railing") from kicking in
      so 2D gestures never get locked to a single axis. */
-  scroll-axis-lock: none;
+	scroll-axis-lock: none;
 
-  /* Contain scrolling and prevent accidental swipe navigations at edges
+	/* Contain scrolling and prevent accidental swipe navigations at edges
      (use `none` or `contain`). */
-  overscroll-behavior: none;
+	overscroll-behavior: none;
 }
 
 /* Provide a clear focus indicator when keyboard users focus the viewport. */
 .pan-viewport:focus-visible {
-  outline: 3px solid #005fcc;
-  outline-offset: 2px;
+	outline: 3px solid #005fcc;
+	outline-offset: 2px;
 }
 
 .pan-surface {
-  /* Example surface dimensions larger than .pan-viewport in both axes. */
-  inline-size: 3000px;
-  block-size: 3000px;
+	/* Example surface dimensions larger than .pan-viewport in both axes. */
+	inline-size: 3000px;
+	block-size: 3000px;
 }
 ```
 
@@ -97,57 +97,57 @@ Because `wheel` (`e.deltaX`, `e.deltaY`) and `pointermove` (`e.clientX`, `e.clie
    and the JavaScript pointer fallback below is active. pinch-zoom keeps
    pinch-to-zoom working. */
 @supports not (scroll-axis-lock: none) {
-  .pan-viewport {
-    touch-action: pinch-zoom;
-  }
+	.pan-viewport {
+		touch-action: pinch-zoom;
+	}
 }
 ```
 
 ```javascript
 // Only attach the main-thread gesture fallback when native support is missing
-if (!CSS.supports('scroll-axis-lock', 'none')) {
-  const viewport = document.querySelector('.pan-viewport');
-  let lastPointer = null;
+if (!CSS.supports("scroll-axis-lock", "none")) {
+	const viewport = document.querySelector(".pan-viewport");
+	let lastPointer = null;
 
-  // 1. Trackpad and mouse wheel fallback
-  viewport.addEventListener(
-    'wheel',
-    (e) => {
-      if (e.ctrlKey) return; // Ctrl+wheel and trackpad pinch zoom the page
-      e.preventDefault();
-      viewport.scrollLeft += e.deltaX;
-      viewport.scrollTop += e.deltaY;
-    },
-    { passive: false },
-  );
+	// 1. Trackpad and mouse wheel fallback
+	viewport.addEventListener(
+		"wheel",
+		(e) => {
+			if (e.ctrlKey) return; // Ctrl+wheel and trackpad pinch zoom the page
+			e.preventDefault();
+			viewport.scrollLeft += e.deltaX;
+			viewport.scrollTop += e.deltaY;
+		},
+		{ passive: false },
+	);
 
-  // 2. Touch and pointer drag fallback
-  viewport.addEventListener('pointerdown', (e) => {
-    // Ignore non-primary buttons and clicks on native scrollbars
-    const rect = viewport.getBoundingClientRect();
-    if (
-      !e.isPrimary ||
-      e.button !== 0 ||
-      e.clientX - rect.left - viewport.clientLeft >= viewport.clientWidth ||
-      e.clientY - rect.top - viewport.clientTop >= viewport.clientHeight
-    ) {
-      return;
-    }
-    lastPointer = { x: e.clientX, y: e.clientY };
-    viewport.setPointerCapture(e.pointerId);
-  });
+	// 2. Touch and pointer drag fallback
+	viewport.addEventListener("pointerdown", (e) => {
+		// Ignore non-primary buttons and clicks on native scrollbars
+		const rect = viewport.getBoundingClientRect();
+		if (
+			!e.isPrimary ||
+			e.button !== 0 ||
+			e.clientX - rect.left - viewport.clientLeft >= viewport.clientWidth ||
+			e.clientY - rect.top - viewport.clientTop >= viewport.clientHeight
+		) {
+			return;
+		}
+		lastPointer = { x: e.clientX, y: e.clientY };
+		viewport.setPointerCapture(e.pointerId);
+	});
 
-  viewport.addEventListener('pointermove', (e) => {
-    if (!lastPointer) return;
-    viewport.scrollLeft -= e.clientX - lastPointer.x;
-    viewport.scrollTop -= e.clientY - lastPointer.y;
-    lastPointer = { x: e.clientX, y: e.clientY };
-  });
+	viewport.addEventListener("pointermove", (e) => {
+		if (!lastPointer) return;
+		viewport.scrollLeft -= e.clientX - lastPointer.x;
+		viewport.scrollTop -= e.clientY - lastPointer.y;
+		lastPointer = { x: e.clientX, y: e.clientY };
+	});
 
-  const endPointerPan = () => {
-    lastPointer = null;
-  };
-  viewport.addEventListener('pointerup', endPointerPan);
-  viewport.addEventListener('pointercancel', endPointerPan);
+	const endPointerPan = () => {
+		lastPointer = null;
+	};
+	viewport.addEventListener("pointerup", endPointerPan);
+	viewport.addEventListener("pointercancel", endPointerPan);
 }
 ```

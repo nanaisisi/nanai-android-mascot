@@ -46,56 +46,58 @@ To implement a rich media picker using the Customizable Select API:
 ```css
 select.custom-select,
 select.custom-select::picker(select) {
-  appearance: base-select; /* MUST opt-in both the select and its picker to enable the customizable state, otherwise browser standard rendering applies */
+	appearance: base-select; /* MUST opt-in both the select and its picker to enable the customizable state, otherwise browser standard rendering applies */
 }
 
 select.custom-select {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 12px;
-  background-color: #1e293b;
-  border: 1px solid #334155;
-  border-radius: 8px;
-  color: #f1f5f9;
-  cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	padding: 12px;
+	background-color: #1e293b;
+	border: 1px solid #334155;
+	border-radius: 8px;
+	color: #f1f5f9;
+	cursor: pointer;
 }
 
 select.custom-select::picker(select) {
-  background-color: #0f172a;
-  border: 1px solid #334155;
-  border-radius: 8px;
-  padding: 8px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
-  width: anchor-size(width); /* Uses Anchor Positioning API to keep the dropdown precisely aligned to the button trigger width */
+	background-color: #0f172a;
+	border: 1px solid #334155;
+	border-radius: 8px;
+	padding: 8px;
+	box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+	width: anchor-size(
+		width
+	); /* Uses Anchor Positioning API to keep the dropdown precisely aligned to the button trigger width */
 }
 
 select.custom-select option {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px;
-  border-radius: 4px;
-  cursor: pointer;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 10px;
+	border-radius: 4px;
+	cursor: pointer;
 }
 
 select.custom-select option:hover {
-  background-color: #1e293b;
+	background-color: #1e293b;
 }
 
 /* Remove standard OS checkmark for base-select */
 select.custom-select option::checkmark {
-  display: none;
+	display: none;
 }
 
 /* MANDATORY: Provide multiple visual indicators (e.g., prominent background color and bold title font) to communicate the checked state cleanly */
 select.custom-select option:checked {
-  background-color: #3b82f6;
-  color: #ffffff;
+	background-color: #3b82f6;
+	color: #ffffff;
 }
 select.custom-select option:checked .option-title {
-  font-weight: 700;
+	font-weight: 700;
 }
 ```
 
@@ -176,9 +178,9 @@ For browsers that do not yet support `appearance: base-select`, the `<select>` e
 
 ```javascript
 document.addEventListener("DOMContentLoaded", () => {
-  // Check if browser supports base-select value
-  if (!CSS.supports("appearance", "base-select")) {
-    // Custom select overrides are not supported natively.
-  }
+	// Check if browser supports base-select value
+	if (!CSS.supports("appearance", "base-select")) {
+		// Custom select overrides are not supported natively.
+	}
 });
 ```

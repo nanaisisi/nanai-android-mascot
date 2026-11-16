@@ -202,7 +202,15 @@ export function expandSakuraScriptEnv(script, options = {}) {
 	});
 
 	const categoryWordsMap: Record<string, string[]> = {
-		"%me": ["カレーライス", "ケーキ", "ポッキー", "おでん", "りんご", "ラーメン", "和菓子"],
+		"%me": [
+			"カレーライス",
+			"ケーキ",
+			"ポッキー",
+			"おでん",
+			"りんご",
+			"ラーメン",
+			"和菓子",
+		],
 		"%mp": ["秋葉原", "モスクワ", "公園", "海", "新宿", "例の場所"],
 		"%mh": ["コンビニ", "八百屋", "喫茶店", "松屋", "東急ハンズ", "本屋"],
 		"%mc": ["マイクロソフト", "ソニー", "富士通", "シャープ", "任天堂"],
@@ -220,14 +228,18 @@ export function expandSakuraScriptEnv(script, options = {}) {
 	};
 
 	// 5. カテゴリ別「単語-」環境変数の動的抽選展開
-	result = result.replace(/%me/g, () => pickCategoryWord("%me", "カレーライス"));
+	result = result.replace(/%me/g, () =>
+		pickCategoryWord("%me", "カレーライス"),
+	);
 	result = result.replace(/%mp/g, () => pickCategoryWord("%mp", "秋葉原"));
 	result = result.replace(/%mh/g, () => pickCategoryWord("%mh", "コンビニ"));
 	result = result.replace(/%mc/g, () => pickCategoryWord("%mc", "ソニー"));
 	result = result.replace(/%mt/g, () => pickCategoryWord("%mt", "ビンタ"));
 	result = result.replace(/%mz/g, () => pickCategoryWord("%mz", "パソコン"));
 	result = result.replace(/%ml/g, () => pickCategoryWord("%ml", "仲間"));
-	result = result.replace(/%dms/g, () => pickCategoryWord("%dms", "意外と近くにいた宇宙人"));
+	result = result.replace(/%dms/g, () =>
+		pickCategoryWord("%dms", "意外と近くにいた宇宙人"),
+	);
 
 	// 6. 日時・システム環境変数マップの構築
 	const envMap = {

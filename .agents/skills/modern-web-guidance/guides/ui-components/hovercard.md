@@ -66,10 +66,13 @@ Position the hovercard relative to its trigger using **CSS Anchor Positioning**.
 
 ```css
 [popover].hovercard {
-  /* Position the card below the trigger, aligned with its inline-start edge
+	/* Position the card below the trigger, aligned with its inline-start edge
      and spanning toward the inline-end, flipping if it overflows the viewport. */
-  position-area: block-end span-inline-end;
-  position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+	position-area: block-end span-inline-end;
+	position-try-fallbacks:
+		flip-block,
+		flip-inline,
+		flip-block flip-inline;
 }
 ```
 
@@ -78,17 +81,17 @@ Position the hovercard relative to its trigger using **CSS Anchor Positioning**.
 By default, interest is shown and lost for keyboard and mouse users with a delay of half a second. This prevents the targeted popover from opening while tabbing through a page or moving your mouse around, and from closing while moving your mouse from the trigger to the popover. To adjust the timing, use the `interest-delay` CSS property.
 
 ```css
-[interestfor]{
-  /* Shorthand for interest-delay-start and interest-delay-end */
-  interest-delay: 0.2s 0.1s;
+[interestfor] {
+	/* Shorthand for interest-delay-start and interest-delay-end */
+	interest-delay: 0.2s 0.1s;
 }
 ```
 
 If users are likely to move through multiple triggers in quick succession, set the initial delay to `0s` if an interest-triggered popover is already open. To prevent performance issues with `:has()`, select a nearby container with a small number of child nodes, and target the triggers as directly as possible.
 
 ```css
-.container:has( > li > a:interest-source) [interestfor] {
-  interest-delay-start: 0s;
+.container:has(> li > a:interest-source) [interestfor] {
+	interest-delay-start: 0s;
 }
 ```
 
@@ -96,34 +99,30 @@ Use `@starting-style` to define the entry animation and `transition-behavior: al
 
 ```css
 [popover].hovercard {
-  opacity: 0;
-  transform-origin: top;
+	opacity: 0;
+	transform-origin: top;
 }
 
 [popover].hovercard:popover-open {
-  opacity: 1;
-  transform: translateY(0) scale(1);
+	opacity: 1;
+	transform: translateY(0) scale(1);
 }
 
 @starting-style {
-  [popover].hovercard:popover-open {
-    opacity: 0;
-    transform: translateY(-10px) scale(0.95);
-  }
+	[popover].hovercard:popover-open {
+		opacity: 0;
+		transform: translateY(-10px) scale(0.95);
+	}
 }
 
 /* MANDATORY: Respect user preference for reduced motion by selectively applying transitions. */
 @media (prefers-reduced-motion: no-preference) {
-  [popover].hovercard {
-    transition:
-      opacity,
-      transform,
-      display,
-      overlay;
-    transition-duration: 0.4s;
-    /* Separate after transition so the shorthand doesn't reset it or fail in older browsers */
-    transition-behavior: allow-discrete;
-  }
+	[popover].hovercard {
+		transition: opacity, transform, display, overlay;
+		transition-duration: 0.4s;
+		/* Separate after transition so the shorthand doesn't reset it or fail in older browsers */
+		transition-behavior: allow-discrete;
+	}
 }
 ```
 
@@ -136,28 +135,28 @@ By assigning matching `view-transition-name` values to elements in the hovercard
 ```css
 /* Opt-in to cross-document transitions on both pages */
 @view-transition {
-  navigation: auto;
+	navigation: auto;
 }
 
 /* Don't show transitions when loading this page */
 ::view-transition-group(*) {
-  animation-duration: 0s;
+	animation-duration: 0s;
 }
 
 /* Assign names ONLY when the popover is open to ensure only the correct elements are selected. */
 [popover]:popover-open {
-  view-transition-name: --hovercard;
-  view-transition-class: morph;
+	view-transition-name: --hovercard;
+	view-transition-class: morph;
 
-  h2 {
-    view-transition-name: --title;
-    view-transition-class: morph;
-  }
+	h2 {
+		view-transition-name: --title;
+		view-transition-class: morph;
+	}
 
-  img {
-    view-transition-name: --image;
-    view-transition-class: morph;
-  }
+	img {
+		view-transition-name: --image;
+		view-transition-class: morph;
+	}
 }
 ```
 
@@ -181,29 +180,29 @@ By assigning matching `view-transition-name` values to elements in the hovercard
 ```css
 /* On the destination page: */
 main {
-  view-transition-name: --hovercard;
-  view-transition-class: morph;
+	view-transition-name: --hovercard;
+	view-transition-class: morph;
 }
 h1 {
-  view-transition-name: --title;
-  view-transition-class: morph;
+	view-transition-name: --title;
+	view-transition-class: morph;
 }
 img {
-  view-transition-name: --image;
-  view-transition-class: morph;
+	view-transition-name: --image;
+	view-transition-class: morph;
 }
 
 /* By default no transition */
 ::view-transition-group(*) {
-  animation-duration: 0s;
+	animation-duration: 0s;
 }
 /* Short transition for morphing elements */
 ::view-transition-group(.morph) {
-  animation-duration: 0.4s;
+	animation-duration: 0.4s;
 }
 /* Disable transition if no `old` view */
 ::view-transition-new(.morph):only-child {
-  animation-duration: 0s;
+	animation-duration: 0s;
 }
 ```
 
@@ -225,7 +224,7 @@ With a bundler or import map:
 ```js
 // MANDATORY: Feature detect 'popover' on HTMLElement.prototype.
 if (!Object.hasOwn(HTMLElement.prototype, "popover")) {
-  import("@oddbird/popover-polyfill");
+	import("@oddbird/popover-polyfill");
 }
 ```
 
@@ -237,7 +236,7 @@ Caveats when using the polyfill:
 
 ```css
 [popover]:is(:popover-open, .\:popover-open) {
-  display: block;
+	display: block;
 }
 ```
 
@@ -276,8 +275,12 @@ When using the polyfill, the CSS API changes slightly to account for the lack of
 
 ```css
 /* Styles to apply when the effect is being previewed */
-:is(:interest-source, .interest-source) { /* ... */ }
-:is(:interest-target, .interest-target) { /* ... */ }
+:is(:interest-source, .interest-source) {
+	/* ... */
+}
+:is(:interest-target, .interest-target) {
+	/* ... */
+}
 ```
 
 - **CSS Properties:** For `interest-delay`, `interest-delay-start`, and `interest-delay-end`, the polyfill requires using CSS variables as it cannot read the custom properties directly in all browsers.
@@ -285,18 +288,19 @@ When using the polyfill, the CSS API changes slightly to account for the lack of
 ```css
 /* Adjust the start and end delay for interest invokers */
 [interestfor] {
-  --interest-delay-start: 0.2s;
-  interest-delay-start: var(--interest-delay-start);
-  --interest-delay-end: 0.1s;
-  interest-delay-end: var(--interest-delay-end);
+	--interest-delay-start: 0.2s;
+	interest-delay-start: var(--interest-delay-start);
+	--interest-delay-end: 0.1s;
+	interest-delay-end: var(--interest-delay-end);
 }
 ```
 
 Set the initial delay to `0s` if an interest-triggered popover is already open and users are likely to move through multiple triggers in quick succession.
 
 ```css
-.container:has([interestfor]:is(:interest-source, .interest-source)) [interestfor] {
-  --interest-delay-start: 0s;
+.container:has([interestfor]:is(:interest-source, .interest-source))
+	[interestfor] {
+	--interest-delay-start: 0s;
 }
 ```
 
@@ -319,7 +323,7 @@ With a bundler or import map:
 ```js
 // MANDATORY: Feature-detect anchor positioning support before loading the polyfill.
 if (!CSS.supports("anchor-name: --a")) {
-  import("@oddbird/css-anchor-positioning");
+	import("@oddbird/css-anchor-positioning");
 }
 ```
 
@@ -341,17 +345,17 @@ Without a bundler, import from a CDN inside a `<script type="module">`:
 
 ```css
 .trigger {
-  /* MANDATORY: Each trigger and positioned element pair must share a unique anchor name. */
-  anchor-name: --my-trigger;
+	/* MANDATORY: Each trigger and positioned element pair must share a unique anchor name. */
+	anchor-name: --my-trigger;
 }
 
 [popover].anchored-overlay {
-  position-anchor: --my-trigger;
-  /* MANDATORY: Use anchor() on inset properties rather than position-area when using the polyfill on elements needing position-try-fallbacks. */
-  inset: auto;
-  top: anchor(bottom);
-  left: anchor(left);
-  margin: 0;
+	position-anchor: --my-trigger;
+	/* MANDATORY: Use anchor() on inset properties rather than position-area when using the polyfill on elements needing position-try-fallbacks. */
+	inset: auto;
+	top: anchor(bottom);
+	left: anchor(left);
+	margin: 0;
 }
 ```
 
@@ -363,22 +367,25 @@ Instead, gate `inset: auto` and `margin: 0` inside `@supports` for the specific 
 
 ```css
 @supports (position-area: block-end) {
-  [popover].anchored-overlay {
-    inset: auto;
-    margin: 0;
-    position-area: block-end span-inline-end;
-    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
-  }
+	[popover].anchored-overlay {
+		inset: auto;
+		margin: 0;
+		position-area: block-end span-inline-end;
+		position-try-fallbacks:
+			flip-block,
+			flip-inline,
+			flip-block flip-inline;
+	}
 }
 
 @supports not (position-area: block-end) {
-  /* Optional: override default popover centering with a fixed bottom bar */
-  [popover].anchored-overlay {
-    position: fixed;
-    inset: auto 0 0 0;
-    width: auto;
-    margin: 0;
-  }
+	/* Optional: override default popover centering with a fixed bottom bar */
+	[popover].anchored-overlay {
+		position: fixed;
+		inset: auto 0 0 0;
+		width: auto;
+		margin: 0;
+	}
 }
 ```
 

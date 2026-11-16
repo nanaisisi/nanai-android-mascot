@@ -8,8 +8,8 @@ Create the underline using a `::before` pseudo-element on the `<ul>` that contai
 
 ```css
 ul::before {
-  /* Use a pseudo-element on the container to represent the animated indicator */
-  content: '';
+	/* Use a pseudo-element on the container to represent the animated indicator */
+	content: "";
 }
 ```
 
@@ -17,8 +17,8 @@ Make the active list item an anchor by adding the `anchor-name` property, which 
 
 ```css
 li.active {
-  /* Make a unique anchor-name for the active element. */
-  anchor-name: --active;
+	/* Make a unique anchor-name for the active element. */
+	anchor-name: --active;
 }
 ```
 
@@ -26,9 +26,9 @@ Tether the underline to the active item anchor with a `position-anchor` that mat
 
 ```css
 ul::before {
-  /* Tether the underline to the active element. */
-  position: absolute;
-  position-anchor: --active;
+	/* Tether the underline to the active element. */
+	position: absolute;
+	position-anchor: --active;
 }
 ```
 
@@ -36,11 +36,11 @@ Position the underline relative to the anchor using the inset properties and `an
 
 ```css
 ul::before {
-  /* DO NOT use position-area, which can not be transitioned. */
-  /* Use calc() to offset the top slightly */
-  inset-block-start: calc(anchor(bottom) + .1lh);
-  inset-inline-start: anchor(left);
-  inset-inline-end: anchor(right);
+	/* DO NOT use position-area, which can not be transitioned. */
+	/* Use calc() to offset the top slightly */
+	inset-block-start: calc(anchor(bottom) + 0.1lh);
+	inset-inline-start: anchor(left);
+	inset-inline-end: anchor(right);
 }
 ```
 
@@ -48,8 +48,8 @@ Draw the underline with a border. DO NOT use a background or `box-shadow`: force
 
 ```css
 ul::before {
-  /* Apply your project's styles for the indicator */
-  border-block-end: .25lh solid red;
+	/* Apply your project's styles for the indicator */
+	border-block-end: 0.25lh solid red;
 }
 ```
 
@@ -57,10 +57,10 @@ Finally, add a transition on the `inset` properties.
 
 ```css
 ul::before {
-  @media (prefers-reduced-motion: no-preference) {
-    /* MANDATORY: The transition must be wrapped in a prefers-reduced-motion media query to respect user preferences. */
-    transition: inset .2s;
-  }
+	@media (prefers-reduced-motion: no-preference) {
+		/* MANDATORY: The transition must be wrapped in a prefers-reduced-motion media query to respect user preferences. */
+		transition: inset 0.2s;
+	}
 }
 ```
 
@@ -90,9 +90,9 @@ If anchor positioning is not supported in the browser, use a `border-bottom` to 
 
 ```css
 ul li.active {
-  @supports not (position-anchor: auto) {
-    /* Choose a color appropriate to the app theme. */
-    border-bottom: .25lh var(--primary) solid;
-  }
+	@supports not (position-anchor: auto) {
+		/* Choose a color appropriate to the app theme. */
+		border-bottom: 0.25lh var(--primary) solid;
+	}
 }
 ```

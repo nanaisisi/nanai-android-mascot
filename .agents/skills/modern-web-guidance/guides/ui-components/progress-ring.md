@@ -36,25 +36,26 @@ If the center content shows the value in another form, such as "3 of 5 files" or
 ### 2. Styles
 
 #### Hiding Native UI
+
 To style the `<progress>` element as a progress ring, first hide the default browser styling for progress bars.
 
 ```css
 /* Hide native bars */
 progress.progress-ring::-webkit-progress-bar {
-  display: none;
-  background: none;
+	display: none;
+	background: none;
 }
 progress.progress-ring::-webkit-progress-value {
-  display: none;
-  background: none;
+	display: none;
+	background: none;
 }
 progress.progress-ring::-moz-progress-bar {
-  display: none;
-  background: none;
+	display: none;
+	background: none;
 }
 progress.progress-ring::slider-fill {
-  display: none;
-  background: none;
+	display: none;
+	background: none;
 }
 ```
 
@@ -64,44 +65,44 @@ The wrapper provides the positioning context. The `<progress>` element handles t
 
 ```css
 .progress-ring-wrapper {
-  position: relative;
-  display: grid;
-  place-items: center;
+	position: relative;
+	display: grid;
+	place-items: center;
 }
 
 progress.progress-ring {
-  --size: 150px;
-  --thickness: 16px;
-  --track-color: #f1f5f9;
-  --fill-color: #3b82f6;
-  --value: attr(value type(<number>));
-  width: var(--size);
-  height: var(--size);
+	--size: 150px;
+	--thickness: 16px;
+	--track-color: #f1f5f9;
+	--fill-color: #3b82f6;
+	--value: attr(value type(<number>));
+	width: var(--size);
+	height: var(--size);
 
-  transition: --value 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 50%;
+	transition: --value 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+	border-radius: 50%;
 
-  background: conic-gradient(
-    var(--fill-color) calc(var(--value) * 1%),
-    var(--track-color) 0
-  );
+	background: conic-gradient(
+		var(--fill-color) calc(var(--value) * 1%),
+		var(--track-color) 0
+	);
 
-  /* MANDATORY: Clip the background to the border-area. */
-  background-clip: border-area;
-  border: var(--thickness) solid transparent;
-  background-origin: border-box;
+	/* MANDATORY: Clip the background to the border-area. */
+	background-clip: border-area;
+	border: var(--thickness) solid transparent;
+	background-origin: border-box;
 
-  @media (forced-colors: active) {
-    /* Keeps the gradient, which forced colors mode removes, and draws it in system colors */
-    forced-color-adjust: none;
-    --fill-color: CanvasText;
-    --track-color: Canvas;
-  }
+	@media (forced-colors: active) {
+		/* Keeps the gradient, which forced colors mode removes, and draws it in system colors */
+		forced-color-adjust: none;
+		--fill-color: CanvasText;
+		--track-color: Canvas;
+	}
 }
 
 .progress-ring-content {
-  /* Positioned in the center of the wrapper */
-  position: absolute;
+	/* Positioned in the center of the wrapper */
+	position: absolute;
 }
 ```
 
@@ -109,25 +110,24 @@ You can also use a `radial-gradient` to make rounded end caps.
 
 #### Enable smooth transitions with `@property`
 
-To animate the progress ring smoothly when the value changes, register `--value` as a numeric custom property. 
+To animate the progress ring smoothly when the value changes, register `--value` as a numeric custom property.
 
 Users with motion sensitivities may find the transition between values disorienting. Respect the `prefers-reduced-motion` media query by having a 0 second (immediate) duration by default, and setting a longer time for users with no preference.
 
 
 ```css
 @property --value {
-  syntax: '<number>';
-  inherits: true;
-  initial-value: 0;
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 0;
 }
 
 progress.progress-ring {
-  transition: --value 0s ease-in-out;
-  @media (prefers-reduced-motion: no-preference) {
-    transition-duration: 0.4s;
-  }
+	transition: --value 0s ease-in-out;
+	@media (prefers-reduced-motion: no-preference) {
+		transition-duration: 0.4s;
+	}
 }
-
 ```
 
 ### 3. Progress Updates
@@ -141,7 +141,7 @@ You can use the CSS attribute selector to automatically update the ring's appear
 ```css
 /* Change the fill color to green when the progress reaches 100% */
 progress.progress-ring[value="100"] {
-  --fill-color: #10b981;
+	--fill-color: #10b981;
 }
 ```
 
@@ -182,12 +182,12 @@ For browsers that don't support the `attr()` CSS function for any property, use 
 
 ```js
 if (!CSS.supports("width: attr(value type(<number>))")) {
-  const observer = new MutationObserver(() => {
-    progress.style.setProperty("--value", progress.getAttribute("value"));
-  });
-  observer.observe(progress, {
-    attributes: true,
-    attributeFilter: ["value"],
-  });
+	const observer = new MutationObserver(() => {
+		progress.style.setProperty("--value", progress.getAttribute("value"));
+	});
+	observer.observe(progress, {
+		attributes: true,
+		attributeFilter: ["value"],
+	});
 }
 ```

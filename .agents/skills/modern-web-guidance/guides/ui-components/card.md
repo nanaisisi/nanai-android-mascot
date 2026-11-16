@@ -77,15 +77,18 @@ When a content card links to a primary destination, also contains other interact
 }
 ```
 
-- Elevate interactive elements with `position: relative; z-index: 1` so they remain operable. Target types of elements (e.g. `a, button`) rather than requiring opt-in via classes. 
+- Elevate interactive elements with `position: relative; z-index: 1` so they remain operable. Target types of elements (e.g. `a, button`) rather than requiring opt-in via classes.
 - Do NOT apply `z-index` to entire containers as that would make them capture pointer events that don't produce any action.
 
 ```css
 .card:has(a.card-link) {
 	/* Keep other interactive elements above the overlay */
-	a:not(.card-link), button, input, x-button {
-	    position: relative;
-	    z-index: 1;
+	a:not(.card-link),
+	button,
+	input,
+	x-button {
+		position: relative;
+		z-index: 1;
 	}
 }
 ```
@@ -99,7 +102,7 @@ When a content card links to a primary destination, also contains other interact
 			outline: none; /* Draw it on the card instead */
 		}
 	}
-	
+
 	&:has(a.card-link:focus-visible) {
 		/* Focus ring */
 	}
@@ -108,7 +111,6 @@ When a content card links to a primary destination, also contains other interact
 		/* Hover styles */
 	}
 }
-
 ```
 
 ### Choice cards
@@ -119,11 +121,11 @@ Style the selected card with `:has(:checked)`. Never change layout-affecting pro
 
 ```css
 .card {
-  border: 2px solid transparent;
+	border: 2px solid transparent;
 
-  &:has(> :checked) {
-    border-color: var(--accent);
-  }
+	&:has(> :checked) {
+		border-color: var(--accent);
+	}
 }
 ```
 

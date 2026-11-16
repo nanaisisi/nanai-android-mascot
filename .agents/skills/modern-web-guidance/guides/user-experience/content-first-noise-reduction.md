@@ -22,27 +22,27 @@ Hide the top bar (the site header or navigation bar) while the user scrolls down
 ```css
 /* The root scroller remembers the direction of the most recent scroll. */
 html {
-  container-type: scroll-state;
+	container-type: scroll-state;
 }
 .top-bar {
-  position: sticky;
-  top: 0;
-  z-index: 1; /* Example value: keeps positioned content from painting over the bar. */
+	position: sticky;
+	top: 0;
+	z-index: 1; /* Example value: keeps positioned content from painting over the bar. */
 }
 /* Scrolling down: move the bar out of view. transform doesn't change layout, so content doesn't jump.
    (scrollable: top) shows the bar at the very top, even after jumps such as the Home key, which don't update "scrolled". */
 @container scroll-state((scrolled: bottom) and (scrollable: top)) {
-  .top-bar {
-    transform: translateY(-100%);
-  }
+	.top-bar {
+		transform: translateY(-100%);
+	}
 }
 /* Keep the bar visible while it contains keyboard focus. */
 .top-bar:focus-within {
-  transform: none;
+	transform: none;
 }
 /* Example value: at least the bar's height, so in-page link targets don't land under the bar. */
 :target {
-  scroll-margin-top: 4rem;
+	scroll-margin-top: 4rem;
 }
 ```
 
@@ -89,23 +89,30 @@ Without scroll-state queries, the bar never hides, but it stays compact and usab
 ```css
 /* Don't hide the bar while it contains keyboard focus. */
 .top-bar.is-hidden:not(:focus-within) {
-  transform: translateY(-100%);
+	transform: translateY(-100%);
 }
 ```
 
 ```js
 // Runs only where scroll-state queries aren't supported. Run it after .top-bar is parsed (for example, in a module script).
-if (!CSS.supports('container-type', 'scroll-state')) {
-  const bar = document.querySelector('.top-bar');
-  let lastY = scrollY;
-  addEventListener('scroll', () => {
-    // Clamp so rubber-band overscroll at the top or bottom doesn't flip the scroll direction.
-    const y = Math.max(0, Math.min(scrollY, document.documentElement.scrollHeight - innerHeight));
-    if (y === lastY) return;
-    // Hide only after scrolling down past the bar's own height, so it doesn't flicker near the top.
-    bar?.classList.toggle('is-hidden', y > lastY && y > bar.offsetHeight);
-    lastY = y;
-  }, { passive: true });
+if (!CSS.supports("container-type", "scroll-state")) {
+	const bar = document.querySelector(".top-bar");
+	let lastY = scrollY;
+	addEventListener(
+		"scroll",
+		() => {
+			// Clamp so rubber-band overscroll at the top or bottom doesn't flip the scroll direction.
+			const y = Math.max(
+				0,
+				Math.min(scrollY, document.documentElement.scrollHeight - innerHeight),
+			);
+			if (y === lastY) return;
+			// Hide only after scrolling down past the bar's own height, so it doesn't flicker near the top.
+			bar?.classList.toggle("is-hidden", y > lastY && y > bar.offsetHeight);
+			lastY = y;
+		},
+		{ passive: true },
+	);
 }
 ```
 
@@ -123,7 +130,7 @@ With a bundler or import map:
 ```js
 // MANDATORY: Feature detect 'popover' on HTMLElement.prototype.
 if (!Object.hasOwn(HTMLElement.prototype, "popover")) {
-  import("@oddbird/popover-polyfill");
+	import("@oddbird/popover-polyfill");
 }
 ```
 
@@ -135,7 +142,7 @@ Caveats when using the polyfill:
 
 ```css
 [popover]:is(:popover-open, .\:popover-open) {
-  display: block;
+	display: block;
 }
 ```
 

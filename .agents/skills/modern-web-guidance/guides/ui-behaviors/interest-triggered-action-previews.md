@@ -16,14 +16,14 @@ An interest relationship is created by setting the `interestfor` attribute on a 
 For the sake of this use case, we can leverage the `interest` and `loseinterest` events to preview various effects for an interest target. Both of these events are `InterestEvent`s which has a `source` property which is the source of the interest (i.e. the element with the `interestfor` attribute).
 
 ```javascript
-interestingElement.addEventListener("interest", event => {
-  // Apply the preview based on `event.source`
-  event.target.dataset.preview = event.source.dataset.effect;
+interestingElement.addEventListener("interest", (event) => {
+	// Apply the preview based on `event.source`
+	event.target.dataset.preview = event.source.dataset.effect;
 });
 
-interestingElement.addEventListener("loseinterest", event => {
-  // Unapply the preview
-  delete event.target.dataset.preview;
+interestingElement.addEventListener("loseinterest", (event) => {
+	// Unapply the preview
+	delete event.target.dataset.preview;
 });
 ```
 
@@ -34,16 +34,18 @@ Active interest sources and targets can be selected with CSS using the `:interes
 
 ```css
 /* Styles to apply when the effect is being previewed */
-:interest-source {}
-:interest-target {}
+:interest-source {
+}
+:interest-target {
+}
 ```
 
 The start and end delay for an interest invoker (i.e. the element with the `interestfor` attribute) can be set with the `interest-delay-start` and `interest-delay-end` CSS properties or the shorthand `interest-delay` property.
 
 ```css
 [interestfor] {
-  interest-delay-start: 0.2s;
-  interest-delay-end: 0.1s;
+	interest-delay-start: 0.2s;
+	interest-delay-end: 0.1s;
 }
 ```
 
@@ -76,8 +78,12 @@ When using the polyfill, the CSS API changes slightly to account for the lack of
 
 ```css
 /* Styles to apply when the effect is being previewed */
-:is(:interest-source, .interest-source) { /* ... */ }
-:is(:interest-target, .interest-target) { /* ... */ }
+:is(:interest-source, .interest-source) {
+	/* ... */
+}
+:is(:interest-target, .interest-target) {
+	/* ... */
+}
 ```
 
 - **CSS Properties:** For `interest-delay`, `interest-delay-start`, and `interest-delay-end`, the polyfill requires using CSS variables as it cannot read the custom properties directly in all browsers.
@@ -85,17 +91,18 @@ When using the polyfill, the CSS API changes slightly to account for the lack of
 ```css
 /* Adjust the start and end delay for interest invokers */
 [interestfor] {
-  --interest-delay-start: 0.2s;
-  interest-delay-start: var(--interest-delay-start);
-  --interest-delay-end: 0.1s;
-  interest-delay-end: var(--interest-delay-end);
+	--interest-delay-start: 0.2s;
+	interest-delay-start: var(--interest-delay-start);
+	--interest-delay-end: 0.1s;
+	interest-delay-end: var(--interest-delay-end);
 }
 ```
 
 Set the initial delay to `0s` if an interest-triggered popover is already open and users are likely to move through multiple triggers in quick succession.
 
 ```css
-.container:has([interestfor]:is(:interest-source, .interest-source)) [interestfor] {
-  --interest-delay-start: 0s;
+.container:has([interestfor]:is(:interest-source, .interest-source))
+	[interestfor] {
+	--interest-delay-start: 0s;
 }
 ```

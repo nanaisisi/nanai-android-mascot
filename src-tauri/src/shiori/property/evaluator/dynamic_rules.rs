@@ -10,6 +10,7 @@ pub(super) fn evaluate_dynamic_property(
     q: &str,
     raw_query: &str,
     monitors: &[SystemMonitorInfo],
+    window_mode: Option<&str>,
 ) -> String {
     if let Some(shiori_var) = q.strip_prefix("shiori.") {
         return match shiori_var {
@@ -23,7 +24,7 @@ pub(super) fn evaluate_dynamic_property(
     }
 
     if let Some(bw_sub) = q.strip_prefix("baseware.") {
-        return evaluate_baseware_property(bw_sub);
+        return evaluate_baseware_property(bw_sub, window_mode);
     }
 
     if let Some(sys_sub) = q.strip_prefix("system.") {

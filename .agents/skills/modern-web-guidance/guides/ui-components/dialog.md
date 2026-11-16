@@ -37,11 +37,11 @@ The browser provides: inert page, focus containment, top layer, `::backdrop`, `E
 ```css
 /* MANDATORY (both rules): without them, scrolling over the backdrop or inside the dialog scrolls the page behind it */
 dialog:modal {
-  overscroll-behavior: contain; /* stops scroll gestures in the dialog chaining to the page */
+	overscroll-behavior: contain; /* stops scroll gestures in the dialog chaining to the page */
 }
 dialog::backdrop {
-  overflow: hidden; /* ::backdrop is not a scroll container by default, so it would ignore overscroll-behavior */
-  overscroll-behavior: contain;
+	overflow: hidden; /* ::backdrop is not a scroll container by default, so it would ignore overscroll-behavior */
+	overscroll-behavior: contain;
 }
 ```
 
@@ -147,19 +147,28 @@ Unsupported in: Safari.
 Without `closedby`, a modal still closes with `Esc` and the back gesture; only click-outside is lost, so this is graceful degradation. `closedby="none"` is ignored the same way: `Esc` fires `cancel` and then closes the dialog. Keep the unsaved-changes guard in a `cancel` handler, not in `closedby="none"` alone, so it also protects where `closedby` is missing. If your Baseline target requires light dismiss, add this where `closedby` is missing:
 
 ```js
-if (!('closedBy' in HTMLDialogElement.prototype)) {
-  // Test the pointer position, not event.target: the <dialog> is also the target for its own
-  // padding and the gaps between its children, so a target check would close on those clicks
-  const outside = (e, dialog) => {
-    const r = dialog.getBoundingClientRect();
-    return e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
-  };
-  for (const dialog of document.querySelectorAll('dialog[closedby="any"]')) {
-    let pressedOutside = false;
-    dialog.addEventListener('pointerdown', (e) => { pressedOutside = outside(e, dialog); });
-    // Require the press and the release outside, so a text-selection drag that ends on the backdrop does not dismiss
-    dialog.addEventListener('pointerup', (e) => { if (pressedOutside && outside(e, dialog)) dialog.close(); });
-  }
+if (!("closedBy" in HTMLDialogElement.prototype)) {
+	// Test the pointer position, not event.target: the <dialog> is also the target for its own
+	// padding and the gaps between its children, so a target check would close on those clicks
+	const outside = (e, dialog) => {
+		const r = dialog.getBoundingClientRect();
+		return (
+			e.clientX < r.left ||
+			e.clientX > r.right ||
+			e.clientY < r.top ||
+			e.clientY > r.bottom
+		);
+	};
+	for (const dialog of document.querySelectorAll('dialog[closedby="any"]')) {
+		let pressedOutside = false;
+		dialog.addEventListener("pointerdown", (e) => {
+			pressedOutside = outside(e, dialog);
+		});
+		// Require the press and the release outside, so a text-selection drag that ends on the backdrop does not dismiss
+		dialog.addEventListener("pointerup", (e) => {
+			if (pressedOutside && outside(e, dialog)) dialog.close();
+		});
+	}
 }
 ```
 
@@ -180,8 +189,8 @@ If your Baseline target does not include Invoker Commands, keep the same markup 
 
 ```js
 // MANDATORY: feature detect on HTMLButtonElement.prototype and load only when native support is missing
-if (!('commandForElement' in HTMLButtonElement.prototype)) {
-  import('invokers-polyfill'); // npm install invokers-polyfill
+if (!("commandForElement" in HTMLButtonElement.prototype)) {
+	import("invokers-polyfill"); // npm install invokers-polyfill
 }
 ```
 
@@ -201,7 +210,7 @@ With a bundler or import map:
 ```js
 // MANDATORY: Feature detect 'popover' on HTMLElement.prototype.
 if (!Object.hasOwn(HTMLElement.prototype, "popover")) {
-  import("@oddbird/popover-polyfill");
+	import("@oddbird/popover-polyfill");
 }
 ```
 
@@ -213,6 +222,6 @@ Caveats when using the polyfill:
 
 ```css
 [popover]:is(:popover-open, .\:popover-open) {
-  display: block;
+	display: block;
 }
 ```

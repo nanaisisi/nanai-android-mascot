@@ -18,7 +18,6 @@ To add entry and exit effects to an element, you need to combine a few CSS prope
     ```
 
 2.  **Attach the entry and exit keyframes to the element.** You can do this by defining multiple animations in the `animation` property.
-
     -   Give the entry animation an `animation-fill-mode` of `backwards` so that it applies its initial state before the animation starts.
     -   Give the exit animation an `animation-fill-mode` of `forwards` so that it maintains its final state after the animation is complete.
 
@@ -41,7 +40,6 @@ To add entry and exit effects to an element, you need to combine a few CSS prope
     By default, `view()` tracks the element on the `block` axis. If you need to track it on the `inline` axis, you can use `view(inline)`.
 
 4.  **Limit the animations to the `entry` and `exit` ranges.** The `animation-range` property allows you to specify which part of the timeline an animation should run on.
-
     -   The `entry` range covers the time from when the element first enters the viewport until it is fully visible.
     -   The `exit` range covers the time from when the element starts to leave the viewport until it is completely hidden.
 
@@ -59,26 +57,26 @@ This code animates the direct children of the scroller on scroll using an **anon
 
 ```css
 @media (prefers-reduced-motion: no-preference) {
-  @supports ((animation-timeline: view()) and (animation-range: entry)) {
-    @keyframes grow {
-      from {
-        scale: 0.5;
-      }
-    }
-    @keyframes shrink {
-      to {
-        scale: 0.5;
-      }
-    }
+	@supports ((animation-timeline: view()) and (animation-range: entry)) {
+		@keyframes grow {
+			from {
+				scale: 0.5;
+			}
+		}
+		@keyframes shrink {
+			to {
+				scale: 0.5;
+			}
+		}
 
-    .scroller > * {
-      animation:
-        grow auto linear backwards,
-        shrink auto linear forwards;
-      animation-timeline: view(inline);
-      animation-range: entry, exit;
-    }
-  }
+		.scroller > * {
+			animation:
+				grow auto linear backwards,
+				shrink auto linear forwards;
+			animation-timeline: view(inline);
+			animation-range: entry, exit;
+		}
+	}
 }
 ```
 
@@ -88,27 +86,27 @@ The following code has the same visual outcome, but animates the direct children
 
 ```css
 @media (prefers-reduced-motion: no-preference) {
-  @supports ((animation-timeline: view()) and (animation-range: entry)) {
-    @keyframes grow {
-      from {
-        scale: 0.5;
-      }
-    }
-    @keyframes shrink {
-      to {
-        scale: 0.5;
-      }
-    }
+	@supports ((animation-timeline: view()) and (animation-range: entry)) {
+		@keyframes grow {
+			from {
+				scale: 0.5;
+			}
+		}
+		@keyframes shrink {
+			to {
+				scale: 0.5;
+			}
+		}
 
-    .scroller > * {
-      view-timeline: --tl inline;
-      animation:
-        grow auto linear backwards,
-        shrink auto linear forwards;
-      animation-timeline: --tl;
-      animation-range: entry, exit;
-    }
-  }
+		.scroller > * {
+			view-timeline: --tl inline;
+			animation:
+				grow auto linear backwards,
+				shrink auto linear forwards;
+			animation-timeline: --tl;
+			animation-range: entry, exit;
+		}
+	}
 }
 ```
 
@@ -116,26 +114,26 @@ You can also express the same entry and exit effect in a **single `@keyframes` r
 
 ```css
 @media (prefers-reduced-motion: no-preference) {
-  @supports ((animation-timeline: view()) and (animation-range: entry)) {
-    @keyframes grow-and-shrink {
-      entry 0% {
-        scale: 0.5; /* Example value */
-      }
-      /* Explicitly set the resting state across the middle (`contain`) phase so the element doesn't interpolate straight from entry 0% to exit 100% */
-      entry 100%,
-      exit 0% {
-        scale: 1;
-      }
-      exit 100% {
-        scale: 0.5;
-      }
-    }
+	@supports ((animation-timeline: view()) and (animation-range: entry)) {
+		@keyframes grow-and-shrink {
+			entry 0% {
+				scale: 0.5; /* Example value */
+			}
+			/* Explicitly set the resting state across the middle (`contain`) phase so the element doesn't interpolate straight from entry 0% to exit 100% */
+			entry 100%,
+			exit 0% {
+				scale: 1;
+			}
+			exit 100% {
+				scale: 0.5;
+			}
+		}
 
-    .scroller > * {
-      animation: grow-and-shrink auto linear both;
-      animation-timeline: view(inline);
-    }
-  }
+		.scroller > * {
+			animation: grow-and-shrink auto linear both;
+			animation-timeline: view(inline);
+		}
+	}
 }
 ```
 
@@ -149,7 +147,7 @@ When using scroll-driven animations, it's important to follow a few best practic
   - If the animation is only considered to be decorative, opt for Progressive Enhancement and **DO NOT** provide a fallback.
 - **DO** respect user preferences: Some users prefer to have less motion on the web. Use the `prefers-reduced-motion` media query to disable or reduce your animations for these users.
 - **DO** try to animate only performant CSS properties: For the smoothest animations, stick to animating properties that can be handled by the browser's compositor thread, such as `transform` and `opacity`. Animating other properties like `width` or `height` can lead to performance issues.
-- **DO** use the correct declaration order: When using the `animation` shorthand property, declare `animation-timeline` and `animation-range` *after* it to prevent the shorthand from resetting them.
+- **DO** use the correct declaration order: When using the `animation` shorthand property, declare `animation-timeline` and `animation-range` _after_ it to prevent the shorthand from resetting them.
 
 Use an anonymous `view()` timeline by default when the animated element is the same element being tracked, so you do not have to name every individual timeline. Use a named `view-timeline` instead when multiple elements reuse a single timeline (avoiding duplicate timelines) or when reaching across the DOM (such as animating descendants or non-ancestors via `timeline-scope` when `view()` or `scroll(nearest)` does not suffice).
 

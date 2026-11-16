@@ -29,20 +29,20 @@ This state is usually stored in `localStorage` and reflected in a `<meta name="c
 
 ### Reflect the override in CSS
 
-The `<meta>` is only a *presentational hint*: any `color-scheme` declaration in author CSS overrides it.
+The `<meta>` is only a _presentational hint_: any `color-scheme` declaration in author CSS overrides it.
 Since `dark-mode` (via `npx -y modern-web-guidance@latest retrieve "dark-mode"`) sets `color-scheme: light dark` on `:root`, updating the `<meta>` alone is a **no-op** — CSS wins.
 Map the `<meta>` back to the property so the cascade follows it:
 
 ```css
 :root {
-  color-scheme: light dark;
+	color-scheme: light dark;
 
-  &:has(> head > meta[name="color-scheme"][content="dark"]) {
-    color-scheme: dark;
-  }
-  &:has(> head > meta[name="color-scheme"][content="light"]) {
-    color-scheme: light;
-  }
+	&:has(> head > meta[name="color-scheme"][content="dark"]) {
+		color-scheme: dark;
+	}
+	&:has(> head > meta[name="color-scheme"][content="light"]) {
+		color-scheme: light;
+	}
 }
 ```
 
@@ -66,7 +66,7 @@ document.querySelector('meta[name="color-scheme"]').content = localStorage.getIt
 - In rare cases `localStorage` access can throw (e.g. site data blocked), but since this script does nothing else, the only side effect would be a console error. Wrap in `try .. catch` if this matters. Ensure the theme is still applied to the page, even if it cannot be persisted.
 - The override can change from another tab: handle `window`'s `storage` event to stay in sync.
 - **DO NOT** use `matchMedia()` to remove the stored value when the system preference changes to match it.
-Many users' OS switches schemes automatically based on time of day; removing the stored value whenever the two happen to coincide would make it impossible to pin a scheme at all.
+  Many users' OS switches schemes automatically based on time of day; removing the stored value whenever the two happen to coincide would make it impossible to pin a scheme at all.
 
 ### Branching for HTML and non-color values
 
@@ -113,7 +113,7 @@ Essentially, it is a tri-state control (`light dark`, `light`, `dark`) where the
 
 When the user toggles:
 
-1. Target scheme = the opposite of the currently *rendered* scheme (stored value if any, else system preference). The user intent is "select the opposite of what I see right now", NOT "select the inverse of the system default".
+1. Target scheme = the opposite of the currently _rendered_ scheme (stored value if any, else system preference). The user intent is "select the opposite of what I see right now", NOT "select the inverse of the system default".
 2. If the target differs from the current system preference, store it literally.
 3. If the target matches the current system preference, the user is undoing their adjustment: remove the stored value. DO NOT store it — that would invisibly pin the scheme against future system changes.
 4. Set the `<meta>` content to the stored value, or `light dark` if none.

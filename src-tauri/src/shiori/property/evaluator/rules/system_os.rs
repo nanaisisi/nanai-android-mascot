@@ -351,12 +351,10 @@ fn get_windows_display_version() -> String {
 
 #[cfg(target_os = "windows")]
 fn is_dst_active() -> bool {
-    use windows_sys::Win32::System::Time::{
-        GetTimeZoneInformation, TIME_ZONE_ID_DAYLIGHT, TIME_ZONE_INFORMATION,
-    };
+    use windows_sys::Win32::System::Time::{GetTimeZoneInformation, TIME_ZONE_INFORMATION};
     let mut tzi: TIME_ZONE_INFORMATION = unsafe { std::mem::zeroed() };
     let res = unsafe { GetTimeZoneInformation(&mut tzi) };
-    res == TIME_ZONE_ID_DAYLIGHT
+    res == 2
 }
 
 #[cfg(not(target_os = "windows"))]

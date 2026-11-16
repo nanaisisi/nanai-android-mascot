@@ -11,14 +11,14 @@
 
 ```css
 .popover-reveal {
-  /* Transition discrete display and top-layer overlay alongside opacity */
-  transition:
-    opacity ease-out,
-    display,
-    overlay;
-  transition-duration: 0.2s;
-  /* Separate after transition so the shorthand doesn't reset it or fail in older browsers */
-  transition-behavior: allow-discrete;
+	/* Transition discrete display and top-layer overlay alongside opacity */
+	transition:
+		opacity ease-out,
+		display,
+		overlay;
+	transition-duration: 0.2s;
+	/* Separate after transition so the shorthand doesn't reset it or fail in older browsers */
+	transition-behavior: allow-discrete;
 }
 ```
 
@@ -44,9 +44,9 @@ When reduced motion should have no animation at all, default to the static state
 ```css
 /* Good: Default to static state and opt in to full motion */
 .spinner {
-  @media (prefers-reduced-motion: no-preference) {
-    animation: spin 1s linear infinite;
-  }
+	@media (prefers-reduced-motion: no-preference) {
+		animation: spin 1s linear infinite;
+	}
 }
 ```
 
@@ -57,10 +57,10 @@ When the animation should still run under reduced motion with gentler parameters
 ```css
 /* Good: Slow down the animation for reduced motion instead of canceling it */
 progress:not([value]) {
-  animation: slide 1s infinite linear;
-  @media (prefers-reduced-motion: reduce) {
-    animation-duration: 20s;
-  }
+	animation: slide 1s infinite linear;
+	@media (prefers-reduced-motion: reduce) {
+		animation-duration: 20s;
+	}
 }
 ```
 
@@ -72,23 +72,23 @@ When `event.animation` is not available, you can usually find the `Animation` in
 
 - Web Animations API (`element.animate()`) animations do not have an `animationName`, so they cannot be matched by name when filtering `event.target.getAnimations()`.
 - Filtering by `animationName` for `AnimationEvent`s is ambiguous when multiple animations with the same name are attached to the same element.
-  - Note that filtering on `transitionProperty` for `TransitionEvent`s works as there is only one event per transition property. 
+  - Note that filtering on `transitionProperty` for `TransitionEvent`s works as there is only one event per transition property.
 - `event.target` always points to the originating DOM element, so it does not distinguish between animations running on the element itself versus one of its pseudo-elements — whereas `event.animation.effect.pseudoElement` exposes the target pseudo-element directly.
 
 ```js
 // Works in most basic CSS animation cases, but fails for WAAPI animations,
 // duplicate animation names on the same element, or pseudo-elements.
-document.addEventListener('animationstart', (event) => {
-  const animation = event.target
-    .getAnimations()
-    .find((anim) => anim.animationName === event.animationName);
-  console.log(animation);
+document.addEventListener("animationstart", (event) => {
+	const animation = event.target
+		.getAnimations()
+		.find((anim) => anim.animationName === event.animationName);
+	console.log(animation);
 });
 
 // PREFERRED: Directly access the exact Animation object via event.animation
-document.addEventListener('animationstart', (event) => {
-  const animation = event.animation;
-  console.log(animation);
+document.addEventListener("animationstart", (event) => {
+	const animation = event.animation;
+	console.log(animation);
 });
 ```
 

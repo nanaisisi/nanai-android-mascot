@@ -18,9 +18,9 @@ Truncation is visual only. Screen readers announce the full text, find-in-page m
 
 ```css
 .label {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 ```
 
@@ -40,14 +40,14 @@ Wrap the part that may truncate, such as everything before the file extension or
 
 ```css
 .filename {
-  display: flex;
-  white-space: nowrap;
+	display: flex;
+	white-space: nowrap;
 }
 
 /* The trailing text is an anonymous flex item, which never shrinks below its content */
 .filename > span {
-  overflow: hidden;
-  text-overflow: ellipsis;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 ```
 
@@ -59,45 +59,47 @@ Use a mask that fades the end of the text. Only fade when the text overflows, or
 /* --truncated is the flag the animation sets, registered so it does not inherit into nested elements.
    --fade-size is the configured size, registered so it can transition. */
 @property --truncated {
-  syntax: "<integer>";
-  inherits: false;
-  initial-value: 0;
+	syntax: "<integer>";
+	inherits: false;
+	initial-value: 0;
 }
 
 @property --fade-size {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0px;
 }
 
 .label {
-  white-space: nowrap;
-  overflow: hidden;
-  /* Example value: how much of the text fades */
-  --fade-size: 2rem;
-  /* Gradient directions and positions are physical, so flip them for right-to-left text */
-  --fade-dir: right;
-  --fade-pos: 100%;
-  /* An opaque layer that is not clipped to the box, minus a band at the end.
+	white-space: nowrap;
+	overflow: hidden;
+	/* Example value: how much of the text fades */
+	--fade-size: 2rem;
+	/* Gradient directions and positions are physical, so flip them for right-to-left text */
+	--fade-dir: right;
+	--fade-pos: 100%;
+	/* An opaque layer that is not clipped to the box, minus a band at the end.
      Masking only the band keeps everything else visible, including a focus outline outside the box.
      The band is --fade-size while truncated, 0 otherwise. */
-  mask:
-    linear-gradient(black, black) no-clip subtract,
-    linear-gradient(to var(--fade-dir), transparent, black) var(--fade-pos) 0 / calc(var(--truncated) * var(--fade-size)) 100% no-repeat no-clip;
-  /* Sets the flag only while the text overflows: with no overflow the timeline is inactive and the animation has no effect */
-  animation: truncated linear both;
-  animation-timeline: scroll(self inline);
+	mask:
+		linear-gradient(black, black) no-clip subtract,
+		linear-gradient(to var(--fade-dir), transparent, black) var(--fade-pos) 0 /
+		calc(var(--truncated) * var(--fade-size)) 100% no-repeat no-clip;
+	/* Sets the flag only while the text overflows: with no overflow the timeline is inactive and the animation has no effect */
+	animation: truncated linear both;
+	animation-timeline: scroll(self inline);
 
-  &:dir(rtl) {
-    --fade-dir: left;
-    --fade-pos: 0;
-  }
+	&:dir(rtl) {
+		--fade-dir: left;
+		--fade-pos: 0;
+	}
 }
 
 @keyframes truncated {
-  from, to {
-    --truncated: 1;
-  }
+	from,
+	to {
+		--truncated: 1;
+	}
 }
 ```
 
@@ -116,29 +118,29 @@ Put both versions in the markup and switch them with a container query on the ce
 
 ```css
 .day {
-  container-type: inline-size;
+	container-type: inline-size;
 }
 
 .short {
-  display: none;
-  user-select: none;
+	display: none;
+	user-select: none;
 }
 
 /* Example threshold: relative units resolve against the container's own font */
 @container (inline-size < 6em) {
-  /* Visually hidden, but still in the accessibility tree */
-  .long {
-    position: absolute;
-    inline-size: 1px;
-    block-size: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
+	/* Visually hidden, but still in the accessibility tree */
+	.long {
+		position: absolute;
+		inline-size: 1px;
+		block-size: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
 
-  .short {
-    display: inline;
-  }
+	.short {
+		display: inline;
+	}
 }
 ```
 
@@ -164,45 +166,48 @@ Move the text by the difference between the element's width and its own: a perce
 
 ```css
 .label {
-  display: block;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  /* Active only while the text overflows */
-  animation: truncated linear both;
-  animation-timeline: scroll(self inline);
+	display: block;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	/* Active only while the text overflows */
+	animation: truncated linear both;
+	animation-timeline: scroll(self inline);
 }
 
 /* The same flag as the fade, registered there so it does not inherit */
 @keyframes truncated {
-  from, to {
-    --truncated: 1;
-  }
+	from,
+	to {
+		--truncated: 1;
+	}
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  /* Outside the query: a container cannot query itself */
-  .label:is(:hover, :focus-visible) {
-    text-overflow: clip;
-  }
+	/* Outside the query: a container cannot query itself */
+	.label:is(:hover, :focus-visible) {
+		text-overflow: clip;
+	}
 
-  @container style(--truncated: 1) {
-    .label:is(:hover, :focus-visible) > span {
-      /* Needs its own box to be moved. It stays inline otherwise, so the ellipsis renders. */
-      display: inline-block;
-      /* Forward by the element's width, then back by the text's own width */
-      margin-inline-start: 100%;
-      /* 1px short, so the text still overflows and the timeline stays active */
-      translate: calc(1px - 100%);
-      /* Example values. Set only here: when the pointer leaves, the text snaps back behind the ellipsis */
-      transition: margin-inline-start 2s ease-in, translate 2s ease-in;
-    }
+	@container style(--truncated: 1) {
+		.label:is(:hover, :focus-visible) > span {
+			/* Needs its own box to be moved. It stays inline otherwise, so the ellipsis renders. */
+			display: inline-block;
+			/* Forward by the element's width, then back by the text's own width */
+			margin-inline-start: 100%;
+			/* 1px short, so the text still overflows and the timeline stays active */
+			translate: calc(1px - 100%);
+			/* Example values. Set only here: when the pointer leaves, the text snaps back behind the ellipsis */
+			transition:
+				margin-inline-start 2s ease-in,
+				translate 2s ease-in;
+		}
 
-    /* The overflow is on the left, so the text moves right */
-    .label:is(:hover, :focus-visible):dir(rtl) > span {
-      translate: calc(100% - 1px);
-    }
-  }
+		/* The overflow is on the left, so the text moves right */
+		.label:is(:hover, :focus-visible):dir(rtl) > span {
+			translate: calc(100% - 1px);
+		}
+	}
 }
 ```
 
@@ -219,11 +224,11 @@ With a fade instead of an ellipsis, the text would scroll under the fade and its
 
 ```css
 @media (prefers-reduced-motion: no-preference) {
-  .label:is(:hover, :focus-visible) {
-    --fade-size: 0px;
-    /* Same duration and easing as the scroll. Set only here, so the fade is back as soon as the text snaps back. */
-    transition: --fade-size 2s ease-in;
-  }
+	.label:is(:hover, :focus-visible) {
+		--fade-size: 0px;
+		/* Same duration and easing as the scroll. Set only here, so the fade is back as soon as the text snaps back. */
+		transition: --fade-size 2s ease-in;
+	}
 }
 ```
 
@@ -233,25 +238,25 @@ Let the element grow to its text, and transition the growth. Set `interpolate-si
 
 ```css
 .chip {
-  /* Example values */
-  min-inline-size: 6rem;
-  max-inline-size: 12rem;
-  interpolate-size: allow-keywords;
+	/* Example values */
+	min-inline-size: 6rem;
+	max-inline-size: 12rem;
+	interpolate-size: allow-keywords;
 
-  & > span {
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+	& > span {
+		display: block;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
 
-  &:is(:hover, :focus-visible) {
-    max-inline-size: var(--expanded-max-inline-size, max-content);
-  }
+	&:is(:hover, :focus-visible) {
+		max-inline-size: var(--expanded-max-inline-size, max-content);
+	}
 
-  @media (prefers-reduced-motion: no-preference) {
-    transition: max-inline-size .3s;
-  }
+	@media (prefers-reduced-motion: no-preference) {
+		transition: max-inline-size 0.3s;
+	}
 }
 ```
 
@@ -319,23 +324,26 @@ Supported by: Chrome 115 (Jul 2023), Edge 115 (Jul 2023), Firefox 159 (Oct 2026)
 Without scroll-driven animations the fade never shows, the hint never shows, and the scroll reveal never starts: the text is clipped with no indication. If your Baseline target does not support them, toggle a class from script: a `ResizeObserver` compares `scrollWidth` to `clientWidth`, and the class sets the same flag as the keyframes. Run the check again when the text changes: `ResizeObserver` reacts only to size changes.
 
 ```js
-if (!CSS.supports('animation-timeline', 'scroll()')) {
-  const observer = new ResizeObserver(entries => {
-    for (const { target } of entries) {
-      target.classList.toggle('truncated', target.scrollWidth > target.clientWidth);
-    }
-  });
+if (!CSS.supports("animation-timeline", "scroll()")) {
+	const observer = new ResizeObserver((entries) => {
+		for (const { target } of entries) {
+			target.classList.toggle(
+				"truncated",
+				target.scrollWidth > target.clientWidth,
+			);
+		}
+	});
 
-  for (const label of document.querySelectorAll('.label')) {
-    observer.observe(label);
-  }
+	for (const label of document.querySelectorAll(".label")) {
+		observer.observe(label);
+	}
 }
 ```
 
 ```css
 /* Same as the keyframes */
 .label.truncated {
-  --truncated: 1;
+	--truncated: 1;
 }
 ```
 
@@ -349,16 +357,18 @@ Without style queries the fade still works, since it is on the element itself, b
 ```css
 /* Same as the style queries */
 .label.truncated > span {
-  text-decoration: underline dotted;
+	text-decoration: underline dotted;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .label.truncated:is(:hover, :focus-visible) > span {
-    display: inline-block;
-    margin-inline-start: 100%;
-    translate: calc(1px - 100%);
-    transition: margin-inline-start 2s ease-in, translate 2s ease-in;
-  }
+	.label.truncated:is(:hover, :focus-visible) > span {
+		display: inline-block;
+		margin-inline-start: 100%;
+		translate: calc(1px - 100%);
+		transition:
+			margin-inline-start 2s ease-in,
+			translate 2s ease-in;
+	}
 }
 ```
 
@@ -372,9 +382,9 @@ Without it, `max-content` cannot be interpolated and the element expands instant
 
 ```css
 .chip {
-  @supports not (interpolate-size: allow-keywords) {
-    --expanded-max-inline-size: 20rem;
-  }
+	@supports not (interpolate-size: allow-keywords) {
+		--expanded-max-inline-size: 20rem;
+	}
 }
 ```
 

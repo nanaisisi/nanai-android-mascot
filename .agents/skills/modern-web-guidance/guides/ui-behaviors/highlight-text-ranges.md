@@ -18,8 +18,8 @@ const treeWalker = document.createTreeWalker(article, NodeFilter.SHOW_TEXT);
 const allTextNodes = [];
 let currentNode = treeWalker.nextNode();
 while (currentNode) {
-  allTextNodes.push(currentNode);
-  currentNode = treeWalker.nextNode();
+	allTextNodes.push(currentNode);
+	currentNode = treeWalker.nextNode();
 }
 
 // MANDATORY: Set range start/end on text nodes, not element nodes.
@@ -69,8 +69,8 @@ Use the `::highlight()` pseudo-element in CSS to style each registered highlight
 
 ```css
 ::highlight(search-results) {
-  background-color: #0000FF;
-  color: white;
+	background-color: #0000ff;
+	color: white;
 }
 ```
 
@@ -84,7 +84,7 @@ Custom highlights are purely presentational and are not exposed to the accessibi
 
 Make sure that there is sufficient contrast between the highlight background color and text color to meeting WCAG 2.2 Success Criterion 1.4.3 Contrast (Minimum) (Level AA). The contrast ratio must be at least 4.5:1 for text with a font size of less than 18 point or 14 point bold, and at least 3:1 for text with a font size of greater than 18 point or 14 point bold.
 
-Make sure that the contrast ratio between the highlight background color and adjacent colors is at least 3:1 to meet WCAG 2.2 Success Criterion 1.4.11 Non-text Content (Level AA). 
+Make sure that the contrast ratio between the highlight background color and adjacent colors is at least 3:1 to meet WCAG 2.2 Success Criterion 1.4.11 Non-text Content (Level AA).
 The contrast can be less than 3:1 if the highlighted text uses another visual indicator (e.g. `text-decoration: underline;` or the inclusion of a subtle `text-shadow` on the text) to further indicate that the text is highlighted.
 
 Highlights must not rely solely on color to convey meaning. For example, if a highlight indicates an error, pair it with another visual indicator such as `text-decoration: wavy underline`, an adjacent text label, or an icon.
@@ -100,9 +100,9 @@ You can detect support before using the API:
 
 ```javascript
 if (CSS.highlights) {
-  // CSS Custom Highlight API is supported.
+	// CSS Custom Highlight API is supported.
 } else {
-  // Fallback: wrap matches in <mark> elements.
+	// Fallback: wrap matches in <mark> elements.
 }
 ```
 
@@ -110,30 +110,30 @@ If the highlight is critical for the user experience, fall back to wrapping matc
 
 ```javascript
 if (!CSS.highlights) {
-  // Walk text nodes and wrap matches in <mark>, preserving structure.
-  const walker = document.createTreeWalker(article, NodeFilter.SHOW_TEXT);
-  const nodes = [];
-  for (let n = walker.nextNode(); n; n = walker.nextNode()) nodes.push(n);
+	// Walk text nodes and wrap matches in <mark>, preserving structure.
+	const walker = document.createTreeWalker(article, NodeFilter.SHOW_TEXT);
+	const nodes = [];
+	for (let n = walker.nextNode(); n; n = walker.nextNode()) nodes.push(n);
 
-  const term = searchTerm.toLowerCase();
-  for (const textNode of nodes) {
-    const text = textNode.textContent;
-    let pos = text.toLowerCase().indexOf(term);
-    if (pos === -1) continue;
+	const term = searchTerm.toLowerCase();
+	for (const textNode of nodes) {
+		const text = textNode.textContent;
+		let pos = text.toLowerCase().indexOf(term);
+		if (pos === -1) continue;
 
-    const frag = document.createDocumentFragment();
-    let last = 0;
-    while (pos !== -1) {
-      frag.append(text.slice(last, pos));
-      const mark = document.createElement("mark");
-      // textContent assignment avoids HTML injection.
-      mark.textContent = text.slice(pos, pos + term.length);
-      frag.append(mark);
-      last = pos + term.length;
-      pos = text.toLowerCase().indexOf(term, last);
-    }
-    frag.append(text.slice(last));
-    textNode.replaceWith(frag);
-  }
+		const frag = document.createDocumentFragment();
+		let last = 0;
+		while (pos !== -1) {
+			frag.append(text.slice(last, pos));
+			const mark = document.createElement("mark");
+			// textContent assignment avoids HTML injection.
+			mark.textContent = text.slice(pos, pos + term.length);
+			frag.append(mark);
+			last = pos + term.length;
+			pos = text.toLowerCase().indexOf(term, last);
+		}
+		frag.append(text.slice(last));
+		textNode.replaceWith(frag);
+	}
 }
 ```

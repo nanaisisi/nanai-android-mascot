@@ -14,7 +14,7 @@ When an element moves in or out of the top layer, it must transition the `overla
 
 ### 3. Entry Animations with `@starting-style`
 
-Use the `@starting-style` at-rule to define the styles an element should transition *from* when it is first rendered or its `display` changes from `none`.
+Use the `@starting-style` at-rule to define the styles an element should transition _from_ when it is first rendered or its `display` changes from `none`.
 
 ### 4. Animating the Backdrop
 
@@ -26,67 +26,67 @@ The `::backdrop` pseudo-element can be animated similarly by applying transition
 /* 1. Define the visible (open) state */
 dialog[open],
 [popover]:popover-open {
-  opacity: 1;
+	opacity: 1;
 
-  /* 2. Define the starting state for entry (must come after open state) */
-  @starting-style {
-    opacity: 0;
-  }
+	/* 2. Define the starting state for entry (must come after open state) */
+	@starting-style {
+		opacity: 0;
+	}
 
-  /* Scale only for users who haven't asked for reduced motion (see 5) */
-  @media (prefers-reduced-motion: no-preference) {
-    transform: scale(1);
+	/* Scale only for users who haven't asked for reduced motion (see 5) */
+	@media (prefers-reduced-motion: no-preference) {
+		transform: scale(1);
 
-    @starting-style {
-      transform: scale(0.9);
-    }
-  }
+		@starting-style {
+			transform: scale(0.9);
+		}
+	}
 }
 
 /* 3. Define the base (closed/exit) state and transitions */
 dialog,
 [popover] {
-  opacity: 0;
+	opacity: 0;
 
-  /* MANDATORY: transition display and overlay for top-layer elements */
-  transition-property: opacity, transform, display, overlay;
-  transition-duration: 0.3s;
-  transition-timing-function: ease-out;
-  /* Separate after transition so a shorthand doesn't reset it or fail in older browsers */
-  transition-behavior: allow-discrete;
+	/* MANDATORY: transition display and overlay for top-layer elements */
+	transition-property: opacity, transform, display, overlay;
+	transition-duration: 0.3s;
+	transition-timing-function: ease-out;
+	/* Separate after transition so a shorthand doesn't reset it or fail in older browsers */
+	transition-behavior: allow-discrete;
 
-  @media (prefers-reduced-motion: no-preference) {
-    transform: scale(0.9);
-  }
+	@media (prefers-reduced-motion: no-preference) {
+		transform: scale(0.9);
+	}
 }
 
 /* 4. Animate the backdrop */
 dialog::backdrop,
 [popover]::backdrop {
-  background-color: rgba(0, 0, 0, 0);
-  transition-property: background-color, display, overlay;
-  transition-duration: 0.3s;
-  transition-timing-function: ease-out;
-  /* Separate after transition so a shorthand doesn't reset it or fail in older browsers */
-  transition-behavior: allow-discrete;
+	background-color: rgba(0, 0, 0, 0);
+	transition-property: background-color, display, overlay;
+	transition-duration: 0.3s;
+	transition-timing-function: ease-out;
+	/* Separate after transition so a shorthand doesn't reset it or fail in older browsers */
+	transition-behavior: allow-discrete;
 }
 
 dialog[open]::backdrop,
 [popover]:popover-open::backdrop {
-  background-color: rgba(0, 0, 0, 0.5);
+	background-color: rgba(0, 0, 0, 0.5);
 
-  @starting-style {
-    background-color: rgba(0, 0, 0, 0);
-  }
+	@starting-style {
+		background-color: rgba(0, 0, 0, 0);
+	}
 }
 
 /* 5. Respect user preference for reduced motion: the scale above only applies
    with no-preference, so this only shortens the fade */
 @media (prefers-reduced-motion: reduce) {
-  dialog,
-  [popover] {
-    transition-duration: 0.1s;
-  }
+	dialog,
+	[popover] {
+		transition-duration: 0.1s;
+	}
 }
 ```
 
@@ -124,22 +124,26 @@ To reliably detect discrete `display` transition support, probe whether a tempor
 ```javascript
 let supportsDisplayTransition;
 function canTransitionDisplay() {
-  if (supportsDisplayTransition !== undefined) return supportsDisplayTransition;
-  if (!window.CSS?.supports?.('transition-behavior', 'allow-discrete') || !document.body) {
-    return false;
-  }
-  const probe = document.createElement('div');
-  // The shorthand is intentional here: browsers that don't parse allow-discrete
-  // drop the whole declaration, so display: none applies instantly and the probe
-  // correctly returns false. !important guards against global reduced-motion
-  // resets like `* { transition: none !important }`.
-  probe.style.cssText = 'transition: display 1s allow-discrete !important; display: block;';
-  document.body.appendChild(probe);
-  getComputedStyle(probe).display;
-  probe.style.display = 'none';
-  supportsDisplayTransition = getComputedStyle(probe).display === 'block';
-  probe.remove();
-  return supportsDisplayTransition;
+	if (supportsDisplayTransition !== undefined) return supportsDisplayTransition;
+	if (
+		!window.CSS?.supports?.("transition-behavior", "allow-discrete") ||
+		!document.body
+	) {
+		return false;
+	}
+	const probe = document.createElement("div");
+	// The shorthand is intentional here: browsers that don't parse allow-discrete
+	// drop the whole declaration, so display: none applies instantly and the probe
+	// correctly returns false. !important guards against global reduced-motion
+	// resets like `* { transition: none !important }`.
+	probe.style.cssText =
+		"transition: display 1s allow-discrete !important; display: block;";
+	document.body.appendChild(probe);
+	getComputedStyle(probe).display;
+	probe.style.display = "none";
+	supportsDisplayTransition = getComputedStyle(probe).display === "block";
+	probe.remove();
+	return supportsDisplayTransition;
 }
 ```
 
@@ -151,27 +155,27 @@ Exit animations require both `overlay` and discrete `display` transition support
 
 ```css
 :is(dialog[open], [popover]:popover-open):where(:not([data-closing])) {
-  opacity: 1;
+	opacity: 1;
 
-  @starting-style {
-    opacity: 0;
-  }
+	@starting-style {
+		opacity: 0;
+	}
 
-  @media (prefers-reduced-motion: no-preference) {
-    transform: scale(1);
+	@media (prefers-reduced-motion: no-preference) {
+		transform: scale(1);
 
-    @starting-style {
-      transform: scale(0.9);
-    }
-  }
+		@starting-style {
+			transform: scale(0.9);
+		}
+	}
 
-  &::backdrop {
-    background-color: rgb(0 0 0 / 0.5);
+	&::backdrop {
+		background-color: rgb(0 0 0 / 0.5);
 
-    @starting-style {
-      background-color: transparent;
-    }
-  }
+		@starting-style {
+			background-color: transparent;
+		}
+	}
 }
 ```
 
@@ -179,33 +183,33 @@ Exit animations require both `overlay` and discrete `display` transition support
 // Evaluate lazily: canTransitionDisplay() needs document.body, so a top-level
 // const would be permanently false if this script runs in <head>.
 function supportsTopLayerExit() {
-  return window.CSS?.supports?.('overlay', 'auto') && canTransitionDisplay();
+	return window.CSS?.supports?.("overlay", "auto") && canTransitionDisplay();
 }
 
 async function closeTopLayer(element) {
-  if (!supportsTopLayerExit()) {
-    element.setAttribute('data-closing', '');
-    const animations = element.getAnimations({ subtree: true });
-    if (animations.length > 0) {
-      await Promise.race([
-        Promise.allSettled(animations.map((a) => a.finished)),
-        new Promise((r) => setTimeout(r, 2000)),
-      ]);
-    }
-    if (!element.hasAttribute('data-closing')) return;
-    element.removeAttribute('data-closing');
-  }
+	if (!supportsTopLayerExit()) {
+		element.setAttribute("data-closing", "");
+		const animations = element.getAnimations({ subtree: true });
+		if (animations.length > 0) {
+			await Promise.race([
+				Promise.allSettled(animations.map((a) => a.finished)),
+				new Promise((r) => setTimeout(r, 2000)),
+			]);
+		}
+		if (!element.hasAttribute("data-closing")) return;
+		element.removeAttribute("data-closing");
+	}
 
-  element.close();
-  // Or for popover:
-  // element.hidePopover();
+	element.close();
+	// Or for popover:
+	// element.hidePopover();
 }
 
 // Route native close requests (Esc, closedby light dismiss) through the same
 // helper so they animate too, instead of closing instantly.
-dialog.addEventListener('cancel', (event) => {
-  event.preventDefault();
-  closeTopLayer(dialog);
+dialog.addEventListener("cancel", (event) => {
+	event.preventDefault();
+	closeTopLayer(dialog);
 });
 ```
 
@@ -225,7 +229,7 @@ With a bundler or import map:
 ```js
 // MANDATORY: Feature detect 'popover' on HTMLElement.prototype.
 if (!Object.hasOwn(HTMLElement.prototype, "popover")) {
-  import("@oddbird/popover-polyfill");
+	import("@oddbird/popover-polyfill");
 }
 ```
 
@@ -237,6 +241,6 @@ Caveats when using the polyfill:
 
 ```css
 [popover]:is(:popover-open, .\:popover-open) {
-  display: block;
+	display: block;
 }
 ```

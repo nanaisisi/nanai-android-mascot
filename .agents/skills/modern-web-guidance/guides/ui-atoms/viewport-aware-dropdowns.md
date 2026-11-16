@@ -23,7 +23,7 @@ The first step is to create a trigger button that opens the overlay container us
 </div>
 ```
 
-This creates an *implicit* anchor association between the button and the panel, so that the panel can be positioned relative to the button natively without needing `anchor-name` on the button or `position-anchor` on the panel.
+This creates an _implicit_ anchor association between the button and the panel, so that the panel can be positioned relative to the button natively without needing `anchor-name` on the button or `position-anchor` on the panel.
 
 ### 2. Positioning with `position-area`
 
@@ -31,14 +31,14 @@ Instead of manual `top`/`left` offsets, use `position-area` to place the target 
 
 ```css
 .panel {
-  /* 
+	/* 
      Position the panel below the anchor (block-end), 
      aligned to the start of the anchor and spanning to its end (span-inline-end).
   */
-  position-area: block-end span-inline-end;
-  
-  /* Reset insets to allow the grid to take control */
-  inset: auto;
+	position-area: block-end span-inline-end;
+
+	/* Reset insets to allow the grid to take control */
+	inset: auto;
 }
 ```
 
@@ -52,12 +52,15 @@ To prevent the panel from being cut off at the edge of the screen, define "try t
 
 ```css
 .panel {
-  /* 
+	/* 
      If the panel overflows the bottom, flip it to the top (flip-block).
      If it overflows the inline edges, flip it horizontally (flip-inline).
      If it overflows both (e.g., in a corner), flip on both axes (flip-block flip-inline).
   */
-  position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
+	position-try-fallbacks:
+		flip-block,
+		flip-inline,
+		flip-block flip-inline;
 }
 ```
 
@@ -79,7 +82,7 @@ With a bundler or import map:
 ```js
 // MANDATORY: Feature detect 'popover' on HTMLElement.prototype.
 if (!Object.hasOwn(HTMLElement.prototype, "popover")) {
-  import("@oddbird/popover-polyfill");
+	import("@oddbird/popover-polyfill");
 }
 ```
 
@@ -91,7 +94,7 @@ Caveats when using the polyfill:
 
 ```css
 [popover]:is(:popover-open, .\:popover-open) {
-  display: block;
+	display: block;
 }
 ```
 
@@ -114,7 +117,7 @@ With a bundler or import map:
 ```js
 // MANDATORY: Feature-detect anchor positioning support before loading the polyfill.
 if (!CSS.supports("anchor-name: --a")) {
-  import("@oddbird/css-anchor-positioning");
+	import("@oddbird/css-anchor-positioning");
 }
 ```
 
@@ -136,17 +139,17 @@ Without a bundler, import from a CDN inside a `<script type="module">`:
 
 ```css
 .trigger {
-  /* MANDATORY: Each trigger and positioned element pair must share a unique anchor name. */
-  anchor-name: --my-trigger;
+	/* MANDATORY: Each trigger and positioned element pair must share a unique anchor name. */
+	anchor-name: --my-trigger;
 }
 
 [popover].anchored-overlay {
-  position-anchor: --my-trigger;
-  /* MANDATORY: Use anchor() on inset properties rather than position-area when using the polyfill on elements needing position-try-fallbacks. */
-  inset: auto;
-  top: anchor(bottom);
-  left: anchor(left);
-  margin: 0;
+	position-anchor: --my-trigger;
+	/* MANDATORY: Use anchor() on inset properties rather than position-area when using the polyfill on elements needing position-try-fallbacks. */
+	inset: auto;
+	top: anchor(bottom);
+	left: anchor(left);
+	margin: 0;
 }
 ```
 
@@ -158,21 +161,24 @@ Instead, gate `inset: auto` and `margin: 0` inside `@supports` for the specific 
 
 ```css
 @supports (position-area: block-end) {
-  [popover].anchored-overlay {
-    inset: auto;
-    margin: 0;
-    position-area: block-end span-inline-end;
-    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
-  }
+	[popover].anchored-overlay {
+		inset: auto;
+		margin: 0;
+		position-area: block-end span-inline-end;
+		position-try-fallbacks:
+			flip-block,
+			flip-inline,
+			flip-block flip-inline;
+	}
 }
 
 @supports not (position-area: block-end) {
-  /* Optional: override default popover centering with a fixed bottom bar */
-  [popover].anchored-overlay {
-    position: fixed;
-    inset: auto 0 0 0;
-    width: auto;
-    margin: 0;
-  }
+	/* Optional: override default popover centering with a fixed bottom bar */
+	[popover].anchored-overlay {
+		position: fixed;
+		inset: auto 0 0 0;
+		width: auto;
+		margin: 0;
+	}
 }
 ```

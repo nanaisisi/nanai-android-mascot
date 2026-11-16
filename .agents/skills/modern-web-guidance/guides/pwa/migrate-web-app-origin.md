@@ -16,9 +16,9 @@ The migration is a two-step verification process: the new site claims the old si
 
 MANDATORY: Both the new and old origins MUST be **"Same-Site"**. They must share the same **Registrable Domain (eTLD+1)**.
 
-*   **Allowed**: Migrating from `app.example.com` to `new.example.com` (both share `example.com`).
-*   **Allowed**: Migrating from `example.com/app1` to `example.com/app2`.
-*   **Prohibited**: Migrating from `example.com` to `example.org` (different registrable domains).
+-   **Allowed**: Migrating from `app.example.com` to `new.example.com` (both share `example.com`).
+-   **Allowed**: Migrating from `example.com/app1` to `example.com/app2`.
+-   **Prohibited**: Migrating from `example.com` to `example.org` (different registrable domains).
 
 ### 2. Configure the new application
 
@@ -28,14 +28,14 @@ In the **new** site's `manifest.json`, add the `migrate_from` field:
 
 ```json
 {
-  "name": "My New App",
-  "id": "/demo.html",
-  "start_url": "/demo.html",
-  "migrate_from": [
-    {
-      "id": "https://old-app.example.com/"
-    }
-  ]
+	"name": "My New App",
+	"id": "/demo.html",
+	"start_url": "/demo.html",
+	"migrate_from": [
+		{
+			"id": "https://old-app.example.com/"
+		}
+	]
 }
 ```
 
@@ -47,9 +47,9 @@ File location: `https://old-app.example.com/.well-known/web-app-origin-associati
 
 ```json
 {
-  "https://new-app.example.com/demo.html": {
-    "allow_migration": true
-  }
+	"https://new-app.example.com/demo.html": {
+		"allow_migration": true
+	}
 }
 ```
 
@@ -59,10 +59,10 @@ To let the browser discover the migration from the old installation, without wai
 
 ```json
 {
-  "migrate_to": {
-    "id": "https://new-app.example.com/demo.html",
-    "install_url": "https://new-app.example.com/demo.html"
-  }
+	"migrate_to": {
+		"id": "https://new-app.example.com/demo.html",
+		"install_url": "https://new-app.example.com/demo.html"
+	}
 }
 ```
 
@@ -72,12 +72,12 @@ By default, a migration is suggested to users. To make the transition mandatory,
 
 ```json
 {
-  "migrate_from": [
-    {
-      "id": "https://old-app.example.com/",
-      "behavior": "force"
-    }
-  ]
+	"migrate_from": [
+		{
+			"id": "https://old-app.example.com/",
+			"behavior": "force"
+		}
+	]
 }
 ```
 

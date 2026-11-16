@@ -8,16 +8,24 @@ Interfaces feel natural when every input gets an immediate response, motion beha
 
 ```css
 :where(button) {
-  /* example durations */
-  transition: box-shadow 150ms ease-out, scale 150ms ease-out;
+	/* example durations */
+	transition:
+		box-shadow 150ms ease-out,
+		scale 150ms ease-out;
 }
-button:hover { box-shadow: 0 2px 8px rgb(0 0 0 / 0.2); }
-a:hover { text-decoration-thickness: 2px; }
-button:active { scale: 0.97; } /* example value */
+button:hover {
+	box-shadow: 0 2px 8px rgb(0 0 0 / 0.2);
+}
+a:hover {
+	text-decoration-thickness: 2px;
+}
+button:active {
+	scale: 0.97;
+} /* example value */
 
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
-  outline: 2px solid CanvasText;
-  outline-offset: 3px;
+	outline: 2px solid CanvasText;
+	outline-offset: 3px;
 }
 ```
 
@@ -31,23 +39,35 @@ Popovers and dropdowns should visibly open from the control that triggered them:
 
 ```css
 .dropdown {
-  /* popovertarget makes the trigger the popover's anchor. */
-  position-area: bottom span-right;
-  inset: auto;
-  margin: 0;
-  /* The corner touching the trigger; change it whenever the placement changes. */
-  transform-origin: top left;
+	/* popovertarget makes the trigger the popover's anchor. */
+	position-area: bottom span-right;
+	inset: auto;
+	margin: 0;
+	/* The corner touching the trigger; change it whenever the placement changes. */
+	transform-origin: top left;
 }
 /* example durations */
-.dropdown:is(:popover-open, .\:popover-open) { animation: fade-in 150ms ease-out both; }
-@media (prefers-reduced-motion: no-preference) {
-  .dropdown:is(:popover-open, .\:popover-open) {
-    /* optional example spring curve, written inline */
-    animation: grow 300ms linear(0, 0.45 15%, 1.08 35%, 0.97 55%, 1.01 75%, 1) both, fade-in 150ms ease-out both;
-  }
+.dropdown:is(:popover-open, .\:popover-open) {
+	animation: fade-in 150ms ease-out both;
 }
-@keyframes grow { from { scale: 0.9; } }
-@keyframes fade-in { from { opacity: 0; } }
+@media (prefers-reduced-motion: no-preference) {
+	.dropdown:is(:popover-open, .\:popover-open) {
+		/* optional example spring curve, written inline */
+		animation:
+			grow 300ms linear(0, 0.45 15%, 1.08 35%, 0.97 55%, 1.01 75%, 1) both,
+			fade-in 150ms ease-out both;
+	}
+}
+@keyframes grow {
+	from {
+		scale: 0.9;
+	}
+}
+@keyframes fade-in {
+	from {
+		opacity: 0;
+	}
+}
 ```
 
 - Keep animations on the compositor (`transform`, its individual properties, and `opacity`) and respect reduced-motion preferences; see `motion` (via `npx -y modern-web-guidance@latest retrieve "motion"`). This example animates the opening only; for exit transitions, see `animate-to-from-top-layer` (via `npx -y modern-web-guidance@latest retrieve "animate-to-from-top-layer"`).
@@ -60,14 +80,14 @@ Any horizontally scrollable row of items, such as a carousel, gallery, or row of
 
 ```css
 .scroller {
-  display: flex;
-  gap: 1rem;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
+	display: flex;
+	gap: 1rem;
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
 }
 .scroller > * {
-  flex: 0 0 85%; /* example item width */
-  scroll-snap-align: start;
+	flex: 0 0 85%; /* example item width */
+	scroll-snap-align: start;
 }
 ```
 
@@ -82,10 +102,15 @@ For large, rapid translations (such as a full-screen sheet sliding into view), a
 
 ```css
 @media (prefers-reduced-motion: no-preference) {
-  .sheet.is-open { animation: sheet-in 300ms ease-out both; } /* example duration */
+	.sheet.is-open {
+		animation: sheet-in 300ms ease-out both;
+	} /* example duration */
 }
 @keyframes sheet-in {
-  from { translate: 0 100%; filter: blur(6px); } /* example blur radius */
+	from {
+		translate: 0 100%;
+		filter: blur(6px);
+	} /* example blur radius */
 }
 ```
 
@@ -97,12 +122,16 @@ For large, rapid translations (such as a full-screen sheet sliding into view), a
 
 ```css
 .card .actions {
-  opacity: 0;
+	opacity: 0;
 
-  .card:hover &,
-  .card:focus-within & { opacity: 1; }
+	.card:hover &,
+	.card:focus-within & {
+		opacity: 1;
+	}
 
-  @media (hover: none) { opacity: 1; }
+	@media (hover: none) {
+		opacity: 1;
+	}
 }
 ```
 
@@ -124,7 +153,7 @@ With a bundler or import map:
 ```js
 // MANDATORY: Feature detect 'popover' on HTMLElement.prototype.
 if (!Object.hasOwn(HTMLElement.prototype, "popover")) {
-  import("@oddbird/popover-polyfill");
+	import("@oddbird/popover-polyfill");
 }
 ```
 
@@ -136,7 +165,7 @@ Caveats when using the polyfill:
 
 ```css
 [popover]:is(:popover-open, .\:popover-open) {
-  display: block;
+	display: block;
 }
 ```
 

@@ -73,16 +73,16 @@ In some cases, if the conditional CSS to apply can be reduced to a single proper
 ```css
 /* Use a custom property to conditionally include the dash animation */
 @property --progress-dash-animation {
-  syntax: "*";
-  inherits: false;
-  initial-value: , progress-dash 3s ease-in-out infinite;
+	syntax: "*";
+	inherits: false;
+	initial-value:
+		, progress-dash 3s ease-in-out infinite;
 }
 
 .spinner {
-  /* The dash animation is only included if @property is supported */
-  animation:
-    progress-spin var(--_used-spinner-duration) linear infinite
-    var(--progress-dash-animation, );
+	/* The dash animation is only included if @property is supported */
+	animation: progress-spin var(--_used-spinner-duration) linear infinite
+		var(--progress-dash-animation,);
 }
 ```
 
@@ -100,7 +100,7 @@ For a more general-purpose solution, you can register a non-inheriting property 
 }
 
 body {
-  /* The background is only applied if @property is supported */
+	/* The background is only applied if @property is supported */
 	background: var(--supports-atproperty, green);
 }
 ```

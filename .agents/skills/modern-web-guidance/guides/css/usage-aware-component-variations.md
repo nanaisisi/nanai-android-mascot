@@ -8,9 +8,9 @@ Style queries let **both sides stay decoupled**: the featured surfaces never nam
 
 ## When to use this guide
 
-This guide covers *behavioral* changes: a component deciding **what to render, how to arrange itself, or which variant to present** in response to its context — hiding or showing a badge, switching layout direction, or swapping a button variant.
+This guide covers _behavioral_ changes: a component deciding **what to render, how to arrange itself, or which variant to present** in response to its context — hiding or showing a badge, switching layout direction, or swapping a button variant.
 
-If instead you need *token-level* changes — density modes, themes, or other higher-order tokens that uniformly shift values like padding and color across many components — see `design-token-reactivity` (via `npx -y modern-web-guidance@latest retrieve "design-token-reactivity"`).
+If instead you need _token-level_ changes — density modes, themes, or other higher-order tokens that uniformly shift values like padding and color across many components — see `design-token-reactivity` (via `npx -y modern-web-guidance@latest retrieve "design-token-reactivity"`).
 
 ## Choosing the right tool
 
@@ -25,40 +25,40 @@ Reach for a style query when **both sides of a contextual relationship may chang
 1. Define a semantic context flag using a CSS custom property on a container.
 2. **DO NOT** set `container-type` for style queries; they query inherited custom properties on the nearest ancestor and don't require an explicit containment context.
 3. **MANDATORY**: Use `@container style(--property: value)` to apply conditional styles to descendant elements. Style queries cannot match the element the property is set on — only its descendants.
-4. **DO** prefer style queries over descendant selectors when the relationship must stay extensible or cross component/shadow DOM boundaries (see *Choosing the right tool* above) — but keep descendant selectors for fixed, one-off relationships where the indirection buys nothing.
+4. **DO** prefer style queries over descendant selectors when the relationship must stay extensible or cross component/shadow DOM boundaries (see _Choosing the right tool_ above) — but keep descendant selectors for fixed, one-off relationships where the indirection buys nothing.
 
 ## Implementation Example
 
 ```css
 /* 1. Set the context on a layout container */
 .featured {
-  --surface: featured; /* Semantic context flag for children */
+	--surface: featured; /* Semantic context flag for children */
 }
 
 /* 2. Component reacts to inherited flag */
 .button {
-  /* Default: Outlined informational style */
-  background: transparent;
-  border: 1px solid currentColor;
+	/* Default: Outlined informational style */
+	background: transparent;
+	border: 1px solid currentColor;
 }
 
 .badge {
-  /* Default: Hidden — only revealed in featured surfaces */
-  display: none;
+	/* Default: Hidden — only revealed in featured surfaces */
+	display: none;
 }
 
 @container style(--surface: featured) {
-  .button {
-    /* Automatic switch to Filled promotional style */
-    background: var(--brand-accent);
-    color: white;
-    border: none;
-  }
+	.button {
+		/* Automatic switch to Filled promotional style */
+		background: var(--brand-accent);
+		color: white;
+		border: none;
+	}
 
-  .badge {
-    /* Reveal decorative elements only in featured context */
-    display: block;
-  }
+	.badge {
+		/* Reveal decorative elements only in featured context */
+		display: block;
+	}
 }
 ```
 
@@ -72,36 +72,36 @@ Until container style queries are widely available, layer them on as a progressi
 ```css
 /* Default styles — work everywhere */
 .button {
-  background: transparent;
-  border: 1px solid currentColor;
+	background: transparent;
+	border: 1px solid currentColor;
 }
 
 .badge {
-  display: none;
+	display: none;
 }
 
 /* Selector-based contextual styles — broad browser support */
 :where(.featured) .button {
-  background: var(--brand-accent);
-  color: white;
-  border: none;
+	background: var(--brand-accent);
+	color: white;
+	border: none;
 }
 
 :where(.featured) .badge {
-  display: block;
+	display: block;
 }
 
 /* Progressive enhancement: style queries override when supported */
 @container style(--surface: featured) {
-  .button {
-    background: var(--brand-accent);
-    color: white;
-    border: none;
-  }
+	.button {
+		background: var(--brand-accent);
+		color: white;
+		border: none;
+	}
 
-  .badge {
-    display: block;
-  }
+	.badge {
+		display: block;
+	}
 }
 ```
 

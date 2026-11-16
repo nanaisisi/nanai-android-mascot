@@ -253,12 +253,11 @@ export class SakuraScriptPlayer {
 				theme,
 			},
 		}).catch((err) => {
-				frontendLog(
-					`❌ show_balloon_window failed for scope ${targetScope}: ${err}`,
-					"error",
-				);
-			},
-		);
+			frontendLog(
+				`❌ show_balloon_window failed for scope ${targetScope}: ${err}`,
+				"error",
+			);
+		});
 		const htmlContent = textEl ? textEl.innerHTML : text;
 		void emit(`update-balloon-content-${targetScope}`, {
 			html: htmlContent,
@@ -266,7 +265,7 @@ export class SakuraScriptPlayer {
 		});
 	}
 
-	private clearBalloon(app: any, scope: number, keepSettings = false): void {
+	private clearBalloon(app: any, scope: number, _keepSettings = false): void {
 		const isKero = scope === 1;
 		const textEl = isKero
 			? app?.elements?.keroBalloonText ||

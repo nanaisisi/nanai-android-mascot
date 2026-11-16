@@ -11,7 +11,7 @@ To implement an animated select picker:
 1. **Opt-in to customization:** Apply `appearance: base-select` to both the `<select>` element and the `::picker(select)` pseudo-element.
 2. **Enable auto-sizing transitions (Optional):** Define `interpolate-size: allow-keywords` (usually on `:root`) to allow the browser to transition between discrete metric values like `height: auto` and `height: 0`.
 3. **Animate the top-layer container:** Apply standard entry/exit styles to `::picker(select)`. Include `display` and `overlay` in the `transition` property and set `transition-behavior: allow-discrete` so the picker stays rendered in the top layer when transitioning between `display: none` and `display: block`.
-4. **Hook into the opening state with `@starting-style`:** Use `@starting-style` to define the baseline styles the browser should compute *before* the transition begins. For example, if you want it to fade in, set the opacity to `0` inside the `@starting-style` block.
+4. **Hook into the opening state with `@starting-style`:** Use `@starting-style` to define the baseline styles the browser should compute _before_ the transition begins. For example, if you want it to fade in, set the opacity to `0` inside the `@starting-style` block.
 5. **Rotate the icon:** Use pseudo-element focus or active selectors like `:open::picker-icon` to apply transitions (such as rotation or translation) to the arrow indicator.
 
 ## Example Code: Smooth Select Scale and Fade
@@ -57,33 +57,33 @@ The following example demonstrates a custom select styled with standard page ani
 /* Opt-in to customizable select */
 .animated-select,
 .animated-select::picker(select) {
-  appearance: base-select;
+	appearance: base-select;
 }
 
 /* Enable auto-keyword transitions (usually set globally at :root) */
 :root {
-  interpolate-size: allow-keywords;
+	interpolate-size: allow-keywords;
 }
 
 /* Style the visible trigger and icon rotation */
 .animated-select {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 0.875rem 1rem;
-  font-size: 1rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: border-color 0.2s ease;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	padding: 0.875rem 1rem;
+	font-size: 1rem;
+	border-radius: 8px;
+	cursor: pointer;
+	transition: border-color 0.2s ease;
 }
 
 .animated-select::picker-icon {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+	transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .animated-select:open::picker-icon {
-  transform: rotate(180deg);
+	transform: rotate(180deg);
 }
 
 /*
@@ -91,62 +91,62 @@ The following example demonstrates a custom select styled with standard page ani
  * Uses top-layer animations with `allow-discrete` visibility hooks
  */
 .animated-select::picker(select) {
-  /* Set a text color with the background so options stay readable on pages with a dark color scheme */
-  background: white;
-  color: black;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px -3px rgba(0,0,0,0.1);
-  padding: 0.5rem;
-  margin-top: 0.25rem;
-  width: anchor-size(width);
+	/* Set a text color with the background so options stay readable on pages with a dark color scheme */
+	background: white;
+	color: black;
+	border-radius: 12px;
+	box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+	padding: 0.5rem;
+	margin-top: 0.25rem;
+	width: anchor-size(width);
 
-  transition:
-    display,
-    overlay,
-    opacity cubic-bezier(0.16, 1, 0.3, 1),
-    height cubic-bezier(0.16, 1, 0.3, 1);
-  transition-duration: 0.4s;
-  /* Separate after transition so the shorthand doesn't reset it or fail in older browsers */
-  transition-behavior: allow-discrete;
-  opacity: 0;
-  height: 0;
+	transition:
+		display,
+		overlay,
+		opacity cubic-bezier(0.16, 1, 0.3, 1),
+		height cubic-bezier(0.16, 1, 0.3, 1);
+	transition-duration: 0.4s;
+	/* Separate after transition so the shorthand doesn't reset it or fail in older browsers */
+	transition-behavior: allow-discrete;
+	opacity: 0;
+	height: 0;
 }
 
 /* Open State */
 .animated-select:open::picker(select) {
-  opacity: 1;
-  height: auto;
+	opacity: 1;
+	height: auto;
 }
 
 /* @starting-style to hook the transition on initial popover open */
 @starting-style {
-  .animated-select:open::picker(select) {
-    opacity: 0;
-    height: 0;
-  }
+	.animated-select:open::picker(select) {
+		opacity: 0;
+		height: 0;
+	}
 }
 
 /* Support for SVG inside Options and Selected Content */
 .animated-select option svg,
 .animated-select selectedcontent svg {
-  flex-shrink: 0; /* Prevent icons from shrinking */
-  width: 1.25rem;
-  height: 1.25rem;
+	flex-shrink: 0; /* Prevent icons from shrinking */
+	width: 1.25rem;
+	height: 1.25rem;
 }
 
 /* MANDATORY: Provide multiple indicators (e.g. bold font and distinct background) for the checked state to avoid color-only state communication */
 .animated-select option:checked {
-  font-weight: 700;
-  background-color: #f1f5f9;
-  color: black;
+	font-weight: 700;
+	background-color: #f1f5f9;
+	color: black;
 }
 
 /* Ensure copy-paste safety for users with motion sensitivities */
 @media (prefers-reduced-motion: reduce) {
-  .animated-select::picker(select),
-  .animated-select::picker-icon {
-    transition: none !important;
-  }
+	.animated-select::picker(select),
+	.animated-select::picker-icon {
+		transition: none !important;
+	}
 }
 ```
 
@@ -177,9 +177,9 @@ For browsers that do not yet support `appearance: base-select`, the `<select>` e
 
 ```javascript
 document.addEventListener("DOMContentLoaded", () => {
-  // Check if browser supports base-select value
-  if (!CSS.supports("appearance", "base-select")) {
-    // Custom select overrides are not supported natively.
-  }
+	// Check if browser supports base-select value
+	if (!CSS.supports("appearance", "base-select")) {
+		// Custom select overrides are not supported natively.
+	}
 });
 ```

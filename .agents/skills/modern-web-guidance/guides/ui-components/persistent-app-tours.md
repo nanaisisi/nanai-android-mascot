@@ -5,6 +5,7 @@ Onboarding tours require overlays that persist while users interact with the hig
 ## Recommended Implementation
 
 ### HTML
+
 ```html
 <div id="feature-target">Highlight this feature</div>
 
@@ -17,27 +18,29 @@ Onboarding tours require overlays that persist while users interact with the hig
 ```
 
 ### CSS
+
 ```css
 #feature-target {
-  anchor-name: --feature-target;
+	anchor-name: --feature-target;
 }
 
 #tour-step {
-  popover: manual;
-  position-anchor: --feature-target;
-  position-area: right center;
-  inset: auto;
-  margin: 1rem;
-  padding: 1rem;
-  border: 1px solid blue;
-  border-radius: 0.5rem;
-  background: aliceblue;
+	popover: manual;
+	position-anchor: --feature-target;
+	position-area: right center;
+	inset: auto;
+	margin: 1rem;
+	padding: 1rem;
+	border: 1px solid blue;
+	border-radius: 0.5rem;
+	background: aliceblue;
 }
 ```
 
 ### JavaScript
+
 ```javascript
-const tourStep = document.getElementById('tour-step');
+const tourStep = document.getElementById("tour-step");
 tourStep.showPopover();
 
 // At this point, as this is an initial onboarding tour popover, set the rest of the document to be inert. Ensure that the onboarding modal popover is not a child of this element, otherwise it too will be rendered inert and therefore inaccessible.
@@ -46,16 +49,16 @@ const main = document.querySelector("main");
 main.inert = true;
 
 // MANDATORY: Programmatically route focus into the non-modal popover so keyboard/assistive technology users immediately perceive the new context
-tourStep.querySelector('button').focus();
+tourStep.querySelector("button").focus();
 ```
 
 ## Implementation Guidelines
 
-* **MANDATORY:** Use `popover="manual"` to prevent the tour step from closing accidentally during user interaction.
-* **MANDATORY:** Mark the container with `role="dialog"` and link its heading via `aria-labelledby`.
-* **MANDATORY:** Shift programmatic focus inside the popover immediately after opening to prevent focus abandonment.
-* **DO** use CSS Anchor Positioning to tether the tour step to the specific feature being explained.
-* **DO** provide an explicit "Close" or "Next" button within the popover that uses `popovertargetaction="hide"`.
+- **MANDATORY:** Use `popover="manual"` to prevent the tour step from closing accidentally during user interaction.
+- **MANDATORY:** Mark the container with `role="dialog"` and link its heading via `aria-labelledby`.
+- **MANDATORY:** Shift programmatic focus inside the popover immediately after opening to prevent focus abandonment.
+- **DO** use CSS Anchor Positioning to tether the tour step to the specific feature being explained.
+- **DO** provide an explicit "Close" or "Next" button within the popover that uses `popovertargetaction="hide"`.
 
 ## Accessibility considerations
 
@@ -85,7 +88,7 @@ With a bundler or import map:
 ```js
 // MANDATORY: Feature detect 'popover' on HTMLElement.prototype.
 if (!Object.hasOwn(HTMLElement.prototype, "popover")) {
-  import("@oddbird/popover-polyfill");
+	import("@oddbird/popover-polyfill");
 }
 ```
 
@@ -97,7 +100,7 @@ Caveats when using the polyfill:
 
 ```css
 [popover]:is(:popover-open, .\:popover-open) {
-  display: block;
+	display: block;
 }
 ```
 
@@ -120,7 +123,7 @@ With a bundler or import map:
 ```js
 // MANDATORY: Feature-detect anchor positioning support before loading the polyfill.
 if (!CSS.supports("anchor-name: --a")) {
-  import("@oddbird/css-anchor-positioning");
+	import("@oddbird/css-anchor-positioning");
 }
 ```
 
@@ -142,17 +145,17 @@ Without a bundler, import from a CDN inside a `<script type="module">`:
 
 ```css
 .trigger {
-  /* MANDATORY: Each trigger and positioned element pair must share a unique anchor name. */
-  anchor-name: --my-trigger;
+	/* MANDATORY: Each trigger and positioned element pair must share a unique anchor name. */
+	anchor-name: --my-trigger;
 }
 
 [popover].anchored-overlay {
-  position-anchor: --my-trigger;
-  /* MANDATORY: Use anchor() on inset properties rather than position-area when using the polyfill on elements needing position-try-fallbacks. */
-  inset: auto;
-  top: anchor(bottom);
-  left: anchor(left);
-  margin: 0;
+	position-anchor: --my-trigger;
+	/* MANDATORY: Use anchor() on inset properties rather than position-area when using the polyfill on elements needing position-try-fallbacks. */
+	inset: auto;
+	top: anchor(bottom);
+	left: anchor(left);
+	margin: 0;
 }
 ```
 
@@ -164,21 +167,24 @@ Instead, gate `inset: auto` and `margin: 0` inside `@supports` for the specific 
 
 ```css
 @supports (position-area: block-end) {
-  [popover].anchored-overlay {
-    inset: auto;
-    margin: 0;
-    position-area: block-end span-inline-end;
-    position-try-fallbacks: flip-block, flip-inline, flip-block flip-inline;
-  }
+	[popover].anchored-overlay {
+		inset: auto;
+		margin: 0;
+		position-area: block-end span-inline-end;
+		position-try-fallbacks:
+			flip-block,
+			flip-inline,
+			flip-block flip-inline;
+	}
 }
 
 @supports not (position-area: block-end) {
-  /* Optional: override default popover centering with a fixed bottom bar */
-  [popover].anchored-overlay {
-    position: fixed;
-    inset: auto 0 0 0;
-    width: auto;
-    margin: 0;
-  }
+	/* Optional: override default popover centering with a fixed bottom bar */
+	[popover].anchored-overlay {
+		position: fixed;
+		inset: auto 0 0 0;
+		width: auto;
+		margin: 0;
+	}
 }
 ```

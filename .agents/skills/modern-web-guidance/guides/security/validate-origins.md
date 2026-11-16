@@ -28,34 +28,37 @@ Use `Origin.from()` to extract an `Origin` object and compare it against a trust
 
 ```javascript
 // Replace with your application's trusted origin(s)
-const TRUSTED_ORIGIN = Origin.from('https://app.example.com');
+const TRUSTED_ORIGIN = Origin.from("https://app.example.com");
 
 function extractOrigin(candidate) {
-  try {
-    return Origin.from(candidate);
-  } catch (err) {
-    // Synthetic new MessageEvent('message', { origin }) objects in tests lack an
-    // internal browser origin; fall back to parsing candidate.origin if it is a URL.
-    if (typeof MessageEvent !== 'undefined' && candidate instanceof MessageEvent) {
-      return Origin.from(candidate.origin);
-    }
-    throw err;
-  }
+	try {
+		return Origin.from(candidate);
+	} catch (err) {
+		// Synthetic new MessageEvent('message', { origin }) objects in tests lack an
+		// internal browser origin; fall back to parsing candidate.origin if it is a URL.
+		if (
+			typeof MessageEvent !== "undefined" &&
+			candidate instanceof MessageEvent
+		) {
+			return Origin.from(candidate.origin);
+		}
+		throw err;
+	}
 }
 
 export function isTrustedSameOrigin(candidate) {
-  try {
-    return extractOrigin(candidate).isSameOrigin(TRUSTED_ORIGIN);
-  } catch {
-    // Rejects invalid URLs, "null" strings, or unsupported objects
-    return false;
-  }
+	try {
+		return extractOrigin(candidate).isSameOrigin(TRUSTED_ORIGIN);
+	} catch {
+		// Rejects invalid URLs, "null" strings, or unsupported objects
+		return false;
+	}
 }
 
-window.addEventListener('message', (event) => {
-  if (!isTrustedSameOrigin(event)) return;
+window.addEventListener("message", (event) => {
+	if (!isTrustedSameOrigin(event)) return;
 
-  // Safe to process privileged commands from the verified origin
+	// Safe to process privileged commands from the verified origin
 });
 ```
 
@@ -68,21 +71,21 @@ When validating redirect targets (such as `?returnTo=` parameters) or internal l
 
 ```javascript
 // Replace with your application's primary origin
-const APP_ORIGIN = Origin.from('https://app.example.co.uk');
+const APP_ORIGIN = Origin.from("https://app.example.co.uk");
 
 export function isAllowedSameSiteUrl(candidateUrlOrElement) {
-  try {
-    return extractOrigin(candidateUrlOrElement).isSameSite(APP_ORIGIN);
-  } catch {
-    return false;
-  }
+	try {
+		return extractOrigin(candidateUrlOrElement).isSameSite(APP_ORIGIN);
+	} catch {
+		return false;
+	}
 }
 
 // true: same scheme (https) and same registrable domain (example.co.uk)
-isAllowedSameSiteUrl('https://billing.example.co.uk:8443/checkout');
+isAllowedSameSiteUrl("https://billing.example.co.uk:8443/checkout");
 
 // false: scheme downgrade (http vs. https) is rejected by schemeful same-site
-isAllowedSameSiteUrl('http://billing.example.co.uk/checkout');
+isAllowedSameSiteUrl("http://billing.example.co.uk/checkout");
 ```
 
 ## 3. Distinguish and Pin Opaque Origins (`origin.opaque` and `Origin.from(event)`)
@@ -99,21 +102,25 @@ let pinnedSandboxOrigin = new Origin();
 let isSandboxPinned = false;
 
 export function handleSandboxedWidgetMessage(event, expectedWidgetWindow) {
-  try {
-    const senderOrigin = Origin.from(event);
+	try {
+		const senderOrigin = Origin.from(event);
 
-    // Pin the opaque origin only once on initialization from the expected sandboxed iframe
-    if (!isSandboxPinned && event.source === expectedWidgetWindow && event.data?.type === 'init') {
-      pinnedSandboxOrigin = senderOrigin;
-      isSandboxPinned = true;
-    }
+		// Pin the opaque origin only once on initialization from the expected sandboxed iframe
+		if (
+			!isSandboxPinned &&
+			event.source === expectedWidgetWindow &&
+			event.data?.type === "init"
+		) {
+			pinnedSandboxOrigin = senderOrigin;
+			isSandboxPinned = true;
+		}
 
-    // Subsequent messages from the SAME sandboxed iframe match pinnedSandboxOrigin;
-    // messages from any other sandboxed iframe (also event.origin === "null") return false.
-    return senderOrigin.isSameOrigin(pinnedSandboxOrigin);
-  } catch {
-    return false;
-  }
+		// Subsequent messages from the SAME sandboxed iframe match pinnedSandboxOrigin;
+		// messages from any other sandboxed iframe (also event.origin === "null") return false.
+		return senderOrigin.isSameOrigin(pinnedSandboxOrigin);
+	} catch {
+		return false;
+	}
 }
 ```
 
@@ -139,59 +146,68 @@ If your Baseline target includes browsers that do not yet support the `Origin` i
 
 ```javascript
 // Replace with your trusted reference URL and known registrable domain
-const TRUSTED_URL = 'https://app.example.com';
-const TRUSTED_SITE_DOMAIN = 'example.com';
+const TRUSTED_URL = "https://app.example.com";
+const TRUSTED_SITE_DOMAIN = "example.com";
 
 function extractUrlString(candidate) {
-  if (typeof candidate === 'string') return candidate;
-  if (typeof MessageEvent !== 'undefined' && candidate instanceof MessageEvent) {
-    return candidate.origin;
-  }
-  if (candidate === globalThis) {
-    return globalThis.location?.href ?? '';
-  }
-  return candidate?.href ?? '';
+	if (typeof candidate === "string") return candidate;
+	if (
+		typeof MessageEvent !== "undefined" &&
+		candidate instanceof MessageEvent
+	) {
+		return candidate.origin;
+	}
+	if (candidate === globalThis) {
+		return globalThis.location?.href ?? "";
+	}
+	return candidate?.href ?? "";
 }
 
 function extractOrigin(candidate) {
-  try {
-    return Origin.from(candidate);
-  } catch (err) {
-    if (typeof MessageEvent !== 'undefined' && candidate instanceof MessageEvent) {
-      return Origin.from(candidate.origin);
-    }
-    throw err;
-  }
+	try {
+		return Origin.from(candidate);
+	} catch (err) {
+		if (
+			typeof MessageEvent !== "undefined" &&
+			candidate instanceof MessageEvent
+		) {
+			return Origin.from(candidate.origin);
+		}
+		throw err;
+	}
 }
 
 export function checkSameOriginWithFallback(candidate) {
-  try {
-    if ('Origin' in globalThis) {
-      return extractOrigin(candidate).isSameOrigin(Origin.from(TRUSTED_URL));
-    }
-    const candidateUrl = new URL(extractUrlString(candidate));
-    const trustedUrl = new URL(TRUSTED_URL);
-    return candidateUrl.origin !== 'null' && candidateUrl.origin === trustedUrl.origin;
-  } catch {
-    return false;
-  }
+	try {
+		if ("Origin" in globalThis) {
+			return extractOrigin(candidate).isSameOrigin(Origin.from(TRUSTED_URL));
+		}
+		const candidateUrl = new URL(extractUrlString(candidate));
+		const trustedUrl = new URL(TRUSTED_URL);
+		return (
+			candidateUrl.origin !== "null" &&
+			candidateUrl.origin === trustedUrl.origin
+		);
+	} catch {
+		return false;
+	}
 }
 
 export function checkSameSiteWithFallback(candidate) {
-  try {
-    if ('Origin' in globalThis) {
-      return extractOrigin(candidate).isSameSite(Origin.from(TRUSTED_URL));
-    }
-    const candidateUrl = new URL(extractUrlString(candidate));
-    const trustedUrl = new URL(TRUSTED_URL);
-    return (
-      candidateUrl.origin !== 'null' &&
-      candidateUrl.protocol === trustedUrl.protocol &&
-      (candidateUrl.hostname === TRUSTED_SITE_DOMAIN ||
-        candidateUrl.hostname.endsWith(`.${TRUSTED_SITE_DOMAIN}`))
-    );
-  } catch {
-    return false;
-  }
+	try {
+		if ("Origin" in globalThis) {
+			return extractOrigin(candidate).isSameSite(Origin.from(TRUSTED_URL));
+		}
+		const candidateUrl = new URL(extractUrlString(candidate));
+		const trustedUrl = new URL(TRUSTED_URL);
+		return (
+			candidateUrl.origin !== "null" &&
+			candidateUrl.protocol === trustedUrl.protocol &&
+			(candidateUrl.hostname === TRUSTED_SITE_DOMAIN ||
+				candidateUrl.hostname.endsWith(`.${TRUSTED_SITE_DOMAIN}`))
+		);
+	} catch {
+		return false;
+	}
 }
 ```

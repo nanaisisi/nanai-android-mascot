@@ -46,31 +46,33 @@ To run Gemini Nano and associated models, the system needs:
 ```javascript
 // Language pair options passed to both availability() and create()
 const options = {
-  sourceLanguage: 'es', // Example BCP 47 language code
-  targetLanguage: 'fr', // Example BCP 47 language code
+	sourceLanguage: "es", // Example BCP 47 language code
+	targetLanguage: "fr", // Example BCP 47 language code
 };
 
 // 1. Check availability for the language pair
 const availability = await Translator.availability(options);
 
-if (availability === 'available') {
-  // Model is ready immediately on device
-  const translator = await Translator.create(options);
-} else if (availability === 'downloadable' || availability === 'downloading') {
-  // User gesture is strictly required before create() triggers or attaches to download
-  document.getElementById('start-translation-btn').addEventListener('click', async () => {
-    const translator = await Translator.create({
-      ...options,
-      monitor(m) {
-        m.addEventListener('downloadprogress', (e) => {
-          console.log(`Downloaded ${Math.round(e.loaded * 100)}%`);
-        });
-      },
-    });
-  });
-} else if (availability === 'unavailable') {
-  // Language pair or hardware unsupported; execute fallback
-  console.warn('Translation model is unavailable on this device.');
+if (availability === "available") {
+	// Model is ready immediately on device
+	const translator = await Translator.create(options);
+} else if (availability === "downloadable" || availability === "downloading") {
+	// User gesture is strictly required before create() triggers or attaches to download
+	document
+		.getElementById("start-translation-btn")
+		.addEventListener("click", async () => {
+			const translator = await Translator.create({
+				...options,
+				monitor(m) {
+					m.addEventListener("downloadprogress", (e) => {
+						console.log(`Downloaded ${Math.round(e.loaded * 100)}%`);
+					});
+				},
+			});
+		});
+} else if (availability === "unavailable") {
+	// Language pair or hardware unsupported; execute fallback
+	console.warn("Translation model is unavailable on this device.");
 }
 ```
 
@@ -83,17 +85,17 @@ The API supports both static and streaming responses. Always include download pr
 ```javascript
 // Default to including a progress monitor when creating translator
 const translator = await Translator.create({
-  sourceLanguage: 'en',
-  targetLanguage: 'fr',
-  monitor(m) {
-    m.addEventListener('downloadprogress', (e) => {
-      console.log(`Downloaded ${Math.round(e.loaded * 100)}%`);
-    });
-  },
+	sourceLanguage: "en",
+	targetLanguage: "fr",
+	monitor(m) {
+		m.addEventListener("downloadprogress", (e) => {
+			console.log(`Downloaded ${Math.round(e.loaded * 100)}%`);
+		});
+	},
 });
 
 const result = await translator.translate(
-  'Where is the next bus stop, please?',
+	"Where is the next bus stop, please?",
 );
 console.log(result);
 // Output: "Où est le prochain arrêt de bus, s'il vous plaît ?"
@@ -104,7 +106,7 @@ console.log(result);
 ```javascript
 const stream = translator.translateStreaming(longText);
 for await (const chunk of stream) {
-  console.log(chunk);
+	console.log(chunk);
 }
 ```
 
@@ -178,10 +180,10 @@ Unsupported in: Firefox and Safari.
 Before use, check if the `Translator` object is available in the global scope:
 
 ```javascript
-if ('Translator' in self) {
-  // The Translator API is supported.
+if ("Translator" in self) {
+	// The Translator API is supported.
 } else {
-  // Execute fallback strategy (do not fall back to window.ai.translator).
+	// Execute fallback strategy (do not fall back to window.ai.translator).
 }
 ```
 

@@ -20,8 +20,8 @@ MANDATORY: Apply the `color-scheme` property to the `html` element or the `:root
 ```css
 /* MANDATORY: Apply color-scheme to :root or html for viewport-wide theming */
 :root {
-  /* MANDATORY: Automatically adapt native UI to user system preferences */
-  color-scheme: light dark;
+	/* MANDATORY: Automatically adapt native UI to user system preferences */
+	color-scheme: light dark;
 }
 ```
 
@@ -35,22 +35,25 @@ For more control over the colors of built-in UI such as `accent-color` or `scrol
 
 ```css
 :root {
-  --color-brand-light: oklch(45% 0.23 270);
-  --color-brand-dark: oklch(85% 0.15 210);
-  --color-brand-text-light: white;
-  --color-brand-text-dark: oklch(40% 0.23 270);
+	--color-brand-light: oklch(45% 0.23 270);
+	--color-brand-dark: oklch(85% 0.15 210);
+	--color-brand-text-light: white;
+	--color-brand-text-dark: oklch(40% 0.23 270);
 
-  --color-brand: light-dark(var(--color-brand-light), var(--color-brand-dark));
-  --color-brand-text: light-dark(var(--color-brand-text-light), var(--color-brand-text-dark));
+	--color-brand: light-dark(var(--color-brand-light), var(--color-brand-dark));
+	--color-brand-text: light-dark(
+		var(--color-brand-text-light),
+		var(--color-brand-text-dark)
+	);
 
-  /* MANDATORY: Automatically adapt native UI to user system preferences */
-  color-scheme: light dark;
+	/* MANDATORY: Automatically adapt native UI to user system preferences */
+	color-scheme: light dark;
 }
 
 button.primary {
-  /* These automatically adapt to color scheme */
-  background-color: var(--color-brand);
-  color: var(--color-brand-text);
+	/* These automatically adapt to color scheme */
+	background-color: var(--color-brand);
+	color: var(--color-brand-text);
 }
 ```
 
@@ -76,7 +79,7 @@ This resolves to the OS setting by default, but you can use the `accent-color` p
 
 ```css
 html {
-  accent-color: light-dark(var(--color-accent-light), var(--color-accent-dark));
+	accent-color: light-dark(var(--color-accent-light), var(--color-accent-dark));
 }
 ```
 
@@ -93,10 +96,10 @@ You can use `scrollbar-color` together with `light-dark()` to set custom scrollb
 
 ```css
 :root {
-  --color-scrollbar-track: light-dark(#eee, #222);
-  /* Example values: the thumb needs at least 3:1 contrast against the track */
-  --color-scrollbar-thumb: light-dark(#6b6b6b, #8a8a8a);
-  scrollbar-color: var(--color-scrollbar-thumb) var(--color-scrollbar-track);
+	--color-scrollbar-track: light-dark(#eee, #222);
+	/* Example values: the thumb needs at least 3:1 contrast against the track */
+	--color-scrollbar-thumb: light-dark(#6b6b6b, #8a8a8a);
+	scrollbar-color: var(--color-scrollbar-thumb) var(--color-scrollbar-track);
 }
 ```
 
@@ -170,22 +173,22 @@ To adapt to the user's preferences in older browsers, use `prefers-color-scheme`
 
 ```css
 :root {
-  /* Define brand colors for each mode */
-  --color-brand-light: #0056b3;
-  --color-brand-dark: #00e5ff;
-  --color-brand-text-light: white;
-  --color-brand-text-dark: #001f24;
-  --color-brand: var(--color-brand-light);
-  --color-brand-text: var(--color-brand-text-light);
+	/* Define brand colors for each mode */
+	--color-brand-light: #0056b3;
+	--color-brand-dark: #00e5ff;
+	--color-brand-text-light: white;
+	--color-brand-text-dark: #001f24;
+	--color-brand: var(--color-brand-light);
+	--color-brand-text: var(--color-brand-text-light);
 
-  /* MANDATORY: Fallback for browsers without light-dark support */
-  @media (prefers-color-scheme: dark) {
-    --color-brand: var(--color-brand-dark);
-    --color-brand-text: var(--color-brand-text-dark);
-  }
+	/* MANDATORY: Fallback for browsers without light-dark support */
+	@media (prefers-color-scheme: dark) {
+		--color-brand: var(--color-brand-dark);
+		--color-brand-text: var(--color-brand-text-dark);
+	}
 
-  /* Ignored in older browsers */
-  color-scheme: light dark;
+	/* Ignored in older browsers */
+	color-scheme: light dark;
 }
 
 button.primary {
@@ -203,33 +206,37 @@ For browsers that support `color-scheme` but not yet `light-dark()`, light and d
 
 ```css
 :root {
-  /* Define browser UI accent color for each mode */
-  --brand-accent-light: #0056b3;
-  --brand-accent-dark: #00e5ff;
-  --accent-color: var(--brand-accent-light);
+	/* Define browser UI accent color for each mode */
+	--brand-accent-light: #0056b3;
+	--brand-accent-dark: #00e5ff;
+	--accent-color: var(--brand-accent-light);
 
-  /* MANDATORY: Fallback for browsers without light-dark support */
-  @media (prefers-color-scheme: dark) {
-    --accent-color: var(--brand-accent-dark);
-  }
+	/* MANDATORY: Fallback for browsers without light-dark support */
+	@media (prefers-color-scheme: dark) {
+		--accent-color: var(--brand-accent-dark);
+	}
 
-  /* OPTIONAL: use light-dark() for more control of built-in UI colors */
-  @supports (color: light-dark(white, black)) {
-    --accent-color: light-dark(var(--brand-accent-light), var(--brand-accent-dark));
-  }
+	/* OPTIONAL: use light-dark() for more control of built-in UI colors */
+	@supports (color: light-dark(white, black)) {
+		--accent-color: light-dark(
+			var(--brand-accent-light),
+			var(--brand-accent-dark)
+		);
+	}
 
-  /* MANDATORY: Automatically adapt native UI to user system preferences */
-  color-scheme: light dark;
+	/* MANDATORY: Automatically adapt native UI to user system preferences */
+	color-scheme: light dark;
 
-  /* Example inherited color property */
-  accent-color: var(--accent-color);
+	/* Example inherited color property */
+	accent-color: var(--accent-color);
 }
 
-pre, code {
-  color-scheme: dark;
+pre,
+code {
+	color-scheme: dark;
 
-  /* **Mandatory**: any inherited color properties must be set again, even if to the same design tokens */
-  accent-color: var(--accent-color);
+	/* **Mandatory**: any inherited color properties must be set again, even if to the same design tokens */
+	accent-color: var(--accent-color);
 }
 ```
 
@@ -246,22 +253,25 @@ Define the switch once on `:root`. Every use site then only needs both images in
 
 ```css
 :root {
-  --light-type: ;
-  --dark-type: type("image/do-not-use");
+	--light-type: ;
+	--dark-type: type("image/do-not-use");
 
-  /* MANDATORY: Fallback for browsers without light-dark() image support */
-  @media (prefers-color-scheme: dark) {
-    --light-type: type("image/do-not-use");
-    --dark-type: ;
-  }
+	/* MANDATORY: Fallback for browsers without light-dark() image support */
+	@media (prefers-color-scheme: dark) {
+		--light-type: type("image/do-not-use");
+		--dark-type: ;
+	}
 }
 
 .hero {
-  background-image: image-set(url(hero-light.png) var(--light-type), url(hero-dark.png) var(--dark-type));
+	background-image: image-set(
+		url(hero-light.png) var(--light-type),
+		url(hero-dark.png) var(--dark-type)
+	);
 
-  @supports (background-image: light-dark(url("a"), url("b"))) {
-    background-image: light-dark(url(hero-light.png), url(hero-dark.png));
-  }
+	@supports (background-image: light-dark(url("a"), url("b"))) {
+		background-image: light-dark(url(hero-light.png), url(hero-dark.png));
+	}
 }
 ```
 
@@ -276,19 +286,19 @@ Simpler when only a handful of images vary, but every image needs its own media 
 
 ```css
 :root {
-  --hero-image: url(hero-light.png);
+	--hero-image: url(hero-light.png);
 
-  @media (prefers-color-scheme: dark) {
-    --hero-image: url(hero-dark.png);
-  }
+	@media (prefers-color-scheme: dark) {
+		--hero-image: url(hero-dark.png);
+	}
 
-  @supports (background-image: light-dark(url("a"), url("b"))) {
-    --hero-image: light-dark(url(hero-light.png), url(hero-dark.png));
-  }
+	@supports (background-image: light-dark(url("a"), url("b"))) {
+		--hero-image: light-dark(url(hero-light.png), url(hero-dark.png));
+	}
 }
 
 .hero {
-  background-image: var(--hero-image);
+	background-image: var(--hero-image);
 }
 ```
 
@@ -319,25 +329,25 @@ If you are using custom properties to define colors, these will cascade to the l
 ```css
 /* Legacy fallback for WebKit/Blink browsers */
 @supports not (scrollbar-color: auto) {
-  .scroller {
-    /* Reset scrollbar-width: thin (if set) so it does not disable
+	.scroller {
+		/* Reset scrollbar-width: thin (if set) so it does not disable
        ::-webkit-scrollbar in browsers without scrollbar-color */
-    scrollbar-width: auto;
-  }
+		scrollbar-width: auto;
+	}
 
-  .scroller::-webkit-scrollbar {
-    /* Must define a base size (e.g., 8px for thin or 12px for default) for custom colors to render in WebKit */
-    width: 12px;
-    height: 12px;
-  }
+	.scroller::-webkit-scrollbar {
+		/* Must define a base size (e.g., 8px for thin or 12px for default) for custom colors to render in WebKit */
+		width: 12px;
+		height: 12px;
+	}
 
-  .scroller::-webkit-scrollbar-thumb {
-    background: var(--scrollbar-thumb);
-  }
+	.scroller::-webkit-scrollbar-thumb {
+		background: var(--scrollbar-thumb);
+	}
 
-  .scroller::-webkit-scrollbar-track {
-    background: var(--scrollbar-track);
-  }
+	.scroller::-webkit-scrollbar-track {
+		background: var(--scrollbar-track);
+	}
 }
 ```
 

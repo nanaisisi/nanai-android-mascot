@@ -64,27 +64,27 @@ There is no hard-coded breakpoint. Script collapses the navigation only when the
 ```css
 /* Keep the row's natural width measurable */
 .header-inner > * {
-  flex-shrink: 0;
-  white-space: nowrap;
+	flex-shrink: 0;
+	white-space: nowrap;
 }
 
 .site-header {
-  .menu-button {
-    anchor-name: --menu-button;
-  }
+	.menu-button {
+		anchor-name: --menu-button;
+	}
 
-  .site-menu {
-    position: fixed;
-    inset: auto;
-    inset-block-start: anchor(--menu-button bottom);
-    inset-inline-end: 1rem;
-    inline-size: min(80dvw, 24rem);
-    max-inline-size: calc(100dvw - 2rem);
-    block-size: fit-content;
-    max-block-size: calc(100dvh - 6rem);
-    margin-block-start: 0.5rem;
-    overflow: auto;
-  }
+	.site-menu {
+		position: fixed;
+		inset: auto;
+		inset-block-start: anchor(--menu-button bottom);
+		inset-inline-end: 1rem;
+		inline-size: min(80dvw, 24rem);
+		max-inline-size: calc(100dvw - 2rem);
+		block-size: fit-content;
+		max-block-size: calc(100dvh - 6rem);
+		margin-block-start: 0.5rem;
+		overflow: auto;
+	}
 }
 ```
 
@@ -97,30 +97,30 @@ When the row fits, hide the collapsed-layout trigger and reset the popover prese
 
 ```css
 .site-header.is-wide {
-  .menu-button {
-    display: none;
-  }
+	.menu-button {
+		display: none;
+	}
 
-  .site-menu {
-    position: static;
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    inline-size: auto;
-    max-inline-size: none;
-    block-size: auto;
-    max-block-size: none;
-    overflow: visible;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    box-shadow: none;
-  }
+	.site-menu {
+		position: static;
+		display: flex;
+		align-items: center;
+		gap: 0.25rem;
+		inline-size: auto;
+		max-inline-size: none;
+		block-size: auto;
+		max-block-size: none;
+		overflow: visible;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		box-shadow: none;
+	}
 
-  .site-menu::backdrop {
-    display: none;
-  }
+	.site-menu::backdrop {
+		display: none;
+	}
 }
 ```
 
@@ -156,34 +156,34 @@ Position the wide submenu below its trigger with CSS Anchor Positioning (`positi
 
 ```css
 .site-header.is-wide {
-  .dropdown-list[popover] {
-    position: absolute;
-    position-area: block-end span-inline-end;
-    position-try-fallbacks: flip-block, flip-inline;
-    inset: auto;
-    height: auto;
-    inline-size: max-content;
-    min-inline-size: 12rem;
-    margin-block-start: 0.5rem;
-    overflow: visible;
-  }
+	.dropdown-list[popover] {
+		position: absolute;
+		position-area: block-end span-inline-end;
+		position-try-fallbacks: flip-block, flip-inline;
+		inset: auto;
+		height: auto;
+		inline-size: max-content;
+		min-inline-size: 12rem;
+		margin-block-start: 0.5rem;
+		overflow: visible;
+	}
 
-  .dropdown-list::before {
-    content: "";
-    position: absolute;
-    inset-inline: 0;
-    inset-block-end: 100%;
-    block-size: 0.5rem;
-  }
+	.dropdown-list::before {
+		content: "";
+		position: absolute;
+		inset-inline: 0;
+		inset-block-end: 100%;
+		block-size: 0.5rem;
+	}
 
-  /* Also hides the list before script sets popover, so an open narrow disclosure cannot widen the measured row */
-  .dropdown-list:not(:is(:popover-open, .\:popover-open)) {
-    display: none;
-  }
+	/* Also hides the list before script sets popover, so an open narrow disclosure cannot widen the measured row */
+	.dropdown-list:not(:is(:popover-open, .\:popover-open)) {
+		display: none;
+	}
 
-  .dropdown-list:is(:popover-open, .\:popover-open) {
-    display: grid;
-  }
+	.dropdown-list:is(:popover-open, .\:popover-open) {
+		display: grid;
+	}
 }
 ```
 
@@ -224,7 +224,7 @@ With a bundler or import map:
 ```js
 // MANDATORY: Feature detect 'popover' on HTMLElement.prototype.
 if (!Object.hasOwn(HTMLElement.prototype, "popover")) {
-  import("@oddbird/popover-polyfill");
+	import("@oddbird/popover-polyfill");
 }
 ```
 
@@ -236,7 +236,7 @@ Caveats when using the polyfill:
 
 ```css
 [popover]:is(:popover-open, .\:popover-open) {
-  display: block;
+	display: block;
 }
 ```
 
@@ -250,11 +250,11 @@ For the mobile menu, put an absolute fallback declaration before the `anchor()` 
 
 ```css
 .site-header {
-  .site-menu {
-    /* Example-only offset: use roughly your header height. Browsers without anchor() keep this one. */
-    inset-block-start: 4.75rem;
-    inset-block-start: anchor(--menu-button bottom);
-  }
+	.site-menu {
+		/* Example-only offset: use roughly your header height. Browsers without anchor() keep this one. */
+		inset-block-start: 4.75rem;
+		inset-block-start: anchor(--menu-button bottom);
+	}
 }
 ```
 
@@ -278,4 +278,3 @@ Supported by: Chrome 108 (Nov 2022), Edge 108 (Dec 2022), Firefox 130 (Sep 2024)
 Gate the optional narrow submenu slide-down rules that override `[hidden]` with `display: grid` behind `@supports (interpolate-size: allow-keywords)`. Without the gate, browsers lacking keyword interpolation snap the list closed instead of sliding; with it, they keep native `[hidden]` behavior. Without `@starting-style` or `transition-behavior: allow-discrete`, the optional popover entry or exit transitions fall back to opening or closing immediately.
 
 Without script nothing adds `is-wide`, so the header stays collapsed: the menu button opens the native popover and the submenu is a nested list. Do not write a separate no-script layout or a `no-js` class.
-

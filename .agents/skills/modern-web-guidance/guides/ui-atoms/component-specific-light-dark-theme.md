@@ -31,8 +31,10 @@ For implementing page-wide dark mode well, see `dark-mode` (via `npx -y modern-w
 Once a page-wide `color-scheme` is in place, and you are using color tokens sensitive to it (e.g. via `light-dark()`), you can simply set `color-scheme` on specific components to override the color mode for that subtree:
 
 ```css
-pre, code, .dark {
-  color-scheme: dark;
+pre,
+code,
+.dark {
+	color-scheme: dark;
 }
 ```
 
@@ -61,10 +63,10 @@ This includes:
 - Any other `<color>` property set to `inherit`
 
 This means you should:
-- **NOT** register custom properties meant to hold *design tokens* (e.g. `--surface-color`) as `<color>`. Tokens need to keep their `light-dark()` expression live so descendants can re-resolve them under a different `color-scheme`.
+- **NOT** register custom properties meant to hold _design tokens_ (e.g. `--surface-color`) as `<color>`. Tokens need to keep their `light-dark()` expression live so descendants can re-resolve them under a different `color-scheme`.
 - When setting `color-scheme` on an element, re-specify any inherited `<color>` properties that may have been set to `light-dark()` values (directly or via design tokens), even if that's to the same design token.
 - **NOT** use `inherit` on `<color>` properties on elements with a `color-scheme` override (fine to use on their descendants).
-- **DO** use registered `<color>` properties for the *opposite* use case: when you deliberately want to snapshot the ancestor's resolved color and prevent it from re-resolving under the descendant's `color-scheme`. For example, capturing the page background to use elsewhere.
+- **DO** use registered `<color>` properties for the _opposite_ use case: when you deliberately want to snapshot the ancestor's resolved color and prevent it from re-resolving under the descendant's `color-scheme`. For example, capturing the page background to use elsewhere.
 - If you need to animate a color, use a separate `@property`-registered `<color>` property on the element being animated (registration is required for color interpolation) — this is not a design token, but a per-element animation target, so it does not conflict with the rule above.
 
 Example:
@@ -85,7 +87,8 @@ body {
 	background: var(--surface-color);
 }
 
-pre, code {
+pre,
+code {
 	color-scheme: dark;
 	background: var(--surface-color);
 
@@ -120,22 +123,22 @@ To adapt to the user's preferences in older browsers, use `prefers-color-scheme`
 
 ```css
 :root {
-  /* Define brand colors for each mode */
-  --color-brand-light: #0056b3;
-  --color-brand-dark: #00e5ff;
-  --color-brand-text-light: white;
-  --color-brand-text-dark: #001f24;
-  --color-brand: var(--color-brand-light);
-  --color-brand-text: var(--color-brand-text-light);
+	/* Define brand colors for each mode */
+	--color-brand-light: #0056b3;
+	--color-brand-dark: #00e5ff;
+	--color-brand-text-light: white;
+	--color-brand-text-dark: #001f24;
+	--color-brand: var(--color-brand-light);
+	--color-brand-text: var(--color-brand-text-light);
 
-  /* MANDATORY: Fallback for browsers without light-dark support */
-  @media (prefers-color-scheme: dark) {
-    --color-brand: var(--color-brand-dark);
-    --color-brand-text: var(--color-brand-text-dark);
-  }
+	/* MANDATORY: Fallback for browsers without light-dark support */
+	@media (prefers-color-scheme: dark) {
+		--color-brand: var(--color-brand-dark);
+		--color-brand-text: var(--color-brand-text-dark);
+	}
 
-  /* Ignored in older browsers */
-  color-scheme: light dark;
+	/* Ignored in older browsers */
+	color-scheme: light dark;
 }
 
 button.primary {
@@ -153,32 +156,36 @@ For browsers that support `color-scheme` but not yet `light-dark()`, light and d
 
 ```css
 :root {
-  /* Define browser UI accent color for each mode */
-  --brand-accent-light: #0056b3;
-  --brand-accent-dark: #00e5ff;
-  --accent-color: var(--brand-accent-light);
+	/* Define browser UI accent color for each mode */
+	--brand-accent-light: #0056b3;
+	--brand-accent-dark: #00e5ff;
+	--accent-color: var(--brand-accent-light);
 
-  /* MANDATORY: Fallback for browsers without light-dark support */
-  @media (prefers-color-scheme: dark) {
-    --accent-color: var(--brand-accent-dark);
-  }
+	/* MANDATORY: Fallback for browsers without light-dark support */
+	@media (prefers-color-scheme: dark) {
+		--accent-color: var(--brand-accent-dark);
+	}
 
-  /* OPTIONAL: use light-dark() for more control of built-in UI colors */
-  @supports (color: light-dark(white, black)) {
-    --accent-color: light-dark(var(--brand-accent-light), var(--brand-accent-dark));
-  }
+	/* OPTIONAL: use light-dark() for more control of built-in UI colors */
+	@supports (color: light-dark(white, black)) {
+		--accent-color: light-dark(
+			var(--brand-accent-light),
+			var(--brand-accent-dark)
+		);
+	}
 
-  /* MANDATORY: Automatically adapt native UI to user system preferences */
-  color-scheme: light dark;
+	/* MANDATORY: Automatically adapt native UI to user system preferences */
+	color-scheme: light dark;
 
-  /* Example inherited color property */
-  accent-color: var(--accent-color);
+	/* Example inherited color property */
+	accent-color: var(--accent-color);
 }
 
-pre, code {
-  color-scheme: dark;
+pre,
+code {
+	color-scheme: dark;
 
-  /* **Mandatory**: any inherited color properties must be set again, even if to the same design tokens */
-  accent-color: var(--accent-color);
+	/* **Mandatory**: any inherited color properties must be set again, even if to the same design tokens */
+	accent-color: var(--accent-color);
 }
 ```

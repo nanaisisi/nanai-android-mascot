@@ -52,68 +52,68 @@ No CSS is needed on the scope element itself (`.card` or `.card ul`) to establis
 ```css
 /* 1. Name participating child items */
 .card ul li {
-  view-transition-name: match-element;
+	view-transition-name: match-element;
 }
 
 /* 2. OPTIONAL: Customize transition timing (300ms is an example duration) */
 ::view-transition-group(*) {
-  animation-duration: 300ms;
-  animation-timing-function: ease-in-out;
+	animation-duration: 300ms;
+	animation-timing-function: ease-in-out;
 }
 
 /* 3. MANDATORY: Respect user preference for reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  ::view-transition-group(*),
-  ::view-transition-old(*),
-  ::view-transition-new(*) {
-    animation: none !important;
-  }
+	::view-transition-group(*),
+	::view-transition-old(*),
+	::view-transition-new(*) {
+		animation: none !important;
+	}
 }
 ```
 
 ```javascript
 // 1. Trigger a transition scoped to a single component subtree
 function runScopedTransition(scopeEl, updateDOM) {
-  // MANDATORY: Call startViewTransition on the component element, not document
-  const transition = scopeEl.startViewTransition(() => {
-    updateDOM();
-  });
+	// MANDATORY: Call startViewTransition on the component element, not document
+	const transition = scopeEl.startViewTransition(() => {
+		updateDOM();
+	});
 
-  // Re-triggering startViewTransition() on the same element skips the active transition
-  // and rejects `ready`. Catch the rejection to avoid unhandled promise rejection errors.
-  transition.ready.catch(() => {});
+	// Re-triggering startViewTransition() on the same element skips the active transition
+	// and rejects `ready`. Catch the rejection to avoid unhandled promise rejection errors.
+	transition.ready.catch(() => {});
 }
 
 // 2. Reorder items by moving existing DOM nodes (required for `match-element`)
 // Scope to `listEl` since only the list order changes, keeping controls outside `listEl` interactive
 function reorderItems(listEl, orderedIds) {
-  const existing = new Map(
-    Array.from(listEl.children, (li) => [li.dataset.id, li]),
-  );
+	const existing = new Map(
+		Array.from(listEl.children, (li) => [li.dataset.id, li]),
+	);
 
-  runScopedTransition(listEl, () => {
-    for (const id of orderedIds) {
-      const li = existing.get(id);
-      if (li) listEl.appendChild(li);
-    }
-  });
+	runScopedTransition(listEl, () => {
+		for (const id of orderedIds) {
+			const li = existing.get(id);
+			if (li) listEl.appendChild(li);
+		}
+	});
 }
 
 // 3. Remove an item while preserving exit animation and keyboard focus
 // Scope to the outer `cardEl` so the card itself also transitions its height change
 function removeItem(cardEl, itemEl) {
-  const hadFocus = itemEl.contains(document.activeElement);
-  const nextFocusTarget =
-    itemEl.nextElementSibling?.querySelector('button') ??
-    itemEl.previousElementSibling?.querySelector('button') ??
-    cardEl.querySelector('button');
+	const hadFocus = itemEl.contains(document.activeElement);
+	const nextFocusTarget =
+		itemEl.nextElementSibling?.querySelector("button") ??
+		itemEl.previousElementSibling?.querySelector("button") ??
+		cardEl.querySelector("button");
 
-  runScopedTransition(cardEl, () => {
-    itemEl.remove();
-    if (hadFocus) {
-      nextFocusTarget?.focus();
-    }
-  });
+	runScopedTransition(cardEl, () => {
+		itemEl.remove();
+		if (hadFocus) {
+			nextFocusTarget?.focus();
+		}
+	});
 }
 ```
 
@@ -145,24 +145,24 @@ To prevent this from happening, wrap the scope element in a separate wrapper ele
 ```
 
 ```javascript
-document.querySelector('#page').startViewTransition(() => {
-  // do your DOM updates here...
+document.querySelector("#page").startViewTransition(() => {
+	// do your DOM updates here...
 });
 ```
 
 ```css
 /* Apply a view-transition-name on the wrapper */
 .card-wrapper {
-  view-transition-name: match-element;
+	view-transition-name: match-element;
 }
 
 /* Prevent the contents of the card being captured by an outer transition */
 .card {
-  view-transition-scope: all;
+	view-transition-scope: all;
 }
 
 .card ul li {
-  view-transition-name: match-element;
+	view-transition-name: match-element;
 }
 ```
 
@@ -170,19 +170,19 @@ Alternatively, you can allow the outer transition to capture the children. In or
 
 ```css
 .card-wrapper {
-  overflow: clip;
-  view-transition-name: match-element; /* Capture me as part of the outer VT */
-  view-transition-group: contain; /* Nest children that also have a view-transition-name */
-  view-transition-class: card; /* For targeting purposes */
+	overflow: clip;
+	view-transition-name: match-element; /* Capture me as part of the outer VT */
+	view-transition-group: contain; /* Nest children that also have a view-transition-name */
+	view-transition-class: card; /* For targeting purposes */
 }
 
 /* Manually copy back the clip onto the ::view-transition-group-children pseudo */
 ::view-transition-group-children(.card) {
-  overflow: clip;
+	overflow: clip;
 }
 
 .card ul li {
-  view-transition-name: match-element;
+	view-transition-name: match-element;
 }
 ```
 
@@ -210,20 +210,20 @@ If your Baseline target does not support element-scoped view transitions, degrad
 
 ```javascript
 // Feature detect specifically on Element.prototype (not document.startViewTransition)
-const supportsScopedTransition = 'startViewTransition' in Element.prototype;
+const supportsScopedTransition = "startViewTransition" in Element.prototype;
 
 function runWithTransition(scopeEl, updateDOM) {
-  if (!supportsScopedTransition) {
-    // Fallback: apply the DOM update immediately without animation
-    updateDOM();
-    return;
-  }
+	if (!supportsScopedTransition) {
+		// Fallback: apply the DOM update immediately without animation
+		updateDOM();
+		return;
+	}
 
-  const transition = scopeEl.startViewTransition(() => {
-    updateDOM();
-  });
+	const transition = scopeEl.startViewTransition(() => {
+		updateDOM();
+	});
 
-  transition.ready.catch(() => {});
+	transition.ready.catch(() => {});
 }
 ```
 

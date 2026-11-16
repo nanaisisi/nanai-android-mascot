@@ -8,6 +8,7 @@ pub mod evaluator;
 mod tests;
 
 use crate::common::state::AppState;
+#[allow(unused_imports)]
 pub use evaluator::{
     evaluate_property_query, evaluate_property_query_full, evaluate_property_query_with_context,
     evaluate_property_query_with_ghost_info, SystemMonitorInfo,
@@ -43,25 +44,27 @@ fn query_win32_monitors() -> Vec<SystemMonitorInfo> {
         _rect: *mut RECT,
         lparam: isize,
     ) -> i32 {
-        let list = &mut *(lparam as *mut Vec<SystemMonitorInfo>);
-        let mut info: MONITORINFO = std::mem::zeroed();
-        info.cbSize = std::mem::size_of::<MONITORINFO>() as u32;
-        if GetMonitorInfoW(hmonitor, &mut info) != 0 {
-            let is_primary = (info.dwFlags & 1) != 0;
-            let bpp = evaluator::dynamic_rules::get_display_bpp();
-            list.push(SystemMonitorInfo {
-                left: info.rcMonitor.left,
-                top: info.rcMonitor.top,
-                right: info.rcMonitor.right,
-                bottom: info.rcMonitor.bottom,
-                work_left: info.rcWork.left,
-                work_top: info.rcWork.top,
-                work_right: info.rcWork.right,
-                work_bottom: info.rcWork.bottom,
-                scale_factor: 1.0,
-                bpp,
-                is_primary,
-            });
+        unsafe {
+            let list = &mut *(lparam as *mut Vec<SystemMonitorInfo>);
+            let mut info: MONITORINFO = std::mem::zeroed();
+            info.cbSize = std::mem::size_of::<MONITORINFO>() as u32;
+            if GetMonitorInfoW(hmonitor, &mut info) != 0 {
+                let is_primary = (info.dwFlags & 1) != 0;
+                let bpp = evaluator::dynamic_rules::get_display_bpp();
+                list.push(SystemMonitorInfo {
+                    left: info.rcMonitor.left,
+                    top: info.rcMonitor.top,
+                    right: info.rcMonitor.right,
+                    bottom: info.rcMonitor.bottom,
+                    work_left: info.rcWork.left,
+                    work_top: info.rcWork.top,
+                    work_right: info.rcWork.right,
+                    work_bottom: info.rcWork.bottom,
+                    scale_factor: 1.0,
+                    bpp,
+                    is_primary,
+                });
+            }
         }
         1
     }

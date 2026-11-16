@@ -53,8 +53,8 @@ Use `nomemory` and move `focusgroupstart` to the selected tab:
 
 ```js
 for (const tab of tabs) {
-  tab.ariaSelected = tab === selected;
-  tab.toggleAttribute('focusgroupstart', tab === selected);
+	tab.ariaSelected = tab === selected;
+	tab.toggleAttribute("focusgroupstart", tab === selected);
 }
 ```
 
@@ -70,19 +70,19 @@ Do not apply any styling that changes the dimensions of the tab (e.g., `padding`
 
 ```css
 [role="tab"] {
-  position: relative;
+	position: relative;
 }
 
 [aria-selected="true"] {
-  color: var(--accent);
+	color: var(--accent);
 
-  /* Example: a 3px underline that takes no space */
-  &::after {
-    content: "";
-    position: absolute;
-    inset: auto 0 0;
-    border-block-end: 3px solid var(--accent);
-  }
+	/* Example: a 3px underline that takes no space */
+	&::after {
+		content: "";
+		position: absolute;
+		inset: auto 0 0;
+		border-block-end: 3px solid var(--accent);
+	}
 }
 ```
 
@@ -117,51 +117,57 @@ Fade the content with a mask on the scroller itself: an opaque layer minus a gra
 
 ```css
 @property --fade-start {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0px;
 }
 
 @property --fade-end {
-  syntax: "<length>";
-  inherits: false;
-  initial-value: 0px;
+	syntax: "<length>";
+	inherits: false;
+	initial-value: 0px;
 }
 
 .scroller {
-  overflow-x: auto;
-  /* Example value: how far each fade reaches */
-  --fade-size: 3rem;
-  /* Gradient directions and positions are physical, so flip them for right-to-left content */
-  --fade-dir: right;
-  --fade-start-pos: 0;
-  --fade-end-pos: 100%;
-  mask:
-    linear-gradient(black, black) no-clip subtract,
-    linear-gradient(to var(--fade-dir), black, transparent) var(--fade-start-pos) 0 / var(--fade-start) 100% no-repeat no-clip,
-    linear-gradient(to var(--fade-dir), transparent, black) var(--fade-end-pos) 0 / var(--fade-end) 100% no-repeat no-clip;
-  animation: reveal-fade-start linear both, hide-fade-end linear both;
-  animation-timeline: scroll(self inline);
-  /* Each fade animates over the first or last --fade-size of scrolling */
-  animation-range: 0 var(--fade-size), calc(100% - var(--fade-size)) 100%;
+	overflow-x: auto;
+	/* Example value: how far each fade reaches */
+	--fade-size: 3rem;
+	/* Gradient directions and positions are physical, so flip them for right-to-left content */
+	--fade-dir: right;
+	--fade-start-pos: 0;
+	--fade-end-pos: 100%;
+	mask:
+		linear-gradient(black, black) no-clip subtract,
+		linear-gradient(to var(--fade-dir), black, transparent)
+		var(--fade-start-pos) 0 / var(--fade-start) 100% no-repeat no-clip,
+		linear-gradient(to var(--fade-dir), transparent, black) var(--fade-end-pos)
+		0 / var(--fade-end) 100% no-repeat no-clip;
+	animation:
+		reveal-fade-start linear both,
+		hide-fade-end linear both;
+	animation-timeline: scroll(self inline);
+	/* Each fade animates over the first or last --fade-size of scrolling */
+	animation-range:
+		0 var(--fade-size),
+		calc(100% - var(--fade-size)) 100%;
 
-  &:dir(rtl) {
-    --fade-dir: left;
-    --fade-start-pos: 100%;
-    --fade-end-pos: 0;
-  }
+	&:dir(rtl) {
+		--fade-dir: left;
+		--fade-start-pos: 100%;
+		--fade-end-pos: 0;
+	}
 }
 
 @keyframes reveal-fade-start {
-  to {
-    --fade-start: var(--fade-size);
-  }
+	to {
+		--fade-start: var(--fade-size);
+	}
 }
 
 @keyframes hide-fade-end {
-  from {
-    --fade-end: var(--fade-size);
-  }
+	from {
+		--fade-end: var(--fade-size);
+	}
 }
 ```
 
@@ -200,35 +206,38 @@ The rest of this section covers only what is specific to tabs.
 ```
 
 ```js
-const observer = new IntersectionObserver(entries => {
-  for (const { target: tab, intersectionRatio } of entries) {
-    const overflowed = intersectionRatio < 1;
-    // CSS: .clipped:not([aria-selected="true"], :focus) { visibility: hidden; }
-    tab.classList.toggle('clipped', overflowed);
-    menuItemFor(tab).hidden = !overflowed;
-  }
-  more.hidden = !tabs.some(tab => tab.classList.contains('clipped'));
-  reveal();
-}, { root: tablist, threshold: 1 });
+const observer = new IntersectionObserver(
+	(entries) => {
+		for (const { target: tab, intersectionRatio } of entries) {
+			const overflowed = intersectionRatio < 1;
+			// CSS: .clipped:not([aria-selected="true"], :focus) { visibility: hidden; }
+			tab.classList.toggle("clipped", overflowed);
+			menuItemFor(tab).hidden = !overflowed;
+		}
+		more.hidden = !tabs.some((tab) => tab.classList.contains("clipped"));
+		reveal();
+	},
+	{ root: tablist, threshold: 1 },
+);
 
-tabs.forEach(tab => observer.observe(tab));
+tabs.forEach((tab) => observer.observe(tab));
 
 // Also call after every selection change.
 // CSS: .displaced { display: none; }
 function reveal() {
-  const tab = tabs.find(tab => tab.ariaSelected === 'true');
-  const before = tabs.slice(0, tabs.indexOf(tab));
-  tabs.forEach(tab => tab.classList.remove('displaced'));
-  while (before.length && !fits(tab)) {
-    before.pop().classList.add('displaced');
-  }
+	const tab = tabs.find((tab) => tab.ariaSelected === "true");
+	const before = tabs.slice(0, tabs.indexOf(tab));
+	tabs.forEach((tab) => tab.classList.remove("displaced"));
+	while (before.length && !fits(tab)) {
+		before.pop().classList.add("displaced");
+	}
 }
 
 // Checks both edges, so it works in either writing direction
 function fits(tab) {
-  const list = tablist.getBoundingClientRect();
-  const { left, right } = tab.getBoundingClientRect();
-  return left >= list.left && right <= list.right;
+	const list = tablist.getBoundingClientRect();
+	const { left, right } = tab.getBoundingClientRect();
+	return left >= list.left && right <= list.right;
 }
 ```
 
@@ -257,9 +266,9 @@ Unsupported in: Firefox and Safari.
 Load `@microsoft/focusgroup-polyfill` only when native support is missing:
 
 ```js
-if (!(Object.hasOwn(HTMLElement.prototype, 'focusGroup'))) {
-  const { polyfill } = await import('@microsoft/focusgroup-polyfill');
-  polyfill();
+if (!Object.hasOwn(HTMLElement.prototype, "focusGroup")) {
+	const { polyfill } = await import("@microsoft/focusgroup-polyfill");
+	polyfill();
 }
 ```
 
@@ -298,17 +307,24 @@ Each shadow has a cover: a `local` background in the scroller's own color, which
 At either end of the content its cover sits on top of its shadow and hides it; once the user scrolls away from that end, the cover moves away and the shadow shows.
 
 ```css
-@supports not ((container-type: scroll-state) or (animation-timeline: scroll())) {
-  .scroller {
-    background:
+@supports not (
+		(container-type: scroll-state) or
+		(animation-timeline: scroll())
+	) {
+	.scroller {
+		background:
       /* Covers: scroll with the content. Must use the scroller's own background color. */
-      linear-gradient(var(--surface) 30%, transparent) top / 100% 2.5rem no-repeat local,
-      linear-gradient(transparent, var(--surface) 70%) bottom / 100% 2.5rem no-repeat local,
-      /* Shadows: stay at the edges of the scrollport */
-      radial-gradient(farthest-side at 50% 0, rgb(0 0 0 / .15), transparent) top / 100% .75rem no-repeat,
-      radial-gradient(farthest-side at 50% 100%, rgb(0 0 0 / .15), transparent) bottom / 100% .75rem no-repeat,
-      var(--surface);
-  }
+			linear-gradient(var(--surface) 30%, transparent) top / 100% 2.5rem
+			no-repeat local,
+			linear-gradient(transparent, var(--surface) 70%) bottom / 100% 2.5rem
+			no-repeat local,
+			/* Shadows: stay at the edges of the scrollport */
+			radial-gradient(farthest-side at 50% 0, rgb(0 0 0 / 0.15), transparent)
+			top / 100% 0.75rem no-repeat,
+			radial-gradient(farthest-side at 50% 100%, rgb(0 0 0 / 0.15), transparent)
+			bottom / 100% 0.75rem no-repeat,
+			var(--surface);
+	}
 }
 ```
 
@@ -319,19 +335,28 @@ The shadows paint behind the content, so content with its own opaque background 
 Use an `IntersectionObserver` to mark which edges have more content, and show the hints from those attributes. Observe the scroller's first and last children, with the scroller as the root and `threshold: 1`: a child that is not fully visible means there is more content beyond it.
 
 ```js
-if (!CSS.supports('animation-timeline', 'scroll()')) {
-  for (const scroller of document.querySelectorAll('.scroller')) {
-    const [first, last] = [scroller.firstElementChild, scroller.lastElementChild];
-    // rootMargin: without it, sub-pixel widths can leave an edge child a fraction of a pixel short of fully visible
-    const observer = new IntersectionObserver(entries => {
-      for (const { target, intersectionRatio } of entries) {
-        scroller.classList.toggle(target === first ? 'more-start' : 'more-end', intersectionRatio < 1);
-      }
-    }, { root: scroller, threshold: 1, rootMargin: '1px' });
+if (!CSS.supports("animation-timeline", "scroll()")) {
+	for (const scroller of document.querySelectorAll(".scroller")) {
+		const [first, last] = [
+			scroller.firstElementChild,
+			scroller.lastElementChild,
+		];
+		// rootMargin: without it, sub-pixel widths can leave an edge child a fraction of a pixel short of fully visible
+		const observer = new IntersectionObserver(
+			(entries) => {
+				for (const { target, intersectionRatio } of entries) {
+					scroller.classList.toggle(
+						target === first ? "more-start" : "more-end",
+						intersectionRatio < 1,
+					);
+				}
+			},
+			{ root: scroller, threshold: 1, rootMargin: "1px" },
+		);
 
-    observer.observe(first);
-    observer.observe(last);
-  }
+		observer.observe(first);
+		observer.observe(last);
+	}
 }
 ```
 
@@ -339,20 +364,22 @@ if (!CSS.supports('animation-timeline', 'scroll()')) {
 /* Shadows */
 .scroller.more-start::before,
 .scroller.more-end::after {
-  opacity: 1;
+	opacity: 1;
 }
 
 /* Fades */
 .scroller {
-  transition: --fade-start .2s, --fade-end .2s;
+	transition:
+		--fade-start 0.2s,
+		--fade-end 0.2s;
 
-  &.more-start {
-    --fade-start: var(--fade-size);
-  }
+	&.more-start {
+		--fade-start: var(--fade-size);
+	}
 
-  &.more-end {
-    --fade-end: var(--fade-size);
-  }
+	&.more-end {
+		--fade-end: var(--fade-size);
+	}
 }
 ```
 
@@ -360,10 +387,13 @@ If a single child can be larger than the scroller (e.g. one long article), it is
 
 ```js
 // Must be valid children of the scroller (e.g. <li aria-hidden="true"> in a list)
-const [start, end] = [document.createElement('div'), document.createElement('div')];
+const [start, end] = [
+	document.createElement("div"),
+	document.createElement("div"),
+];
 for (const sentinel of [start, end]) {
-  // A zero-size sentinel at the very edge never counts as intersecting
-  sentinel.style.cssText = 'min-inline-size: 1px; min-block-size: 1px';
+	// A zero-size sentinel at the very edge never counts as intersecting
+	sentinel.style.cssText = "min-inline-size: 1px; min-block-size: 1px";
 }
 scroller.prepend(start);
 scroller.append(end);

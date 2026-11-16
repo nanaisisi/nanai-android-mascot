@@ -24,114 +24,116 @@ Use the native `<progress>` element as both the semantic source of truth and the
 ### 2. Styles
 
 #### Hiding Native UI
+
 To style the `<progress>` element as a spinner, first hide the default browser styling for indeterminate progress bars.
 
 ```css
 /* Hide native bars */
 progress.loading-spinner:indeterminate::-webkit-progress-bar {
-  display: none;
-  background: none;
+	display: none;
+	background: none;
 }
 progress.loading-spinner:indeterminate::-webkit-progress-value {
-  display: none;
-  background: none;
+	display: none;
+	background: none;
 }
 progress.loading-spinner:indeterminate::-moz-progress-bar {
-  display: none;
-  background: none;
+	display: none;
+	background: none;
 }
 progress.loading-spinner:indeterminate::slider-fill {
-  display: none;
-  background: none;
+	display: none;
+	background: none;
 }
 ```
 
 #### Spinner Ring and Trail
+
 The spinner uses a `conic-gradient` to create a visual trail. Forced colors mode removes background gradients, so in `@media (forced-colors: active)`, opt the spinner out with `forced-color-adjust: none` and draw it with system colors, or the spinner disappears.
 
 ```css
 @property --arc-start {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0deg;
+	syntax: "<angle>";
+	inherits: false;
+	initial-value: 0deg;
 }
 @property --arc-end {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0deg;
+	syntax: "<angle>";
+	inherits: false;
+	initial-value: 0deg;
 }
 /* Use a custom property to conditionally include the dash animation */
 @property --progress-dash-animation {
-  syntax: "*";
-  inherits: false;
-  initial-value: , progress-dash 3s ease-in-out infinite;
+	syntax: "*";
+	inherits: false;
+	initial-value:
+		, progress-dash 3s ease-in-out infinite;
 }
 
 progress.loading-spinner:indeterminate {
-  --_from: calc(90deg + var(--arc-start, 0deg));
-  --_to: calc(90deg + var(--arc-end, 158deg));
-  --size: 40px;
-  --thickness: 2px;
-  --spinner-color: #2563eb;
-  --track-color: #e2e5e7;
-  --spinner-duration: 1.5s;
-  --_used-spinner-duration: var(--spinner-duration);
-  --spinner-timing: linear;
+	--_from: calc(90deg + var(--arc-start, 0deg));
+	--_to: calc(90deg + var(--arc-end, 158deg));
+	--size: 40px;
+	--thickness: 2px;
+	--spinner-color: #2563eb;
+	--track-color: #e2e5e7;
+	--spinner-duration: 1.5s;
+	--_used-spinner-duration: var(--spinner-duration);
+	--spinner-timing: linear;
 
-  position: relative;
-  width: var(--size);
-  height: var(--size);
-  border-radius: 50%;
-  appearance: none;
+	position: relative;
+	width: var(--size);
+	height: var(--size);
+	border-radius: 50%;
+	appearance: none;
 
-  /* Create the fading trail with dynamic angles */
-  background: conic-gradient(
-      from var(--_from),
-      var(--spinner-color) calc(var(--_to) - var(--_from)),
-      transparent 0
-    )
-    var(--track-color);
+	/* Create the fading trail with dynamic angles */
+	background: conic-gradient(
+			from var(--_from),
+			var(--spinner-color) calc(var(--_to) - var(--_from)),
+			transparent 0
+		)
+		var(--track-color);
 
-  @supports (background-clip: border-area) {
-    background-clip: border-area;
-    border: var(--thickness) solid transparent;
-    background-origin: border-box;
-  }
+	@supports (background-clip: border-area) {
+		background-clip: border-area;
+		border: var(--thickness) solid transparent;
+		background-origin: border-box;
+	}
 
-  /* ... fallback for background-clip: border-area ... */
+	/* ... fallback for background-clip: border-area ... */
 
-  @media (forced-colors: active) {
-    /* Keeps the gradient, which forced colors mode removes, and draws it in system colors */
-    forced-color-adjust: none;
-    --spinner-color: CanvasText;
-    --track-color: Canvas;
-  }
+	@media (forced-colors: active) {
+		/* Keeps the gradient, which forced colors mode removes, and draws it in system colors */
+		forced-color-adjust: none;
+		--spinner-color: CanvasText;
+		--track-color: Canvas;
+	}
 
-  /* The dash animation is only included if @property is supported */
-  animation:
-    progress-spin var(--_used-spinner-duration) linear infinite
-    var(--progress-dash-animation, );
+	/* The dash animation is only included if @property is supported */
+	animation: progress-spin var(--_used-spinner-duration) linear infinite
+		var(--progress-dash-animation,);
 }
 
 @keyframes progress-spin {
-  to {
-    rotate: 1turn;
-  }
+	to {
+		rotate: 1turn;
+	}
 }
 
 @keyframes progress-dash {
-  from {
-    --arc-start: 0deg;
-    --arc-end: 3deg;
-  }
-  50% {
-    --arc-start: 100deg;
-    --arc-end: 358deg;
-  }
-  to {
-    --arc-start: 360deg;
-    --arc-end: 363deg;
-  }
+	from {
+		--arc-start: 0deg;
+		--arc-end: 3deg;
+	}
+	50% {
+		--arc-start: 100deg;
+		--arc-end: 358deg;
+	}
+	to {
+		--arc-start: 360deg;
+		--arc-end: 363deg;
+	}
 }
 ```
 
@@ -141,14 +143,14 @@ Users with motion sensitivities may find fast-spinning elements disorienting. Al
 
 ```css
 @media (prefers-reduced-motion: reduce) {
-  progress.loading-spinner:indeterminate {
-    /* Slow down the animation significantly rather than stopping it entirely,
+	progress.loading-spinner:indeterminate {
+		/* Slow down the animation significantly rather than stopping it entirely,
        so the user still knows that the process is active. */
-    --_used-spinner-duration: 6s;
-    /* Drops the dash animation, so the arc keeps a fixed length */
-    --progress-dash-animation: ;
-    --arc-end: 158deg;
-  }
+		--_used-spinner-duration: 6s;
+		/* Drops the dash animation, so the arc keeps a fixed length */
+		--progress-dash-animation: ;
+		--arc-end: 158deg;
+	}
 }
 ```
 

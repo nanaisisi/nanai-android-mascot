@@ -152,8 +152,7 @@ pub fn evaluate_system_disk(q: &str) -> Option<String> {
 #[cfg(target_os = "windows")]
 pub fn get_system_disks() -> Vec<SystemDiskInfo> {
     use windows_sys::Win32::Storage::FileSystem::{
-        GetDiskFreeSpaceExW, GetDriveTypeW, GetLogicalDriveStringsW, DRIVE_CDROM, DRIVE_FIXED,
-        DRIVE_RAMDISK, DRIVE_REMOTE, DRIVE_REMOVABLE,
+        GetDiskFreeSpaceExW, GetDriveTypeW, GetLogicalDriveStringsW,
     };
     let mut buf = [0u16; 512];
     let len = unsafe { GetLogicalDriveStringsW(buf.len() as u32, buf.as_mut_ptr()) };
@@ -170,11 +169,11 @@ pub fn get_system_disks() -> Vec<SystemDiskInfo> {
 
                     let dtype_code = unsafe { GetDriveTypeW(drive_path_slice.as_ptr()) };
                     let drive_type = match dtype_code {
-                        DRIVE_REMOVABLE => "removable",
-                        DRIVE_FIXED => "fixed",
-                        DRIVE_REMOTE => "network",
-                        DRIVE_CDROM => "optical",
-                        DRIVE_RAMDISK => "ram",
+                        2 => "removable",
+                        3 => "fixed",
+                        4 => "network",
+                        5 => "optical",
+                        6 => "ram",
                         _ => "unknown",
                     }
                     .to_string();

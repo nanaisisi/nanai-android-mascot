@@ -70,7 +70,7 @@ pub fn handle_window_event(window: &tauri::Window, event: &tauri::WindowEvent) {
         if label == "menu_window" || label == "submenu_window" {
             let app = window.app_handle().clone();
             tauri::async_runtime::spawn_blocking(move || {
-                std::thread::sleep(std::time::Duration::from_millis(150));
+                std::thread::sleep(std::time::Duration::from_millis(200));
                 let menu_focused = app
                     .get_webview_window("menu_window")
                     .map(|w| w.is_focused().unwrap_or(false))
@@ -79,11 +79,15 @@ pub fn handle_window_event(window: &tauri::Window, event: &tauri::WindowEvent) {
                     .get_webview_window("submenu_window")
                     .map(|w| w.is_focused().unwrap_or(false))
                     .unwrap_or(false);
+                let sub_visible = app
+                    .get_webview_window("submenu_window")
+                    .map(|w| w.is_visible().unwrap_or(false))
+                    .unwrap_or(false);
 
                 let state = app.state::<crate::common::state::AppState>();
                 let is_dialog_open = *state.is_dialog_open.lock();
 
-                if !menu_focused && !sub_focused && !is_dialog_open {
+                if !menu_focused && !sub_focused && !sub_visible && !is_dialog_open {
                     if let Some(m) = app.get_webview_window("menu_window")
                         && m.is_visible().unwrap_or(false)
                     {

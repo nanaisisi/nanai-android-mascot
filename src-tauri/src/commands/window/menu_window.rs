@@ -155,6 +155,7 @@ pub async fn hide_menu_window(_app_handle: tauri::AppHandle) -> Result<(), Strin
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ShowSubmenuWindowParams {
     menu_type: String,
     x: f64,

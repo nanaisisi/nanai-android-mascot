@@ -1,4 +1,8 @@
-import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import {
+	invoke,
+	isNativeMultiWindow,
+	isTauriAvailable,
+} from "../core/tauri-helper.js";
 import { handleMenuKeydown } from "./context-menu-keyboard.js";
 import { setupContextMenuSync } from "./context-menu-sync.js";
 import { MenuDispatcher } from "./menu-dispatcher.js";
@@ -22,7 +26,7 @@ setupContextMenuSync(dispatcher, renderer);
 
 let hasActiveSubmenu = false;
 
-// 独立サブメニューウィンドウを開く補助関数 (デスクトップ環境用)
+// 独立サブメニューウィンドウ（デスクトップ）またはインラインサブメニュー（モバイル/Android/Web）を開く補助関数
 function _triggerSubmenuWindow(menuType: string, buttonEl: Element) {
 	const now = Date.now();
 	const last = _triggerSubmenuWindow.lastRequest;
@@ -30,8 +34,9 @@ function _triggerSubmenuWindow(menuType: string, buttonEl: Element) {
 	_triggerSubmenuWindow.lastRequest = { type: menuType, time: now };
 
 	hasActiveSubmenu = true;
+	const wrapper = buttonEl.closest(".menu-item-wrapper");
 
-	if (isTauriAvailable()) {
+	if (isNativeMultiWindow()) {
 		const rect = buttonEl.getBoundingClientRect();
 		const sX = globalThis.screenX ?? 0;
 		const sY = globalThis.screenY ?? 0;
@@ -47,17 +52,27 @@ function _triggerSubmenuWindow(menuType: string, buttonEl: Element) {
 			},
 		}).catch((e) => {
 			console.error("Failed to show submenu window:", e);
-			const wrapper = buttonEl.closest(".menu-item-wrapper");
 			if (wrapper) {
 				checkSubmenuFlip(wrapper);
 				wrapper.classList.add("open");
 			}
 		});
+	} else if (wrapper) {
+		const isAlreadyOpen = wrapper.classList.contains("open");
+		document.querySelectorAll(".menu-item-wrapper.open").forEach((el) => {
+			if (el !== wrapper) el.classList.remove("open");
+		});
+		if (!isAlreadyOpen) {
+			checkSubmenuFlip(wrapper);
+			wrapper.classList.add("open");
+		} else {
+			wrapper.classList.remove("open");
+		}
 	}
 }
 
 document.addEventListener("click", (e) => {
-	const menuItem = e.target.closest(".menu-item");
+	const menuItem = (e.target as Element).closest(".menu-item");
 	if (!menuItem) return;
 
 	// サブメニュー展開用の親ボタン
@@ -66,7 +81,7 @@ document.addEventListener("click", (e) => {
 			.replace("-menu-btn", "")
 			.replace("-switch-btn", "")
 			.replace("-btn", "");
-		if (isTauriAvailable()) {
+		if (isNativeMultiWindow()) {
 			_triggerSubmenuWindow(menuType, menuItem);
 			return;
 		}
@@ -75,11 +90,13 @@ document.addEventListener("click", (e) => {
 		if (wrapper) {
 			const isAlreadyOpen = wrapper.classList.contains("open");
 			document.querySelectorAll(".menu-item-wrapper.open").forEach((el) => {
-				el.classList.remove("open");
+				if (el !== wrapper) el.classList.remove("open");
 			});
 			if (!isAlreadyOpen) {
 				checkSubmenuFlip(wrapper);
 				wrapper.classList.add("open");
+			} else {
+				wrapper.classList.remove("open");
 			}
 		}
 		return;
@@ -105,7 +122,7 @@ function checkSubmenuFlip(wrapper: Element) {
 	}
 }
 
-// ホバー時にも右/左展開を判定 & 独立サブメニューウィンドウ呼び出し
+// ホバー時にも右/左展開を判定 & サブメニュー呼び出し
 document.addEventListener("mouseover", (e: unknown) => {
 	const btn = (e.target as Element)?.closest?.(".menu-item.has-submenu");
 	if (!btn) return;
@@ -117,20 +134,22 @@ document.addEventListener("mouseover", (e: unknown) => {
 		.replace("-menu-btn", "")
 		.replace("-switch-btn", "")
 		.replace("-btn", "");
-	if (isTauriAvailable()) {
+	if (isNativeMultiWindow()) {
 		_triggerSubmenuWindow(menuType, btn);
 	} else if (wrapper) {
 		document.querySelectorAll(".menu-item-wrapper.open").forEach((el) => {
 			if (el !== wrapper) el.classList.remove("open");
 		});
-		wrapper.classList.add("open");
+		if (!wrapper.classList.contains("open")) {
+			wrapper.classList.add("open");
+		}
 	}
 });
 
 document.querySelectorAll(".menu-item-wrapper").forEach((wrapper) => {
 	wrapper.addEventListener("mouseenter", () => {
 		checkSubmenuFlip(wrapper);
-		if (isTauriAvailable()) {
+		if (isNativeMultiWindow()) {
 			const btn = wrapper.querySelector(".menu-item.has-submenu");
 			if (btn) {
 				const menuType = btn.id
@@ -140,11 +159,13 @@ document.querySelectorAll(".menu-item-wrapper").forEach((wrapper) => {
 				_triggerSubmenuWindow(menuType, btn);
 			}
 		} else {
-			wrapper.classList.add("open");
+			if (!wrapper.classList.contains("open")) {
+				wrapper.classList.add("open");
+			}
 		}
 	});
 	wrapper.addEventListener("mouseleave", () => {
-		if (!isTauriAvailable()) {
+		if (!isNativeMultiWindow()) {
 			wrapper.classList.remove("open");
 		}
 	});

@@ -7,11 +7,22 @@ use crate::common::models::GhostInfo;
 use dynamic_rules::evaluate_dynamic_property;
 use static_rules::evaluate_static_property;
 
-/// Evaluate property system queries with optional active GhostInfo and app context
-pub fn evaluate_property_query_with_ghost_info(
+#[derive(Debug, Clone, Default)]
+pub struct SystemMonitorInfo {
+    pub left: i32,
+    pub top: i32,
+    pub right: i32,
+    pub bottom: i32,
+    pub scale_factor: f64,
+    pub is_primary: bool,
+}
+
+/// Evaluate property system queries with optional active GhostInfo, app context, and monitors
+pub fn evaluate_property_query_full(
     query: &str,
     ghost: Option<&GhostInfo>,
     active_ghost_count: Option<usize>,
+    monitors: &[SystemMonitorInfo],
 ) -> String {
     let q = query.trim().to_lowercase();
 
@@ -40,8 +51,10 @@ pub fn evaluate_property_query_with_ghost_info(
             "default.balloon.path" => {
                 return g.default_balloon_path().unwrap_or("").to_string();
             }
-            "ghostlist.index(0).name" | "ghostlist.index(0)" => return g.name().to_string(),
-            "ghostlist.index(0).path" => return g.path().to_string(),
+            "ghostlist.index(0).name" | "ghostlist.index(0)" | "ghostlist.current.name" => {
+                return g.name().to_string();
+            }
+            "ghostlist.index(0).path" | "ghostlist.current.path" => return g.path().to_string(),
             "ghostlist.count" | "activeghostlist.count" => {
                 return active_ghost_count.unwrap_or(1).max(1).to_string();
             }
@@ -60,6 +73,49 @@ pub fn evaluate_property_query_with_ghost_info(
                 return g.num_characters().max(1).to_string();
             }
             _ => {}
+        }
+
+        // Evaluate ghostlist(KEY).property_name
+        if let Some(ghost_prop) = q.strip_prefix("ghostlist(")
+            && let Some(idx) = ghost_prop.find(").")
+        {
+            let key = &ghost_prop[..idx];
+            let prop = &ghost_prop[idx + 2..];
+            if key == g.name().to_lowercase()
+                || key == g.path().to_lowercase()
+                || key == g.sakura_name().unwrap_or("").to_lowercase()
+            {
+                return match prop {
+                    "name" => g.name().to_string(),
+                    "sakuraname" | "sakura.name" => g.sakura_name().unwrap_or("").to_string(),
+                    "keroname" | "kero.name" => g.kero_name().unwrap_or("").to_string(),
+                    "craftman" | "craftmanw" => g.craftman().unwrap_or("").to_string(),
+                    "craftmanurl" => g.craftman_url().unwrap_or("").to_string(),
+                    "path" => g.path().to_string(),
+                    "version" => g.version().unwrap_or("").to_string(),
+                    _ => String::new(),
+                };
+            }
+        }
+
+        // Evaluate currentghost.shelllist(KEY).property_name
+        if let Some(shell_prop) = q.strip_prefix("currentghost.shelllist(")
+            && let Some(idx) = shell_prop.find(").")
+        {
+            let key = &shell_prop[..idx];
+            let prop = &shell_prop[idx + 2..];
+            if let Some(s) = g
+                .shells()
+                .iter()
+                .find(|s| s.name.to_lowercase() == key || s.path.to_lowercase() == key)
+            {
+                return match prop {
+                    "name" => s.name.clone(),
+                    "path" => s.path.clone(),
+                    "craftman" => s.craftman.clone().unwrap_or_default(),
+                    _ => String::new(),
+                };
+            }
         }
     } else {
         match q.as_str() {
@@ -82,8 +138,16 @@ pub fn evaluate_property_query_with_ghost_info(
     if let Some(val) = evaluate_static_property(&q) {
         val
     } else {
-        evaluate_dynamic_property(&q, query)
+        evaluate_dynamic_property(&q, query, monitors)
     }
+}
+
+pub fn evaluate_property_query_with_ghost_info(
+    query: &str,
+    ghost: Option<&GhostInfo>,
+    active_ghost_count: Option<usize>,
+) -> String {
+    evaluate_property_query_full(query, ghost, active_ghost_count, &[])
 }
 
 pub fn evaluate_property_query_with_context(

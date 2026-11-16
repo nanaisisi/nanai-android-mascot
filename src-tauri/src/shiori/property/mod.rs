@@ -8,7 +8,10 @@ pub mod evaluator;
 mod tests;
 
 use crate::common::state::AppState;
-pub use evaluator::{evaluate_property_query, evaluate_property_query_with_context};
+pub use evaluator::{
+    evaluate_property_query, evaluate_property_query_full, evaluate_property_query_with_context,
+    evaluate_property_query_with_ghost_info, SystemMonitorInfo,
+};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -29,6 +32,7 @@ impl PropertyQueryRequest {
 
 #[tauri::command]
 pub async fn get_system_property(
+    app: tauri::AppHandle,
     state: tauri::State<'_, AppState>,
     query: String,
 ) -> Result<String, String> {
@@ -37,9 +41,37 @@ pub async fn get_system_property(
     let active_ghosts_guard = state.active_ghosts.lock();
     let active_count = active_ghosts_guard.len();
 
-    Ok(evaluate_property_query_with_context(
+    let primary_name = app
+        .primary_monitor()
+        .ok()
+        .flatten()
+        .and_then(|m| m.name().map(|s| s.to_string()));
+
+    let monitors: Vec<SystemMonitorInfo> = if let Ok(mon_list) = app.available_monitors() {
+        mon_list
+            .into_iter()
+            .map(|m| {
+                let pos = m.position();
+                let size = m.size();
+                let is_primary = m.name().map(|s| s.to_string()) == primary_name;
+                SystemMonitorInfo {
+                    left: pos.x,
+                    top: pos.y,
+                    right: pos.x + size.width as i32,
+                    bottom: pos.y + size.height as i32,
+                    scale_factor: m.scale_factor(),
+                    is_primary,
+                }
+            })
+            .collect()
+    } else {
+        Vec::new()
+    };
+
+    Ok(evaluate_property_query_full(
         &query,
-        current_ghost,
+        None,
         Some(active_count),
+        &monitors,
     ))
 }

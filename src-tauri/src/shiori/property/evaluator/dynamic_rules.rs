@@ -1,6 +1,12 @@
 //! 接頭辞・パターン一致型動的プロパティ評価モジュール
 
-pub(super) fn evaluate_dynamic_property(q: &str, raw_query: &str) -> String {
+use super::SystemMonitorInfo;
+
+pub(super) fn evaluate_dynamic_property(
+    q: &str,
+    raw_query: &str,
+    monitors: &[SystemMonitorInfo],
+) -> String {
     if let Some(shiori_var) = q.strip_prefix("shiori.") {
         return match shiori_var {
             "version" => "3.0".to_string(),
@@ -44,13 +50,88 @@ pub(super) fn evaluate_dynamic_property(q: &str, raw_query: &str) -> String {
     if q.starts_with("system.network.") {
         return "online".to_string();
     }
-    if q.starts_with("system.monitor.index") {
-        return "0,0,1920,1080".to_string();
+
+    // UKADOC spec: system.monitor.count & system.monitor.index(ID).(rect|work|dpi|bpp|primary)
+    if q == "system.monitor.count" {
+        return monitors.len().max(1).to_string();
     }
-    if q.starts_with("system.disk.") {
-        let (free_mb, _total_mb) = get_disk_space_info(".");
-        return free_mb.to_string();
+    if let Some(mon_prop) = q.strip_prefix("system.monitor.index(")
+        && let Some(idx) = mon_prop.find(").")
+    {
+        let mon_id = mon_prop[..idx].parse::<usize>().unwrap_or(0);
+        let subkey = &mon_prop[idx + 2..];
+        if let Some(mon) = monitors.get(mon_id) {
+            return match subkey {
+                "rect" => format!("{},{},{},{}", mon.left, mon.top, mon.right, mon.bottom),
+                "work" => format!(
+                    "{},{},{},{}",
+                    mon.left,
+                    mon.top,
+                    mon.right,
+                    (mon.bottom - 40).max(mon.top)
+                ),
+                "dpi" => format!("{:.0}", mon.scale_factor * 96.0),
+                "bpp" => "32".to_string(),
+                "primary" => {
+                    if mon.is_primary {
+                        "1".to_string()
+                    } else {
+                        "0".to_string()
+                    }
+                }
+                _ => "0".to_string(),
+            };
+        } else if mon_id == 0 {
+            return match subkey {
+                "rect" => "0,0,1920,1080".to_string(),
+                "work" => "0,0,1920,1040".to_string(),
+                "dpi" => "96".to_string(),
+                "bpp" => "32".to_string(),
+                "primary" => "1".to_string(),
+                _ => "0".to_string(),
+            };
+        } else {
+            return "0".to_string();
+        }
     }
+
+    // UKADOC spec: system.disk.count & system.disk.index(ID).(mountpoint|type|total|free)
+    if q == "system.disk.count" {
+        return "1".to_string();
+    }
+    if let Some(disk_prop) = q.strip_prefix("system.disk.index(")
+        && let Some(idx) = disk_prop.find(").")
+    {
+        let disk_id = disk_prop[..idx].parse::<usize>().unwrap_or(0);
+        let subkey = &disk_prop[idx + 2..];
+        let (free_mb, total_mb) = get_disk_space_info(".");
+        return match subkey {
+            "mountpoint" => {
+                if cfg!(target_os = "windows") {
+                    "C:".to_string()
+                } else {
+                    "/".to_string()
+                }
+            }
+            "type" => "fixed".to_string(),
+            "total" => {
+                if disk_id == 0 {
+                    total_mb.to_string()
+                } else {
+                    "-1".to_string()
+                }
+            }
+            "free" => {
+                if disk_id == 0 {
+                    free_mb.to_string()
+                } else {
+                    "-1".to_string()
+                }
+            }
+            _ => "-1".to_string(),
+        };
+    }
+
     if let Some(scope_prop) = q.strip_prefix("currentghost.scope(")
         && let Some(idx) = scope_prop.find(").")
     {

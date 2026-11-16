@@ -6,11 +6,9 @@
 
 ## 突合結果
 
-実装コードに「system.os.」が見つからない。
-
+UKADOC `system.os` 仕様に従い全 15 キー（`type`, `arch`, `name`, `version`, `build`, `parenttype`, `parentname`, `locale`, `locale.language`, `locale.country`, `timezone.offset`, `dst`, `uptime`, `unixtime`, `idletime`）をシステムの標準関数・`sys_locale`・`chrono`・`GetTickCount64` / `/proc/uptime` から完全に動的算出・評価するよう実装。
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:88` `if q.starts_with("system.os.") {`
-- `src-tauri/src/shiori/property.rs:152` `assert_eq!(evaluate_property_query("system.os.name"), "Linux");`
-- `ui/js/ghost/command-handler/env.js:136` `if (key.startsWith("system.os.")) return "Linux";`
+- `src-tauri/src/shiori/property/evaluator/dynamic_rules.rs` `if let Some(sub) = q.strip_prefix("system.os.")`
+- `src-tauri/src/shiori/property/tests.rs` `evaluate_property_query("system.os.name")`

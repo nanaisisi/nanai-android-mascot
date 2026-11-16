@@ -17,12 +17,93 @@ pub(super) fn evaluate_dynamic_property(
             _ => format!("(unknown shiori property: {})", shiori_var),
         };
     }
+
+    // UKADOC spec: system.os.(type|arch|name|version|build|parenttype|parentname|locale|locale.language|locale.country|timezone.offset|dst|uptime|unixtime|idletime)
     if let Some(sub) = q.strip_prefix("system.os.") {
         return match sub {
-            "name" | "version" => std::env::consts::OS.to_string(),
+            "type" => {
+                if cfg!(target_os = "windows") {
+                    "Windows".to_string()
+                } else if cfg!(target_os = "android") {
+                    "Android".to_string()
+                } else if cfg!(target_os = "macos") {
+                    "MacOS".to_string()
+                } else if cfg!(target_os = "linux") {
+                    "Linux".to_string()
+                } else {
+                    "Web".to_string()
+                }
+            }
+            "arch" => match std::env::consts::ARCH {
+                "x86_64" => "x64".to_string(),
+                "aarch64" => "arm64".to_string(),
+                "x86" => "x86".to_string(),
+                "arm" => "arm".to_string(),
+                "riscv32" | "riscv64" | "riscv64gc" => "risc-v".to_string(),
+                "powerpc" | "powerpc64" | "powerpc64le" => "ppc".to_string(),
+                "mips" | "mips64" | "mipsel" | "mips64el" => "mips".to_string(),
+                "loongarch64" => "loongarch".to_string(),
+                "ia64" => "ia64".to_string(),
+                "sparc" | "sparc64" => "sparc".to_string(),
+                "s390x" => "s390x".to_string(),
+                "wasm32" | "wasm64" => "unknown".to_string(),
+                other => {
+                    if other.is_empty() {
+                        "unknown".to_string()
+                    } else {
+                        other.to_string()
+                    }
+                }
+            },
+            "name" => {
+                if cfg!(target_os = "windows") {
+                    "Windows 11".to_string()
+                } else if cfg!(target_os = "android") {
+                    "Android OS".to_string()
+                } else {
+                    format!("Linux {}", std::env::consts::ARCH)
+                }
+            }
+            "version" => {
+                if cfg!(target_os = "windows") {
+                    "10.0".to_string()
+                } else {
+                    "1.0".to_string()
+                }
+            }
+            "build" => "22621".to_string(),
+            "parenttype" | "parentname" => "".to_string(),
+            "locale" => sys_locale::get_locale().unwrap_or_else(|| "ja-JP".to_string()),
+            "locale.language" => {
+                let loc = sys_locale::get_locale().unwrap_or_else(|| "ja-JP".to_string());
+                loc.split(&['-', '_'][..])
+                    .next()
+                    .unwrap_or("ja")
+                    .to_string()
+            }
+            "locale.country" => {
+                let loc = sys_locale::get_locale().unwrap_or_else(|| "ja-JP".to_string());
+                loc.split(&['-', '_'][..])
+                    .nth(1)
+                    .unwrap_or("JP")
+                    .to_string()
+            }
+            "timezone.offset" => {
+                use chrono::Offset;
+                let now = chrono::Local::now();
+                let offset_secs = now.offset().fix().local_minus_utc();
+                let offset_mins = offset_secs / 60;
+                // UKADOC spec: "UTCに対して進んでいる地域では負の値になる。" (e.g. JST UTC+9 -> -540)
+                (-offset_mins).to_string()
+            }
+            "dst" => "0".to_string(),
+            "uptime" => get_system_uptime_secs().to_string(),
+            "unixtime" => chrono::Utc::now().timestamp().to_string(),
+            "idletime" => "0".to_string(),
             _ => std::env::consts::OS.to_string(),
         };
     }
+
     if let Some(sub) = q.strip_prefix("system.cpu.") {
         return match sub {
             "num" => std::thread::available_parallelism()
@@ -193,6 +274,23 @@ pub(super) fn evaluate_dynamic_property(
         return "1".to_string();
     }
     format!("(unknown property: {})", raw_query)
+}
+
+#[cfg(target_os = "windows")]
+fn get_system_uptime_secs() -> u64 {
+    unsafe { windows_sys::Win32::System::SystemInformation::GetTickCount64() / 1000 }
+}
+
+#[cfg(not(target_os = "windows"))]
+fn get_system_uptime_secs() -> u64 {
+    if let Ok(content) = std::fs::read_to_string("/proc/uptime") {
+        if let Some(first) = content.split_whitespace().next() {
+            if let Ok(secs) = first.parse::<f64>() {
+                return secs as u64;
+            }
+        }
+    }
+    0
 }
 
 #[cfg(target_os = "windows")]

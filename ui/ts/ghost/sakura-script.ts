@@ -230,23 +230,21 @@ export class SakuraScriptPlayer {
 			dispEl.style.display = "block";
 		}
 
-		if (isNativeMultiWindow()) {
-			const theme = app?.currentBalloonTheme || "default";
-			const targetScope = 0;
-			frontendLog(
-				`💬 [SakuraScript] メインバルーン表示要求集約: scope=${scope} -> ${targetScope}`,
-			);
-			void invoke("show_balloon_window", { scope_id: targetScope, theme }).catch(
-				(err) => {
-					console.error("❌ show_balloon_window failed:", err);
-				},
-			);
-			const htmlContent = textEl ? textEl.innerHTML : text;
-			void emit(`update-balloon-content-${targetScope}`, {
-				html: htmlContent,
-				theme,
-			});
-		}
+		const theme = app?.currentBalloonTheme || "default";
+		const targetScope = 0;
+		frontendLog(
+			`💬 [SakuraScript] 強制バルーン表示＆同期要求: scope=${scope} -> ${targetScope}, textLength=${text.length}`,
+		);
+		void invoke("show_balloon_window", { scopeId: targetScope, theme }).catch(
+			(err) => {
+				frontendLog(`❌ show_balloon_window failed: ${err}`, "error");
+			},
+		);
+		const htmlContent = textEl ? textEl.innerHTML : text;
+		void emit(`update-balloon-content-${targetScope}`, {
+			html: htmlContent,
+			theme,
+		});
 	}
 
 	private clearBalloon(app: any, scope: number): void {
@@ -267,13 +265,11 @@ export class SakuraScriptPlayer {
 		if (dispEl?.style && isSinglePageUi()) {
 			dispEl.style.display = "none";
 		}
-		if (isNativeMultiWindow()) {
-			const targetScope = 0;
-			void emit(`update-balloon-content-${targetScope}`, {
-				html: "",
-				theme: app?.currentBalloonTheme || "default",
-			});
-		}
+		const targetScope = 0;
+		void emit(`update-balloon-content-${targetScope}`, {
+			html: "",
+			theme: app?.currentBalloonTheme || "default",
+		});
 	}
 
 	private addChoiceToBalloon(
@@ -317,14 +313,12 @@ export class SakuraScriptPlayer {
 			dispEl.style.display = "block";
 		}
 
-		if (isNativeMultiWindow()) {
-			const theme = app?.currentBalloonTheme || "default";
-			const targetScope = 0;
-			void emit(`update-balloon-content-${targetScope}`, {
-				html: textEl ? textEl.innerHTML : "",
-				theme,
-			});
-		}
+		const theme = app?.currentBalloonTheme || "default";
+		const targetScope = 0;
+		void emit(`update-balloon-content-${targetScope}`, {
+			html: textEl ? textEl.innerHTML : "",
+			theme,
+		});
 	}
 
 	private addAnchorToBalloon(

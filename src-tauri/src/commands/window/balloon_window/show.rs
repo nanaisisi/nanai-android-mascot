@@ -13,91 +13,54 @@ impl Drop for BalloonLockGuard {
     }
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct ShowBalloonWindowParams {
-    #[serde(alias = "scopeId")]
-    scope_id: i32,
-    #[serde(default)]
-    theme: Option<String>,
-    #[serde(default)]
-    x: Option<f64>,
-    #[serde(default)]
-    y: Option<f64>,
-    #[serde(default)]
-    width: Option<f64>,
-    #[serde(default)]
-    height: Option<f64>,
-}
-
-impl ShowBalloonWindowParams {
-    // Add getter methods
-    pub fn scope_id(&self) -> i32 {
-        self.scope_id
-    }
-
-    pub fn theme(&self) -> Option<&str> {
-        self.theme.as_deref()
-    }
-
-    pub fn x(&self) -> Option<f64> {
-        self.x
-    }
-
-    pub fn y(&self) -> Option<f64> {
-        self.y
-    }
-
-    pub fn width(&self) -> Option<f64> {
-        self.width
-    }
-
-    pub fn height(&self) -> Option<f64> {
-        self.height
-    }
-}
-
 /// 独立バルーン（スコープ N）ウィンドウ表示コマンド
 #[tauri::command]
 pub async fn show_balloon_window(
     _app_handle: tauri::AppHandle,
-    params: ShowBalloonWindowParams,
+    scope_id: Option<i32>,
+    #[allow(non_snake_case)]
+    scopeId: Option<i32>,
+    theme: Option<String>,
+    x: Option<f64>,
+    y: Option<f64>,
+    width: Option<f64>,
+    height: Option<f64>,
 ) -> Result<(), String> {
     #[cfg(desktop)]
     {
         let app_handle = _app_handle;
-        let scope_id = params.scope_id();
-        let theme = params.theme().map(ToString::to_string);
-        let x = params.x();
-        let y = params.y();
-        let width = params.width();
-        let height = params.height();
+        let s_id = scope_id.or(scopeId).unwrap_or(0);
+        let t_val = theme;
+        let p_x = x;
+        let p_y = y;
+        let w_val = width;
+        let h_val = height;
 
-        println!("💬 show_balloon_window called: scope_id={}", scope_id);
+        println!("💬 show_balloon_window called: scope_id={}", s_id);
         use tauri::Manager;
-        let label = format!("balloon_window_{}", scope_id);
+        let label = format!("balloon_window_{}", s_id);
 
         if app_handle.get_webview_window(&label).is_none() {
             let mut locks = BALLOON_CREATION_LOCKS.lock().map_err(|e| e.to_string())?;
-            if locks.contains(&scope_id) {
+            if locks.contains(&s_id) {
                 println!(
                     "⚠️ show_balloon_window creation already in progress for scope {}, skipping duplicate request.",
-                    scope_id
+                    s_id
                 );
                 return Ok(());
             }
-            locks.insert(scope_id);
+            locks.insert(s_id);
         }
-        let _guard = BalloonLockGuard(scope_id);
+        let _guard = BalloonLockGuard(s_id);
 
-        let win_width = width.unwrap_or(280.0);
-        let win_height = height.unwrap_or(200.0);
+        let win_width = w_val.unwrap_or(280.0);
+        let win_height = h_val.unwrap_or(200.0);
 
         let get_pos = || {
-            if let (Some(px), Some(py)) = (x, y) {
+            if let (Some(px), Some(py)) = (p_x, p_y) {
                 (px, py)
             } else {
-                let char_label = format!("subchar_window_{}", scope_id);
+                let char_label = format!("subchar_window_{}", s_id);
                 if let Some(char_win) = app_handle.get_webview_window(&char_label) {
                     if let Ok(pos) = char_win.outer_position() {
                         let scale = char_win
@@ -107,19 +70,34 @@ pub async fn show_balloon_window(
                             .unwrap_or(1.0);
                         let base_x = pos.x as f64 / scale;
                         let base_y = pos.y as f64 / scale;
+                        let char_size = char_win
+                            .outer_size()
+                            .unwrap_or(tauri::PhysicalSize {
+                                width: 200,
+                                height: 360,
+                            });
+                        let char_width = char_size.width as f64 / scale;
 
-                        let raw_x = if scope_id == 0 {
-                            base_x + 180.0
-                        } else {
-                            base_x - 260.0
-                        };
-                        let raw_y = base_y - 60.0;
-                        (raw_x.max(10.0), raw_y.max(10.0))
+                        let monitor_width = char_win
+                            .current_monitor()
+                            .ok()
+                            .flatten()
+                            .map(|m| m.size().width as f64 / m.scale_factor())
+                            .unwrap_or(1920.0);
+
+                        let mut raw_x = base_x + char_width + 10.0;
+                        if raw_x + win_width > monitor_width - 20.0 {
+                            raw_x = base_x - win_width - 10.0;
+                        }
+                        raw_x = raw_x.max(10.0);
+
+                        let raw_y = (base_y - 40.0).max(10.0);
+                        (raw_x, raw_y)
                     } else {
-                        (200.0 + (scope_id as f64 * 220.0), 100.0)
+                        (200.0 + (s_id as f64 * 220.0), 100.0)
                     }
                 } else {
-                    (200.0 + (scope_id as f64 * 220.0), 100.0)
+                    (200.0 + (s_id as f64 * 220.0), 100.0)
                 }
             }
         };
@@ -135,7 +113,7 @@ pub async fn show_balloon_window(
             let _ = balloon_win.set_always_on_top(true);
             let _ = balloon_win.show();
 
-            if let Some(theme) = theme.as_ref().filter(|value| !value.is_empty()) {
+            if let Some(theme) = t_val.as_ref().filter(|value| !value.is_empty()) {
                 let _ = app_handle.emit_to(
                     &label,
                     "balloon-theme-changed",
@@ -145,8 +123,8 @@ pub async fn show_balloon_window(
         } else {
             let (target_x, target_y) = get_pos();
 
-            let title = format!("Nanai Mascot - Balloon {}", scope_id);
-            let theme_query = theme
+            let title = format!("Nanai Mascot - Balloon {}", s_id);
+            let theme_query = t_val
                 .as_ref()
                 .filter(|value| !value.is_empty())
                 .map(|value| format!("&theme={value}"))
@@ -155,7 +133,7 @@ pub async fn show_balloon_window(
                 &app_handle,
                 &label,
                 tauri::WebviewUrl::App(
-                    format!("balloon.html?scope={scope_id}{theme_query}").into(),
+                    format!("balloon.html?scope={s_id}{theme_query}").into(),
                 ),
             )
             .title(title)
@@ -173,7 +151,7 @@ pub async fn show_balloon_window(
             let _ = balloon_win.unminimize();
             let _ = balloon_win.set_always_on_top(true);
             let _ = balloon_win.show();
-            if let Some(theme) = theme.as_ref().filter(|value| !value.is_empty()) {
+            if let Some(theme) = t_val.as_ref().filter(|value| !value.is_empty()) {
                 let _ = app_handle.emit_to(
                     &label,
                     "balloon-theme-changed",

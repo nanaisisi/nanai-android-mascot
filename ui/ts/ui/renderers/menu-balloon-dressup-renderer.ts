@@ -11,6 +11,16 @@ export const menuBalloonDressupRenderer = {
 		const container = document.getElementById("balloon-submenu");
 		if (!container) return;
 
+		const activeTheme =
+			currentBalloonTheme ||
+			(typeof document !== "undefined"
+				? document.documentElement.getAttribute("data-balloon-theme")
+				: null) ||
+			(typeof localStorage !== "undefined"
+				? localStorage.getItem("nanai_balloon_theme")
+				: null) ||
+			"nsm";
+
 		container.innerHTML = `
 			<button type="button" class="menu-item" id="balloon-cycle-btn">
 				<span>🔄 次のスキンへ切り替え</span>
@@ -27,7 +37,18 @@ export const menuBalloonDressupRenderer = {
 
 		if (balloons && balloons.length > 0) {
 			balloons.forEach((balloon: { dir_name: unknown; name: unknown }) => {
-				const isCurrent = currentBalloonTheme === balloon.dir_name;
+				const currentNorm = String(activeTheme || "")
+					.trim()
+					.toLowerCase();
+				const balloonDir = String(balloon.dir_name || "")
+					.trim()
+					.toLowerCase();
+				const balloonName = String(balloon.name || "")
+					.trim()
+					.toLowerCase();
+				const isCurrent =
+					currentNorm === balloonDir || currentNorm === balloonName;
+
 				const btn = document.createElement("button");
 				btn.className = `menu-item ${isCurrent ? "is-current" : ""}`;
 				btn.dataset.action = `balloon-theme-${balloon.dir_name}`;
@@ -47,7 +68,13 @@ export const menuBalloonDressupRenderer = {
 				{ id: "nsm_vertical", label: "NAMデフォルト+(頭上)" },
 			];
 			fallbackThemes.forEach((t) => {
-				const isCurrent = currentBalloonTheme === t.id;
+				const currentNorm = String(activeTheme || "")
+					.trim()
+					.toLowerCase();
+				const isCurrent =
+					currentNorm === t.id.toLowerCase() ||
+					currentNorm === t.label.toLowerCase();
+
 				const btn = document.createElement("button");
 				btn.className = `menu-item ${isCurrent ? "is-current" : ""}`;
 				btn.dataset.action = `balloon-theme-${t.id}`;

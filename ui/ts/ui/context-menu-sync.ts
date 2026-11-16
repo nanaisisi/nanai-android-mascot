@@ -56,16 +56,22 @@ export function setupContextMenuSync(
 		});
 		listen("sync-theme", (event) => {
 			renderer.applyTheme(event.payload);
+			const theme =
+				event.payload ||
+				document.documentElement.getAttribute("data-balloon-theme") ||
+				localStorage.getItem("nanai_balloon_theme") ||
+				"nsm";
 			if (globalThis._lastBalloons) {
-				renderer.renderBalloonSubmenu(globalThis._lastBalloons, event.payload);
+				renderer.renderBalloonSubmenu(globalThis._lastBalloons, theme);
 			}
 		});
 		listen("sync-balloons", (event) => {
 			globalThis._lastBalloons = event.payload;
-			renderer.renderBalloonSubmenu(
-				event.payload,
-				document.documentElement.getAttribute("data-balloon-theme"),
-			);
+			const theme =
+				document.documentElement.getAttribute("data-balloon-theme") ||
+				localStorage.getItem("nanai_balloon_theme") ||
+				"nsm";
+			renderer.renderBalloonSubmenu(event.payload, theme);
 		});
 	}
 
@@ -112,17 +118,26 @@ export function setupContextMenuSync(
 			}
 		} else if (event.data?.type === "sync-theme") {
 			renderer.applyTheme(event.data.theme);
+			const theme =
+				event.data.theme ||
+				document.documentElement.getAttribute("data-balloon-theme") ||
+				localStorage.getItem("nanai_balloon_theme") ||
+				"nsm";
 			if (globalThis._lastBalloons) {
 				renderer.renderBalloonSubmenu(
 					globalThis._lastBalloons,
-					event.data.theme,
+					theme,
 				);
 			}
 		} else if (event.data?.type === "sync-balloons") {
 			globalThis._lastBalloons = event.data.balloons;
+			const theme =
+				document.documentElement.getAttribute("data-balloon-theme") ||
+				localStorage.getItem("nanai_balloon_theme") ||
+				"nsm";
 			renderer.renderBalloonSubmenu(
 				event.data.balloons,
-				document.documentElement.getAttribute("data-balloon-theme"),
+				theme,
 			);
 		}
 	});

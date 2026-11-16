@@ -102,28 +102,69 @@ export function renderSubmenuContent({
 			}
 		}
 	} else if (currentSubmenuType === "balloon") {
-		(cachedBalloons.length > 0
-			? cachedBalloons
-			: [
-					{ dir_name: "nsm", name: "NAMデフォルト+" },
-					{
-						dir_name: "nsm_vertical",
-						name: "NAMデフォルト+(頭上)",
-					},
-				]
-		).forEach((balloonItem: { dir_name: unknown; name: unknown }) => {
-			const dirName = balloonItem.dir_name || balloonItem.name;
-			const displayName = balloonItem.name || dirName;
-			const isCurrent = dirName === currentBalloonTheme;
-			const btn = document.createElement("button");
-			btn.type = "button";
-			btn.className = `menu-item${isCurrent ? " is-current" : ""}`;
-			btn.innerHTML = `<span class="menu-item-indicator">${isCurrent ? "✓" : ""}</span><span class="menu-item-label">${displayName}</span>`;
-			btn.addEventListener("click", () => {
-				dispatchSubmenuAction(`balloon-theme-${dirName}`);
+		const renderBalloons = (balloonsList: unknown[]) => {
+			container.innerHTML = "";
+			const activeTheme =
+				currentBalloonTheme ||
+				(typeof document !== "undefined"
+					? document.documentElement.getAttribute("data-balloon-theme")
+					: null) ||
+				(typeof localStorage !== "undefined"
+					? localStorage.getItem("nanai_balloon_theme")
+					: null) ||
+				"nsm";
+
+			const currentNorm = String(activeTheme || "").trim().toLowerCase();
+
+			(balloonsList.length > 0
+				? balloonsList
+				: [
+						{ dir_name: "nsm", name: "NAMデフォルト+" },
+						{
+							dir_name: "nsm_vertical",
+							name: "NAMデフォルト+(頭上)",
+						},
+					]
+			).forEach((balloonItem: { dir_name: unknown; name: unknown }) => {
+				const dirName = String(
+					balloonItem.dir_name || balloonItem.name || "",
+				).trim();
+				const displayName = balloonItem.name || dirName;
+				const balloonNorm = dirName.toLowerCase();
+				const isCurrent =
+					currentNorm === balloonNorm ||
+					currentNorm === String(balloonItem.name || "").trim().toLowerCase();
+
+				const btn = document.createElement("button");
+				btn.type = "button";
+				btn.className = `menu-item${isCurrent ? " is-current" : ""}`;
+				btn.innerHTML = `<span class="menu-item-indicator">${isCurrent ? "✓" : ""}</span><span class="menu-item-label">${displayName}</span>`;
+				btn.addEventListener("click", () => {
+					dispatchSubmenuAction(`balloon-theme-${dirName}`);
+				});
+				container.appendChild(btn);
 			});
-			container.appendChild(btn);
-		});
+		};
+
+		if (!cachedBalloons || cachedBalloons.length === 0) {
+			container.innerHTML = `<div class="menu-item is-disabled"><span class="menu-item-indicator"></span><span class="menu-item-label">読み込み中...</span></div>`;
+			import("@tauri-apps/api/core")
+				.then(({ invoke }) => {
+					invoke("scan_balloons")
+						.catch(() => invoke("list_balloons"))
+						.then((res) => {
+							if (Array.isArray(res) && res.length > 0) {
+								renderBalloons(res);
+							} else {
+								renderBalloons([]);
+							}
+						})
+						.catch(() => renderBalloons([]));
+				})
+				.catch(() => renderBalloons([]));
+		} else {
+			renderBalloons(cachedBalloons);
+		}
 	} else if (currentSubmenuType === "recent") {
 		if (!cachedRecentGhosts || cachedRecentGhosts.length === 0) {
 			const empty = document.createElement("div");

@@ -314,6 +314,7 @@ pub fn resolve_balloon_dir(
     name: &str,
     app_handle: &tauri::AppHandle,
 ) -> Result<PathBuf, String> {
+    println!("🔍 [Balloon] resolve_balloon_dir 呼び出し: name='{}'", name);
     let effective_name = if name.is_empty() { "default" } else { name };
 
     let mut search_bases = vec![

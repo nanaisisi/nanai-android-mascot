@@ -1,6 +1,7 @@
 pub mod android;
 pub mod balloon_window;
 pub mod character_window;
+pub mod frontend_log;
 pub mod lifecycle;
 pub mod loading_banner_window;
 pub mod menu_native;
@@ -10,6 +11,7 @@ pub mod menu_window;
 pub use android::*;
 pub use balloon_window::*;
 pub use character_window::*;
+pub use frontend_log::*;
 pub use lifecycle::*;
 pub use loading_banner_window::*;
 pub use menu_native::*;

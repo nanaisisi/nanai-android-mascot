@@ -230,5 +230,15 @@ export async function getCurrentWindowPosition(): Promise<{
 	}
 }
 
+/**
+ * フロントエンド側のログをRustターミナル（stdout/stderr）に転送する
+ */
+export function frontendLog(message: string, level = "info") {
+	console.log(`[Frontend Log] ${message}`);
+	if (isTauriAvailable()) {
+		void invoke("log_from_frontend", { message, level }).catch(() => {});
+	}
+}
+
 (globalThis as unknown as Record<string, unknown>).__NANAI_IPC_QUEUE_STATS__ =
 	ipcQueueStats;

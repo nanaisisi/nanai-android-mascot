@@ -3,7 +3,7 @@
  * @brief GhostController 向け SHIORI 初期化・イベント送受信・タイマー管理ロジック
  */
 
-import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import { invoke, isTauriAvailable, frontendLog } from "../core/tauri-helper.js";
 import { fromRustResponse } from "./shiori-protocol.js";
 
 export interface GhostShioriContext {
@@ -33,27 +33,27 @@ export const ghostShioriMethods = {
 	) {
 		if (!isTauriAvailable()) return;
 		try {
-			console.log("👻 [Init step 1] invoking load_ghost for:", ghost?.name);
+			frontendLog(`👻 [Init step 1] invoking load_ghost for: ${ghost?.name}`);
 			await invoke("load_ghost", {
 				ghostName: ghost?.name,
 				ghostPath: ghost?.path,
 			});
 			if (!isCurrentLoad()) return;
-			console.log("👻 [Init step 2] load_ghost completed, hiding loading banner");
+			frontendLog(`👻 [Init step 2] load_ghost completed, hiding loading banner`);
 
 			try {
 				await invoke("hide_loading_banner_window");
 			} catch (e) {
-				console.warn("⚠️ hide_loading_banner_window error:", e);
+				frontendLog(`⚠️ hide_loading_banner_window error: ${e}`, "warn");
 			}
 			if (!isCurrentLoad()) return;
 
-			console.log("👻 [Init step 3] waiting for readinessGatePromise...");
+			frontendLog(`👻 [Init step 3] waiting for readinessGatePromise...`);
 			if (readinessGatePromise) {
 				await readinessGatePromise;
 			}
 			if (!isCurrentLoad()) return;
-			console.log("👻 [Init step 4] readinessGatePromise passed, sending OnBoot/OnGhostChanged");
+			frontendLog(`👻 [Init step 4] readinessGatePromise passed, sending OnBoot/OnGhostChanged`);
 
 			try {
 				type ShioriResponse = {
@@ -64,7 +64,7 @@ export const ghostShioriMethods = {
 				const prevGhost = this._previousGhostName || "";
 				let bootRes: ShioriResponse = null;
 				if (prevGhost && prevGhost !== ghost?.name) {
-					console.log("👻 [Init step 4a] sending OnGhostChanged");
+					frontendLog(`👻 [Init step 4a] sending OnGhostChanged`);
 					const res = await this.sendShioriEvent("OnGhostChanged", [
 						ghost?.name,
 						"manual",
@@ -73,13 +73,13 @@ export const ghostShioriMethods = {
 					bootRes = res as ShioriResponse;
 				}
 				if (!bootRes || bootRes.status === 204 || !bootRes.value) {
-					console.log("👻 [Init step 4b] sending OnBoot");
+					frontendLog(`👻 [Init step 4b] sending OnBoot`);
 					const res = await this.sendShioriEvent("OnBoot");
 					bootRes = res as ShioriResponse;
 				}
 				this._previousGhostName = ghost?.name;
 				const scriptText = bootRes?.value || bootRes?.headers?.value;
-				console.log("👻 [Init step 5] boot response received, status:", bootRes?.status, "script length:", scriptText?.length);
+				frontendLog(`👻 [Init step 5] boot response received, status: ${bootRes?.status}, script length: ${scriptText?.length}`);
 				if (bootRes?.status === 200 && scriptText) {
 					this.app?.playSakuraScript?.(scriptText);
 				}
@@ -95,13 +95,13 @@ export const ghostShioriMethods = {
 					}
 				}
 			} catch (error) {
-				console.error("❌ [Init step 4/5 error] SHIORI event/script error:", error);
+				frontendLog(`❌ [Init step 4/5 error] SHIORI event/script error: ${error}`, "error");
 			}
 
 			this.startSecondChangeTimer();
-			console.log("✅ [Init step 6] initializeGhostSHIORI finished successfully");
+			frontendLog(`✅ [Init step 6] initializeGhostSHIORI finished successfully`);
 		} catch (error) {
-			console.error("❌ [Init outer error] SHIORI初期化エラー:", error);
+			frontendLog(`❌ [Init outer error] SHIORI初期化エラー: ${error}`, "error");
 			if (isCurrentLoad()) {
 				invoke("hide_loading_banner_window").catch(() => {});
 			}

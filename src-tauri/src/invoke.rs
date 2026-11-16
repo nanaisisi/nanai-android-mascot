@@ -76,6 +76,7 @@ pub fn get_invoke_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         commands::window::preload_auxiliary_windows,
         commands::window::show_loading_banner_window,
         commands::window::hide_loading_banner_window,
+        commands::window::log_from_frontend,
         commands::install::pick_and_install_ghost_archive,
         commands::install::install_ghost_archive,
         commands::install::install_ghost_archive_bytes,

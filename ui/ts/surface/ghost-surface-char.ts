@@ -10,28 +10,19 @@ export async function updateGhostCharacter(
 	const sakuraPlaceholder =
 		byId("sakura-placeholder") ||
 		document.querySelector(".character-placeholder");
-	const keroPlaceholder = byId("kero-placeholder");
-	const keroSlot = byId("kero-slot");
 	if (!sakuraPlaceholder) return;
 
 	if (!ghostName) {
 		sakuraPlaceholder.innerHTML = "";
-		if (keroPlaceholder) keroPlaceholder.innerHTML = "";
-		if (keroSlot) keroSlot.style.display = "none";
 		return;
 	}
 	sakuraPlaceholder.title = ghostName;
-	if (keroSlot) keroSlot.style.display = "none";
-	if (keroPlaceholder) keroPlaceholder.innerHTML = "";
 
-	const promises = [thisObj.updateSurface(0, 0)];
-
-	const hasKero = Boolean(thisObj.currentGhost?.kero_name);
-	if (hasKero) {
-		promises.push(thisObj.updateSurface(10, 1));
-	} else if (isTauriAvailable()) {
-		invoke("hide_subchar_window", { scopeId: 1 }).catch(() => {});
-	}
+	// スコープ 0 (メイン) とスコープ 1 (サブ) の両方を独立して並行初期化・更新
+	const promises = [
+		thisObj.updateSurface(0, 0),
+		thisObj.updateSurface(10, 1),
+	];
 	await Promise.all(promises);
 }
 

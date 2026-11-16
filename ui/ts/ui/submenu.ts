@@ -72,6 +72,16 @@ async function dispatchSubmenuAction(action: unknown, payload = null) {
 }
 
 function renderContent() {
+	if (!currentBalloonTheme) {
+		try {
+			currentBalloonTheme =
+				localStorage.getItem("nanai_balloon_theme") ||
+				document.documentElement.getAttribute("data-balloon-theme") ||
+				"nsm";
+		} catch (_e) {
+			currentBalloonTheme = "nsm";
+		}
+	}
 	renderSubmenuContent({
 		currentSubmenuType,
 		cachedGhosts,

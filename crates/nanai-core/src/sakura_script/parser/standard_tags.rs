@@ -95,28 +95,18 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
             }
             's' => {
                 chars.next();
-                if let Some(arg) = parse_bracket_arg(chars) {
-                    if let Ok(id) = arg.parse::<i32>() {
-                        tokens.push(SakuraToken::Surface(id));
-                    }
-                } else if let Some(&digit) = chars.peek()
-                    && digit.is_ascii_digit()
-                {
-                    chars.next();
-                    tokens.push(SakuraToken::Surface((digit as u8 - b'0') as i32));
+                if let Some(id) = parse_bracket_arg(chars).and_then(|arg| arg.parse::<i32>().ok()) {
+                    tokens.push(SakuraToken::Surface(id));
+                } else if let Some(id) = parse_number(chars) {
+                    tokens.push(SakuraToken::Surface(id));
                 }
             }
             'b' => {
                 chars.next();
-                if let Some(arg) = parse_bracket_arg(chars) {
-                    if let Ok(id) = arg.parse::<i32>() {
-                        tokens.push(SakuraToken::Balloon(id));
-                    }
-                } else if let Some(&digit) = chars.peek()
-                    && digit.is_ascii_digit()
-                {
-                    chars.next();
-                    tokens.push(SakuraToken::Balloon((digit as u8 - b'0') as i32));
+                if let Some(id) = parse_bracket_arg(chars).and_then(|arg| arg.parse::<i32>().ok()) {
+                    tokens.push(SakuraToken::Balloon(id));
+                } else if let Some(id) = parse_number(chars) {
+                    tokens.push(SakuraToken::Balloon(id));
                 }
             }
             'i' => {
@@ -129,11 +119,8 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
             }
             'w' => {
                 chars.next();
-                if let Some(&digit) = chars.peek()
-                    && digit.is_ascii_digit()
-                {
-                    chars.next();
-                    let wait_ms = ((digit as u8 - b'0') as u32) * 50;
+                if let Some(wait_num) = parse_number(chars) {
+                    let wait_ms = (wait_num as u32) * 50;
                     tokens.push(SakuraToken::Wait(wait_ms));
                 }
             }
@@ -203,5 +190,21 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
         }
     } else {
         text_buf.push('\\');
+    }
+}
+
+fn parse_number<I: Iterator<Item = char>>(chars: &mut Peekable<I>) -> Option<i32> {
+    let mut num_str = String::new();
+    while let Some(&ch) = chars.peek() {
+        if ch.is_ascii_digit() {
+            num_str.push(chars.next().unwrap());
+        } else {
+            break;
+        }
+    }
+    if num_str.is_empty() {
+        None
+    } else {
+        num_str.parse::<i32>().ok()
     }
 }

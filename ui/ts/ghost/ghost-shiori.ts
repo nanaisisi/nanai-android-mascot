@@ -163,7 +163,7 @@ export const ghostShioriMethods = {
 
 			try {
 				if ((this.uptimeSeconds || 0) % 60 === 0) {
-					await this.sendShioriEvent("OnMinuteChange", [
+					void this.sendShioriEvent("OnMinuteChange", [
 						Math.floor((this.uptimeSeconds || 0) / 60),
 						0,
 						0,
@@ -171,7 +171,7 @@ export const ghostShioriMethods = {
 						cantTalk,
 					]);
 				}
-				await this.sendShioriEvent("OnSecondChange", [
+				void this.sendShioriEvent("OnSecondChange", [
 					this.uptimeSeconds,
 					0,
 					0,

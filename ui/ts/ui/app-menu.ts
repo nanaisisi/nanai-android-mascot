@@ -63,7 +63,7 @@ export const menuMethods = {
 		}
 	},
 
-	syncMenuGhosts(scope: number = 0) {
+	async syncMenuGhosts(scope: number = 0) {
 		const app =
 			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
 		const gc = app.ghostController;
@@ -123,6 +123,10 @@ export const menuMethods = {
 		} catch (_err) {}
 
 		if (isTauriAvailable()) {
+			if (!app.availableBalloons || app.availableBalloons.length === 0) {
+				await app.scanBalloons?.();
+			}
+
 			emit("sync-ghosts", {
 				ghosts,
 				currentGhost: gc.currentGhost?.name || gc.currentGhost,

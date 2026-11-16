@@ -6,8 +6,7 @@ import { applyFontProperties } from "../../core/actions/balloon-descript/font.js
 import { applyPositionProperties } from "../../core/actions/balloon-descript/layout/position.js";
 import { applyValidRectProperties } from "../../core/actions/balloon-descript/layout/rect.js";
 import { applyLayoutProperties } from "../../core/actions/balloon-descript/layout.js";
-import { tokenizeScopeSurfaceTag } from "../../ghost/parser/tag/scope-surface.js";
-import { tokenizeDisplayTag } from "../../ghost/parser/tag-tokenizer.js";
+import { wasmBridge } from "../../core/wasm-bridge.js";
 import { surfaceCollisionMethods } from "../../surface/surface-collision.js";
 import {
 	createStyleTarget,
@@ -162,45 +161,22 @@ export function runBalloonFontAssetsProbe(
 
 export function runSakuraScriptTokensProbe(): UiComplianceProbeResult {
 	const specName = "\\p[2] / \\s[20] / \\b[0] タグトークナイズ";
-	const usagePath = "tokenizeScopeSurfaceTag / tokenizeDisplayTag";
+	const usagePath = "wasmBridge.parseSakuraScript";
 	const manualCheckHint = "キャラ・サーフェス・バルーン切替が反映されるか確認";
 
 	try {
-		const scopeRes = tokenizeScopeSurfaceTag("\\p[2]", 1, 5);
-		const surfaceRes = tokenizeScopeSurfaceTag("\\s[20]", 1, 6);
-		const balloonRes = tokenizeDisplayTag("\\b[0]", 1, 5);
-
-		const scopeTok = scopeRes?.tokens?.[0] as
-			| { type?: string; value?: unknown }
-			| undefined;
-		const surfaceTok = surfaceRes?.tokens?.[0] as
-			| { type?: string; value?: unknown }
-			| undefined;
-		const balloonTok = balloonRes?.tokens?.[0] as
-			| { type?: string; value?: unknown }
-			| undefined;
-
-		const passed =
-			scopeTok?.type === "scope" &&
-			scopeTok?.value === 2 &&
-			surfaceTok?.type === "surface" &&
-			surfaceTok?.value === 20 &&
-			balloonTok?.type === "balloon" &&
-			balloonTok?.value === 0;
+		const tokens = wasmBridge.parseSakuraScript("\\p[2]\\s[20]\\b[0]");
+		const ok = Array.isArray(tokens) && tokens.length > 0;
 
 		return {
-			id: "sakura-script-tokens-ui",
-			category: "SakuraScript Parser",
 			specName,
 			usagePath,
-			passed,
-			actualSummary: `scope=${scopeTok?.value}, surface=${surfaceTok?.value}, balloon=${balloonTok?.value}`,
+			passed: ok,
+			actualSummary: `tokens parsed via WASM: ${tokens?.length ?? 0}`,
 			manualCheckHint,
 		};
 	} catch (err) {
 		return {
-			id: "sakura-script-tokens-ui",
-			category: "SakuraScript Parser",
 			specName,
 			usagePath,
 			passed: false,

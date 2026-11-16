@@ -4,7 +4,7 @@
  */
 
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
-import type { SakuraScriptToken } from "./sakura-parser.js";
+import type { SakuraToken as SakuraScriptToken } from "../core/wasm/wasm-types.js";
 
 export interface RustCommand {
 	type: string;

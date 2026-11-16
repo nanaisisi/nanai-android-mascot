@@ -1,14 +1,6 @@
 //! 接頭辞・パターン一致型動的プロパティ評価モジュール
 
-use super::rules::{
-    ghost_scope::evaluate_ghost_scope,
-    system_cpu::evaluate_system_cpu,
-    system_hardware::{
-        evaluate_system_disk, evaluate_system_memory, evaluate_system_monitor,
-        evaluate_system_network, evaluate_system_power,
-    },
-    system_os::{evaluate_system_os, evaluate_theme_mode, get_system_dnd_mode},
-};
+use super::rules::{ghost_scope::evaluate_ghost_scope, system::evaluate_system_subsystem};
 use super::SystemMonitorInfo;
 
 pub(super) fn evaluate_dynamic_property(
@@ -27,42 +19,8 @@ pub(super) fn evaluate_dynamic_property(
         };
     }
 
-    if let Some(sub) = q.strip_prefix("system.os.") {
-        return evaluate_system_os(sub);
-    }
-
-    if let Some(sub) = q.strip_prefix("system.cpu.") {
-        return evaluate_system_cpu(sub);
-    }
-
-    if let Some(sub) = q.strip_prefix("system.memory.") {
-        return evaluate_system_memory(sub);
-    }
-
-    if q.starts_with("system.power.") {
-        return evaluate_system_power(q);
-    }
-
-    if q.starts_with("system.network.") {
-        return evaluate_system_network(q);
-    }
-
-    if q == "system.theme.os.mode" {
-        return evaluate_theme_mode(true);
-    }
-    if q == "system.theme.app.mode" {
-        return evaluate_theme_mode(false);
-    }
-    if q == "system.dnd.mode" {
-        return get_system_dnd_mode();
-    }
-
-    if let Some(val) = evaluate_system_monitor(q, monitors) {
-        return val;
-    }
-
-    if let Some(val) = evaluate_system_disk(q) {
-        return val;
+    if let Some(sys_sub) = q.strip_prefix("system.") {
+        return evaluate_system_subsystem(sys_sub, raw_query, monitors);
     }
 
     if let Some(val) = evaluate_ghost_scope(q) {

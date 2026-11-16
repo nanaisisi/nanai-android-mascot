@@ -6,11 +6,9 @@
 
 ## 突合結果
 
-実装コードに「system.cursor.pos」が見つからない。
-
+UKADOC `system.cursor.pos` 仕様に従い、Win32 `GetCursorPos` からリアルタイムのマウスカーソルスクリーン座標 (X,Y ピクセル) を動的取得・算出するよう完全実装。
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:78` `"system.cursor.pos" => "0,0".to_string(),`
-- `src-tauri/src/shiori/property.rs:146` `assert_eq!(evaluate_property_query("system.cursor.pos"), "0,0");`
-- `ui/js/ghost/command-handler/env.js:120` `case "system.cursor.pos":`
+- `src-tauri/src/shiori/property/evaluator/rules/system.rs` `fn get_mouse_cursor_pos()`
+- `src-tauri/src/shiori/property/tests.rs` `evaluate_property_query("system.cursor.pos")`

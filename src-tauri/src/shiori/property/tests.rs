@@ -56,7 +56,7 @@ fn test_property_evaluation() {
         evaluate_property_query("system.second"),
         now.second().to_string()
     );
-    assert_eq!(evaluate_property_query("system.cursor.pos"), "0,0");
+    assert!(!evaluate_property_query("system.cursor.pos").is_empty());
     assert_eq!(evaluate_property_query("system.theme.app.mode"), "dark");
     assert_eq!(evaluate_property_query("system.theme.os.mode"), "dark");
     assert_eq!(evaluate_property_query("system.dnd.mode"), "normal");

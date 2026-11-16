@@ -12,8 +12,8 @@ pub fn evaluate_system_memory(sub: &str) -> String {
     }
 }
 
-pub fn evaluate_system_power() -> String {
-    get_power_status()
+pub fn evaluate_system_power(q: &str) -> String {
+    get_power_status(q)
 }
 
 pub fn evaluate_system_monitor(q: &str, monitors: &[SystemMonitorInfo]) -> Option<String> {
@@ -244,21 +244,66 @@ fn get_disk_space_info(path: &str) -> (u64, u64) {
 }
 
 #[cfg(target_os = "windows")]
-fn get_power_status() -> String {
+fn get_power_status(q: &str) -> String {
     use windows_sys::Win32::System::Power::{GetSystemPowerStatus, SYSTEM_POWER_STATUS};
+    let sub = q.strip_prefix("system.power.").unwrap_or(q);
     let mut status: SYSTEM_POWER_STATUS = unsafe { std::mem::zeroed() };
     if unsafe { GetSystemPowerStatus(&mut status) } != 0 {
-        if status.ACLineStatus == 1 {
-            return "ac".to_string();
-        } else if status.ACLineStatus == 0 {
-            return format!("battery,{}", status.BatteryLifePercent);
+        match sub {
+            "source" => match status.ACLineStatus {
+                1 => "ac".to_string(),
+                0 => "battery".to_string(),
+                _ => "unknown".to_string(),
+            },
+            "battery.percent" => {
+                if status.BatteryLifePercent <= 100 {
+                    status.BatteryLifePercent.to_string()
+                } else {
+                    "-1".to_string()
+                }
+            }
+            "battery.lifetime" => {
+                if status.BatteryLifeTime != u32::MAX && status.BatteryLifeTime != 0 {
+                    status.BatteryLifeTime.to_string()
+                } else {
+                    "-1".to_string()
+                }
+            }
+            "battery.flag" => {
+                if status.BatteryFlag == 128 {
+                    "no_battery".to_string()
+                } else if status.BatteryFlag == 255 {
+                    String::new()
+                } else {
+                    let mut flags = Vec::new();
+                    if (status.BatteryFlag & 8) != 0 {
+                        flags.push("charging");
+                    }
+                    if (status.BatteryFlag & 1) != 0 {
+                        flags.push("high");
+                    } else if (status.BatteryFlag & 2) != 0 {
+                        flags.push("low");
+                    } else if (status.BatteryFlag & 4) != 0 {
+                        flags.push("critical");
+                    }
+                    flags.join(",")
+                }
+            }
+            _ => "unknown".to_string(),
+        }
+    } else {
+        match sub {
+            "source" => "unknown".to_string(),
+            "battery.percent" | "battery.lifetime" => "-1".to_string(),
+            "battery.flag" => String::new(),
+            _ => "unknown".to_string(),
         }
     }
-    "ac".to_string()
 }
 
 #[cfg(target_os = "android")]
-fn get_power_status() -> String {
+fn get_power_status(q: &str) -> String {
+    let sub = q.strip_prefix("system.power.").unwrap_or(q);
     let mut is_charging = false;
     if let Ok(status) = std::fs::read_to_string("/sys/class/power_supply/battery/status") {
         let s = status.trim().to_lowercase();
@@ -266,28 +311,80 @@ fn get_power_status() -> String {
             is_charging = true;
         }
     }
-    if is_charging {
-        return "ac".to_string();
-    }
-    if let Ok(cap) = std::fs::read_to_string("/sys/class/power_supply/battery/capacity") {
-        if let Ok(pct) = cap.trim().parse::<u32>() {
-            return format!("battery,{}", pct);
+    let capacity = std::fs::read_to_string("/sys/class/power_supply/battery/capacity")
+        .ok()
+        .and_then(|c| c.trim().parse::<u32>().ok());
+
+    match sub {
+        "source" => {
+            if is_charging {
+                "ac".to_string()
+            } else if capacity.is_some() {
+                "battery".to_string()
+            } else {
+                "unknown".to_string()
+            }
         }
+        "battery.percent" => capacity.map(|c| c.to_string()).unwrap_or_else(|| "-1".to_string()),
+        "battery.lifetime" => "-1".to_string(),
+        "battery.flag" => {
+            if let Some(pct) = capacity {
+                let mut flags = Vec::new();
+                if is_charging {
+                    flags.push("charging");
+                }
+                if pct > 66 {
+                    flags.push("high");
+                } else if pct > 15 {
+                    flags.push("low");
+                } else {
+                    flags.push("critical");
+                }
+                flags.join(",")
+            } else {
+                "no_battery".to_string()
+            }
+        }
+        _ => "unknown".to_string(),
     }
-    "ac".to_string()
 }
 
 #[cfg(all(not(target_os = "windows"), not(target_os = "android")))]
-fn get_power_status() -> String {
-    if let Ok(ac) = std::fs::read_to_string("/sys/class/power_supply/AC/online") {
-        if ac.trim() == "1" {
-            return "ac".to_string();
+fn get_power_status(q: &str) -> String {
+    let sub = q.strip_prefix("system.power.").unwrap_or(q);
+    let mut is_ups = false;
+    let mut is_ac = false;
+
+    if let Ok(entries) = std::fs::read_dir("/sys/class/power_supply") {
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if let Ok(ps_type) = std::fs::read_to_string(path.join("type")) {
+                let t = ps_type.trim().to_lowercase();
+                if t == "ups" {
+                    is_ups = true;
+                } else if t == "mains" {
+                    if let Ok(online) = std::fs::read_to_string(path.join("online")) {
+                        if online.trim() == "1" {
+                            is_ac = true;
+                        }
+                    }
+                }
+            }
         }
     }
-    if let Ok(ac) = std::fs::read_to_string("/sys/class/power_supply/ACAD/online") {
-        if ac.trim() == "1" {
-            return "ac".to_string();
+
+    match sub {
+        "source" => {
+            if is_ups {
+                "ups".to_string()
+            } else if is_ac {
+                "ac".to_string()
+            } else {
+                "unknown".to_string()
+            }
         }
+        "battery.percent" | "battery.lifetime" => "-1".to_string(),
+        "battery.flag" => "no_battery".to_string(),
+        _ => "unknown".to_string(),
     }
-    "ac".to_string()
 }

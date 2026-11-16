@@ -71,7 +71,8 @@ fn test_property_evaluation() {
         std::env::consts::ARCH
     );
     assert!(!evaluate_property_query("system.memory.total").is_empty());
-    assert!(!evaluate_property_query("system.power.state").is_empty());
+    assert!(!evaluate_property_query("system.power.source").is_empty());
+    assert!(!evaluate_property_query("system.power.battery.percent").is_empty());
     assert_eq!(evaluate_property_query("system.network.state"), "online");
     assert_eq!(
         evaluate_property_query("system.monitor.index(0).rect"),

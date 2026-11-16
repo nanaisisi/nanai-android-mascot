@@ -40,7 +40,7 @@ pub(super) fn evaluate_dynamic_property(
     }
 
     if q.starts_with("system.power.") {
-        return evaluate_system_power();
+        return evaluate_system_power(q);
     }
 
     if q.starts_with("system.network.") {

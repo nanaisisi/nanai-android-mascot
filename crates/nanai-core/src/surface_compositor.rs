@@ -138,7 +138,8 @@ pub fn process_chroma_key_data(
 
             let is_match_top_left = r == target_r && g == target_g && b == target_b;
             let is_match_top_right = r == tr_r && g == tr_g && b == tr_b;
-            let is_green_bg = g > 130 && (g as f32) > (r as f32) * 1.15 && (g as f32) > (b as f32) * 1.15;
+            let is_green_bg =
+                g > 130 && (g as f32) > (r as f32) * 1.15 && (g as f32) > (b as f32) * 1.15;
 
             if is_match_top_left || is_match_top_right || is_green_bg {
                 if paint_black {

@@ -49,6 +49,12 @@ impl HostProc {
             cands.push(d.join("resources").join(name));
         }
         // 開発時
+        cands.push(PathBuf::from(format!(
+            "target_shiori_host/i686-pc-windows-msvc/release/{name}"
+        )));
+        cands.push(PathBuf::from(format!(
+            "src-tauri/target_shiori_host/i686-pc-windows-msvc/release/{name}"
+        )));
         for prof in ["release", "debug"] {
             cands.push(PathBuf::from(format!(
                 "shiori-host/target/i686-pc-windows-msvc/{prof}/{name}"

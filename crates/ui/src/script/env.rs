@@ -36,6 +36,10 @@ impl<'a> Expand_sakura_script_envParams<'a> {
 }
 
 pub fn expand_sakura_script_env(params: Expand_sakura_script_envParams<'_>) -> String {
+    let now = chrono::Local::now();
+    use chrono::Datelike;
+    use chrono::Timelike;
+
     let text = params.text();
     let username = params.username();
     let selfname = params.selfname();
@@ -48,11 +52,18 @@ pub fn expand_sakura_script_env(params: Expand_sakura_script_envParams<'_>) -> S
         if let Some(end) = result[start..].find(']') {
             let query = &result[start + 10..start + end];
             let val = match query {
-                "username" => username,
-                "currentghost.name" | "name" => selfname,
-                _ => "",
+                "username" => username.to_string(),
+                "currentghost.name" | "name" => selfname.to_string(),
+                "keroname" => keroname.to_string(),
+                "system.year" => now.year().to_string(),
+                "system.month" => now.month().to_string(),
+                "system.day" => now.day().to_string(),
+                "system.hour" => now.hour().to_string(),
+                "system.minute" => now.minute().to_string(),
+                "system.second" => now.second().to_string(),
+                _ => String::new(),
             };
-            result.replace_range(start..start + end + 1, val);
+            result.replace_range(start..start + end + 1, &val);
         } else {
             break;
         }
@@ -66,12 +77,12 @@ pub fn expand_sakura_script_env(params: Expand_sakura_script_envParams<'_>) -> S
     result = result.replace("%selfname", selfname);
     result = result.replace("%selfname2", selfname);
     result = result.replace("%keroname", keroname);
-    result = result.replace("%year", "2026");
-    result = result.replace("%month", "3");
-    result = result.replace("%day", "30");
-    result = result.replace("%hour", "12");
-    result = result.replace("%minute", "00");
-    result = result.replace("%second", "00");
+    result = result.replace("%year", &now.year().to_string());
+    result = result.replace("%month", &now.month().to_string());
+    result = result.replace("%day", &now.day().to_string());
+    result = result.replace("%hour", &now.hour().to_string());
+    result = result.replace("%minute", &format!("{:02}", now.minute()));
+    result = result.replace("%second", &format!("{:02}", now.second()));
     result = result.replace("%dms", "0");
     result = result.replace("%et", "0");
     result = result.replace("%exh", "0");

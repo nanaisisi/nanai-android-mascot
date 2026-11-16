@@ -72,9 +72,10 @@ export const ghostSurfaceMethods = {
 			}
 			return {
 				selector: `#char-placeholder-${sId} img`,
-				placeholder: byId(`char-placeholder-${sId}`),
-				container: byId(`char-display-${sId}`),
-				slot: byId(`char-slot-${sId}`),
+				placeholder:
+					byId(`char-placeholder-${sId}`) || byId("sakura-placeholder"),
+				container: byId(`char-display-${sId}`) || byId("ghost-display"),
+				slot: byId(`char-slot-${sId}`) || byId("ghost-container"),
 				fallbackSurface: sId * 10,
 				isMain: false,
 			};

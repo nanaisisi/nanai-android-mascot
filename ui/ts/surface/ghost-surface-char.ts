@@ -18,11 +18,20 @@ export async function updateGhostCharacter(
 	}
 	sakuraPlaceholder.title = ghostName;
 
-	// スコープ 0 (メイン) とスコープ 1 (サブ) の両方を独立して並行初期化・更新
-	const promises = [
-		thisObj.updateSurface(0, 0),
-		thisObj.updateSurface(10, 1),
-	];
+	const promises = [thisObj.updateSurface(0, 0)];
+
+	const hasKero = Boolean(
+		thisObj.currentGhost?.kero_name ||
+			thisObj.currentGhost?.keroName ||
+			(Array.isArray(thisObj.shells) && thisObj.shells.length > 1),
+	);
+
+	if (hasKero) {
+		promises.push(thisObj.updateSurface(10, 1));
+	} else if (isTauriAvailable()) {
+		invoke("hide_subchar_window", { scopeId: 1 }).catch(() => {});
+	}
+
 	await Promise.all(promises);
 }
 

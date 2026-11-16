@@ -33,21 +33,27 @@ export const ghostShioriMethods = {
 	) {
 		if (!isTauriAvailable()) return;
 		try {
+			console.log("👻 [Init step 1] invoking load_ghost for:", ghost?.name);
 			await invoke("load_ghost", {
 				ghostName: ghost?.name,
 				ghostPath: ghost?.path,
 			});
 			if (!isCurrentLoad()) return;
+			console.log("👻 [Init step 2] load_ghost completed, hiding loading banner");
 
 			try {
 				await invoke("hide_loading_banner_window");
-			} catch (_e) {}
+			} catch (e) {
+				console.warn("⚠️ hide_loading_banner_window error:", e);
+			}
 			if (!isCurrentLoad()) return;
 
+			console.log("👻 [Init step 3] waiting for readinessGatePromise...");
 			if (readinessGatePromise) {
 				await readinessGatePromise;
 			}
 			if (!isCurrentLoad()) return;
+			console.log("👻 [Init step 4] readinessGatePromise passed, sending OnBoot/OnGhostChanged");
 
 			try {
 				type ShioriResponse = {
@@ -58,6 +64,7 @@ export const ghostShioriMethods = {
 				const prevGhost = this._previousGhostName || "";
 				let bootRes: ShioriResponse = null;
 				if (prevGhost && prevGhost !== ghost?.name) {
+					console.log("👻 [Init step 4a] sending OnGhostChanged");
 					const res = await this.sendShioriEvent("OnGhostChanged", [
 						ghost?.name,
 						"manual",
@@ -66,11 +73,13 @@ export const ghostShioriMethods = {
 					bootRes = res as ShioriResponse;
 				}
 				if (!bootRes || bootRes.status === 204 || !bootRes.value) {
+					console.log("👻 [Init step 4b] sending OnBoot");
 					const res = await this.sendShioriEvent("OnBoot");
 					bootRes = res as ShioriResponse;
 				}
 				this._previousGhostName = ghost?.name;
 				const scriptText = bootRes?.value || bootRes?.headers?.value;
+				console.log("👻 [Init step 5] boot response received, status:", bootRes?.status, "script length:", scriptText?.length);
 				if (bootRes?.status === 200 && scriptText) {
 					this.app?.playSakuraScript?.(scriptText);
 				}
@@ -85,11 +94,14 @@ export const ghostShioriMethods = {
 						}).catch(() => {});
 					}
 				}
-			} catch (_error) {}
+			} catch (error) {
+				console.error("❌ [Init step 4/5 error] SHIORI event/script error:", error);
+			}
 
 			this.startSecondChangeTimer();
+			console.log("✅ [Init step 6] initializeGhostSHIORI finished successfully");
 		} catch (error) {
-			console.error("❌ SHIORI初期化エラー:", error);
+			console.error("❌ [Init outer error] SHIORI初期化エラー:", error);
 			if (isCurrentLoad()) {
 				invoke("hide_loading_banner_window").catch(() => {});
 			}

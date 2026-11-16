@@ -78,10 +78,44 @@ export const ghostShioriMethods = {
 					bootRes = res as ShioriResponse;
 				}
 				this._previousGhostName = ghost?.name;
-				const scriptText = bootRes?.value || bootRes?.headers?.value;
-				frontendLog(`👻 [Init step 5] boot response received, status: ${bootRes?.status}, script length: ${scriptText?.length}`);
-				if (bootRes?.status === 200 && scriptText) {
-					this.app?.playSakuraScript?.(scriptText);
+				const statusCode = Number(
+					(bootRes as unknown as Record<string, unknown>)?.status ?? 0,
+				);
+				const scriptText =
+					bootRes?.value ||
+					bootRes?.headers?.value ||
+					(typeof bootRes === "string" ? bootRes : "");
+				frontendLog(
+					`👻 [Init step 5] boot response received, status: ${statusCode}, script length: ${scriptText?.length}`,
+				);
+				if ((statusCode === 200 || statusCode === 204) && scriptText) {
+					console.log(
+						"👻 [Init step 5.5] attempting to play SakuraScript, length:",
+						scriptText.length,
+					);
+					const appInst =
+						this.app ||
+						(globalThis as any).mascotApp ||
+						(window as any).app ||
+						this;
+					if (typeof appInst?.playSakuraScript === "function") {
+						appInst.playSakuraScript(scriptText);
+					} else {
+						try {
+							const { SakuraScriptPlayer } = await import("./sakura-script.js");
+							const player = new SakuraScriptPlayer(scriptText, appInst);
+							player.play();
+							appInst.sakuraPlayer = player;
+							console.log(
+								"✨ [GhostShiori] SakuraScriptPlayer fallback successfully played script",
+							);
+						} catch (e) {
+							console.error(
+								"❌ [GhostShiori] Failed to play SakuraScript via fallback:",
+								e,
+							);
+						}
+					}
 				}
 				if (this.app?.availablePlugins && isTauriAvailable()) {
 					for (const plugin of this.app.availablePlugins) {

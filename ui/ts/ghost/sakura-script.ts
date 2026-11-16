@@ -126,6 +126,9 @@ export class SakuraScriptPlayer {
 		switch (stepRes.action) {
 			case "TextAppend": {
 				const text = stepRes.data?.text || "";
+				console.log(
+					`💬 [SakuraScript Player] TextAppend: scope=${scope}, text=${text}`,
+				);
 				this.appendTextToBalloon(app, scope, text);
 				break;
 			}

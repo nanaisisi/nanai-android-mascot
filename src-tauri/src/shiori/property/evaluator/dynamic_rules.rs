@@ -22,20 +22,20 @@ pub(super) fn evaluate_dynamic_property(
     if let Some(sub) = q.strip_prefix("system.os.") {
         return match sub {
             "type" => {
-                if cfg!(target_os = "windows") {
+                if check_reactos() {
+                    "ReactOS".to_string()
+                } else if cfg!(target_os = "windows") {
                     "Windows".to_string()
-                } else if cfg!(target_os = "macos") {
-                    "MacOS".to_string()
-                } else if cfg!(target_os = "linux") {
-                    "Linux".to_string()
                 } else if cfg!(target_os = "ios") {
                     "iOS".to_string()
+                } else if cfg!(target_os = "macos") {
+                    "MacOS".to_string()
                 } else if cfg!(target_os = "android") {
                     "Android".to_string()
+                } else if cfg!(target_os = "linux") {
+                    "Linux".to_string()
                 } else if cfg!(target_os = "freebsd") {
                     "FreeBSD".to_string()
-                } else if check_reactos() {
-                    "ReactOS".to_string()
                 } else {
                     "Web".to_string()
                 }
@@ -62,25 +62,45 @@ pub(super) fn evaluate_dynamic_property(
                 }
             },
             "name" => {
-                let (ver, build) = get_os_ver_and_build();
+                let (ver, build, major, minor) = get_os_ver_and_build();
                 if cfg!(target_os = "windows") {
-                    if build >= 22000 {
-                        format!("Windows 11 (Build {})", build)
+                    let os_name = match (major, minor) {
+                        (10, 0) => {
+                            if build >= 22000 {
+                                "Windows 11"
+                            } else {
+                                "Windows 10"
+                            }
+                        }
+                        (6, 3) => "Windows 8.1",
+                        (6, 2) => "Windows 8",
+                        (6, 1) => "Windows 7",
+                        (6, 0) => "Windows Vista",
+                        (5, 1) | (5, 2) => "Windows XP",
+                        _ => "Windows",
+                    };
+                    let disp_ver = get_windows_display_version();
+                    if !disp_ver.is_empty() {
+                        format!("{} {}", os_name, disp_ver)
                     } else {
-                        format!("Windows 10 (Build {})", build)
+                        format!("{} (Build {})", os_name, build)
                     }
                 } else if cfg!(target_os = "android") {
                     "Android OS".to_string()
+                } else if cfg!(target_os = "macos") {
+                    format!("macOS {}", ver)
+                } else if cfg!(target_os = "ios") {
+                    format!("iOS {}", ver)
                 } else {
                     format!("Linux {} ({})", ver, std::env::consts::ARCH)
                 }
             }
             "version" => {
-                let (ver, _) = get_os_ver_and_build();
+                let (ver, _, _, _) = get_os_ver_and_build();
                 ver
             }
             "build" => {
-                let (_, build) = get_os_ver_and_build();
+                let (_, build, _, _) = get_os_ver_and_build();
                 build.to_string()
             }
             "parenttype" => check_wine_parent().0,
@@ -108,7 +128,13 @@ pub(super) fn evaluate_dynamic_property(
                 // UKADOC spec: "UTCに対して進んでいる地域では負の値になる。" (e.g. JST UTC+9 -> -540)
                 (-offset_mins).to_string()
             }
-            "dst" => "0".to_string(),
+            "dst" => {
+                if is_dst_active() {
+                    "1".to_string()
+                } else {
+                    "0".to_string()
+                }
+            }
             "uptime" => get_system_uptime_secs().to_string(),
             "unixtime" => chrono::Utc::now().timestamp().to_string(),
             "idletime" => get_user_idle_time_secs().to_string(),
@@ -122,8 +148,8 @@ pub(super) fn evaluate_dynamic_property(
                 .map(|n| n.get().to_string())
                 .unwrap_or_else(|_| "1".to_string()),
             "vendor" | "name" => std::env::consts::ARCH.to_string(),
-            "load" => "0".to_string(),
-            "clock" => "0".to_string(),
+            "load" => get_cpu_load_percent().to_string(),
+            "clock" => get_cpu_clock_mhz().to_string(),
             "features" => std::env::consts::ARCH.to_string(),
             _ => std::env::consts::ARCH.to_string(),
         };
@@ -289,7 +315,7 @@ pub(super) fn evaluate_dynamic_property(
 }
 
 #[cfg(target_os = "windows")]
-fn get_os_ver_and_build() -> (String, u32) {
+fn get_os_ver_and_build() -> (String, u32, u32, u32) {
     use windows_sys::Win32::System::SystemInformation::OSVERSIONINFOEXW;
     type RtlGetVersionFn = unsafe extern "system" fn(*mut OSVERSIONINFOEXW) -> i32;
     unsafe {
@@ -306,16 +332,21 @@ fn get_os_ver_and_build() -> (String, u32) {
                 info.dwOSVersionInfoSize = std::mem::size_of::<OSVERSIONINFOEXW>() as u32;
                 if rtl_get_version(&mut info) == 0 {
                     let ver = format!("{}.{}", info.dwMajorVersion, info.dwMinorVersion);
-                    return (ver, info.dwBuildNumber);
+                    return (
+                        ver,
+                        info.dwBuildNumber,
+                        info.dwMajorVersion,
+                        info.dwMinorVersion,
+                    );
                 }
             }
         }
     }
-    ("10.0".to_string(), 22621)
+    ("10.0".to_string(), 22621, 10, 0)
 }
 
 #[cfg(not(target_os = "windows"))]
-fn get_os_ver_and_build() -> (String, u32) {
+fn get_os_ver_and_build() -> (String, u32, u32, u32) {
     use std::ffi::CStr;
     let mut uts: libc::utsname = unsafe { std::mem::zeroed() };
     if unsafe { libc::uname(&mut uts) } == 0 {
@@ -327,9 +358,9 @@ fn get_os_ver_and_build() -> (String, u32) {
             .filter_map(|s| s.parse::<u32>().ok())
             .last()
             .unwrap_or(0);
-        return (release, build);
+        return (release, build, 0, 0);
     }
-    ("1.0".to_string(), 0)
+    ("1.0".to_string(), 0, 0, 0)
 }
 
 #[cfg(target_os = "windows")]
@@ -394,7 +425,7 @@ fn get_system_uptime_secs() -> u64 {
 
 #[cfg(target_os = "windows")]
 pub(super) fn get_display_bpp() -> u32 {
-    use windows_sys::Win32::Graphics::Gdi::{BITSPIXEL, GetDC, GetDeviceCaps, ReleaseDC};
+    use windows_sys::Win32::Graphics::Gdi::{GetDC, GetDeviceCaps, ReleaseDC, BITSPIXEL};
     unsafe {
         let hdc = GetDC(std::ptr::null_mut());
         if !hdc.is_null() {
@@ -416,9 +447,17 @@ pub(super) fn get_display_bpp() -> u32 {
 #[cfg(target_os = "windows")]
 fn get_primary_work_area_rect() -> (i32, i32, i32, i32) {
     use windows_sys::Win32::Foundation::RECT;
-    use windows_sys::Win32::UI::WindowsAndMessaging::{SPI_GETWORKAREA, SystemParametersInfoW};
+    use windows_sys::Win32::UI::WindowsAndMessaging::{SystemParametersInfoW, SPI_GETWORKAREA};
     let mut rect: RECT = unsafe { std::mem::zeroed() };
-    if unsafe { SystemParametersInfoW(SPI_GETWORKAREA, 0, &mut rect as *mut _ as *mut _, 0) } != 0 {
+    if unsafe {
+        SystemParametersInfoW(
+            SPI_GETWORKAREA,
+            0,
+            &mut rect as *mut _ as *mut _,
+            0,
+        )
+    } != 0
+    {
         return (rect.left, rect.top, rect.right, rect.bottom);
     }
     (0, 0, 1920, 1040)
@@ -586,4 +625,168 @@ fn check_reactos() -> bool {
         }
     }
     false
+}
+
+#[cfg(target_os = "windows")]
+fn get_windows_display_version() -> String {
+    use std::ffi::OsStr;
+    use std::os::windows::ffi::OsStrExt;
+    use windows_sys::Win32::System::Registry::{
+        HKEY_LOCAL_MACHINE, KEY_READ, RegOpenKeyExW, RegQueryValueExW,
+    };
+    let subkey: Vec<u16> = OsStr::new("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion")
+        .encode_wide()
+        .chain(std::iter::once(0))
+        .collect();
+    let val_name: Vec<u16> = OsStr::new("DisplayVersion")
+        .encode_wide()
+        .chain(std::iter::once(0))
+        .collect();
+    let mut hkey = 0isize;
+    if unsafe { RegOpenKeyExW(HKEY_LOCAL_MACHINE, subkey.as_ptr(), 0, KEY_READ, &mut hkey) } == 0 {
+        let mut buf = [0u16; 128];
+        let mut buf_bytes = (buf.len() * 2) as u32;
+        if unsafe {
+            RegQueryValueExW(
+                hkey,
+                val_name.as_ptr(),
+                std::ptr::null_mut(),
+                std::ptr::null_mut(),
+                buf.as_mut_ptr() as *mut u8,
+                &mut buf_bytes,
+            )
+        } == 0
+        {
+            let len = (buf_bytes as usize / 2).saturating_sub(1);
+            let version_str = String::from_utf16_lossy(&buf[..len]).trim().to_string();
+            if !version_str.is_empty() {
+                return version_str;
+            }
+        }
+    }
+    String::new()
+}
+
+#[cfg(not(target_os = "windows"))]
+fn get_windows_display_version() -> String {
+    String::new()
+}
+
+#[cfg(target_os = "windows")]
+fn is_dst_active() -> bool {
+    use windows_sys::Win32::System::Time::{
+        GetTimeZoneInformation, TIME_ZONE_ID_DAYLIGHT, TIME_ZONE_INFORMATION,
+    };
+    let mut tzi: TIME_ZONE_INFORMATION = unsafe { std::mem::zeroed() };
+    let res = unsafe { GetTimeZoneInformation(&mut tzi) };
+    res == TIME_ZONE_ID_DAYLIGHT
+}
+
+#[cfg(not(target_os = "windows"))]
+fn is_dst_active() -> bool {
+    let now = unsafe { libc::time(std::ptr::null_mut()) };
+    let mut tm: libc::tm = unsafe { std::mem::zeroed() };
+    if !unsafe { libc::localtime_r(&now, &mut tm) }.is_null() {
+        return tm.tm_isdst > 0;
+    }
+    false
+}
+
+#[cfg(target_os = "windows")]
+fn get_cpu_clock_mhz() -> u32 {
+    use std::ffi::OsStr;
+    use std::os::windows::ffi::OsStrExt;
+    use windows_sys::Win32::System::Registry::{
+        HKEY_LOCAL_MACHINE, KEY_READ, RegOpenKeyExW, RegQueryValueExW,
+    };
+    let subkey: Vec<u16> = OsStr::new("HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0")
+        .encode_wide()
+        .chain(std::iter::once(0))
+        .collect();
+    let val_name: Vec<u16> = OsStr::new("~MHz")
+        .encode_wide()
+        .chain(std::iter::once(0))
+        .collect();
+    let mut hkey = 0isize;
+    if unsafe { RegOpenKeyExW(HKEY_LOCAL_MACHINE, subkey.as_ptr(), 0, KEY_READ, &mut hkey) } == 0 {
+        let mut mhz = 0u32;
+        let mut mhz_bytes = std::mem::size_of::<u32>() as u32;
+        if unsafe {
+            RegQueryValueExW(
+                hkey,
+                val_name.as_ptr(),
+                std::ptr::null_mut(),
+                std::ptr::null_mut(),
+                &mut mhz as *mut u32 as *mut u8,
+                &mut mhz_bytes,
+            )
+        } == 0
+            && mhz > 0
+        {
+            return mhz;
+        }
+    }
+    2400
+}
+
+#[cfg(not(target_os = "windows"))]
+fn get_cpu_clock_mhz() -> u32 {
+    if let Ok(content) =
+        std::fs::read_to_string("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq")
+    {
+        if let Ok(khz) = content.trim().parse::<u32>() {
+            return khz / 1000;
+        }
+    }
+    if let Ok(content) = std::fs::read_to_string("/proc/cpuinfo") {
+        for line in content.lines() {
+            if line.contains("cpu MHz") || line.contains("BogoMIPS") {
+                if let Some(val) = line.split(':').nth(1) {
+                    if let Ok(mhz) = val.trim().parse::<f32>() {
+                        return mhz as u32;
+                    }
+                }
+            }
+        }
+    }
+    2400
+}
+
+#[cfg(target_os = "windows")]
+fn get_cpu_load_percent() -> u32 {
+    use windows_sys::Win32::Foundation::FILETIME;
+    use windows_sys::Win32::System::Threading::GetSystemTimes;
+    let mut idle: FILETIME = unsafe { std::mem::zeroed() };
+    let mut kernel: FILETIME = unsafe { std::mem::zeroed() };
+    let mut user: FILETIME = unsafe { std::mem::zeroed() };
+    if unsafe { GetSystemTimes(&mut idle, &mut kernel, &mut user) } != 0 {
+        let filetime_to_u64 =
+            |ft: FILETIME| ((ft.dwHighDateTime as u64) << 32) | (ft.dwLowDateTime as u64);
+        let idle_u = filetime_to_u64(idle);
+        let kernel_u = filetime_to_u64(kernel);
+        let user_u = filetime_to_u64(user);
+        let total = kernel_u.saturating_add(user_u);
+        if total > 0 {
+            let busy = total.saturating_sub(idle_u);
+            let percent = (busy * 100) / total;
+            return (percent as u32).min(100);
+        }
+    }
+    0
+}
+
+#[cfg(not(target_os = "windows"))]
+fn get_cpu_load_percent() -> u32 {
+    if let Ok(content) = std::fs::read_to_string("/proc/loadavg") {
+        if let Some(first) = content.split_whitespace().next() {
+            if let Ok(load_1min) = first.parse::<f32>() {
+                let cpus = std::thread::available_parallelism()
+                    .map(|n| n.get())
+                    .unwrap_or(1) as f32;
+                let percent = (load_1min / cpus * 100.0) as u32;
+                return percent.min(100);
+            }
+        }
+    }
+    0
 }

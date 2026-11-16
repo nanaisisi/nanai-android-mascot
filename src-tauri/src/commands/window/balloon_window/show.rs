@@ -14,12 +14,19 @@ impl Drop for BalloonLockGuard {
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct ShowBalloonWindowParams {
+    #[serde(alias = "scopeId")]
     scope_id: i32,
+    #[serde(default)]
     theme: Option<String>,
+    #[serde(default)]
     x: Option<f64>,
+    #[serde(default)]
     y: Option<f64>,
+    #[serde(default)]
     width: Option<f64>,
+    #[serde(default)]
     height: Option<f64>,
 }
 

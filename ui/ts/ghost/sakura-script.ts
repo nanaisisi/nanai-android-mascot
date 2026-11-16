@@ -228,11 +228,17 @@ export class SakuraScriptPlayer {
 
 		if (isNativeMultiWindow()) {
 			const theme = app?.currentBalloonTheme || "default";
-			void invoke("show_balloon_window", { scope_id: scope, theme }).catch(
-				() => {},
+			console.log(
+				`💬 [SakuraScript] ネイティブマルチウィンドウ向けバルーン表示要求: scope=${scope}, text=${text}`,
 			);
+			void invoke("show_balloon_window", { scope_id: scope, theme }).catch(
+				(err) => {
+					console.error("❌ show_balloon_window failed:", err);
+				},
+			);
+			const htmlContent = textEl ? textEl.innerHTML : text;
 			void emit(`update-balloon-content-${scope}`, {
-				html: textEl ? textEl.innerHTML : text,
+				html: htmlContent,
 				theme,
 			});
 		}

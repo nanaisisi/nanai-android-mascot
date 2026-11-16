@@ -123,28 +123,63 @@ pub fn expand_sakura_script_env(params: Expand_sakura_script_envParams<'_>) -> S
     };
 
     while result.contains("%me") {
-        result = result.replacen("%me", &pick_static(&["カレーライス", "ケーキ", "ポッキー", "おでん", "りんご", "ラーメン"]), 1);
+        result = result.replacen(
+            "%me",
+            &pick_static(&[
+                "カレーライス",
+                "ケーキ",
+                "ポッキー",
+                "おでん",
+                "りんご",
+                "ラーメン",
+            ]),
+            1,
+        );
     }
     while result.contains("%mp") {
-        result = result.replacen("%mp", &pick_static(&["秋葉原", "モスクワ", "公園", "海", "新宿"]), 1);
+        result = result.replacen(
+            "%mp",
+            &pick_static(&["秋葉原", "モスクワ", "公園", "海", "新宿"]),
+            1,
+        );
     }
     while result.contains("%mh") {
-        result = result.replacen("%mh", &pick_static(&["コンビニ", "八百屋", "喫茶店", "松屋", "東急ハンズ"]), 1);
+        result = result.replacen(
+            "%mh",
+            &pick_static(&["コンビニ", "八百屋", "喫茶店", "松屋", "東急ハンズ"]),
+            1,
+        );
     }
     while result.contains("%mc") {
-        result = result.replacen("%mc", &pick_static(&["マイクロソフト", "ソニー", "富士通", "シャープ"]), 1);
+        result = result.replacen(
+            "%mc",
+            &pick_static(&["マイクロソフト", "ソニー", "富士通", "シャープ"]),
+            1,
+        );
     }
     while result.contains("%mt") {
-        result = result.replacen("%mt", &pick_static(&["ビンタ", "キン肉バスター", "蹴り", "真空竜巻旋風脚"]), 1);
+        result = result.replacen(
+            "%mt",
+            &pick_static(&["ビンタ", "キン肉バスター", "蹴り", "真空竜巻旋風脚"]),
+            1,
+        );
     }
     while result.contains("%mz") {
-        result = result.replacen("%mz", &pick_static(&["パソコン", "タブレット", "湯呑み", "ディスプレイ"]), 1);
+        result = result.replacen(
+            "%mz",
+            &pick_static(&["パソコン", "タブレット", "湯呑み", "ディスプレイ"]),
+            1,
+        );
     }
     while result.contains("%ml") {
         result = result.replacen("%ml", &pick_static(&["仲間", "人類"]), 1);
     }
     while result.contains("%dms") {
-        result = result.replacen("%dms", &pick_static(&["意外と近くにいた宇宙人", "食べられない大根"]), 1);
+        result = result.replacen(
+            "%dms",
+            &pick_static(&["意外と近くにいた宇宙人", "食べられない大根"]),
+            1,
+        );
     }
 
     result = result.replace("%ms", selfname);

@@ -111,8 +111,18 @@ fn test_parse_sakura_script_cycle6_extensions() {
             path: "voice.wav".to_string()
         }
     );
-    assert_eq!(tokens_vc[1], SakuraToken::Clear { keep_settings: false });
+    assert_eq!(
+        tokens_vc[1],
+        SakuraToken::Clear {
+            keep_settings: false
+        }
+    );
     assert_eq!(tokens_vc[2], SakuraToken::Text("Hello".to_string()));
-    assert_eq!(tokens_vc[3], SakuraToken::Clear { keep_settings: true });
+    assert_eq!(
+        tokens_vc[3],
+        SakuraToken::Clear {
+            keep_settings: true
+        }
+    );
     assert_eq!(tokens_vc[4], SakuraToken::Text("World".to_string()));
 }

@@ -24,12 +24,18 @@ pub(super) fn evaluate_dynamic_property(
             "type" => {
                 if cfg!(target_os = "windows") {
                     "Windows".to_string()
-                } else if cfg!(target_os = "android") {
-                    "Android".to_string()
                 } else if cfg!(target_os = "macos") {
                     "MacOS".to_string()
                 } else if cfg!(target_os = "linux") {
                     "Linux".to_string()
+                } else if cfg!(target_os = "ios") {
+                    "iOS".to_string()
+                } else if cfg!(target_os = "android") {
+                    "Android".to_string()
+                } else if cfg!(target_os = "freebsd") {
+                    "FreeBSD".to_string()
+                } else if check_reactos() {
+                    "ReactOS".to_string()
                 } else {
                     "Web".to_string()
                 }
@@ -56,23 +62,29 @@ pub(super) fn evaluate_dynamic_property(
                 }
             },
             "name" => {
+                let (ver, build) = get_os_ver_and_build();
                 if cfg!(target_os = "windows") {
-                    "Windows 11".to_string()
+                    if build >= 22000 {
+                        format!("Windows 11 (Build {})", build)
+                    } else {
+                        format!("Windows 10 (Build {})", build)
+                    }
                 } else if cfg!(target_os = "android") {
                     "Android OS".to_string()
                 } else {
-                    format!("Linux {}", std::env::consts::ARCH)
+                    format!("Linux {} ({})", ver, std::env::consts::ARCH)
                 }
             }
             "version" => {
-                if cfg!(target_os = "windows") {
-                    "10.0".to_string()
-                } else {
-                    "1.0".to_string()
-                }
+                let (ver, _) = get_os_ver_and_build();
+                ver
             }
-            "build" => "22621".to_string(),
-            "parenttype" | "parentname" => "".to_string(),
+            "build" => {
+                let (_, build) = get_os_ver_and_build();
+                build.to_string()
+            }
+            "parenttype" => check_wine_parent().0,
+            "parentname" => check_wine_parent().1,
             "locale" => sys_locale::get_locale().unwrap_or_else(|| "ja-JP".to_string()),
             "locale.language" => {
                 let loc = sys_locale::get_locale().unwrap_or_else(|| "ja-JP".to_string());
@@ -99,7 +111,7 @@ pub(super) fn evaluate_dynamic_property(
             "dst" => "0".to_string(),
             "uptime" => get_system_uptime_secs().to_string(),
             "unixtime" => chrono::Utc::now().timestamp().to_string(),
-            "idletime" => "0".to_string(),
+            "idletime" => get_user_idle_time_secs().to_string(),
             _ => std::env::consts::OS.to_string(),
         };
     }
@@ -277,6 +289,80 @@ pub(super) fn evaluate_dynamic_property(
 }
 
 #[cfg(target_os = "windows")]
+fn get_os_ver_and_build() -> (String, u32) {
+    use windows_sys::Win32::System::SystemInformation::OSVERSIONINFOEXW;
+    type RtlGetVersionFn = unsafe extern "system" fn(*mut OSVERSIONINFOEXW) -> i32;
+    unsafe {
+        let ntdll =
+            windows_sys::Win32::System::LibraryLoader::GetModuleHandleA(b"ntdll.dll\0".as_ptr());
+        if ntdll != 0 {
+            let proc = windows_sys::Win32::System::LibraryLoader::GetProcAddress(
+                ntdll,
+                b"RtlGetVersion\0".as_ptr(),
+            );
+            if let Some(rtl_get_version) = proc {
+                let rtl_get_version: RtlGetVersionFn = std::mem::transmute(rtl_get_version);
+                let mut info: OSVERSIONINFOEXW = std::mem::zeroed();
+                info.dwOSVersionInfoSize = std::mem::size_of::<OSVERSIONINFOEXW>() as u32;
+                if rtl_get_version(&mut info) == 0 {
+                    let ver = format!("{}.{}", info.dwMajorVersion, info.dwMinorVersion);
+                    return (ver, info.dwBuildNumber);
+                }
+            }
+        }
+    }
+    ("10.0".to_string(), 22621)
+}
+
+#[cfg(not(target_os = "windows"))]
+fn get_os_ver_and_build() -> (String, u32) {
+    ("1.0".to_string(), 0)
+}
+
+#[cfg(target_os = "windows")]
+fn check_wine_parent() -> (String, String) {
+    unsafe {
+        let ntdll =
+            windows_sys::Win32::System::LibraryLoader::GetModuleHandleA(b"ntdll.dll\0".as_ptr());
+        if ntdll != 0 {
+            let proc = windows_sys::Win32::System::LibraryLoader::GetProcAddress(
+                ntdll,
+                b"wine_get_version\0".as_ptr(),
+            );
+            if proc.is_some() {
+                return ("Wine".to_string(), "Linux".to_string());
+            }
+        }
+    }
+    (String::new(), String::new())
+}
+
+#[cfg(not(target_os = "windows"))]
+fn check_wine_parent() -> (String, String) {
+    (String::new(), String::new())
+}
+
+#[cfg(target_os = "windows")]
+fn get_user_idle_time_secs() -> u64 {
+    use windows_sys::Win32::UI::WindowsAndMessaging::{GetLastInputInfo, LASTINPUTINFO};
+    unsafe {
+        let mut info: LASTINPUTINFO = std::mem::zeroed();
+        info.cbSize = std::mem::size_of::<LASTINPUTINFO>() as u32;
+        if GetLastInputInfo(&mut info) != 0 {
+            let now = windows_sys::Win32::System::SystemInformation::GetTickCount64();
+            let idle_ms = now.saturating_sub(info.dwTime as u64);
+            return idle_ms / 1000;
+        }
+    }
+    0
+}
+
+#[cfg(not(target_os = "windows"))]
+fn get_user_idle_time_secs() -> u64 {
+    0
+}
+
+#[cfg(target_os = "windows")]
 fn get_system_uptime_secs() -> u64 {
     unsafe { windows_sys::Win32::System::SystemInformation::GetTickCount64() / 1000 }
 }
@@ -295,7 +381,7 @@ fn get_system_uptime_secs() -> u64 {
 
 #[cfg(target_os = "windows")]
 pub(super) fn get_display_bpp() -> u32 {
-    use windows_sys::Win32::Graphics::Gdi::{GetDC, GetDeviceCaps, ReleaseDC, BITSPIXEL};
+    use windows_sys::Win32::Graphics::Gdi::{BITSPIXEL, GetDC, GetDeviceCaps, ReleaseDC};
     unsafe {
         let hdc = GetDC(std::ptr::null_mut());
         if !hdc.is_null() {
@@ -317,17 +403,9 @@ pub(super) fn get_display_bpp() -> u32 {
 #[cfg(target_os = "windows")]
 fn get_primary_work_area_rect() -> (i32, i32, i32, i32) {
     use windows_sys::Win32::Foundation::RECT;
-    use windows_sys::Win32::UI::WindowsAndMessaging::{SystemParametersInfoW, SPI_GETWORKAREA};
+    use windows_sys::Win32::UI::WindowsAndMessaging::{SPI_GETWORKAREA, SystemParametersInfoW};
     let mut rect: RECT = unsafe { std::mem::zeroed() };
-    if unsafe {
-        SystemParametersInfoW(
-            SPI_GETWORKAREA,
-            0,
-            &mut rect as *mut _ as *mut _,
-            0,
-        )
-    } != 0
-    {
+    if unsafe { SystemParametersInfoW(SPI_GETWORKAREA, 0, &mut rect as *mut _ as *mut _, 0) } != 0 {
         return (rect.left, rect.top, rect.right, rect.bottom);
     }
     (0, 0, 1920, 1040)
@@ -449,4 +527,50 @@ fn get_power_status() -> String {
         }
     }
     "ac".to_string()
+}
+
+fn check_reactos() -> bool {
+    if std::env::var_os("REACTOS").is_some() || std::env::var_os("ReactOS").is_some() {
+        return true;
+    }
+    #[cfg(target_os = "windows")]
+    {
+        use std::ffi::OsStr;
+        use std::os::windows::ffi::OsStrExt;
+        use windows_sys::Win32::System::Registry::{
+            HKEY_LOCAL_MACHINE, KEY_READ, RegOpenKeyExW, RegQueryValueExW,
+        };
+        let subkey: Vec<u16> = OsStr::new("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion")
+            .encode_wide()
+            .chain(std::iter::once(0))
+            .collect();
+        let val_name: Vec<u16> = OsStr::new("ProductName")
+            .encode_wide()
+            .chain(std::iter::once(0))
+            .collect();
+        let mut hkey = 0isize;
+        if unsafe { RegOpenKeyExW(HKEY_LOCAL_MACHINE, subkey.as_ptr(), 0, KEY_READ, &mut hkey) }
+            == 0
+        {
+            let mut buf = [0u8; 256];
+            let mut buf_len = buf.len() as u32;
+            if unsafe {
+                RegQueryValueExW(
+                    hkey,
+                    val_name.as_ptr(),
+                    std::ptr::null_mut(),
+                    std::ptr::null_mut(),
+                    buf.as_mut_ptr(),
+                    &mut buf_len,
+                )
+            } == 0
+            {
+                let name = String::from_utf8_lossy(&buf[..buf_len as usize]);
+                if name.to_lowercase().contains("reactos") {
+                    return true;
+                }
+            }
+        }
+    }
+    false
 }

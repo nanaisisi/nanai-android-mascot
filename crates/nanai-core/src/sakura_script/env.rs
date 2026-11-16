@@ -252,7 +252,11 @@ pub fn expand_sakura_environment_variables(script: &str, ctx: &SakuraEnvContext)
         result = result.replacen("%ml", &pick_word(&ctx.words_ml, "仲間"), 1);
     }
     while result.contains("%dms") {
-        result = result.replacen("%dms", &pick_word(&ctx.words_dms, "意外と近くにいた宇宙人"), 1);
+        result = result.replacen(
+            "%dms",
+            &pick_word(&ctx.words_dms, "意外と近くにいた宇宙人"),
+            1,
+        );
     }
 
     result = result.replace("%ms", ctx.selfname());

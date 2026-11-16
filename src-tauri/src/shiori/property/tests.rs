@@ -35,20 +35,41 @@ fn test_property_evaluation() {
     let now = chrono::Local::now();
     use chrono::Datelike;
     use chrono::Timelike;
-    assert_eq!(evaluate_property_query("system.year"), now.year().to_string());
-    assert_eq!(evaluate_property_query("system.month"), now.month().to_string());
+    assert_eq!(
+        evaluate_property_query("system.year"),
+        now.year().to_string()
+    );
+    assert_eq!(
+        evaluate_property_query("system.month"),
+        now.month().to_string()
+    );
     assert_eq!(evaluate_property_query("system.day"), now.day().to_string());
-    assert_eq!(evaluate_property_query("system.hour"), now.hour().to_string());
-    assert_eq!(evaluate_property_query("system.minute"), now.minute().to_string());
-    assert_eq!(evaluate_property_query("system.second"), now.second().to_string());
+    assert_eq!(
+        evaluate_property_query("system.hour"),
+        now.hour().to_string()
+    );
+    assert_eq!(
+        evaluate_property_query("system.minute"),
+        now.minute().to_string()
+    );
+    assert_eq!(
+        evaluate_property_query("system.second"),
+        now.second().to_string()
+    );
     assert_eq!(evaluate_property_query("system.cursor.pos"), "0,0");
     assert_eq!(evaluate_property_query("system.theme.app.mode"), "dark");
     assert_eq!(evaluate_property_query("system.theme.os.mode"), "dark");
     assert_eq!(evaluate_property_query("system.dnd.mode"), "none");
     assert_eq!(evaluate_property_query("system.monitor.count"), "1");
     assert_eq!(evaluate_property_query("system.disk.count"), "1");
-    assert_eq!(evaluate_property_query("system.os.name"), std::env::consts::OS);
-    assert_eq!(evaluate_property_query("system.cpu.name"), std::env::consts::ARCH);
+    assert_eq!(
+        evaluate_property_query("system.os.name"),
+        std::env::consts::OS
+    );
+    assert_eq!(
+        evaluate_property_query("system.cpu.name"),
+        std::env::consts::ARCH
+    );
     assert!(!evaluate_property_query("system.memory.total").is_empty());
     assert!(!evaluate_property_query("system.power.state").is_empty());
     assert_eq!(evaluate_property_query("system.network.state"), "online");

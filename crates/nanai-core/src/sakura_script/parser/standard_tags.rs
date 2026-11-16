@@ -95,11 +95,15 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
             }
             'c' => {
                 chars.next();
-                tokens.push(SakuraToken::Clear { keep_settings: false });
+                tokens.push(SakuraToken::Clear {
+                    keep_settings: false,
+                });
             }
             'C' => {
                 chars.next();
-                tokens.push(SakuraToken::Clear { keep_settings: true });
+                tokens.push(SakuraToken::Clear {
+                    keep_settings: true,
+                });
             }
             '*' => {
                 chars.next();
@@ -142,7 +146,9 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
             }
             'p' => {
                 chars.next();
-                if let Some(scope) = parse_bracket_arg(chars).and_then(|arg| arg.parse::<u32>().ok()) {
+                if let Some(scope) =
+                    parse_bracket_arg(chars).and_then(|arg| arg.parse::<u32>().ok())
+                {
                     tokens.push(SakuraToken::Scope(scope));
                 } else if let Some(scope) = parse_number(chars).map(|n| n as u32) {
                     tokens.push(SakuraToken::Scope(scope));

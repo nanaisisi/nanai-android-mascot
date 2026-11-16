@@ -194,6 +194,8 @@ pub enum SakuraToken {
     Voice { path: String },
     /// ウエイト (\w1 ~ \w9, \_w[ms])
     Wait(u32),
+    /// 選択肢入力待ち (\*)
+    Star,
     /// 選択肢 (\q[title,id])
     Choice {
         title: String,

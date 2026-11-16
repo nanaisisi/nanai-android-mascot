@@ -23,6 +23,8 @@ pub enum StepOutput {
     Voice { scope: u32, path: String },
     /// スコープ変更 (\0, \1, \p[N])
     ScopeChange { scope: u32 },
+    /// 選択肢入力待ち (\*)
+    ChoiceWait { scope: u32 },
     /// 選択肢 (\q[title,id])
     Choice {
         scope: u32,
@@ -147,6 +149,9 @@ impl SakuraPlayerEngine {
             SakuraToken::Voice { path } => StepOutput::Voice {
                 scope: self.current_scope,
                 path,
+            },
+            SakuraToken::Star => StepOutput::ChoiceWait {
+                scope: self.current_scope,
             },
             SakuraToken::Wait(ms) => StepOutput::Wait { duration_ms: ms },
             SakuraToken::Choice { title, id, .. } => StepOutput::Choice {

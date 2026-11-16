@@ -2,16 +2,15 @@
 
 - **規格**: [star.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/choice/star/) (ukadoc-spec/list/sakura-script/choice/star.md)
 - **検索語**: \*
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-`\*` (Star) タグのパース処理および `SakuraCommand::Star` へのマッピングを実装 (`crates/ui/src/script/parser/mod.rs`)。
+`\*` (Star) タグによる選択肢入力待ち制御（スクリプト進行の一時停止および選択肢クリック時の進行再開）をコアエンジン・演奏器にて完全実装。
 
 ## 実装箇所
 
+- `crates/nanai-core/src/sakura_script/types.rs` `SakuraToken::Star`
+- `crates/nanai-core/src/sakura_player.rs` `StepOutput::ChoiceWait { scope }`
 - `crates/ui/src/script/command.rs:43` `Star,         // \*`
-- `crates/ui/src/script/env.rs:59` `// %* (%\*) 環境変数展開 [pct-star.md]`
-- `crates/ui/src/script/parser/executor.rs:113` `Some('*') => callback(SakuraCommand::Star), // \*`
-- `crates/ui/src/script/parser/tests.rs:66` `\\*\\![change,ghost,sakura]\\![call,ghost,kero]\`
-- `ui/ts/surface/parser/scope-blocks.ts:19` `/^(sakura|kero|char\d+|\*)?\.?cursor\s*\{?$/i,`
+- `ui/ts/ghost/sakura-script.ts` `case "ChoiceWait": ...`

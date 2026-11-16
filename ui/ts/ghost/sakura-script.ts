@@ -161,6 +161,11 @@ export class SakuraScriptPlayer {
 				this.addChoiceToBalloon(app, scope, title, id);
 				break;
 			}
+			case "ChoiceWait": {
+				// Pause auto-stepping until user choice input
+				this.isLoopRunning = false;
+				return;
+			}
 			case "Anchor": {
 				const title = stepRes.data?.text || "";
 				const id = stepRes.data?.id || "";
@@ -318,6 +323,10 @@ export class SakuraScriptPlayer {
 						id,
 						title,
 					]);
+				}
+				if (!this.isLoopRunning && this.playerInstance) {
+					this.isLoopRunning = true;
+					this.scheduleNextStep(0);
 				}
 			});
 			textEl.appendChild(btn);

@@ -100,7 +100,9 @@ export const ghostShioriMethods = {
 						`👻 [Init step 5.5] attempting to play SakuraScript, length: ${scriptText.length}`,
 					);
 					try {
-						await invoke("show_balloon_window", { scopeId: 0 });
+						await invoke("show_balloon_window", {
+							params: { scopeId: 0 },
+						});
 					} catch (e) {
 						frontendLog(
 							`❌ [Init step 5] show_balloon_window error: ${e}`,
@@ -170,6 +172,9 @@ export const ghostShioriMethods = {
 
 		this._secondTimerId = setInterval(async () => {
 			if (this._secondSending) return;
+			if (this.app?.sakuraPlayer?.isPlaying) {
+				return;
+			}
 			this._secondSending = true;
 			this.uptimeSeconds = (this.uptimeSeconds || 0) + 1;
 			const isSpeaking = this.app?.sakuraPlayer?.isPlaying ? 1 : 0;

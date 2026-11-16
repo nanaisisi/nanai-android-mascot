@@ -134,9 +134,9 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
             }
             'p' => {
                 chars.next();
-                if let Some(arg) = parse_bracket_arg(chars)
-                    && let Ok(scope) = arg.parse::<u32>()
-                {
+                if let Some(scope) = parse_bracket_arg(chars).and_then(|arg| arg.parse::<u32>().ok()) {
+                    tokens.push(SakuraToken::Scope(scope));
+                } else if let Some(scope) = parse_number(chars).map(|n| n as u32) {
                     tokens.push(SakuraToken::Scope(scope));
                 }
             }
@@ -193,7 +193,7 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
                 ));
             }
             _ => {
-                text_buf.push('\\');
+                // 未知のタグはテキストとして露出させない（スキップ）
             }
         }
     } else {

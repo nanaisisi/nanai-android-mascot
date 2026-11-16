@@ -190,25 +190,48 @@ export class ModalGhostHandlers {
 	renderBalloonList() {
 		const currentEl = document.getElementById("current-balloon");
 		const listEl = document.getElementById("balloon-list");
+		if (!listEl) return;
+
 		if (currentEl) {
 			currentEl.textContent = this.app?.currentBalloonTheme || "デフォルト";
 		}
-		if (listEl && this.app?.availableBalloons) {
-			listEl.innerHTML = "";
-			this.app.availableBalloons.forEach((b: BalloonInfo) => {
-				const item = document.createElement("div");
-				const isCurrent = this.app?.currentBalloonTheme === b.dir_name;
-				item.className = `balloon-item${isCurrent ? " active" : ""}`;
-				item.style.cssText = "padding: 6px; cursor: pointer;";
-				item.textContent = b.name || b.dir_name || "";
-				item.addEventListener("click", () => {
-					if (b.dir_name) {
-						this.app?.setBalloonTheme?.(b.dir_name);
-					}
-					this.renderBalloonList();
-				});
-				listEl.appendChild(item);
-			});
+
+		const balloons = this.app?.availableBalloons || [];
+		if (balloons.length === 0) {
+			listEl.innerHTML = `<div class="info">バルーンが検出されません</div>`;
+			return;
 		}
+
+		listEl.innerHTML = "";
+		balloons.forEach((b: BalloonInfo) => {
+			const item = document.createElement("div");
+			const isCurrent = this.app?.currentBalloonTheme === b.dir_name;
+			item.className = `balloon-item${isCurrent ? " active" : ""}`;
+			item.style.cssText =
+				"padding: 8px; margin: 4px 0; border: 1px solid #ccc; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; cursor: pointer;";
+
+			const thumbHtml = b.thumbnail
+				? `<img src="${b.thumbnail}" alt="" style="width: 48px; height: 36px; object-fit: contain; margin-right: 8px; border-radius: 2px;" />`
+				: "";
+
+			item.innerHTML = `<div style="display: flex; align-items: center;">${thumbHtml}<span><strong>${b.name ?? b.dir_name ?? ""}</strong> (${b.dir_name ?? ""})</span></div> <button type="button" class="primary select-balloon-btn">${isCurrent ? "使用中" : "切り替え"}</button>`;
+
+			item.addEventListener("click", async () => {
+				if (b.dir_name) {
+					await this.app?.setBalloonTheme?.(b.dir_name);
+				}
+				this.renderBalloonList();
+			});
+
+			item.querySelector("button")?.addEventListener("click", async (e) => {
+				e.stopPropagation();
+				if (b.dir_name) {
+					await this.app?.setBalloonTheme?.(b.dir_name);
+				}
+				this.renderBalloonList();
+			});
+
+			listEl.appendChild(item);
+		});
 	}
 }

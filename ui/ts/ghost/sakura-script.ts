@@ -234,8 +234,12 @@ export class SakuraScriptPlayer {
 		frontendLog(
 			`💬 [SakuraScript] スコープ別独立バルーン表示要求: scope=${targetScope}, textLength=${text.length}`,
 		);
-		void invoke("show_balloon_window", { scopeId: targetScope, theme }).catch(
-			(err) => {
+		void invoke("show_balloon_window", {
+			params: {
+				scopeId: targetScope,
+				theme,
+			},
+		}).catch((err) => {
 				frontendLog(
 					`❌ show_balloon_window failed for scope ${targetScope}: ${err}`,
 					"error",

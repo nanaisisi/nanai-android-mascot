@@ -101,6 +101,7 @@ pub fn parse_extended_tag<I: Iterator<Item = char>>(params: Parse_extended_tagPa
             }
             's' => {
                 chars.next();
+                let _ = parse_bracket_arg(chars);
                 tokens.push(SakuraToken::Sync(true));
             }
             'q' => {
@@ -149,8 +150,7 @@ pub fn parse_extended_tag<I: Iterator<Item = char>>(params: Parse_extended_tagPa
                 }
             }
             _ => {
-                text_buf.push('\\');
-                text_buf.push('_');
+                // 未知の拡張タグはテキストとして露出させない（スキップ）
             }
         }
     }

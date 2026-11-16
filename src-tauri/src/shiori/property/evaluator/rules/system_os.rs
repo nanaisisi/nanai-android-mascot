@@ -117,8 +117,13 @@ pub fn evaluate_system_os(sub: &str) -> String {
         "uptime" => get_system_uptime_secs().to_string(),
         "unixtime" => chrono::Utc::now().timestamp().to_string(),
         "idletime" => get_user_idle_time_secs().to_string(),
+        "dnd.mode" => get_system_dnd_mode(),
         _ => std::env::consts::OS.to_string(),
     }
+}
+
+pub fn evaluate_theme_mode(is_os_mode: bool) -> String {
+    get_theme_mode(is_os_mode)
 }
 
 pub fn get_android_property(prop_name: &str) -> Option<String> {
@@ -362,4 +367,99 @@ fn is_dst_active() -> bool {
         return tm.tm_isdst > 0;
     }
     false
+}
+
+#[cfg(target_os = "windows")]
+fn get_theme_mode(is_os_mode: bool) -> String {
+    use std::ffi::OsStr;
+    use std::os::windows::ffi::OsStrExt;
+    use windows_sys::Win32::System::Registry::{
+        HKEY_CURRENT_USER, KEY_READ, RegOpenKeyExW, RegQueryValueExW,
+    };
+    let subkey: Vec<u16> =
+        OsStr::new("Software\\Microsoft\\Windows\\CurrentVersion\\Themes\\Personalize")
+            .encode_wide()
+            .chain(std::iter::once(0))
+            .collect();
+    let val_name_str = if is_os_mode {
+        "SystemUsesLightTheme"
+    } else {
+        "AppsUseLightTheme"
+    };
+    let val_name: Vec<u16> = OsStr::new(val_name_str)
+        .encode_wide()
+        .chain(std::iter::once(0))
+        .collect();
+    let mut hkey = 0isize;
+    if unsafe { RegOpenKeyExW(HKEY_CURRENT_USER, subkey.as_ptr(), 0, KEY_READ, &mut hkey) } == 0 {
+        let mut light = 0u32;
+        let mut light_bytes = std::mem::size_of::<u32>() as u32;
+        if unsafe {
+            RegQueryValueExW(
+                hkey,
+                val_name.as_ptr(),
+                std::ptr::null_mut(),
+                std::ptr::null_mut(),
+                &mut light as *mut u32 as *mut u8,
+                &mut light_bytes,
+            )
+        } == 0
+        {
+            if light == 0 {
+                return "dark".to_string();
+            } else {
+                return "light".to_string();
+            }
+        }
+    }
+    "dark".to_string()
+}
+
+#[cfg(not(target_os = "windows"))]
+fn get_theme_mode(_is_os_mode: bool) -> String {
+    "dark".to_string()
+}
+
+#[cfg(target_os = "windows")]
+pub fn get_system_dnd_mode() -> String {
+    use std::ffi::OsStr;
+    use std::os::windows::ffi::OsStrExt;
+    use windows_sys::Win32::System::Registry::{
+        HKEY_CURRENT_USER, KEY_READ, RegOpenKeyExW, RegQueryValueExW,
+    };
+    let subkey: Vec<u16> =
+        OsStr::new("Software\\Microsoft\\Windows\\CurrentVersion\\FocusAssist")
+            .encode_wide()
+            .chain(std::iter::once(0))
+            .collect();
+    let val_name: Vec<u16> = OsStr::new("Value")
+        .encode_wide()
+        .chain(std::iter::once(0))
+        .collect();
+    let mut hkey = 0isize;
+    if unsafe { RegOpenKeyExW(HKEY_CURRENT_USER, subkey.as_ptr(), 0, KEY_READ, &mut hkey) } == 0 {
+        let mut fa_value = 0u32;
+        let mut fa_bytes = std::mem::size_of::<u32>() as u32;
+        if unsafe {
+            RegQueryValueExW(
+                hkey,
+                val_name.as_ptr(),
+                std::ptr::null_mut(),
+                std::ptr::null_mut(),
+                &mut fa_value as *mut u32 as *mut u8,
+                &mut fa_bytes,
+            )
+        } == 0
+        {
+            if fa_value > 0 {
+                return "quiet".to_string();
+            }
+        }
+    }
+    "normal".to_string()
+}
+
+#[cfg(not(target_os = "windows"))]
+pub fn get_system_dnd_mode() -> String {
+    "normal".to_string()
 }

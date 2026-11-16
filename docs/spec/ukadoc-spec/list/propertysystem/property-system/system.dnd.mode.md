@@ -6,11 +6,9 @@
 
 ## 突合結果
 
-実装コードに「system.dnd.mode」が見つからない。
-
+UKADOC 仕様に従い、`quiet` (有効/集中モード時) または `normal` (無効時) を Win32 Registry FocusAssist 状態から完全に動的解決するよう実装。
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property.rs:81` `"system.dnd.mode" => "none".to_string(),`
-- `src-tauri/src/shiori/property.rs:149` `assert_eq!(evaluate_property_query("system.dnd.mode"), "none");`
-- `ui/js/ghost/command-handler/env.js:125` `case "system.dnd.mode":`
+- `src-tauri/src/shiori/property/evaluator/rules/system_os.rs` `pub fn get_system_dnd_mode()`
+- `src-tauri/src/shiori/property/tests.rs` `evaluate_property_query("system.dnd.mode")`

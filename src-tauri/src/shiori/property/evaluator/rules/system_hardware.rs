@@ -2,6 +2,14 @@
 
 use super::super::SystemMonitorInfo;
 
+#[derive(Debug, Clone)]
+pub struct SystemDiskInfo {
+    pub mountpoint: String,
+    pub drive_type: String,
+    pub total_mb: i64,
+    pub free_mb: i64,
+}
+
 pub fn evaluate_system_memory(sub: &str) -> String {
     let (free_mb, total_mb) = get_memory_info_mb();
     match sub {
@@ -14,6 +22,56 @@ pub fn evaluate_system_memory(sub: &str) -> String {
 
 pub fn evaluate_system_power(q: &str) -> String {
     get_power_status(q)
+}
+
+pub fn evaluate_system_network(q: &str) -> String {
+    let sub = q.strip_prefix("system.network.").unwrap_or(q);
+    let ip = get_local_ip_address();
+    let is_online = ip != "127.0.0.1" && !ip.is_empty();
+
+    match sub {
+        "status" => {
+            if is_online {
+                "online".to_string()
+            } else {
+                "offline".to_string()
+            }
+        }
+        "ipaddress" => ip,
+        "type" => {
+            if !is_online {
+                "none".to_string()
+            } else {
+                "ethernet".to_string()
+            }
+        }
+        "cost" => {
+            if !is_online {
+                "unknown".to_string()
+            } else {
+                "unrestricted".to_string()
+            }
+        }
+        "downlink" | "downlink.estimate" => {
+            if is_online {
+                "1000".to_string()
+            } else {
+                "0".to_string()
+            }
+        }
+        _ => "online".to_string(),
+    }
+}
+
+fn get_local_ip_address() -> String {
+    if let Ok(socket) = std::net::UdpSocket::bind("0.0.0.0:0") {
+        if socket.connect("8.8.8.8:80").is_ok() {
+            if let Ok(addr) = socket.local_addr() {
+                return addr.ip().to_string();
+            }
+        }
+    }
+    "127.0.0.1".to_string()
 }
 
 pub fn evaluate_system_monitor(q: &str, monitors: &[SystemMonitorInfo]) -> Option<String> {
@@ -62,42 +120,123 @@ pub fn evaluate_system_monitor(q: &str, monitors: &[SystemMonitorInfo]) -> Optio
 }
 
 pub fn evaluate_system_disk(q: &str) -> Option<String> {
+    let disks = get_system_disks();
     if q == "system.disk.count" {
-        return Some("1".to_string());
+        return Some(disks.len().to_string());
     }
     if let Some(disk_prop) = q.strip_prefix("system.disk.index(")
         && let Some(idx) = disk_prop.find(").")
     {
         let disk_id = disk_prop[..idx].parse::<usize>().unwrap_or(0);
         let subkey = &disk_prop[idx + 2..];
-        let (free_mb, total_mb) = get_disk_space_info(".");
-        return Some(match subkey {
-            "mountpoint" => {
-                if cfg!(target_os = "windows") {
-                    "C:".to_string()
-                } else {
-                    "/".to_string()
-                }
-            }
-            "type" => "fixed".to_string(),
-            "total" => {
-                if disk_id == 0 {
-                    total_mb.to_string()
-                } else {
-                    "-1".to_string()
-                }
-            }
-            "free" => {
-                if disk_id == 0 {
-                    free_mb.to_string()
-                } else {
-                    "-1".to_string()
-                }
-            }
-            _ => "-1".to_string(),
-        });
+        if let Some(disk) = disks.get(disk_id) {
+            return Some(match subkey {
+                "mountpoint" => disk.mountpoint.clone(),
+                "type" => disk.drive_type.clone(),
+                "total" => disk.total_mb.to_string(),
+                "free" => disk.free_mb.to_string(),
+                _ => "-1".to_string(),
+            });
+        } else {
+            return Some(match subkey {
+                "mountpoint" => String::new(),
+                "type" => "unknown".to_string(),
+                "total" | "free" => "-1".to_string(),
+                _ => "-1".to_string(),
+            });
+        }
     }
     None
+}
+
+#[cfg(target_os = "windows")]
+pub fn get_system_disks() -> Vec<SystemDiskInfo> {
+    use windows_sys::Win32::Storage::FileSystem::{
+        GetDiskFreeSpaceExW, GetDriveTypeW, GetLogicalDriveStringsW, DRIVE_CDROM, DRIVE_FIXED,
+        DRIVE_RAMDISK, DRIVE_REMOTE, DRIVE_REMOVABLE,
+    };
+    let mut buf = [0u16; 512];
+    let len = unsafe { GetLogicalDriveStringsW(buf.len() as u32, buf.as_mut_ptr()) };
+    let mut disks = Vec::new();
+
+    if len > 0 {
+        let mut start = 0;
+        for i in 0..len as usize {
+            if buf[i] == 0 {
+                if start < i {
+                    let drive_path_slice = &buf[start..i];
+                    let drive_path = String::from_utf16_lossy(drive_path_slice);
+                    let mountpoint = drive_path.trim_end_matches('\\').to_string();
+
+                    let dtype_code = unsafe { GetDriveTypeW(drive_path_slice.as_ptr()) };
+                    let drive_type = match dtype_code {
+                        DRIVE_REMOVABLE => "removable",
+                        DRIVE_FIXED => "fixed",
+                        DRIVE_REMOTE => "network",
+                        DRIVE_CDROM => "optical",
+                        DRIVE_RAMDISK => "ram",
+                        _ => "unknown",
+                    }
+                    .to_string();
+
+                    let mut free_bytes = 0u64;
+                    let mut total_bytes = 0u64;
+                    let mut total_free = 0u64;
+                    let (free_mb, total_mb) = unsafe {
+                        if GetDiskFreeSpaceExW(
+                            drive_path_slice.as_ptr(),
+                            &mut free_bytes,
+                            &mut total_bytes,
+                            &mut total_free,
+                        ) != 0
+                        {
+                            (
+                                (free_bytes / (1024 * 1024)) as i64,
+                                (total_bytes / (1024 * 1024)) as i64,
+                            )
+                        } else {
+                            (-1, -1)
+                        }
+                    };
+
+                    disks.push(SystemDiskInfo {
+                        mountpoint,
+                        drive_type,
+                        total_mb,
+                        free_mb,
+                    });
+                }
+                start = i + 1;
+            }
+        }
+    }
+
+    if disks.is_empty() {
+        let (free_mb, total_mb) = get_disk_space_info(".");
+        disks.push(SystemDiskInfo {
+            mountpoint: "C:".to_string(),
+            drive_type: "fixed".to_string(),
+            total_mb: total_mb as i64,
+            free_mb: free_mb as i64,
+        });
+    }
+
+    disks
+}
+
+#[cfg(not(target_os = "windows"))]
+pub fn get_system_disks() -> Vec<SystemDiskInfo> {
+    let (free_mb, total_mb) = get_disk_space_info(".");
+    vec![SystemDiskInfo {
+        mountpoint: if cfg!(target_os = "android") {
+            "/data".to_string()
+        } else {
+            "/".to_string()
+        },
+        drive_type: "fixed".to_string(),
+        total_mb: total_mb as i64,
+        free_mb: free_mb as i64,
+    }]
 }
 
 #[cfg(target_os = "windows")]

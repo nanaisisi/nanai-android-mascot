@@ -5,9 +5,9 @@ use super::rules::{
     system_cpu::evaluate_system_cpu,
     system_hardware::{
         evaluate_system_disk, evaluate_system_memory, evaluate_system_monitor,
-        evaluate_system_power,
+        evaluate_system_network, evaluate_system_power,
     },
-    system_os::evaluate_system_os,
+    system_os::{evaluate_system_os, evaluate_theme_mode, get_system_dnd_mode},
 };
 use super::SystemMonitorInfo;
 
@@ -44,7 +44,17 @@ pub(super) fn evaluate_dynamic_property(
     }
 
     if q.starts_with("system.network.") {
-        return "online".to_string();
+        return evaluate_system_network(q);
+    }
+
+    if q == "system.theme.os.mode" {
+        return evaluate_theme_mode(true);
+    }
+    if q == "system.theme.app.mode" {
+        return evaluate_theme_mode(false);
+    }
+    if q == "system.dnd.mode" {
+        return get_system_dnd_mode();
     }
 
     if let Some(val) = evaluate_system_monitor(q, monitors) {

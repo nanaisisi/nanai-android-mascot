@@ -98,9 +98,6 @@ pub(super) fn evaluate_static_property(q: &str) -> Option<String> {
             return Some((now.weekday().num_days_from_sunday()).to_string());
         }
         "system.cursor.pos" => "0,0",
-        "system.theme.app.mode" => "dark",
-        "system.theme.os.mode" => "dark",
-        "system.dnd.mode" => "none",
         "system.monitor.count" => "1",
         "system.disk.count" => "1",
         "update_time" => "0",

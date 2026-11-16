@@ -59,7 +59,7 @@ fn test_property_evaluation() {
     assert_eq!(evaluate_property_query("system.cursor.pos"), "0,0");
     assert_eq!(evaluate_property_query("system.theme.app.mode"), "dark");
     assert_eq!(evaluate_property_query("system.theme.os.mode"), "dark");
-    assert_eq!(evaluate_property_query("system.dnd.mode"), "none");
+    assert_eq!(evaluate_property_query("system.dnd.mode"), "normal");
     assert_eq!(evaluate_property_query("system.monitor.count"), "1");
     assert_eq!(evaluate_property_query("system.disk.count"), "1");
     assert_eq!(

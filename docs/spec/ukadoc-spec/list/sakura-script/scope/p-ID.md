@@ -10,9 +10,7 @@
 
 ## 実装箇所
 
-- `crates/nanai-vfs/src/tests/path_encoding.rs:71` `let file_path = sub_dir.join("Target.txt");`
+- `crates/ui/src/script/parser/executor.rs:28` `Some('p') => { if let Some(n) = brackets::handle_target_p(&mut chars) { callback(SakuraCommand::Target(n)); } }`
+- `crates/ui/src/script/parser/brackets/handlers/basic.rs:55` `pub(crate) fn handle_target_p(...) -> Option<u8>`
 - `ui/ts/ghost/sakura-rust-bridge.ts:47` `case "Target":`
-- `tests/sakura-rust-bridge.test.ts:10` `{ type: "Target", payload: 1 },`
 - `crates/ui/src/script/command.rs:7` `Target(u8),   // \0, \1, \p[n]`
-- `tests/parser-fuzzing/rust-bridge-fuzzing.test.ts:10` `{ type: "Target", payload: null },`
-- `crates/ui/src/script/ast/builder.rs:12` `SakuraCommand::Target(scope) => {`

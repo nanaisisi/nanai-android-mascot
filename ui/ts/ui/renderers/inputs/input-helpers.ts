@@ -28,6 +28,7 @@ export async function attachAutocomplete(
 		const byteOne = String.fromCharCode(1);
 		const items = rawVal
 			.replaceAll("\\1", byteOne)
+			.replaceAll("\\u", byteOne)
 			.split(byteOne)
 			.map((s) => s.trim())
 			.filter(Boolean);

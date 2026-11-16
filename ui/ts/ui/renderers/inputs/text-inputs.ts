@@ -211,8 +211,8 @@ export function openTextAreaBox(
 
 	const textarea = document.createElement("textarea");
 	textarea.className = "balloon-input balloon-textarea";
-	textarea.value = opts.defaultText.replace(/\\1/g, "\n");
-	textarea.placeholder = opts.placeholder.replace(/\\1/g, "\n");
+	textarea.value = opts.defaultText.replace(/\\(1|u)/g, "\n");
+	textarea.placeholder = opts.placeholder.replace(/\\(1|u)/g, "\n");
 	if (opts.limit > 0) textarea.maxLength = opts.limit;
 	textarea.rows = 3;
 	textarea.style.width = "100%";

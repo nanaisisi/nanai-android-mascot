@@ -62,19 +62,19 @@ test("ModalDialogController Cycle 2: passwordinput, textareabox, sliderinput, an
 		),
 	);
 
-	// 2. TextAreaBox: check \1 newline conversion, Ctrl+Enter submit, Enter newline, and timeout
+	// 2. TextAreaBox: check \1 and \u newline conversion, Ctrl+Enter submit, Enter newline, and timeout
 	events.length = 0;
 	controller.openTextAreaBox([
 		"OnTextAreaTest",
-		"--text=line1\\1line2",
-		"--placeholder=desc\\1note",
+		"--text=line1\\1line2\\uline3",
+		"--placeholder=desc\\1note\\utip",
 		"--limit=100",
 		"--timeout=1000",
 	]);
 	const taForm = mockApp.elements.balloonText.child;
 	const taInput = taForm.children.find((c) => c.tagName === "TEXTAREA");
-	assert.equal(taInput.value, "line1\nline2");
-	assert.equal(taInput.placeholder, "desc\nnote");
+	assert.equal(taInput.value, "line1\nline2\nline3");
+	assert.equal(taInput.placeholder, "desc\nnote\ntip");
 	assert.equal(taInput.maxLength, 100);
 
 	// Ctrl+Enter submit

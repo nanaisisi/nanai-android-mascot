@@ -117,7 +117,7 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
                 chars.next();
                 if let Some(id) = parse_bracket_arg(chars).and_then(|arg| arg.parse::<i32>().ok()) {
                     tokens.push(SakuraToken::Surface(id));
-                } else if let Some(id) = parse_number(chars) {
+                } else if let Some(id) = parse_single_digit(chars) {
                     tokens.push(SakuraToken::Surface(id));
                 }
             }
@@ -125,7 +125,7 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
                 chars.next();
                 if let Some(id) = parse_bracket_arg(chars).and_then(|arg| arg.parse::<i32>().ok()) {
                     tokens.push(SakuraToken::Balloon(id));
-                } else if let Some(id) = parse_number(chars) {
+                } else if let Some(id) = parse_single_digit(chars) {
                     tokens.push(SakuraToken::Balloon(id));
                 }
             }
@@ -139,7 +139,7 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
             }
             'w' => {
                 chars.next();
-                if let Some(wait_num) = parse_number(chars) {
+                if let Some(wait_num) = parse_single_digit(chars) {
                     let wait_ms = (wait_num as u32) * 50;
                     tokens.push(SakuraToken::Wait(wait_ms));
                 }
@@ -150,7 +150,7 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
                     parse_bracket_arg(chars).and_then(|arg| arg.parse::<u32>().ok())
                 {
                     tokens.push(SakuraToken::Scope(scope));
-                } else if let Some(scope) = parse_number(chars).map(|n| n as u32) {
+                } else if let Some(scope) = parse_single_digit(chars).map(|n| n as u32) {
                     tokens.push(SakuraToken::Scope(scope));
                 }
             }
@@ -215,18 +215,12 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
     }
 }
 
-fn parse_number<I: Iterator<Item = char>>(chars: &mut Peekable<I>) -> Option<i32> {
-    let mut num_str = String::new();
-    while let Some(&ch) = chars.peek() {
+fn parse_single_digit<I: Iterator<Item = char>>(chars: &mut Peekable<I>) -> Option<i32> {
+    if let Some(&ch) = chars.peek() {
         if ch.is_ascii_digit() {
-            num_str.push(chars.next().unwrap());
-        } else {
-            break;
+            let digit = chars.next().unwrap().to_digit(10).unwrap() as i32;
+            return Some(digit);
         }
     }
-    if num_str.is_empty() {
-        None
-    } else {
-        num_str.parse::<i32>().ok()
-    }
+    None
 }

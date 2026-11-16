@@ -69,7 +69,7 @@ impl HostProc {
         cmd.arg(dll_path)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
-            .stderr(Stdio::null());
+            .stderr(Stdio::piped());
 
         #[cfg(windows)]
         {
@@ -80,6 +80,22 @@ impl HostProc {
         let mut child = cmd.spawn().map_err(|e| format!("host spawn failed: {e}"))?;
         let stdin = child.stdin.take().ok_or("no stdin")?;
         let stdout = child.stdout.take().ok_or("no stdout")?;
+        let stderr = child.stderr.take();
+
+        if let Some(stderr) = stderr {
+            std::thread::spawn(move || {
+                use std::io::{BufRead, BufReader};
+                let reader = BufReader::new(stderr);
+                for line in reader.lines() {
+                    if let Ok(l) = line {
+                        eprintln!("🔴 [shiori-host32 stderr]: {l}");
+                    } else {
+                        break;
+                    }
+                }
+            });
+        }
+
         let mut h = HostProc {
             child,
             stdin,

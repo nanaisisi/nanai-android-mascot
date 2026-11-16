@@ -231,13 +231,13 @@ export class SakuraScriptPlayer {
 		}
 
 		const theme = app?.currentBalloonTheme || "default";
-		const targetScope = 0;
+		const targetScope = scope;
 		frontendLog(
-			`💬 [SakuraScript] 強制バルーン表示＆同期要求: scope=${scope} -> ${targetScope}, textLength=${text.length}`,
+			`💬 [SakuraScript] スコープ別独立バルーン表示要求: scope=${targetScope}, textLength=${text.length}`,
 		);
 		void invoke("show_balloon_window", { scopeId: targetScope, theme }).catch(
 			(err) => {
-				frontendLog(`❌ show_balloon_window failed: ${err}`, "error");
+				frontendLog(`❌ show_balloon_window failed for scope ${targetScope}: ${err}`, "error");
 			},
 		);
 		const htmlContent = textEl ? textEl.innerHTML : text;
@@ -265,7 +265,7 @@ export class SakuraScriptPlayer {
 		if (dispEl?.style && isSinglePageUi()) {
 			dispEl.style.display = "none";
 		}
-		const targetScope = 0;
+		const targetScope = scope;
 		void emit(`update-balloon-content-${targetScope}`, {
 			html: "",
 			theme: app?.currentBalloonTheme || "default",
@@ -314,7 +314,7 @@ export class SakuraScriptPlayer {
 		}
 
 		const theme = app?.currentBalloonTheme || "default";
-		const targetScope = 0;
+		const targetScope = scope;
 		void emit(`update-balloon-content-${targetScope}`, {
 			html: textEl ? textEl.innerHTML : "",
 			theme,

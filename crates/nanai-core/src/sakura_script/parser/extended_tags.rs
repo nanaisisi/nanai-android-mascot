@@ -133,7 +133,7 @@ pub fn parse_extended_tag<I: Iterator<Item = char>>(params: Parse_extended_tagPa
                 if let Some(arg) = parse_bracket_arg(chars) {
                     let mut anchor_text = String::new();
                     while let Some(&a_ch) = chars.peek() {
-                        if a_ch == '\\' {
+                        if a_ch == '\\' || a_ch == '/' {
                             chars.next();
                             if chars.peek() == Some(&'_') {
                                 chars.next();

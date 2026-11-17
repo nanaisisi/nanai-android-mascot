@@ -12,6 +12,19 @@ fn test_parse_sakura_script() {
 }
 
 #[test]
+fn test_parse_sakura_script_slash_prefix_ui() {
+    let script = "/p2/p3/u/h/0/1/s[0]";
+    let cmds = parse_sakura_script(script);
+    assert_eq!(cmds[0], SakuraCommand::Target(2));
+    assert_eq!(cmds[1], SakuraCommand::Target(3));
+    assert_eq!(cmds[2], SakuraCommand::Target(1));
+    assert_eq!(cmds[3], SakuraCommand::Target(0));
+    assert_eq!(cmds[4], SakuraCommand::Target(0));
+    assert_eq!(cmds[5], SakuraCommand::Target(1));
+    assert_eq!(cmds[6], SakuraCommand::Surface(0));
+}
+
+#[test]
 fn test_parse_sakura_script_comprehensive() {
     let script = "\\0\\h\\1\\u\\p[2]\\px\\s[10]\\sx\\w5\\wx\\x\\_w[10]\\b[1]\\bx\\f[bold,1]\\fx\\t\\-\\n\\i[3]\\ix\\c\\e\\q[Opt,ID]\\qx\\![raise,OnE]\\!unknown\\z[arg]\\";
     let cmds = parse_sakura_script(script);

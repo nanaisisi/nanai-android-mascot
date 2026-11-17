@@ -32,8 +32,8 @@ pub fn parse_sakura_script(script: &str) -> Vec<SakuraToken> {
             continue;
         }
 
-        if ch == '\\' {
-            chars.next(); // consume '\'
+        if ch == '\\' || ch == '/' {
+            chars.next(); // consume '\' or '/'
             if !text_buf.is_empty() {
                 tokens.push(SakuraToken::Text(std::mem::take(&mut text_buf)));
             }

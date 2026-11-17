@@ -51,7 +51,7 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
     let (chars, text_buf, tokens, raw_mode_delimiter) = params.into_parts();
     if let Some(&next_ch) = chars.peek() {
         match next_ch {
-            '\\' | '%' => {
+            '\\' | '%' | '/' => {
                 let escaped = chars.next().unwrap();
                 text_buf.push(escaped);
             }
@@ -89,7 +89,7 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
                 chars.next();
                 tokens.push(SakuraToken::Scope(1));
             }
-            'n' => {
+            'n' | 'N' => {
                 chars.next();
                 tokens.push(SakuraToken::Newline);
             }
@@ -109,11 +109,11 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
                 chars.next();
                 tokens.push(SakuraToken::Star);
             }
-            'e' => {
+            'e' | 'E' => {
                 chars.next();
                 tokens.push(SakuraToken::Halt);
             }
-            's' => {
+            's' | 'S' => {
                 chars.next();
                 if let Some(id) = parse_bracket_arg(chars).and_then(|arg| arg.parse::<i32>().ok()) {
                     tokens.push(SakuraToken::Surface(id));
@@ -121,7 +121,7 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
                     tokens.push(SakuraToken::Surface(id));
                 }
             }
-            'b' => {
+            'b' | 'B' => {
                 chars.next();
                 if let Some(id) = parse_bracket_arg(chars).and_then(|arg| arg.parse::<i32>().ok()) {
                     tokens.push(SakuraToken::Balloon(id));
@@ -129,7 +129,7 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
                     tokens.push(SakuraToken::Balloon(id));
                 }
             }
-            'i' => {
+            'i' | 'I' => {
                 chars.next();
                 if let Some(arg) = parse_bracket_arg(chars)
                     && let Ok(id) = arg.parse::<i32>()
@@ -137,14 +137,14 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
                     tokens.push(SakuraToken::Animation(id));
                 }
             }
-            'w' => {
+            'w' | 'W' => {
                 chars.next();
                 if let Some(wait_num) = parse_number(chars) {
                     let wait_ms = (wait_num as u32) * 50;
                     tokens.push(SakuraToken::Wait(wait_ms));
                 }
             }
-            'p' => {
+            'p' | 'P' => {
                 chars.next();
                 if let Some(scope) =
                     parse_bracket_arg(chars).and_then(|arg| arg.parse::<u32>().ok())
@@ -154,7 +154,7 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
                     tokens.push(SakuraToken::Scope(scope));
                 }
             }
-            'q' => {
+            'q' | 'Q' => {
                 chars.next();
                 if let Some(arg) = parse_bracket_arg(chars) {
                     let parts = split_bracket_args(&arg);
@@ -175,7 +175,7 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
                     }
                 }
             }
-            'f' => {
+            'f' | 'F' => {
                 chars.next();
                 if let Some(arg) = parse_bracket_arg(chars) {
                     let parts = split_bracket_args(&arg);

@@ -2,8 +2,8 @@
 	"type": "module",
 	"scripts": {
 		"dev": "npm run build:wasm && vite",
-		"build:wasm": "wasm-pack build crates/nanai-core --target web --out-dir ui/ts/core/wasm/pkg --dev",
-		"build:wasm:release": "wasm-pack build crates/nanai-core --target web --out-dir ui/ts/core/wasm/pkg --release",
+		"build:wasm": "wasm-pack build crates/nanai-core --target web --out-dir ../../ui/ts/core/wasm/pkg --dev",
+		"build:wasm:release": "wasm-pack build crates/nanai-core --target web --out-dir ../../ui/ts/core/wasm/pkg --release",
 		"build": "npm run build:wasm:release && vite build",
 		"preview": "vite preview",
 		"typecheck": "tsc --noEmit -p tsconfig.json",

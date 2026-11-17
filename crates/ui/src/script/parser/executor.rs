@@ -13,11 +13,11 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
     let mut chars = expanded.chars().peekable();
     let mut buffer = String::new();
     while let Some(c) = chars.next() {
-        if c == '\\' {
-            // Check for escaped backslash: \\
-            if chars.peek() == Some(&'\\') {
+        if c == '\\' || c == '/' {
+            // Check for escaped backslash or slash: \\ or //
+            if chars.peek() == Some(&c) {
                 chars.next();
-                buffer.push('\\');
+                buffer.push(c);
                 continue;
             }
             if !buffer.is_empty() {
@@ -26,30 +26,30 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
             }
             match chars.next() {
                 // \0, \1, \2, \3, \4, \5, \6, \7, \8, \9 target scope tags (\0..\9, \h, \u)
-                Some('0') | Some('h') => callback(SakuraCommand::Target(0)),
-                Some('1') | Some('u') => callback(SakuraCommand::Target(1)),
+                Some('0') | Some('h') | Some('H') => callback(SakuraCommand::Target(0)),
+                Some('1') | Some('u') | Some('U') => callback(SakuraCommand::Target(1)),
                 Some(c @ '2'..='9') => {
                     callback(SakuraCommand::Target(c.to_digit(10).unwrap() as u8))
                 }
-                Some('p') => {
-                    // \p[N]
+                Some('p') | Some('P') => {
+                    // \p[N] または \p2..\p9
                     if let Some(n) = brackets::handle_target_p(&mut chars) {
                         callback(SakuraCommand::Target(n));
                     }
                 }
-                Some('s') => {
+                Some('s') | Some('S') => {
                     // \s[N] または \s0..\s9
                     if let Some(n) = brackets::handle_surface(&mut chars) {
                         callback(SakuraCommand::Surface(n));
                     }
                 }
-                Some('w') => {
+                Some('w') | Some('W') => {
                     // \w1..\w9
                     if let Some(ms) = handle_wait_short(&mut chars) {
                         callback(SakuraCommand::Wait(ms));
                     }
                 }
-                Some('x') => {
+                Some('x') | Some('X') => {
                     // \x または \x[noclear]
                     let _ = brackets::read_bracketed(&mut chars);
                     callback(SakuraCommand::ClickWait);
@@ -58,30 +58,30 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
                     // \_w / \_q / \_a / \_s / \_l / \_! / \_\_v / \_\_q
                     brackets::handle_underscore(&mut chars, &mut callback);
                 }
-                Some('b') => {
+                Some('b') | Some('B') => {
                     // \b[n] または \b0..\b9（\b[-1] 等の負数含む）
                     if let Some(n) = brackets::handle_balloon(&mut chars) {
                         callback(SakuraCommand::Balloon(n));
                     }
                 }
-                Some('f') => {
+                Some('f') | Some('F') => {
                     // \f[tag,param] または \f[tag]
                     if let Some((tag, param)) = brackets::handle_font(&mut chars) {
                         callback(SakuraCommand::Font { tag, param });
                     }
                 }
-                Some('t') => callback(SakuraCommand::Timeout),
+                Some('t') | Some('T') => callback(SakuraCommand::Timeout),
                 Some('-') => callback(SakuraCommand::Halt),
                 Some('!') => {
                     // \![raise,Event,...] または \![bind,category,part,status]
                     brackets::handle_raiselike(&mut chars, &mut callback);
                 }
-                Some('n') => {
+                Some('n') | Some('N') => {
                     // \n / \n[half] / \n[N]
                     let half = brackets::handle_newline(&mut chars).unwrap_or(false);
                     callback(SakuraCommand::NewLine { half });
                 }
-                Some('i') => {
+                Some('i') | Some('I') => {
                     // \i[ID] / \i[ID,wait] / \i0..\i9
                     if let Some((id, wait)) = brackets::handle_animation(&mut chars) {
                         callback(SakuraCommand::Animation { id, wait });
@@ -95,8 +95,8 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
                     }
                 }
                 Some('C') => callback(SakuraCommand::Clear),
-                Some('e') => callback(SakuraCommand::End), // \e
-                Some('m') => {
+                Some('e') | Some('E') => callback(SakuraCommand::End), // \e
+                Some('m') | Some('M') => {
                     // \m[umsg,wparam,lparam] (m-umsg-wparam-lparam.md)
                     if let Some((umsg, wparam, lparam)) = brackets::handle_postmessage(&mut chars) {
                         callback(SakuraCommand::PostMessage {
@@ -106,7 +106,7 @@ pub fn execute_sakura_script(script: &str, mut callback: impl FnMut(SakuraComman
                         });
                     }
                 }
-                Some('q') => {
+                Some('q') | Some('Q') => {
                     // \q[テキスト,ID] / \q[temp,テキスト,ID]
                     if let Some((label, id, args)) = brackets::handle_choice(&mut chars) {
                         callback(SakuraCommand::Choice { label, id, args });

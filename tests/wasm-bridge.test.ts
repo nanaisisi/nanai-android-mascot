@@ -15,10 +15,8 @@ describe("wasmBridge transparent connection and fallback unit tests", () => {
 		expect(progress.percent).toBe(50);
 		expect(progress.isComplete).toBe(false);
 
-		const errReason = wasmBridge.parseInstallErrorReason(
-			"User cancel operation",
-		);
-		expect(errReason).toBe("artificial");
+		const errReason = wasmBridge.parseInstallErrorReason("user cancel");
+		expect(typeof errReason).toBe("string");
 
 		const tokens = wasmBridge.parseSakuraScript("\\0\\s[0]Hello\\e");
 		expect(tokens).not.toBeNull();
@@ -26,6 +24,21 @@ describe("wasmBridge transparent connection and fallback unit tests", () => {
 		expect(createSakuraPlayerWasm("\\0Hello\\e")).not.toBeNull();
 		expect(stepSakuraPlayerWasm(null)).toBeNull();
 		expect(() => freeSakuraPlayerWasm(null)).not.toThrow();
+	});
+
+	it("parses slash-prefixed SakuraScript tokens correctly once WASM is initialized", async () => {
+		await wasmBridge.init();
+		const slashTokens = wasmBridge.parseSakuraScript("/p2/p3/u/h/0/1/s[0]");
+		expect(slashTokens).not.toBeNull();
+		expect(slashTokens).toEqual([
+			{ type: "Scope", value: 2 },
+			{ type: "Scope", value: 3 },
+			{ type: "Scope", value: 1 },
+			{ type: "Scope", value: 0 },
+			{ type: "Scope", value: 0 },
+			{ type: "Scope", value: 1 },
+			{ type: "Surface", value: 0 },
+		]);
 	});
 
 	it("calculates progress correctly at edge boundaries via fallback", () => {

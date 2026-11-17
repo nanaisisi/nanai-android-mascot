@@ -126,3 +126,17 @@ fn test_parse_sakura_script_cycle6_extensions() {
     );
     assert_eq!(tokens_vc[4], SakuraToken::Text("World".to_string()));
 }
+
+#[test]
+fn test_parse_sakura_script_slash_prefix() {
+    let script = "/p2/p3/u/h/0/1/s[0]";
+    let tokens = parse_sakura_script(script);
+
+    assert_eq!(tokens[0], SakuraToken::Scope(2));
+    assert_eq!(tokens[1], SakuraToken::Scope(3));
+    assert_eq!(tokens[2], SakuraToken::Scope(1));
+    assert_eq!(tokens[3], SakuraToken::Scope(0));
+    assert_eq!(tokens[4], SakuraToken::Scope(0));
+    assert_eq!(tokens[5], SakuraToken::Scope(1));
+    assert_eq!(tokens[6], SakuraToken::Surface(0));
+}

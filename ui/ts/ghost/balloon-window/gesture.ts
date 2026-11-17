@@ -61,6 +61,17 @@ export function setupWindowGestures(
 		void emit("balloon-clicked", { scopeId });
 	});
 
+	// バルーン右クリックで OS ネイティブのバルーンコンテキストメニューを表示
+	balloonBox.addEventListener("contextmenu", (e: MouseEvent) => {
+		e.preventDefault();
+		e.stopPropagation();
+		if (isTauriAvailable()) {
+			void invoke("show_balloon_context_menu", { scope_id: scopeId }).catch(
+				() => {},
+			);
+		}
+	});
+
 	// ドラッグ移動 (Tauri v2 startDragging)
 	let isDragging = false;
 	balloonBox.addEventListener("mousedown", (e: MouseEvent) => {

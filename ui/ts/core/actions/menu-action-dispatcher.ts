@@ -89,6 +89,42 @@ export function handleMenuActionImpl(
 		return context.onGhostClick?.(undefined, undefined, undefined, scopeId);
 	}
 
+	// バルーン専用ネイティブコンテキストメニューアクション
+	if (action === "balloon-none") {
+		return;
+	}
+	if (action === "balloon-leftclick") {
+		const scopeId =
+			payload && typeof payload === "object" && "scope" in payload
+				? ((payload as NamedPayload).scope ?? 0)
+				: 0;
+		return context.onGhostClick?.(undefined, undefined, undefined, scopeId);
+	}
+	if (action === "balloon-break") {
+		const scopeId =
+			payload && typeof payload === "object" && "scope" in payload
+				? ((payload as NamedPayload).scope ?? 0)
+				: 0;
+		return context.hideBalloon?.(scopeId, "break");
+	}
+	if (action === "balloon-flip" || action === "balloon-side-switch") {
+		const scopeId =
+			payload && typeof payload === "object" && "scope" in payload
+				? ((payload as NamedPayload).scope ?? 0)
+				: 0;
+		return context.toggleBalloonSide?.(scopeId);
+	}
+	if (action === "balloon-reset-pos") {
+		return handleMenuActionImpl(context, "reset-balloon-position", payload);
+	}
+	if (action === "balloon-move-ghost") {
+		const scopeId =
+			payload && typeof payload === "object" && "scope" in payload
+				? ((payload as NamedPayload).scope ?? 0)
+				: 0;
+		return context.onGhostClick?.(undefined, undefined, undefined, scopeId);
+	}
+
 	if (action === "hide-character" || action === "close-character") {
 		const scopeId =
 			payload && typeof payload === "object" && "scope" in payload

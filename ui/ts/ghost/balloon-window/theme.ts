@@ -256,10 +256,12 @@ export async function applyBalloonDescript({
 				root.style.setProperty("--balloon-min-height", `${dims.height}px`);
 			}
 			if (dims.width > 0 && dims.height > 0) {
+				const safeWidth = Math.ceil(dims.width + 24);
+				const safeHeight = Math.ceil(dims.height + 24);
 				void invoke("resize_balloon_window", {
 					scopeId,
-					width: dims.width + 4,
-					height: dims.height + 4,
+					width: safeWidth,
+					height: safeHeight,
 				}).catch(() => {});
 			}
 		}

@@ -1,5 +1,11 @@
 import { showBalloonContextMenu } from "../../ui/balloon-context-menu.js";
-import { emit, invoke, isTauriAvailable, listen } from "../tauri-helper.js";
+import {
+	emit,
+	frontendLog,
+	invoke,
+	isTauriAvailable,
+	listen,
+} from "../tauri-helper.js";
 
 export const setupMethods = {
 	async setupEventListeners() {
@@ -226,37 +232,70 @@ export const setupMethods = {
 			).hideQuickActionsPanel();
 		});
 
-		document.addEventListener("contextmenu", (e: MouseEvent) => {
-			e.preventDefault();
+		const globalContextMenuHandler = (e: MouseEvent) => {
 			const target = e.target as HTMLElement | null;
+			const isInput =
+				target &&
+				(target.tagName === "INPUT" ||
+					target.tagName === "TEXTAREA" ||
+					target.isContentEditable);
+			if (!isInput) {
+				e.preventDefault?.();
+				e.stopPropagation?.();
+			}
+
 			const isBalloonClick = Boolean(
 				target?.closest?.(
-					".balloon-display, .balloon, .balloon-text, .kero-balloon",
+					".balloon-display, .balloon, .balloon-text, .kero-balloon, [id*='balloon'], [class*='balloon']",
 				),
 			);
+
+			const posX = e.clientX || e.pageX || 100;
+			const posY = e.clientY || e.pageY || 100;
+			const sX = e.screenX || posX;
+			const sY = e.screenY || posY;
+
+			console.log(
+				`🖱️ [ContextMenu Event] 右クリック検知: isBalloon=${isBalloonClick}, target=${target?.tagName}#${target?.id}.${target?.className}, posX=${posX}, posY=${posY}`,
+			);
+
 			if (isBalloonClick) {
-				// バルーン右クリック時はメインメニューとは完全に独立した「バルーン専用メニュー」を起動
 				const scopeId = target?.closest?.(
-					"#kero-balloon-display, .kero-balloon",
+					"#kero-balloon-display, .kero-balloon, .char-balloon-1",
 				)
 					? 1
 					: 0;
 
-				const posX = e.clientX || e.pageX || 100;
-				const posY = e.clientY || e.pageY || 100;
-
-				showBalloonContextMenu({
+				void showBalloonContextMenu({
 					x: posX,
 					y: posY,
+					screenX: sX,
+					screenY: sY,
 					scopeId,
 					app: this,
 				});
-				return;
+				return false;
 			}
-			(
-				this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-			).toggleMenu(e.screenX, e.screenY);
-		});
+			if (!isInput) {
+				(
+					this as unknown as import("../../../main.js").NanaiAndroidMascotApp
+				).toggleMenu(sX, sY);
+			}
+			return false;
+		};
+
+		document.addEventListener("contextmenu", globalContextMenuHandler, true);
+		if (typeof window !== "undefined") {
+			window.addEventListener("contextmenu", globalContextMenuHandler, true);
+			try {
+				(window as unknown as { oncontextmenu?: unknown }).oncontextmenu =
+					globalContextMenuHandler;
+			} catch (_) {}
+		}
+		try {
+			(document as unknown as { oncontextmenu?: unknown }).oncontextmenu =
+				globalContextMenuHandler;
+		} catch (_) {}
 
 		document.addEventListener("keydown", (e: KeyboardEvent) => {
 			const key = e.key.toLowerCase();

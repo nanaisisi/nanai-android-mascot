@@ -107,7 +107,7 @@ pub async fn show_character_window(
             .minimizable(false)
             .visible(false)
             .initialization_script(
-                "window.addEventListener('contextmenu', function(e) { e.preventDefault(); });",
+                "window.addEventListener('contextmenu', function(e) { var t = e.target; var isInput = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable); if (!isInput) { e.preventDefault(); e.stopPropagation(); } }, true);",
             )
             .build()
             .map_err(|e| {

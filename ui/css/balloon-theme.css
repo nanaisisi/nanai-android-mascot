@@ -20,6 +20,15 @@ body[class*="overhead"] {
 	transform-origin: top left;
 }
 
+.balloon-display,
+.balloon,
+.balloon-text,
+.balloon-display * {
+	pointer-events: auto;
+	-webkit-app-region: no-drag;
+	app-region: no-drag;
+}
+
 /* バルーン内のテキスト・全子要素の選択（テキストコピー用選択）を完全無効化 */
 .balloon,
 .balloon *,

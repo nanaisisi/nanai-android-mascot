@@ -26,6 +26,8 @@ body {
 }
 
 .balloon {
+	-webkit-app-region: no-drag;
+	app-region: no-drag;
 	background-color: var(--balloon-bg, transparent);
 	background-image: var(--balloon-bg-image, var(--balloon-pattern, none));
 	background-repeat: no-repeat;

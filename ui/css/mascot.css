@@ -243,13 +243,19 @@
 }
 
 /* バルーン表示 */
+.balloon-display,
+.balloon-display *,
+.balloon,
+.balloon * {
+	pointer-events: auto;
+}
+
 .balloon-display {
 	position: absolute;
 	top: clamp(1rem, 5vh, 2.5rem);
 	left: 50%;
 	transform: translateX(-50%);
 	z-index: 100;
-	pointer-events: auto;
 	max-width: 90vw;
 }
 

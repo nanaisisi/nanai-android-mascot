@@ -153,6 +153,9 @@ pub async fn show_balloon_window(
             .skip_taskbar(true)
             .resizable(true)
             .position(target_x, target_y)
+            .initialization_script(
+                "window.addEventListener('contextmenu', function(e) { var t = e.target; var isInput = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable); if (!isInput) { e.preventDefault(); e.stopPropagation(); } }, true);",
+            )
             .build()
             .map_err(|e| {
                 println!("❌ [Rust Window] balloon_window_{} 構築エラー: {}", s_id, e);

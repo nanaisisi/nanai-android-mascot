@@ -8,25 +8,79 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 export interface BalloonContextMenuOptions {
 	x: number;
 	y: number;
+	screenX?: number;
+	screenY?: number;
 	scopeId: number;
 	app?: unknown;
 }
 
-export function showBalloonContextMenu({
+export async function showBalloonContextMenu({
 	x,
 	y,
+	screenX,
+	screenY,
 	scopeId,
 	app,
 }: BalloonContextMenuOptions) {
+	console.log(
+		`👉 show_balloon_context_menu called: x=${x}, y=${y}, screenX=${screenX}, screenY=${screenY}, scope=Some(${scopeId})`,
+	);
+	let nativeMenuSuccess = false;
+
 	if (isTauriAvailable()) {
-		void invoke("show_balloon_context_menu", {
-			scope_id: scopeId,
-			x,
-			y,
-		}).catch(() => {});
+		try {
+			const tauriMenu = await import("@tauri-apps/api/menu");
+			if (tauriMenu?.Menu?.new) {
+				const menu = await tauriMenu.Menu.new({
+					items: [
+						await tauriMenu.MenuItem.new({
+							id: "balloon-none",
+							text: "何もしない",
+						}),
+						await tauriMenu.PredefinedMenuItem.new({ item: "Separator" }),
+						await tauriMenu.MenuItem.new({
+							id: "balloon-leftclick",
+							text: "左クリックと同じ",
+						}),
+						await tauriMenu.MenuItem.new({
+							id: "balloon-break",
+							text: "スクリプトブレーク",
+						}),
+						await tauriMenu.PredefinedMenuItem.new({ item: "Separator" }),
+						await tauriMenu.MenuItem.new({
+							id: "balloon-flip",
+							text: "バルーン左右切替",
+						}),
+						await tauriMenu.MenuItem.new({
+							id: "balloon-reset-pos",
+							text: "バルーン位置調整",
+						}),
+						await tauriMenu.MenuItem.new({
+							id: "balloon-move-ghost",
+							text: "ゴースト本体移動",
+						}),
+					],
+				});
+				await menu.popup();
+				nativeMenuSuccess = true;
+			}
+		} catch (_) {
+			// Fallback to Rust invoke
+		}
+
+		if (!nativeMenuSuccess) {
+			try {
+				await invoke("show_balloon_context_menu", {
+					scope_id: scopeId,
+					x: screenX ?? x,
+					y: screenY ?? y,
+				});
+				nativeMenuSuccess = true;
+			} catch (_) {}
+		}
 	}
 
-	if (typeof document === "undefined") return;
+	if (nativeMenuSuccess || typeof document === "undefined") return;
 
 	const existing = document.getElementById("balloon-context-menu-popup");
 	if (existing) {

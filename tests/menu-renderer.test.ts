@@ -116,7 +116,8 @@ test("MenuRenderer covers initialization, delegation, and dynamic item creation"
 		shortcut: "Ctrl+T",
 	});
 	assert.ok(activeBtn.className.includes("is-current"));
-	assert.ok(activeBtn.innerHTML.includes("✓ Active Item"));
+	assert.ok(activeBtn.innerHTML.includes("✓"));
+	assert.ok(activeBtn.innerHTML.includes("Active Item"));
 	assert.ok(activeBtn.innerHTML.includes("Ctrl+T"));
 	activeBtn.click();
 	assert.ok(dispatched.some((d) => d.action === "custom-action"));

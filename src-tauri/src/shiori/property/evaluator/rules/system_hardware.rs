@@ -64,12 +64,11 @@ pub fn evaluate_system_network(q: &str) -> String {
 }
 
 fn get_local_ip_address() -> String {
-    if let Ok(socket) = std::net::UdpSocket::bind("0.0.0.0:0") {
-        if socket.connect("8.8.8.8:80").is_ok() {
-            if let Ok(addr) = socket.local_addr() {
-                return addr.ip().to_string();
-            }
-        }
+    if let Ok(socket) = std::net::UdpSocket::bind("0.0.0.0:0")
+        && socket.connect("8.8.8.8:80").is_ok()
+        && let Ok(addr) = socket.local_addr()
+    {
+        return addr.ip().to_string();
     }
     "127.0.0.1".to_string()
 }
@@ -240,7 +239,7 @@ pub fn get_system_disks() -> Vec<SystemDiskInfo> {
 
 #[cfg(target_os = "windows")]
 pub fn get_display_bpp() -> u32 {
-    use windows_sys::Win32::Graphics::Gdi::{GetDC, GetDeviceCaps, ReleaseDC, BITSPIXEL};
+    use windows_sys::Win32::Graphics::Gdi::{BITSPIXEL, GetDC, GetDeviceCaps, ReleaseDC};
     unsafe {
         let hdc = GetDC(std::ptr::null_mut());
         if !hdc.is_null() {
@@ -262,17 +261,9 @@ pub fn get_display_bpp() -> u32 {
 #[cfg(target_os = "windows")]
 fn get_primary_work_area_rect() -> (i32, i32, i32, i32) {
     use windows_sys::Win32::Foundation::RECT;
-    use windows_sys::Win32::UI::WindowsAndMessaging::{SystemParametersInfoW, SPI_GETWORKAREA};
+    use windows_sys::Win32::UI::WindowsAndMessaging::{SPI_GETWORKAREA, SystemParametersInfoW};
     let mut rect: RECT = unsafe { std::mem::zeroed() };
-    if unsafe {
-        SystemParametersInfoW(
-            SPI_GETWORKAREA,
-            0,
-            &mut rect as *mut _ as *mut _,
-            0,
-        )
-    } != 0
-    {
+    if unsafe { SystemParametersInfoW(SPI_GETWORKAREA, 0, &mut rect as *mut _ as *mut _, 0) } != 0 {
         return (rect.left, rect.top, rect.right, rect.bottom);
     }
     (0, 0, 1920, 1040)
@@ -463,7 +454,9 @@ fn get_power_status(q: &str) -> String {
                 "unknown".to_string()
             }
         }
-        "battery.percent" => capacity.map(|c| c.to_string()).unwrap_or_else(|| "-1".to_string()),
+        "battery.percent" => capacity
+            .map(|c| c.to_string())
+            .unwrap_or_else(|| "-1".to_string()),
         "battery.lifetime" => "-1".to_string(),
         "battery.flag" => {
             if let Some(pct) = capacity {

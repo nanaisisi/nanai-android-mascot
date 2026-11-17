@@ -10,8 +10,8 @@ mod tests;
 use crate::common::state::AppState;
 #[allow(unused_imports)]
 pub use evaluator::{
-    evaluate_property_query, evaluate_property_query_full, evaluate_property_query_with_context,
-    evaluate_property_query_with_ghost_info, SystemMonitorInfo,
+    SystemMonitorInfo, evaluate_property_query, evaluate_property_query_full,
+    evaluate_property_query_with_context, evaluate_property_query_with_ghost_info,
 };
 use serde::{Deserialize, Serialize};
 

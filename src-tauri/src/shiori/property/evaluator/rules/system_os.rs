@@ -94,11 +94,17 @@ pub fn evaluate_system_os(sub: &str) -> String {
         "locale" => sys_locale::get_locale().unwrap_or_else(|| "ja-JP".to_string()),
         "locale.language" => {
             let loc = sys_locale::get_locale().unwrap_or_else(|| "ja-JP".to_string());
-            loc.split(&['-', '_'][..]).next().unwrap_or("ja").to_string()
+            loc.split(&['-', '_'][..])
+                .next()
+                .unwrap_or("ja")
+                .to_string()
         }
         "locale.country" => {
             let loc = sys_locale::get_locale().unwrap_or_else(|| "ja-JP".to_string());
-            loc.split(&['-', '_'][..]).nth(1).unwrap_or("JP").to_string()
+            loc.split(&['-', '_'][..])
+                .nth(1)
+                .unwrap_or("JP")
+                .to_string()
         }
         "timezone.offset" => {
             use chrono::Offset;
@@ -129,10 +135,10 @@ pub fn evaluate_theme_mode(is_os_mode: bool) -> String {
 pub fn get_android_property(prop_name: &str) -> Option<String> {
     if let Ok(content) = std::fs::read_to_string("/system/build.prop") {
         for line in content.lines() {
-            if let Some((k, v)) = line.split_once('=') {
-                if k.trim() == prop_name {
-                    return Some(v.trim().to_string());
-                }
+            if let Some((k, v)) = line.split_once('=')
+                && k.trim() == prop_name
+            {
+                return Some(v.trim().to_string());
             }
         }
     }
@@ -174,8 +180,7 @@ fn get_os_ver_and_build() -> (String, u32, u32, u32) {
 fn get_os_ver_and_build() -> (String, u32, u32, u32) {
     let release =
         get_android_property("ro.build.version.release").unwrap_or_else(|| "14".to_string());
-    let sdk_str =
-        get_android_property("ro.build.version.sdk").unwrap_or_else(|| "34".to_string());
+    let sdk_str = get_android_property("ro.build.version.sdk").unwrap_or_else(|| "34".to_string());
     let sdk = sdk_str.parse::<u32>().unwrap_or(34);
     (release, sdk, sdk, 0)
 }
@@ -425,11 +430,10 @@ pub fn get_system_dnd_mode() -> String {
     use windows_sys::Win32::System::Registry::{
         HKEY, HKEY_CURRENT_USER, KEY_READ, RegOpenKeyExW, RegQueryValueExW,
     };
-    let subkey: Vec<u16> =
-        OsStr::new("Software\\Microsoft\\Windows\\CurrentVersion\\FocusAssist")
-            .encode_wide()
-            .chain(std::iter::once(0))
-            .collect();
+    let subkey: Vec<u16> = OsStr::new("Software\\Microsoft\\Windows\\CurrentVersion\\FocusAssist")
+        .encode_wide()
+        .chain(std::iter::once(0))
+        .collect();
     let val_name: Vec<u16> = OsStr::new("Value")
         .encode_wide()
         .chain(std::iter::once(0))
@@ -448,10 +452,9 @@ pub fn get_system_dnd_mode() -> String {
                 &mut fa_bytes,
             )
         } == 0
+            && fa_value > 0
         {
-            if fa_value > 0 {
-                return "quiet".to_string();
-            }
+            return "quiet".to_string();
         }
     }
     "normal".to_string()

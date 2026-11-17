@@ -20,10 +20,7 @@ fn test_property_evaluation() {
         evaluate_property_query("baseware.version"),
         env!("CARGO_PKG_VERSION")
     );
-    assert_eq!(
-        evaluate_property_query("baseware.windowmode"),
-        "normal"
-    );
+    assert_eq!(evaluate_property_query("baseware.windowmode"), "normal");
     assert_eq!(
         evaluate_property_query("system.baseware.version"),
         env!("CARGO_PKG_VERSION")

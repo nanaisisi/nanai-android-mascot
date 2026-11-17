@@ -30,8 +30,9 @@ body {
 
 .submenu-window-container .menu-item {
 	width: 100%;
-	padding: 0.04rem 0.3rem;
-	min-height: 14px;
+	padding: 3px 6px;
+	min-height: 20px;
+	line-height: 1.3;
 	touch-action: manipulation;
 	-webkit-tap-highlight-color: transparent;
 	background: none;
@@ -40,7 +41,7 @@ body {
 	text-align: left;
 	cursor: pointer;
 	font-family: inherit;
-	font-size: var(--menu-font-size, 0.7rem);
+	font-size: var(--menu-font-size, 0.75rem);
 	color: var(--balloon-text-color, #111111);
 	display: flex;
 	align-items: center;
@@ -53,12 +54,15 @@ body {
 	justify-content: center;
 	align-items: center;
 	flex-shrink: 0;
+	font-weight: bold;
 }
 
 .submenu-window-container .menu-item-label {
 	flex-grow: 1;
 	text-align: left;
-	justify-content: flex-start;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .submenu-window-container .menu-item:hover,

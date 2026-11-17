@@ -1,5 +1,6 @@
 //! system.* プロパティ群の統合評価モジュール
 
+use super::super::SystemMonitorInfo;
 use super::{
     system_cpu::evaluate_system_cpu,
     system_hardware::{
@@ -8,7 +9,6 @@ use super::{
     },
     system_os::{evaluate_system_os, evaluate_theme_mode, get_system_dnd_mode},
 };
-use super::super::SystemMonitorInfo;
 use chrono::{Datelike, Timelike};
 
 pub fn evaluate_system_subsystem(
@@ -58,7 +58,6 @@ pub fn evaluate_system_subsystem(
         let (x, y) = get_mouse_cursor_pos();
         return format!("{},{}", x, y);
     }
-
 
     // System date and time
     let now = chrono::Local::now();

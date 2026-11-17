@@ -1,10 +1,10 @@
 //! 接頭辞・パターン一致型動的プロパティ評価モジュール
 
+use super::SystemMonitorInfo;
 use super::rules::{
     baseware::evaluate_baseware_property, ghost_scope::evaluate_ghost_scope,
     system::evaluate_system_subsystem,
 };
-use super::SystemMonitorInfo;
 
 pub(super) fn evaluate_dynamic_property(
     q: &str,

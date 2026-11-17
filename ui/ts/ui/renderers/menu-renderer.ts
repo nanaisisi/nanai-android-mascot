@@ -158,7 +158,7 @@ export class MenuRenderer {
 		if (disabled) {
 			const div = document.createElement("div");
 			div.className = "menu-item is-disabled";
-			div.innerHTML = `<span>${label}</span>`;
+			div.innerHTML = `<span class="menu-item-indicator"></span><span class="menu-item-label">${label}</span>`;
 			return div;
 		}
 
@@ -172,7 +172,7 @@ export class MenuRenderer {
 			btn.setAttribute("data-action", action);
 		}
 
-		let html = `<span>${isCurrent ? "✓ " : ""}${label}</span>`;
+		let html = `<span class="menu-item-indicator">${isCurrent ? "✓" : ""}</span><span class="menu-item-label">${label}</span>`;
 		if (shortcut) {
 			html += `<span class="shortcut-key">${shortcut}</span>`;
 		}

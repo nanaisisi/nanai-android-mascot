@@ -187,4 +187,10 @@ export async function setBalloonThemeImpl(
 			// スキン descript 未定義の場合は無視
 		}
 	}
+
+	// UKADOC 準拠: OnBalloonChange イベント送信
+	const gc = manager.app?.ghostController;
+	if (gc?.sendShioriEvent) {
+		void gc.sendShioriEvent("OnBalloonChange", [themeName]).catch(() => {});
+	}
 }

@@ -4,6 +4,7 @@ import { InteractionManager } from "../../surface/interaction.js";
 import { SurfaceManager } from "../../surface/surface-manager.js";
 import { menuMethods } from "../../ui/app-menu.js";
 import { ModalManager } from "../../ui/modal.js";
+import { BalloonThemeManager } from "../actions/balloon-theme.js";
 import { DictationManager } from "../actions/dictation.js";
 import { actionMethods } from "../app-actions.js";
 import { eventMethods } from "../app-events.js";
@@ -115,6 +116,7 @@ export class NanaiAndroidMascotApp {
 	balloonDontMove?: boolean;
 	balloonSyncScale?: boolean;
 	balloonAlignment?: string;
+	balloonThemeManager: BalloonThemeManager;
 	internalWindowManager: InternalWindowManager;
 	_isExiting?: boolean;
 	_isBooted?: boolean;
@@ -139,6 +141,7 @@ export class NanaiAndroidMascotApp {
 			urlParams.get("ghost_name") ||
 			(search ? AppConfig.paths.fallbackGhostName : null);
 
+		this.balloonThemeManager = new BalloonThemeManager(this as any);
 		this.ghostController = new GhostController(this as any);
 		this.dictationManager = new DictationManager(this);
 		this.interactionManager = new InteractionManager(this as any);

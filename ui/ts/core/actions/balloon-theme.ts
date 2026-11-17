@@ -110,11 +110,15 @@ export class BalloonThemeManager {
 	cycleTheme() {
 		let themes = BALLOON_THEMES;
 		if (this.availableBalloons.length > 0) {
-			themes = this.availableBalloons.map((b) => b.name || b.id || b);
+			themes = this.availableBalloons.map(
+				(b) => b.dir_name || b.name || b.id || b,
+			);
 		}
 		const idx = themes.indexOf(this.currentTheme);
 		const nextIdx = (idx + 1) % themes.length;
-		return this.setTheme(themes[nextIdx]);
+		const nextTheme = themes[nextIdx];
+		void this.setTheme(nextTheme);
+		return nextTheme;
 	}
 
 	/**
@@ -152,6 +156,10 @@ export class BalloonThemeManager {
 		return [];
 	}
 
+	async scanBalloons() {
+		return this.scanAvailableBalloons();
+	}
+
 	/**
 	 * バルーン descript スタイルを初期化
 	 */
@@ -165,18 +173,66 @@ export class BalloonThemeManager {
 	}
 }
 
+function getOrInitBalloonThemeManager(context: {
+	balloonThemeManager?: BalloonThemeManager;
+	[key: string]: unknown;
+}) {
+	if (!context.balloonThemeManager) {
+		context.balloonThemeManager = new BalloonThemeManager(context);
+	}
+	return context.balloonThemeManager;
+}
+
 /**
  * 既存の Mixin 用アクションオブジェクト
  */
 export const balloonThemeActions = {
-	async setTheme(themeName) {
-		if (this.balloonThemeManager) {
-			return this.balloonThemeManager.setTheme(themeName);
-		}
+	get balloonThemeManager() {
+		return this._balloonThemeManager;
 	},
-	applyBalloonScale(scale) {
-		if (this.balloonThemeManager) {
-			this.balloonThemeManager.applyScale(scale);
-		}
+	set balloonThemeManager(mgr) {
+		this._balloonThemeManager = mgr;
+	},
+
+	async setTheme(themeName: string) {
+		const mgr = getOrInitBalloonThemeManager(this);
+		return mgr.setTheme(themeName);
+	},
+
+	async setBalloonTheme(themeName: string) {
+		return this.setTheme(themeName);
+	},
+
+	cycleTheme() {
+		const mgr = getOrInitBalloonThemeManager(this);
+		return mgr.cycleTheme();
+	},
+
+	cycleBalloonTheme() {
+		return this.cycleTheme();
+	},
+
+	applyBalloonScale(scale: number | string) {
+		const mgr = getOrInitBalloonThemeManager(this);
+		return mgr.applyScale(scale);
+	},
+
+	applyBalloonScaleAction(scale: number | string) {
+		return this.applyBalloonScale(scale);
+	},
+
+	resetBalloonDescript() {
+		const mgr = getOrInitBalloonThemeManager(this);
+		mgr.resetDescript();
+	},
+
+	async scanAvailableBalloons() {
+		const mgr = getOrInitBalloonThemeManager(this);
+		return mgr.scanAvailableBalloons();
+	},
+
+	async scanBalloons() {
+		const mgr = getOrInitBalloonThemeManager(this);
+		return mgr.scanBalloons();
 	},
 };

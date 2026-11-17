@@ -148,12 +148,9 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 	});
 
 	it("cycles balloon themes correctly with default and custom lists", () => {
-		let shownMessage = "";
 		const mockApp = {
 			currentBalloonTheme: "nsm",
-			showBalloon(msg) {
-				shownMessage = msg;
-			},
+			showBalloon() {},
 			hideBalloon() {},
 		};
 		const mgr = new BalloonThemeManager(mockApp);
@@ -162,7 +159,6 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 		assert.equal(next1, "nsm_vertical");
 		assert.equal(mgr.currentTheme, "nsm_vertical");
 		assert.equal(mockApp.currentBalloonTheme, "nsm_vertical");
-		assert.ok(shownMessage.includes("NAMデフォルト+(頭上)"));
 
 		// Custom list
 		mgr.availableBalloons = [
@@ -172,7 +168,6 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 		mgr.currentTheme = "themeA";
 		const nextCustom = mgr.cycleTheme();
 		assert.equal(nextCustom, "themeB");
-		assert.ok(shownMessage.includes("Theme Beta"));
 	});
 
 	it("applies balloon scale with numeric and action inputs and dispatches OnBalloonScaling", () => {

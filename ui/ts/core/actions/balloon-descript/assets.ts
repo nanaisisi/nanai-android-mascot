@@ -20,11 +20,18 @@ export function verifyRecommendedGhost(
 			currentGhostName,
 			currentGhostPath,
 		);
-		if (res) {
-			if (!res.isRecommended && res.warningMessage) {
-				console.warn(res.warningMessage);
+		if (res && typeof res === "object") {
+			const isRec = Boolean(
+				(res as any).isRecommended ?? (res as any).is_recommended,
+			);
+			const warnMsg =
+				(res as any).warningMessage ??
+				(res as any).warning_message ??
+				(res as any).warning;
+			if (!isRec && warnMsg) {
+				console.warn(warnMsg);
 			}
-			return { isRecommended: res.isRecommended, warning: res.warningMessage };
+			return { isRecommended: isRec, warning: warnMsg || undefined };
 		}
 	}
 

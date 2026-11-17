@@ -134,37 +134,51 @@ export function handleMenuActionImpl(
 		});
 	}
 	if (action === "reset-shell-position" || action === "resetwindowpos") {
-		if (context.elements?.ghostDisplay) {
-			context.elements.ghostDisplay.style.left = "";
-			context.elements.ghostDisplay.style.top = "";
-			context.elements.ghostDisplay.style.transform = "";
-			context.elements.ghostDisplay.classList.remove(
-				"is-docked-left",
-				"is-docked-right",
+		context.interactionManager?.resetShellPositions?.();
+		if (typeof document !== "undefined") {
+			const targets = document.querySelectorAll(
+				".ghost-display, .character-slot, .ghost-character, .character-placeholder",
 			);
+			targets.forEach((el) => {
+				const hEl = el as HTMLElement;
+				if (hEl?.style) {
+					hEl.style.left = "";
+					hEl.style.top = "";
+					hEl.style.transform = "";
+					hEl.style.margin = "";
+				}
+				hEl.classList.remove("is-docked-left", "is-docked-right");
+			});
 		}
 		if (isTauriAvailable()) {
-			invoke("set_character_scale", { scale: 1.0 }).catch(() => {});
+			void invoke("set_character_scale", { scale: 1.0 }).catch(() => {});
+			void invoke("reset_character_positions").catch(() => {});
 		}
 		context.showBalloon?.("📍 シェル位置・倍率を初期リセットしました");
 		setTimeout(() => context.hideBalloon?.(), 2000);
 		return;
 	}
 	if (action === "reset-balloon-position" || action === "resetballoonpos") {
-		if (context.interactionManager) {
-			context.interactionManager.balloonOffsetX = 0;
-			context.interactionManager.balloonOffsetY = 0;
-		}
-		if (typeof localStorage !== "undefined") {
-			try {
-				localStorage.removeItem("nanai_balloon_offset");
-			} catch (_e) {
-				// Fallback if localStorage access fails
-			}
+		context.interactionManager?.resetBalloonPositions?.();
+		if (typeof document !== "undefined") {
+			const balloons = document.querySelectorAll(".balloon-display");
+			balloons.forEach((el) => {
+				const bEl = el as HTMLElement;
+				if (bEl?.style) {
+					bEl.style.left = "";
+					bEl.style.top = "";
+					bEl.style.transform = "";
+				}
+			});
 		}
 		if (isTauriAvailable()) {
-			invoke("set_balloon_offset", { scopeId: 0, x: 0, y: 0 }).catch(() => {});
-			invoke("set_balloon_offset", { scopeId: 1, x: 0, y: 0 }).catch(() => {});
+			void invoke("reset_balloon_positions").catch(() => {});
+			void invoke("set_balloon_offset", { scopeId: 0, x: 0, y: 0 }).catch(
+				() => {},
+			);
+			void invoke("set_balloon_offset", { scopeId: 1, x: 0, y: 0 }).catch(
+				() => {},
+			);
 		}
 		context.showBalloon?.("📍 バルーン位置を初期リセットしました");
 		setTimeout(() => context.hideBalloon?.(), 2000);

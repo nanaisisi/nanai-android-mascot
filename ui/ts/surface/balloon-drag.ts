@@ -31,6 +31,28 @@ export class BalloonDragManager {
 		}
 	}
 
+	resetOffset() {
+		this.balloonOffsetX = 0;
+		this.balloonOffsetY = 0;
+		try {
+			if (typeof localStorage !== "undefined") {
+				localStorage.removeItem("nanai_balloon_offset");
+			}
+		} catch (_) {}
+
+		if (typeof document !== "undefined") {
+			const balloons = document.querySelectorAll(".balloon-display");
+			balloons.forEach((el) => {
+				const bEl = el as HTMLElement;
+				if (bEl?.style) {
+					bEl.style.left = "";
+					bEl.style.top = "";
+					bEl.style.transform = "";
+				}
+			});
+		}
+	}
+
 	updateFollowPosition(newX: number, newY: number) {
 		const balloon = document.getElementById("balloon-display");
 		if (!balloon) return;

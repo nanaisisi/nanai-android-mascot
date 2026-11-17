@@ -33,6 +33,28 @@ export class InteractionManager {
 		this.balloonDragManager.balloonOffsetY = val;
 	}
 
+	resetBalloonPositions() {
+		this.balloonDragManager.resetOffset();
+	}
+
+	resetShellPositions() {
+		if (typeof document !== "undefined") {
+			const targets = document.querySelectorAll(
+				".ghost-display, .character-slot, .ghost-character, .character-placeholder",
+			);
+			targets.forEach((el) => {
+				const hEl = el as HTMLElement;
+				if (hEl?.style) {
+					hEl.style.left = "";
+					hEl.style.top = "";
+					hEl.style.transform = "";
+					hEl.style.margin = "";
+				}
+				hEl.classList.remove("is-docked-left", "is-docked-right");
+			});
+		}
+	}
+
 	isPixelTransparent(
 		img: HTMLElement,
 		clientX: number,

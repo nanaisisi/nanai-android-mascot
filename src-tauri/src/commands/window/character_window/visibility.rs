@@ -266,3 +266,25 @@ pub async fn hide_subchar_window(
     let scope_id = _scope_id;
     hide_character_window(app_handle, scope_id).await
 }
+
+/// キャラクターウィンドウ位置リセットコマンド
+#[tauri::command]
+pub async fn reset_character_positions(
+    app_handle: tauri::AppHandle,
+    state: tauri::State<'_, crate::common::state::AppState>,
+) -> Result<(), String> {
+    use tauri::Manager;
+    let n = *state.num_characters.lock();
+    let max_scopes = if n > 0 { n } else { 2 };
+    for scope_id in 0..max_scopes {
+        let label = if scope_id == 0 {
+            "main".to_string()
+        } else {
+            format!("subchar_window_{}", scope_id)
+        };
+        if let Some(win) = app_handle.get_webview_window(&label) {
+            let _ = win.center();
+        }
+    }
+    Ok(())
+}

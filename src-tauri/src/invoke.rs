@@ -64,6 +64,7 @@ pub fn get_invoke_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         commands::window::show_subchar_window,
         commands::window::hide_subchar_window,
         commands::window::set_character_scale,
+        commands::window::reset_character_positions,
         commands::window::set_surface_image,
         commands::window::get_surface_image,
         commands::window::show_balloon_window,

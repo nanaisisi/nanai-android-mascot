@@ -111,6 +111,15 @@ export const ghostSurfaceMethods = {
 					balloonDisp.className = `balloon-display char-balloon-${sId}`;
 					balloonDisp.style.display = "none";
 					balloonDisp.innerHTML = `<div class="balloon"><div class="balloon-text" id="char-balloon-text-${sId}"></div></div>`;
+					balloonDisp.addEventListener("contextmenu", (e: MouseEvent) => {
+						e.preventDefault();
+						e.stopPropagation();
+						if (isTauriAvailable()) {
+							void invoke("show_balloon_context_menu", { scope_id: sId }).catch(
+								() => {},
+							);
+						}
+					});
 					slotEl.appendChild(balloonDisp);
 
 					containerEl = document.createElement("div");

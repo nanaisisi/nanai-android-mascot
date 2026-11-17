@@ -101,6 +101,56 @@ export const setupMethods = {
 				.elements?.keroDisplay,
 			1,
 		);
+
+		const bindBalloon = (
+			el: HTMLElement | null | undefined,
+			scopeId: number,
+		) => {
+			if (!el) return;
+			el.addEventListener("contextmenu", (e: MouseEvent) => {
+				e.preventDefault();
+				e.stopPropagation();
+				if (isTauriAvailable()) {
+					void invoke("show_balloon_context_menu", { scope_id: scopeId }).catch(
+						() => {
+							(
+								this as unknown as import("../../../main.js").NanaiAndroidMascotApp
+							).toggleMenu(e.screenX, e.screenY, scopeId);
+						},
+					);
+				} else {
+					(
+						this as unknown as import("../../../main.js").NanaiAndroidMascotApp
+					).toggleMenu(e.screenX, e.screenY, scopeId);
+				}
+			});
+		};
+
+		bindBalloon(
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.elements?.balloonDisplay ||
+				(typeof document !== "undefined"
+					? document.getElementById("balloon-display")
+					: null),
+			0,
+		);
+		bindBalloon(
+			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
+				.elements?.keroBalloonDisplay ||
+				(typeof document !== "undefined"
+					? document.getElementById("kero-balloon-display")
+					: null),
+			1,
+		);
+
+		if (
+			typeof document !== "undefined" &&
+			typeof document.querySelectorAll === "function"
+		) {
+			document.querySelectorAll(".balloon-display").forEach((el, idx) => {
+				bindBalloon(el as HTMLElement, idx);
+			});
+		}
 	},
 
 	setupUiButtons() {

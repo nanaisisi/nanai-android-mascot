@@ -18,10 +18,14 @@ pub async fn show_balloon_context_menu(
         let app_handle = _app_handle;
         let scope_id = params.scope_id.unwrap_or(0);
         let label = format!("balloon_window_{}", scope_id);
+        let subchar_label = format!("subchar_window_{}", scope_id);
 
         let window = app_handle
             .get_webview_window(&label)
+            .or_else(|| app_handle.get_webview_window(&subchar_label))
+            .or_else(|| app_handle.get_webview_window("subchar_window_0"))
             .or_else(|| app_handle.get_webview_window("main"))
+            .or_else(|| app_handle.webview_windows().into_values().next())
             .ok_or("balloon window not found")?;
 
         let menu = MenuBuilder::new(&app_handle)

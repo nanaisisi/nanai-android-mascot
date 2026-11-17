@@ -52,15 +52,6 @@ describe("balloon-descript-layout rect submodule", () => {
 			assert.equal(padding, "20px 30px 40px 10px");
 			assert.equal(maxWidth, "400px");
 			assert.equal(maxHeight, "250px");
-			assert.equal(
-				root.vars["--balloon-border-image-slice"],
-				"20 30 40 10 fill",
-			);
-			assert.equal(
-				root.vars["--balloon-border-image-width"],
-				"20px 30px 40px 10px",
-			);
-			assert.equal(root.vars["--balloon-border-image-repeat"], "stretch");
 		} finally {
 			globalThis.document = originalDoc;
 		}

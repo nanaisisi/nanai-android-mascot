@@ -293,6 +293,7 @@
 }
 
 .balloon-text {
+	pointer-events: none;
 	width: 100%;
 	max-width: 100%;
 	box-sizing: border-box;

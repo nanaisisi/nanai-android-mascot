@@ -79,10 +79,6 @@ body {
 	background-color: var(--balloon-highlight-bg, rgba(0, 120, 215, 0.5));
 }
 
-.balloon[style*="border-image-source"] {
-	border-color: transparent;
-}
-
 @media (max-width: 600px) {
 	.balloon {
 		max-width: 95vw;
@@ -95,6 +91,7 @@ body {
 }
 
 .balloon-text {
+	pointer-events: none;
 	width: 100%;
 	max-width: var(--balloon-max-width, 100%);
 	box-sizing: border-box;

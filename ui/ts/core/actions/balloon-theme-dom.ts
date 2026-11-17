@@ -88,30 +88,22 @@ export function computeValidRectLayout(
 ): ValidRectLayoutResult {
 	const { top: t, right: r, bottom: b, left: l } = parseValidRect(props);
 
-	const repeat = props["border.repeat"] || "repeat";
 	const source = bgImageUrl || props["balloon.image"] || "";
 	const cacheKey =
 		scopeId > 0
-			? `scope${scopeId}_${t}_${r}_${b}_${l}_${repeat}_${source}`
-			: `${t}_${r}_${b}_${l}_${repeat}_${source}`;
+			? `scope${scopeId}_${t}_${r}_${b}_${l}_${source}`
+			: `${t}_${r}_${b}_${l}_${source}`;
 
 	if (cache.has(cacheKey)) {
 		return cache.get(cacheKey) as ValidRectLayoutResult;
 	}
 
-	const slice = `${t} ${r} ${b} ${l} fill`;
-	const width = `${t}px ${r}px ${b}px ${l}px`;
-
-	const cssBorderImage = source
-		? `url("${source}") ${t} ${r} ${b} ${l} fill / ${width} ${repeat}`
-		: "";
-
 	const result: ValidRectLayoutResult = {
 		source,
-		slice,
-		width,
-		repeat,
-		cssBorderImage,
+		top: t,
+		right: r,
+		bottom: b,
+		left: l,
 		scopeId,
 		cacheKey,
 	};
@@ -164,7 +156,6 @@ export function resetBalloonDescriptDom(
 					bEl.style.padding = "";
 					bEl.style.maxWidth = "";
 					bEl.style.maxHeight = "";
-					bEl.style.borderImage = "";
 					const scale = userScale || app?.balloonUserScale || 1;
 					bEl.style.transform = scale !== 1 ? `scale(${scale})` : "";
 				}
@@ -175,7 +166,6 @@ export function resetBalloonDescriptDom(
 				bEl.style.padding = "";
 				bEl.style.maxWidth = "";
 				bEl.style.maxHeight = "";
-				bEl.style.borderImage = "";
 				const scale = userScale || app?.balloonUserScale || 1;
 				bEl.style.transform = scale !== 1 ? `scale(${scale})` : "";
 			}

@@ -1,6 +1,6 @@
 /**
  * @file layout.js
- * @brief バルーンレイアウト・DPI・領域・位置・数字・SSTPメッセージ・9スライス設定反映 (UKADOC準拠)
+ * @brief バルーンレイアウト・DPI・有効テキスト領域(validrect)・位置・座標設定反映 (UKADOC準拠)
  * // [descript.txt（Balloonの）]: Balloon descript.txt レイアウト・領域・座標バインディング
  */
 import { applyAlignmentProperties } from "./layout/alignment.js";

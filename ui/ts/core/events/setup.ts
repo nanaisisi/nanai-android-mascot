@@ -258,6 +258,9 @@ export const setupMethods = {
 			console.log(
 				`🖱️ [ContextMenu Event] 右クリック検知: isBalloon=${isBalloonClick}, target=${target?.tagName}#${target?.id}.${target?.className}, posX=${posX}, posY=${posY}`,
 			);
+			frontendLog(
+				`🖱️ [ContextMenu Event] 右クリック検知: isBalloon=${isBalloonClick}, target=${target?.tagName}#${target?.id}.${target?.className}, posX=${posX}, posY=${posY}`,
+			);
 
 			if (isBalloonClick) {
 				const scopeId = target?.closest?.(

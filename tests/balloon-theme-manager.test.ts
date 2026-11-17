@@ -96,7 +96,7 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 		assert.equal(mgrCustom.availableBalloons.length, 1);
 	});
 
-	it("computes validrect border-image tokens correctly based on validrect", () => {
+	it("computes validrect tokens correctly based on validrect", () => {
 		const mgr = new BalloonThemeManager();
 		const layout = mgr.computeValidRect(
 			{
@@ -109,15 +109,15 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 		);
 
 		assert.equal(layout.source, "assets/balloon/test.png");
-		assert.equal(layout.slice, "24 20 28 20 fill");
-		assert.equal(layout.width, "24px 20px 28px 20px");
-		assert.equal(layout.repeat, "repeat");
-		assert.ok(layout.cssBorderImage.includes("url("));
+		assert.equal(layout.left, 20);
+		assert.equal(layout.top, 24);
+		assert.equal(layout.right, 20);
+		assert.equal(layout.bottom, 28);
 
 		// Fallback when values are missing or NaN
 		const fallback = mgr.computeValidRect({});
-		assert.equal(fallback.slice, "16 16 16 16 fill");
-		assert.equal(fallback.width, "16px 16px 16px 16px");
+		assert.equal(fallback.left, 16);
+		assert.equal(fallback.top, 16);
 
 		// Test cache hit and cache clearing
 		const cached = mgr.computeValidRect(
@@ -220,11 +220,9 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 		};
 		const mgr = new BalloonThemeManager(mockApp);
 		cssVars["--balloon-font-family"] = "Arial";
-		cssVars["--balloon-border-image-slice"] = "16 16 16 16 fill";
 
 		mgr.resetDescript();
 		assert.equal(cssVars["--balloon-font-family"], undefined);
-		assert.equal(cssVars["--balloon-border-image-slice"], undefined);
 		assert.equal(mockApp.balloonDpiScale, 1);
 		assert.equal(mgr.dpiScale, 1);
 	});

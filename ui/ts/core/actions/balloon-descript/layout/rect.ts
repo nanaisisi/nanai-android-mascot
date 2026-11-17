@@ -24,19 +24,6 @@ export function applyValidRectProperties(
 		"--balloon-padding",
 		`${padTop} ${padRight} ${padBottom} ${padLeft}`,
 	);
-	root.style.setProperty(
-		"--balloon-border-image-slice",
-		`${sliceTop} ${sliceRight} ${sliceBottom} ${sliceLeft} fill`,
-	);
-	root.style.setProperty(
-		"--balloon-border-image-width",
-		`${sliceTop}px ${sliceRight}px ${sliceBottom}px ${sliceLeft}px`,
-	);
-
-	root.style.setProperty(
-		"--balloon-border-image-repeat",
-		props["border.repeat"] || "repeat",
-	);
 
 	// [wordwrappoint.x,座標], [wordwrappoint.y,座標]:
 	if (props["wordwrappoint.x"]) {

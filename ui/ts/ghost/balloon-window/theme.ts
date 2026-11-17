@@ -229,22 +229,6 @@ export async function applyBalloonDescript({
 
 			root.style.setProperty("--balloon-bg-image", `url("${bgImage}")`);
 			root.style.setProperty(
-				"--balloon-border-image-source",
-				`url("${bgImage}")`,
-			);
-			root.style.setProperty(
-				"--balloon-border-image-slice",
-				`${sliceTop} ${sliceRight} ${sliceBottom} ${sliceLeft} fill`,
-			);
-			root.style.setProperty(
-				"--balloon-border-image-width",
-				`${sliceTop}px ${sliceRight}px ${sliceBottom}px ${sliceLeft}px`,
-			);
-			root.style.setProperty(
-				"--balloon-border-image-repeat",
-				props["border.repeat"] || "repeat",
-			);
-			root.style.setProperty(
 				"--balloon-padding",
 				`${sliceTop}px ${sliceRight}px ${sliceBottom}px ${sliceLeft}px`,
 			);

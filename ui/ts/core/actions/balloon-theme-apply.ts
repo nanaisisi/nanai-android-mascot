@@ -193,7 +193,7 @@ export async function setBalloonThemeImpl(
 					})
 						.then((dataUrl) => {
 							if (dataUrl) {
-								const layout = manager.computeValidRect(props, dataUrl, 0);
+								manager.computeValidRect(props, dataUrl, 0);
 								if (typeof document !== "undefined") {
 									const root = document.documentElement;
 									if (root) {
@@ -201,48 +201,11 @@ export async function setBalloonThemeImpl(
 											"--balloon-bg-image",
 											`url("${dataUrl}")`,
 										);
-										if (layout.cssBorderImage) {
-											root.style.setProperty(
-												"--balloon-border-image-source",
-												`url("${dataUrl}")`,
-											);
-											root.style.setProperty(
-												"--balloon-border-image-slice",
-												layout.slice,
-											);
-											root.style.setProperty(
-												"--balloon-border-image-width",
-												layout.width,
-											);
-											root.style.setProperty(
-												"--balloon-border-image-repeat",
-												layout.repeat,
-											);
-										}
 									}
 								}
 							}
 						})
 						.catch(() => {});
-				} else {
-					const layout = manager.computeValidRect(props, null, 0);
-					if (typeof document !== "undefined" && layout.cssBorderImage) {
-						const root = document.documentElement;
-						if (root) {
-							root.style.setProperty(
-								"--balloon-border-image-slice",
-								layout.slice,
-							);
-							root.style.setProperty(
-								"--balloon-border-image-width",
-								layout.width,
-							);
-							root.style.setProperty(
-								"--balloon-border-image-repeat",
-								layout.repeat,
-							);
-						}
-					}
 				}
 			}
 		} catch (_e) {

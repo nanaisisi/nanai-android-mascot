@@ -4,12 +4,6 @@
    === */
 
 :root {
-	/* 9スライス・ボーダー画像トークン */
-	--balloon-border-image-source: none;
-	--balloon-border-image-slice: 16 16 16 16 fill;
-	--balloon-border-image-width: 16px;
-	--balloon-border-image-repeat: repeat;
-
 	/* 縦書き・文字組トークン */
 	--balloon-writing-mode: horizontal-tb;
 }
@@ -20,20 +14,33 @@ body[class*="overhead"] {
 	transform-origin: top left;
 }
 
+/* ゴースト本体 (.ghost-character) と同じイベント透過構造をバルーンにも適用 */
 .balloon-display,
-.balloon,
-.balloon-text,
-.balloon-display * {
+.balloon {
 	pointer-events: auto;
+	cursor: pointer;
 	-webkit-app-region: no-drag;
 	app-region: no-drag;
 }
 
-/* バルーン内のテキスト・全子要素の選択（テキストコピー用選択）を完全無効化 */
-.balloon,
-.balloon *,
-.balloon-display,
-.balloon-display * {
+.balloon-text,
+.balloon-text * {
+	pointer-events: none;
+}
+
+.balloon button,
+.balloon a,
+.balloon .balloon-choice-btn,
+.balloon .balloon-anchor {
+	pointer-events: auto;
+	cursor: pointer;
+	-webkit-app-region: no-drag;
+	app-region: no-drag;
+}
+
+/* バルーンテキストボックス内のテキスト・子要素選択（テキストコピー用選択）を無効化 */
+.balloon-text,
+.balloon-text * {
 	user-select: none;
 	-webkit-user-select: none;
 	-moz-user-select: none;

@@ -56,10 +56,6 @@ describe("balloon-descript-layout layout facade submodule", () => {
 
 			assert.equal(root.vars["--balloon-dpi"], "96");
 			assert.equal(root.vars["--balloon-dpi-scale"], "1");
-			assert.equal(
-				root.vars["--balloon-border-image-slice"],
-				"12 12 12 12 fill",
-			);
 			assert.equal(root.vars["--balloon-dontmove"], "0");
 			assert.equal(instance.balloonDontMove, false);
 

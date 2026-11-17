@@ -107,7 +107,7 @@ pub async fn show_character_window(
             .minimizable(false)
             .visible(false)
             .initialization_script(
-                "window.addEventListener('contextmenu', function(e) { var t = e.target; var isInput = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable); if (!isInput) { e.preventDefault(); e.stopPropagation(); } }, true);",
+                "(function(){var b=function(e){var t=e.target;var i=t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable);if(!i){if(e.preventDefault)e.preventDefault();if(e.stopPropagation)e.stopPropagation();return false;}};window.addEventListener('contextmenu',b,true);document.addEventListener('contextmenu',b,true);window.oncontextmenu=b;document.oncontextmenu=b;})();",
             )
             .build()
             .map_err(|e| {

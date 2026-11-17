@@ -235,14 +235,19 @@ export const setupMethods = {
 				),
 			);
 			if (isBalloonClick) {
+				// バルーン右クリック時はメインメニューとは完全に独立した「バルーン専用メニュー」を起動
 				const scopeId = target?.closest?.(
 					"#kero-balloon-display, .kero-balloon",
 				)
 					? 1
 					: 0;
+
+				const posX = e.clientX || e.pageX || 100;
+				const posY = e.clientY || e.pageY || 100;
+
 				showBalloonContextMenu({
-					x: e.clientX || e.pageX || 100,
-					y: e.clientY || e.pageY || 100,
+					x: posX,
+					y: posY,
 					scopeId,
 					app: this,
 				});

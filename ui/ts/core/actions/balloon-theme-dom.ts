@@ -13,6 +13,71 @@ export interface BalloonAppInterface {
 }
 
 /**
+ * UKADOC/SSP 規格準拠 validrect (テキスト描画範囲) プロパティパース
+ */
+export function parseValidRect(
+	props: Record<string, string> = {},
+	imageWidth?: number,
+	imageHeight?: number,
+) {
+	const getProp = (key: string) =>
+		props[key] || props[`sakura.${key}`] || props[`kero.${key}`];
+
+	let vl = parseInt(getProp("validrect.left"), 10);
+	let vt = parseInt(getProp("validrect.top"), 10);
+	let vr = parseInt(getProp("validrect.right"), 10);
+	let vb = parseInt(getProp("validrect.bottom"), 10);
+
+	if (Number.isNaN(vl) && props.validrect) {
+		const parts = props.validrect.split(",").map((s) => parseInt(s.trim(), 10));
+		if (parts.length >= 4) {
+			[vl, vt, vr, vb] = parts;
+		}
+	}
+
+	const ox = parseInt(props["origin.x"], 10);
+	const oy = parseInt(props["origin.y"], 10);
+	if (!Number.isNaN(ox)) vl = ox;
+	if (!Number.isNaN(oy)) vt = oy;
+
+	const bw =
+		imageWidth && imageWidth > 0
+			? imageWidth
+			: parseInt(props["balloon.width"] || "280", 10) || 280;
+	const bh =
+		imageHeight && imageHeight > 0
+			? imageHeight
+			: parseInt(props["balloon.height"] || "180", 10) || 180;
+
+	const l = !Number.isNaN(vl) ? Math.max(0, vl) : 16;
+	const t = !Number.isNaN(vt) ? Math.max(0, vt) : 16;
+
+	let r = 16;
+	if (!Number.isNaN(vr)) {
+		if (vr <= 0) {
+			r = Math.abs(vr);
+		} else if (vr <= 60) {
+			r = vr;
+		} else {
+			r = Math.max(8, bw - vr);
+		}
+	}
+
+	let b = 16;
+	if (!Number.isNaN(vb)) {
+		if (vb <= 0) {
+			b = Math.abs(vb);
+		} else if (vb <= 60) {
+			b = vb;
+		} else {
+			b = Math.max(8, bh - vb);
+		}
+	}
+
+	return { top: t, right: r, bottom: b, left: l };
+}
+
+/**
  * 有効テキスト表示領域 (validrect) 設定からスタイルを算出 (キャッシュ対応・WASM駆動)
  */
 export function computeValidRectLayout(
@@ -21,15 +86,7 @@ export function computeValidRectLayout(
 	bgImageUrl: string | null = null,
 	scopeId: number = 0,
 ): ValidRectLayoutResult {
-	const vl = parseInt(props["validrect.left"], 10);
-	const vt = parseInt(props["validrect.top"], 10);
-	const vr = parseInt(props["validrect.right"], 10);
-	const vb = parseInt(props["validrect.bottom"], 10);
-
-	const t = !Number.isNaN(vt) && vt >= 0 ? Math.max(8, vt) : 16;
-	const r = !Number.isNaN(vr) && vr >= 0 ? Math.max(8, vr) : 16;
-	const b = !Number.isNaN(vb) && vb >= 0 ? Math.max(8, vb) : 16;
-	const l = !Number.isNaN(vl) && vl >= 0 ? Math.max(8, vl) : 16;
+	const { top: t, right: r, bottom: b, left: l } = parseValidRect(props);
 
 	const repeat = props["border.repeat"] || "repeat";
 	const source = bgImageUrl || props["balloon.image"] || "";

@@ -179,9 +179,71 @@ export async function setBalloonThemeImpl(
 	manager.resetDescript();
 	if (isTauriAvailable()) {
 		try {
-			const props = await invoke("balloon_manifest", { name: themeName });
+			const props = (await invoke("balloon_manifest", {
+				name: themeName,
+			})) as Record<string, string>;
 			if (props && typeof props === "object") {
 				manager.app?.applyBalloonDescript?.(props);
+
+				const bgImage = props["balloon.image"] || props.balloon_image;
+				if (bgImage) {
+					void invoke<string | null>("load_balloon_image", {
+						name: themeName,
+						file: bgImage,
+					})
+						.then((dataUrl) => {
+							if (dataUrl) {
+								const layout = manager.computeValidRect(props, dataUrl, 0);
+								if (typeof document !== "undefined") {
+									const root = document.documentElement;
+									if (root) {
+										root.style.setProperty(
+											"--balloon-bg-image",
+											`url("${dataUrl}")`,
+										);
+										if (layout.cssBorderImage) {
+											root.style.setProperty(
+												"--balloon-border-image-source",
+												`url("${dataUrl}")`,
+											);
+											root.style.setProperty(
+												"--balloon-border-image-slice",
+												layout.slice,
+											);
+											root.style.setProperty(
+												"--balloon-border-image-width",
+												layout.width,
+											);
+											root.style.setProperty(
+												"--balloon-border-image-repeat",
+												layout.repeat,
+											);
+										}
+									}
+								}
+							}
+						})
+						.catch(() => {});
+				} else {
+					const layout = manager.computeValidRect(props, null, 0);
+					if (typeof document !== "undefined" && layout.cssBorderImage) {
+						const root = document.documentElement;
+						if (root) {
+							root.style.setProperty(
+								"--balloon-border-image-slice",
+								layout.slice,
+							);
+							root.style.setProperty(
+								"--balloon-border-image-width",
+								layout.width,
+							);
+							root.style.setProperty(
+								"--balloon-border-image-repeat",
+								layout.repeat,
+							);
+						}
+					}
+				}
 			}
 		} catch (_e) {
 			// スキン descript 未定義の場合は無視

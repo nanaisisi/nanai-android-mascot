@@ -191,6 +191,27 @@ pub fn balloon_manifest(
     let dir = resolve_balloon_dir(&name, &app_handle)?;
     let mut map = balloon_descript_map(&dir);
 
+    // balloons.txt, balloonk.txt, balloons0s.txt, balloonk0s.txt 等のオプションプロパティもマージ
+    let option_files = vec![
+        "balloons.txt",
+        "balloonk.txt",
+        "balloons0s.txt",
+        "balloonk0s.txt",
+        "balloonss.txt",
+        "balloonks.txt",
+    ];
+    for opt_file in option_files {
+        let p = dir.join(opt_file);
+        if p.is_file()
+            && let Some(sub_map) = resolve_vfs_path(&dir, opt_file)
+                .and_then(|fp| crate::ghost::scan::read_descript_file(&fp))
+        {
+            for (k, v) in sub_map {
+                map.entry(k).or_insert(v);
+            }
+        }
+    }
+
     if let Some(sid) = s_id {
         let prefix = if sid == 1 { "balloonk" } else { "balloons" };
         let candidates = if let Some(surf) = surf_id {
@@ -198,9 +219,14 @@ pub fn balloon_manifest(
                 format!("{}{}{}s.txt", prefix, surf, sid),
                 format!("{}0s.txt", prefix),
                 format!("{}s.txt", prefix),
+                format!("{}.txt", prefix),
             ]
         } else {
-            vec![format!("{}0s.txt", prefix), format!("{}s.txt", prefix)]
+            vec![
+                format!("{}0s.txt", prefix),
+                format!("{}s.txt", prefix),
+                format!("{}.txt", prefix),
+            ]
         };
         for cand in candidates {
             let p = dir.join(&cand);
@@ -305,6 +331,28 @@ pub fn load_balloon_image(
 pub fn resolve_balloon_dir(name: &str, app_handle: &tauri::AppHandle) -> Result<PathBuf, String> {
     println!("🔍 [Balloon] resolve_balloon_dir 呼び出し: name='{}'", name);
     let effective_name = if name.is_empty() { "default" } else { name };
+
+    // 1. スキャン一覧の中から dir_name や name (表示名) が一致するフォルダを探索
+    if let Ok(scanned) = scan_balloons(app_handle.clone()) {
+        let norm_target = effective_name.trim().to_lowercase();
+        for b in scanned {
+            let b_dir = b.dir_name.trim().to_lowercase();
+            let b_name = b.name.trim().to_lowercase();
+            if b_dir == norm_target || b_name == norm_target {
+                let bases = vec![
+                    format!("assets/balloon/{}", b.dir_name),
+                    format!("balloon/{}", b.dir_name),
+                ];
+                for base in bases {
+                    if let Ok(resolved) = resolve_asset_path(&base, app_handle)
+                        && resolved.is_dir()
+                    {
+                        return Ok(resolved);
+                    }
+                }
+            }
+        }
+    }
 
     let mut search_bases = vec![
         format!("assets/balloon/{}", effective_name),

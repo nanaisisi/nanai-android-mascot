@@ -5,6 +5,7 @@
 import { applyAssetProperties } from "../../core/actions/balloon-descript/assets.js";
 import { applyFontProperties } from "../../core/actions/balloon-descript/font.js";
 import { applyLayoutProperties } from "../../core/actions/balloon-descript/layout.js";
+import { parseValidRect } from "../../core/actions/balloon-theme-dom.js";
 import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 import { processChromaKey } from "../../surface/surface-compositor.js";
 import { updateBalloonWindowScale } from "./scale.js";
@@ -213,25 +214,12 @@ export async function applyBalloonDescript({
 		if (bgImage) {
 			const dims = await getImageDimensions(bgImage);
 
-			const vt = parseInt(props["validrect.top"], 10);
-			const vr = parseInt(props["validrect.right"], 10);
-			const vb = parseInt(props["validrect.bottom"], 10);
-			const vl = parseInt(props["validrect.left"], 10);
-
-			const parseVal = (val: number) => {
-				if (Number.isNaN(val)) return 16;
-				return Math.max(4, Math.abs(val));
-			};
-
-			const padTop = parseVal(vt);
-			const padRight = parseVal(vr);
-			const padBottom = parseVal(vb);
-			const padLeft = parseVal(vl);
-
-			const sliceTop = parseVal(vt);
-			const sliceRight = parseVal(vr);
-			const sliceBottom = parseVal(vb);
-			const sliceLeft = parseVal(vl);
+			const {
+				top: sliceTop,
+				right: sliceRight,
+				bottom: sliceBottom,
+				left: sliceLeft,
+			} = parseValidRect(props, dims.width, dims.height);
 
 			root.style.setProperty("--balloon-bg-image", `url("${bgImage}")`);
 			root.style.setProperty(
@@ -252,7 +240,7 @@ export async function applyBalloonDescript({
 			);
 			root.style.setProperty(
 				"--balloon-padding",
-				`${padTop}px ${padRight}px ${padBottom}px ${padLeft}px`,
+				`${sliceTop}px ${sliceRight}px ${sliceBottom}px ${sliceLeft}px`,
 			);
 
 			if (dims.width > 0) {

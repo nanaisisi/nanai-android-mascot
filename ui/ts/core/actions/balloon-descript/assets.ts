@@ -21,13 +21,11 @@ export function verifyRecommendedGhost(
 			currentGhostPath,
 		);
 		if (res && typeof res === "object") {
-			const isRec = Boolean(
-				(res as any).isRecommended ?? (res as any).is_recommended,
-			);
-			const warnMsg =
-				(res as any).warningMessage ??
-				(res as any).warning_message ??
-				(res as any).warning;
+			const r = res as Record<string, unknown>;
+			const isRec = Boolean(r.isRecommended ?? r.is_recommended);
+			const warnMsg = (r.warningMessage ?? r.warning_message ?? r.warning) as
+				| string
+				| undefined;
 			if (!isRec && warnMsg) {
 				console.warn(warnMsg);
 			}
@@ -141,14 +139,7 @@ export function applyAssetProperties(
 		const filename = p[propName];
 		if (filename) {
 			const themeName = (instance?.currentBalloonTheme as string) || "default";
-			const fullPath = `assets/balloon/${themeName}/${filename}`;
-			const url = globalThis.__TAURI__?.core?.convertFileSrc
-				? globalThis.__TAURI__.core.convertFileSrc(fullPath)
-				: fullPath;
-			preloadBalloonAsset(url);
-			root.style.setProperty(cssVarName, `url("${url}")`);
-
-			if (globalThis.__TAURI__ && typeof invoke === "function") {
+			if (typeof invoke === "function") {
 				void invoke("load_balloon_image", { name: themeName, file: filename })
 					.then((dataUrl) => {
 						if (dataUrl) {
@@ -156,7 +147,21 @@ export function applyAssetProperties(
 							root.style.setProperty(cssVarName, `url("${dataUrl}")`);
 						}
 					})
-					.catch(() => {});
+					.catch(() => {
+						const fullPath = `assets/balloon/${themeName}/${filename}`;
+						const url = globalThis.__TAURI__?.core?.convertFileSrc
+							? globalThis.__TAURI__.core.convertFileSrc(fullPath)
+							: fullPath;
+						preloadBalloonAsset(url);
+						root.style.setProperty(cssVarName, `url("${url}")`);
+					});
+			} else {
+				const fullPath = `assets/balloon/${themeName}/${filename}`;
+				const url = globalThis.__TAURI__?.core?.convertFileSrc
+					? globalThis.__TAURI__.core.convertFileSrc(fullPath)
+					: fullPath;
+				preloadBalloonAsset(url);
+				root.style.setProperty(cssVarName, `url("${url}")`);
 			}
 		}
 	};
@@ -177,14 +182,7 @@ export function applyAssetProperties(
 	const themeName = (instance?.currentBalloonTheme as string) || "default";
 
 	const resolveAndSetArrow = (file: string, cssVar: string) => {
-		const fullPath = `assets/balloon/${themeName}/${file}`;
-		const url = globalThis.__TAURI__?.core?.convertFileSrc
-			? globalThis.__TAURI__.core.convertFileSrc(fullPath)
-			: fullPath;
-		preloadBalloonAsset(url);
-		root.style.setProperty(cssVar, `url("${url}")`);
-
-		if (globalThis.__TAURI__ && typeof invoke === "function") {
+		if (typeof invoke === "function") {
 			void invoke("load_balloon_image", { name: themeName, file })
 				.then((dataUrl) => {
 					if (dataUrl) {
@@ -193,7 +191,21 @@ export function applyAssetProperties(
 						root.style.setProperty("--balloon-arrow-display", "block");
 					}
 				})
-				.catch(() => {});
+				.catch(() => {
+					const fullPath = `assets/balloon/${themeName}/${file}`;
+					const url = globalThis.__TAURI__?.core?.convertFileSrc
+						? globalThis.__TAURI__.core.convertFileSrc(fullPath)
+						: fullPath;
+					preloadBalloonAsset(url);
+					root.style.setProperty(cssVar, `url("${url}")`);
+				});
+		} else {
+			const fullPath = `assets/balloon/${themeName}/${file}`;
+			const url = globalThis.__TAURI__?.core?.convertFileSrc
+				? globalThis.__TAURI__.core.convertFileSrc(fullPath)
+				: fullPath;
+			preloadBalloonAsset(url);
+			root.style.setProperty(cssVar, `url("${url}")`);
 		}
 	};
 
@@ -205,6 +217,7 @@ export function applyAssetProperties(
 		resolveAndSetArrow(`${arrowBaseName}0.png`, "--balloon-arrow0-image");
 		resolveAndSetArrow(`${arrowBaseName}1.png`, "--balloon-arrow1-image");
 	}
+	setBalloonImage("balloon.image", "--balloon-bg-image");
 	setBalloonImage("arrow.filename", "--balloon-arrow-image");
 	// [clickwaitmarker.filename,ファイル名]:
 	setBalloonImage("clickwaitmarker.filename", "--balloon-clickwait-image");

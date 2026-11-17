@@ -54,6 +54,8 @@ export class SakuraScriptPlayer {
 		this.stop();
 		this.currentScript = script;
 		this.lastScript = script;
+		this.currentScope = 0;
+		this.clearAllBalloons();
 		this.playerInstance = createSakuraPlayerWasm(script);
 	}
 
@@ -153,6 +155,11 @@ export class SakuraScriptPlayer {
 			}
 			case "ScopeChange": {
 				this.currentScope = scope;
+				if (scope >= 1) {
+					void invoke("show_subchar_window", { scopeId: scope }).catch(
+						() => {},
+					);
+				}
 				break;
 			}
 			case "Choice": {
@@ -203,19 +210,36 @@ export class SakuraScriptPlayer {
 		return null;
 	}
 
+	private getBalloonElements(app: any, scope: number) {
+		const textEl =
+			scope === 0
+				? app?.elements?.balloonText || this.getDocElement("balloon-text")
+				: scope === 1
+					? app?.elements?.keroBalloonText ||
+						this.getDocElement("kero-balloon-text")
+					: this.getDocElement(`char-balloon-text-${scope}`) ||
+						app?.elements?.balloonText ||
+						this.getDocElement("balloon-text");
+		const dispEl =
+			scope === 0
+				? app?.elements?.balloonDisplay || this.getDocElement("balloon-display")
+				: scope === 1
+					? app?.elements?.keroBalloonDisplay ||
+						this.getDocElement("kero-balloon-display")
+					: this.getDocElement(`char-balloon-display-${scope}`) ||
+						app?.elements?.balloonDisplay ||
+						this.getDocElement("balloon-display");
+		const slotEl =
+			scope === 0
+				? app?.elements?.sakuraSlot || this.getDocElement("sakura-slot")
+				: scope === 1
+					? app?.elements?.keroSlot || this.getDocElement("kero-slot")
+					: this.getDocElement(`char-slot-${scope}`);
+		return { textEl, dispEl, slotEl };
+	}
+
 	private appendTextToBalloon(app: any, scope: number, text: string): void {
-		const isKero = scope === 1;
-		const textEl = isKero
-			? app?.elements?.keroBalloonText ||
-				this.getDocElement("kero-balloon-text")
-			: app?.elements?.balloonText || this.getDocElement("balloon-text");
-		const dispEl = isKero
-			? app?.elements?.keroBalloonDisplay ||
-				this.getDocElement("kero-balloon-display")
-			: app?.elements?.balloonDisplay || this.getDocElement("balloon-display");
-		const slotEl = isKero
-			? app?.elements?.keroSlot || this.getDocElement("kero-slot")
-			: app?.elements?.sakuraSlot || this.getDocElement("sakura-slot");
+		const { textEl, dispEl, slotEl } = this.getBalloonElements(app, scope);
 
 		if (slotEl?.style && slotEl.style.display === "none") {
 			slotEl.style.display = "block";
@@ -265,16 +289,15 @@ export class SakuraScriptPlayer {
 		});
 	}
 
+	public clearAllBalloons(app?: any): void {
+		const targetApp = app || this.getApp();
+		for (let s = 0; s < 8; s++) {
+			this.clearBalloon(targetApp, s);
+		}
+	}
+
 	private clearBalloon(app: any, scope: number, _keepSettings = false): void {
-		const isKero = scope === 1;
-		const textEl = isKero
-			? app?.elements?.keroBalloonText ||
-				this.getDocElement("kero-balloon-text")
-			: app?.elements?.balloonText || this.getDocElement("balloon-text");
-		const dispEl = isKero
-			? app?.elements?.keroBalloonDisplay ||
-				this.getDocElement("kero-balloon-display")
-			: app?.elements?.balloonDisplay || this.getDocElement("balloon-display");
+		const { textEl, dispEl } = this.getBalloonElements(app, scope);
 
 		if (textEl) {
 			textEl.innerHTML = "";
@@ -296,15 +319,7 @@ export class SakuraScriptPlayer {
 		title: string,
 		id: string,
 	): void {
-		const isKero = scope === 1;
-		const textEl = isKero
-			? app?.elements?.keroBalloonText ||
-				this.getDocElement("kero-balloon-text")
-			: app?.elements?.balloonText || this.getDocElement("balloon-text");
-		const dispEl = isKero
-			? app?.elements?.keroBalloonDisplay ||
-				this.getDocElement("kero-balloon-display")
-			: app?.elements?.balloonDisplay || this.getDocElement("balloon-display");
+		const { textEl, dispEl } = this.getBalloonElements(app, scope);
 
 		if (
 			textEl &&
@@ -317,6 +332,7 @@ export class SakuraScriptPlayer {
 			btn.dataset.id = id;
 			btn.textContent = title;
 			btn.addEventListener("click", () => {
+				this.clearAllBalloons(app);
 				if (app?.ghostController?.sendShioriEvent) {
 					void app.ghostController.sendShioriEvent("OnChoiceSelect", [
 						id,
@@ -349,15 +365,7 @@ export class SakuraScriptPlayer {
 		title: string,
 		id: string,
 	): void {
-		const isKero = scope === 1;
-		const textEl = isKero
-			? app?.elements?.keroBalloonText ||
-				this.getDocElement("kero-balloon-text")
-			: app?.elements?.balloonText || this.getDocElement("balloon-text");
-		const dispEl = isKero
-			? app?.elements?.keroBalloonDisplay ||
-				this.getDocElement("kero-balloon-display")
-			: app?.elements?.balloonDisplay || this.getDocElement("balloon-display");
+		const { textEl } = this.getBalloonElements(app, scope);
 
 		if (
 			textEl &&
@@ -370,6 +378,7 @@ export class SakuraScriptPlayer {
 			a.textContent = title;
 			a.addEventListener("click", (e) => {
 				e.preventDefault();
+				this.clearAllBalloons(app);
 				if (app?.ghostController?.sendShioriEvent) {
 					void app.ghostController.sendShioriEvent("OnAnchorSelect", [
 						id,

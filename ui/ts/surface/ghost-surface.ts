@@ -86,12 +86,62 @@ export const ghostSurfaceMethods = {
 					isMain: false,
 				};
 			}
+
+			// 3キャラ目以降 (sId >= 2): 必要に応じて動的DOMスロット枠を作成
+			let slotEl = byId(`char-slot-${sId}`);
+			let containerEl = byId(`char-display-${sId}`);
+			let placeholderEl = byId(`char-placeholder-${sId}`);
+
+			if (
+				!slotEl &&
+				typeof document !== "undefined" &&
+				typeof document.createElement === "function"
+			) {
+				const mainDisplay =
+					document.querySelector(".main-display") ||
+					document.querySelector(".container");
+				if (mainDisplay) {
+					slotEl = document.createElement("div");
+					slotEl.id = `char-slot-${sId}`;
+					slotEl.className = `character-slot char-slot-${sId}`;
+					slotEl.style.display = "none";
+
+					const balloonDisp = document.createElement("div");
+					balloonDisp.id = `char-balloon-display-${sId}`;
+					balloonDisp.className = `balloon-display char-balloon-${sId}`;
+					balloonDisp.style.display = "none";
+					balloonDisp.innerHTML = `<div class="balloon"><div class="balloon-text" id="char-balloon-text-${sId}"></div></div>`;
+					slotEl.appendChild(balloonDisp);
+
+					containerEl = document.createElement("div");
+					containerEl.id = `char-display-${sId}`;
+					containerEl.className = `ghost-display char-display-${sId}`;
+
+					const charDiv = document.createElement("div");
+					charDiv.className = "ghost-character";
+					charDiv.id = `char-character-${sId}`;
+
+					placeholderEl = document.createElement("span");
+					placeholderEl.id = `char-placeholder-${sId}`;
+					placeholderEl.className = "character-placeholder";
+
+					charDiv.appendChild(placeholderEl);
+					containerEl.appendChild(charDiv);
+					slotEl.appendChild(containerEl);
+
+					mainDisplay.appendChild(slotEl);
+
+					try {
+						this.app?.setupGhostInteractions?.(containerEl, sId);
+					} catch (_e) {}
+				}
+			}
+
 			return {
 				selector: `#char-placeholder-${sId} img`,
-				placeholder:
-					byId(`char-placeholder-${sId}`) || byId("sakura-placeholder"),
-				container: byId(`char-display-${sId}`) || byId("ghost-display"),
-				slot: byId(`char-slot-${sId}`) || byId("ghost-container"),
+				placeholder: placeholderEl || byId(`char-placeholder-${sId}`),
+				container: containerEl || byId(`char-display-${sId}`),
+				slot: slotEl || byId(`char-slot-${sId}`),
 				fallbackSurface: sId * 10,
 				isMain: false,
 			};

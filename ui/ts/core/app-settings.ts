@@ -68,26 +68,42 @@ export const settingsMethods = {
 	showBalloon(text: string, scopeId: number = 0) {
 		const app =
 			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
-		const isKero = scopeId === 1;
 		const getDocEl = (id: string) =>
 			typeof document !== "undefined" &&
 			typeof document.getElementById === "function"
 				? document.getElementById(id)
 				: null;
-		const balloonText = isKero
-			? app.elements?.keroBalloonText || getDocEl("kero-balloon-text")
-			: app.elements?.balloonText || getDocEl("balloon-text");
-		const balloonDisplay = isKero
-			? app.elements?.keroBalloonDisplay || getDocEl("kero-balloon-display")
-			: app.elements?.balloonDisplay || getDocEl("balloon-display");
+		const balloonText =
+			scopeId === 0
+				? app.elements?.balloonText || getDocEl("balloon-text")
+				: scopeId === 1
+					? app.elements?.keroBalloonText || getDocEl("kero-balloon-text")
+					: getDocEl(`char-balloon-text-${scopeId}`) ||
+						app.elements?.balloonText ||
+						getDocEl("balloon-text");
+		const balloonDisplay =
+			scopeId === 0
+				? app.elements?.balloonDisplay || getDocEl("balloon-display")
+				: scopeId === 1
+					? app.elements?.keroBalloonDisplay || getDocEl("kero-balloon-display")
+					: getDocEl(`char-balloon-display-${scopeId}`) ||
+						app.elements?.balloonDisplay ||
+						getDocEl("balloon-display");
+		const slotEl =
+			scopeId === 0
+				? app.elements?.sakuraSlot || getDocEl("sakura-slot")
+				: scopeId === 1
+					? app.elements?.keroSlot || getDocEl("kero-slot")
+					: getDocEl(`char-slot-${scopeId}`);
+
 		if (balloonText) {
 			balloonText.textContent = text;
 		}
 		if (balloonDisplay && isSinglePageUi()) {
 			balloonDisplay.style.display = "block";
 		}
-		if (isKero && app.elements?.keroSlot) {
-			app.elements.keroSlot.style.display = "block";
+		if (slotEl) {
+			slotEl.style.display = "block";
 		}
 		if (isNativeMultiWindow()) {
 			invoke("show_balloon_window", {
@@ -110,15 +126,19 @@ export const settingsMethods = {
 	) {
 		const app =
 			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
-		const isKero = scopeId === 1;
 		const getDocEl = (id: string) =>
 			typeof document !== "undefined" &&
 			typeof document.getElementById === "function"
 				? document.getElementById(id)
 				: null;
-		const balloonDisplay = isKero
-			? app.elements?.keroBalloonDisplay || getDocEl("kero-balloon-display")
-			: app.elements?.balloonDisplay || getDocEl("balloon-display");
+		const balloonDisplay =
+			scopeId === 0
+				? app.elements?.balloonDisplay || getDocEl("balloon-display")
+				: scopeId === 1
+					? app.elements?.keroBalloonDisplay || getDocEl("kero-balloon-display")
+					: getDocEl(`char-balloon-display-${scopeId}`) ||
+						app.elements?.balloonDisplay ||
+						getDocEl("balloon-display");
 		if (balloonDisplay && isSinglePageUi()) {
 			balloonDisplay.style.display = "none";
 		}

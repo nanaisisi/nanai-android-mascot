@@ -1,3 +1,4 @@
+import { showBalloonContextMenu } from "../../ui/balloon-context-menu.js";
 import { emit, invoke, isTauriAvailable, listen } from "../tauri-helper.js";
 
 export const setupMethods = {
@@ -110,19 +111,12 @@ export const setupMethods = {
 			el.addEventListener("contextmenu", (e: MouseEvent) => {
 				e.preventDefault();
 				e.stopPropagation();
-				if (isTauriAvailable()) {
-					void invoke("show_balloon_context_menu", { scope_id: scopeId }).catch(
-						() => {
-							(
-								this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-							).toggleMenu(e.screenX, e.screenY, scopeId);
-						},
-					);
-				} else {
-					(
-						this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-					).toggleMenu(e.screenX, e.screenY, scopeId);
-				}
+				showBalloonContextMenu({
+					x: e.clientX,
+					y: e.clientY,
+					scopeId,
+					app: this,
+				});
 			});
 		};
 

@@ -4,210 +4,206 @@
    ========================================================================== */
 
 :root {
-	--menu-font-family:
-		-apple-system, BlinkMacSystemFont, "Segoe UI", "Meiryo", sans-serif;
-	--menu-font-size: 0.75rem;
-	--menu-text-color: #111111;
-	--menu-bg: #f4f8fc;
-	--menu-highlight-bg: #0078d7;
-	--menu-highlight-text: #ffffff;
-	--menu-separator-color: #b0c4de;
+  --menu-font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", "Meiryo", sans-serif;
+  --menu-font-size: 0.7rem;
+  --menu-text-color: #111111;
+  --menu-bg: #f4f8fc;
+  --menu-highlight-bg: #0078d7;
+  --menu-highlight-text: #ffffff;
+  --menu-separator-color: #b0c4de;
 }
 
 * {
-	margin: 0;
-	padding: 0;
-	box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 .visually-hidden {
-	position: absolute;
-	width: 1px;
-	height: 1px;
-	padding: 0;
-	margin: -1px;
-	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
-	white-space: nowrap;
-	border: 0;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 body {
-	font-family: var(--menu-font-family, sans-serif);
-	background: transparent;
-	color: var(--menu-text-color, #111111);
-	user-select: none;
-	-webkit-user-select: none;
-	overflow: hidden;
-	padding: 0;
-	margin: 0;
-	display: flex;
-	flex-direction: row;
-	align-items: stretch;
-	gap: 0;
-	width: max-content;
-	height: max-content;
+  font-family: var(--menu-font-family, sans-serif);
+  background: transparent;
+  color: var(--menu-text-color, #111111);
+  user-select: none;
+  -webkit-user-select: none;
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0;
+  width: max-content;
+  height: max-content;
 }
 
 body.subchar-mode .main-only {
-	display: none;
+  display: none;
 }
 
 body:not(.subchar-mode) .subchar-only {
-	display: none;
+  display: none;
 }
 
 .menu-container {
-	padding: 0;
-	width: auto;
-	min-width: 150px;
-	max-width: 320px;
-	flex-grow: 1;
-	flex-shrink: 0;
-	align-self: stretch;
-	height: auto;
-	min-height: auto;
-	overflow-y: visible;
-	overflow-x: visible;
-	background: transparent;
-	background-image: var(--menu-bg-image, var(--balloon-pattern, none));
-	background-repeat: var(--menu-bg-repeat, repeat);
-	background-position: var(--menu-bg-position, left top);
-	background-size: auto;
-	border: 0;
-	border-radius: 0;
-	box-shadow: none;
-	outline: 0;
-	position: relative;
-	cursor: move;
+  padding: 0;
+  width: auto;
+  min-width: 150px;
+  max-width: 320px;
+  flex-grow: 1;
+  flex-shrink: 0;
+  align-self: stretch;
+  height: auto;
+  min-height: auto;
+  overflow-y: visible;
+  overflow-x: visible;
+  background: transparent;
+  background-image: var(--menu-bg-image, var(--balloon-pattern, none));
+  background-repeat: var(--menu-bg-repeat, repeat);
+  background-position: var(--menu-bg-position, left top);
+  background-size: auto;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  outline: 0;
+  position: relative;
+  cursor: move;
 }
 
 .menu-sidebar {
-	display: none;
-	width: 0;
-	min-width: 0;
-	align-self: stretch;
-	background: transparent;
-	background-image: var(--menu-sidebar-image, none);
-	background-repeat: no-repeat;
-	background-position: var(--menu-sidebar-position, left top);
-	background-size: 100% 100%;
-	flex-shrink: 0;
-	margin-right: 0;
-	padding-right: 0;
-	z-index: 10;
-	position: relative;
+  display: none;
+  width: 0;
+  min-width: 0;
+  align-self: stretch;
+  background: transparent;
+  background-image: var(--menu-sidebar-image, none);
+  background-repeat: no-repeat;
+  background-position: var(--menu-sidebar-position, left top);
+  background-size: 100% 100%;
+  flex-shrink: 0;
+  margin-right: 0;
+  padding-right: 0;
+  z-index: 10;
+  position: relative;
 }
 
 body.has-sidebar .menu-sidebar {
-	display: block;
-	width: var(--menu-sidebar-width, 28px);
-	min-width: var(--menu-sidebar-min-width, 28px);
+  display: block;
+  width: var(--menu-sidebar-width, 28px);
+  min-width: var(--menu-sidebar-min-width, 28px);
 }
 
 body.subchar-mode .menu-sidebar {
-	overflow: hidden;
-	background-position: left bottom;
-	background-size: 100% auto;
+  overflow: hidden;
+  background-position: left bottom;
+  background-size: 100% auto;
 }
 
 .menu-container::-webkit-scrollbar,
 .submenu-container::-webkit-scrollbar {
-	width: 4px;
+  width: 4px;
 }
 
 .menu-container::-webkit-scrollbar-thumb,
 .submenu-container::-webkit-scrollbar-thumb {
-	background: rgba(128, 128, 128, 0.4);
-	border-radius: 2px;
+  background: rgba(128, 128, 128, 0.4);
+  border-radius: 2px;
 }
 
 .menu-item {
-	width: 100%;
-	padding: 3px 6px;
-	min-height: 20px;
-	line-height: 1.3;
-	touch-action: manipulation;
-	-webkit-tap-highlight-color: transparent;
-	background: none;
-	border: none;
-	border-radius: 0;
-	text-align: left;
-	cursor: pointer;
-	font-family: inherit;
-	font-size: var(--menu-font-size, 0.75rem);
-	color: var(--menu-text-color, #111111);
-	display: flex;
-	align-items: center;
-	justify-content: flex-start;
-	transition:
-		background-color 0.1s ease,
-		color 0.1s ease;
+  width: 100%;
+  padding: 0.04rem 0.3rem;
+  min-height: 14px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  background: none;
+  border: none;
+  border-radius: 0;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: var(--menu-font-size, 0.7rem);
+  color: var(--menu-text-color, #111111);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .menu-item-indicator {
-	width: 1.2rem;
-	display: inline-flex;
-	justify-content: center;
-	align-items: center;
-	flex-shrink: 0;
-	font-weight: bold;
+  width: 1.2rem;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
 }
 
+.menu-item > span:first-child,
 .menu-item-label {
-	flex-grow: 1;
-	text-align: left;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+  flex-grow: 1;
+  text-align: left;
 }
 
 .shortcut-key {
-	order: 1;
-	margin-left: auto;
-	padding-left: 0.8rem;
-	opacity: 0.7;
-	font-size: 0.85em;
-	text-align: right;
-	white-space: nowrap;
+  order: 1;
+  margin-left: auto;
+  padding-left: 0.8rem;
+  opacity: 0.7;
+  font-size: 0.85em;
+  text-align: right;
+  white-space: nowrap;
 }
 
 .menu-item:hover,
 .menu-item:focus {
-	background-color: var(--balloon-highlight-bg, #0078d7);
-	background-image: var(--menu-fg-image, none);
-	background-repeat: var(--menu-fg-repeat, no-repeat);
-	background-position: var(--menu-fg-position, left top);
-	background-size: cover;
-	color: var(--balloon-highlight-text, #ffffff);
-	outline: none;
-	border-radius: 0;
+  background-color: var(--balloon-highlight-bg, #0078d7);
+  background-image: var(--menu-fg-image, none);
+  background-repeat: var(--menu-fg-repeat, no-repeat);
+  background-position: var(--menu-fg-position, left top);
+  background-size: cover;
+  color: var(--balloon-highlight-text, #ffffff);
+  outline: none;
+  border-radius: 0;
 }
 
 /* 全てのメニュー項目ボタンにサブメニュー矢印用のスペース（gutter）を確保し、サブメニューありの場合のみ ▶ を表示 */
 .menu-item::after {
-	content: "";
-	width: 0.8rem;
-	font-size: 0.5rem;
-	opacity: 0.7;
-	display: inline-flex;
-	justify-content: center;
-	align-items: center;
-	flex-shrink: 0;
-	order: 2;
+  content: "";
+  width: 0.8rem;
+  font-size: 0.5rem;
+  opacity: 0.7;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  order: 2;
 }
 
 .menu-item.has-submenu::after {
-	content: "▶";
+  content: "▶";
 }
 
 .menu-item:hover.has-submenu::after {
-	color: var(--menu-highlight-text, #ffffff);
+  color: var(--menu-highlight-text, #ffffff);
 }
 
 .menu-separator {
-	height: 1px;
-	border: none;
-	background-color: var(--menu-separator-color, #b0c4de);
-	margin: 1px 2px;
+  height: 1px;
+  border: none;
+  background-color: var(--menu-separator-color, #b0c4de);
+  margin: 1px 2px;
 }

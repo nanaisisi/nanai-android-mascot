@@ -105,6 +105,33 @@ export class BalloonThemeManager {
 	}
 
 	/**
+	 * バルーンアライメント表示位置の左右反転切り替え
+	 */
+	toggleBalloonSide(scopeId: number = 0) {
+		this._currentSide = this._currentSide === "left" ? "right" : "left";
+		const nextSide = this._currentSide;
+
+		if (typeof document !== "undefined") {
+			const balloonDisplays = document.querySelectorAll(".balloon-display");
+			balloonDisplays.forEach((el) => {
+				const bEl = el as HTMLElement;
+				bEl.setAttribute("data-balloon-side", nextSide);
+				bEl.classList.toggle("balloon-side-left", nextSide === "left");
+				bEl.classList.toggle("balloon-side-right", nextSide === "right");
+			});
+		}
+
+		if (isTauriAvailable()) {
+			const offsetX = nextSide === "left" ? -240 : 40;
+			void invoke("set_balloon_offset", {
+				scopeId,
+				x: offsetX,
+				y: -120,
+			}).catch(() => {});
+		}
+	}
+
+	/**
 	 * バルーンテーマを順繰りに切り替え
 	 */
 	cycleTheme() {

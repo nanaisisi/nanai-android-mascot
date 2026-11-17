@@ -98,13 +98,21 @@ export function handleMenuActionImpl(
 			payload && typeof payload === "object" && "scope" in payload
 				? ((payload as NamedPayload).scope ?? 0)
 				: 0;
-		return context.onGhostClick?.(undefined, undefined, undefined, scopeId);
+		if (context.app?.sakuraPlayer?.isPlaying) {
+			context.app.sakuraPlayer.processStep();
+		} else {
+			context.onGhostClick?.(undefined, undefined, undefined, scopeId);
+		}
+		return;
 	}
-	if (action === "balloon-break") {
+	if (action === "balloon-break" || action === "break") {
 		const scopeId =
 			payload && typeof payload === "object" && "scope" in payload
 				? ((payload as NamedPayload).scope ?? 0)
 				: 0;
+		if (context.app?.sakuraPlayer) {
+			context.app.sakuraPlayer.stop();
+		}
 		return context.hideBalloon?.(scopeId, "break");
 	}
 	if (action === "balloon-flip" || action === "balloon-side-switch") {
@@ -112,7 +120,16 @@ export function handleMenuActionImpl(
 			payload && typeof payload === "object" && "scope" in payload
 				? ((payload as NamedPayload).scope ?? 0)
 				: 0;
-		return context.toggleBalloonSide?.(scopeId);
+		const btm = (context.balloonThemeManager ||
+			context.app?.balloonThemeManager) as
+			| { toggleBalloonSide?: (scopeId: number) => void }
+			| undefined;
+		if (btm?.toggleBalloonSide) {
+			btm.toggleBalloonSide(scopeId);
+		} else if (typeof context.toggleBalloonSide === "function") {
+			(context.toggleBalloonSide as (scopeId: number) => void)(scopeId);
+		}
+		return;
 	}
 	if (action === "balloon-reset-pos") {
 		return handleMenuActionImpl(context, "reset-balloon-position", payload);
@@ -122,6 +139,9 @@ export function handleMenuActionImpl(
 			payload && typeof payload === "object" && "scope" in payload
 				? ((payload as NamedPayload).scope ?? 0)
 				: 0;
+		if (isTauriAvailable()) {
+			void invoke("show_subchar_window", { scopeId }).catch(() => {});
+		}
 		return context.onGhostClick?.(undefined, undefined, undefined, scopeId);
 	}
 

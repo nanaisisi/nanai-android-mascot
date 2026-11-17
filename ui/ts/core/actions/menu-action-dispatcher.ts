@@ -128,10 +128,7 @@ export function handleMenuActionImpl(
 	if (action === "reload-ghost") {
 		const currentName =
 			gc?.currentGhost?.name || AppConfig.paths.fallbackGhostName;
-		return gc?.selectGhost?.(currentName)?.then(() => {
-			context.showBalloon?.("🔄 ゴーストを再読み込みしました");
-			setTimeout(() => context.hideBalloon?.(), 2000);
-		});
+		return gc?.selectGhost?.(currentName);
 	}
 	if (action === "reset-shell-position" || action === "resetwindowpos") {
 		context.interactionManager?.resetShellPositions?.();
@@ -154,8 +151,6 @@ export function handleMenuActionImpl(
 			void invoke("set_character_scale", { scale: 1.0 }).catch(() => {});
 			void invoke("reset_character_positions").catch(() => {});
 		}
-		context.showBalloon?.("📍 シェル位置・倍率を初期リセットしました");
-		setTimeout(() => context.hideBalloon?.(), 2000);
 		return;
 	}
 	if (action === "reset-balloon-position" || action === "resetballoonpos") {
@@ -180,8 +175,6 @@ export function handleMenuActionImpl(
 				() => {},
 			);
 		}
-		context.showBalloon?.("📍 バルーン位置を初期リセットしました");
-		setTimeout(() => context.hideBalloon?.(), 2000);
 		return;
 	}
 	if (action === "close-balloon") {
@@ -190,14 +183,8 @@ export function handleMenuActionImpl(
 	if (action === "keep-temporary-ghost") {
 		if (gc?.currentGhost?.isTemporary) {
 			gc.currentGhost.isTemporary = false;
-			context.showBalloon?.(
-				"📌 一時起動ゴーストを通常起動状態として保持しました",
-			);
 			gc.sendShioriEvent?.("OnBoot");
-		} else {
-			context.showBalloon?.("⚠️ 一時起動中のゴーストではありません");
 		}
-		setTimeout(() => context.hideBalloon?.(), 2000);
 		return;
 	}
 
@@ -214,8 +201,6 @@ export function handleMenuActionImpl(
 	if (action === "scan") {
 		return gc?.scanGhosts?.()?.then(() => {
 			context.syncMenuGhosts?.();
-			context.showBalloon?.("🔄 ゴーストフォルダを再スキャンしました");
-			setTimeout(() => context.hideBalloon?.(), 2000);
 		});
 	}
 	if (

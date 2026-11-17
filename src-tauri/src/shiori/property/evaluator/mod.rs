@@ -49,6 +49,15 @@ pub fn evaluate_property_query_full(
             "update_result" => return g.update_result().unwrap_or("none").to_string(),
             "update_date" => return g.update_date().unwrap_or("").to_string(),
             "install_date" => return g.install_date().unwrap_or("").to_string(),
+            "update_time" | "system.update.time" | "update.lasttime" | "history.update.lasttime" => {
+                if let Some(ud) = g.update_date() {
+                    let trimmed = ud.trim();
+                    if !trimmed.is_empty() && !trimmed.starts_with("1970") {
+                        return trimmed.to_string();
+                    }
+                }
+                return "".to_string();
+            }
             "recommended.balloon" | "recommended_balloon" => {
                 return g.recommended_balloon().unwrap_or("").to_string();
             }

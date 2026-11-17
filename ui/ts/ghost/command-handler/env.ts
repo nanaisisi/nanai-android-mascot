@@ -173,7 +173,10 @@ export function expandSakuraScriptEnv(script, options = {}) {
 			case "system.disk.count":
 				return "1";
 			case "update_time":
-				return "0";
+			case "system.update.time":
+			case "update.lasttime":
+			case "history.update.lasttime":
+				return "";
 			case "sakura.bind.menu":
 			case "kero.bind.menu":
 			case "sakura.menu":

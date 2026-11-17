@@ -83,7 +83,7 @@ fn test_property_evaluation() {
         "0,0,1920,1080"
     );
     assert!(!evaluate_property_query("system.disk.index(0).free").is_empty());
-    assert_eq!(evaluate_property_query("update_time"), "0");
+    assert_eq!(evaluate_property_query("update_time"), "");
     assert_eq!(evaluate_property_query("sakura.bind.menu"), "auto");
     assert_eq!(evaluate_property_query("kero.bind.menu"), "auto");
     assert_eq!(evaluate_property_query("char0.bind.menu"), "auto");

@@ -111,9 +111,11 @@ export const setupMethods = {
 			const handler = (e: MouseEvent) => {
 				e.preventDefault();
 				e.stopPropagation();
+				const posX = e.clientX || e.pageX || 100;
+				const posY = e.clientY || e.pageY || 100;
 				showBalloonContextMenu({
-					x: e.clientX,
-					y: e.clientY,
+					x: posX,
+					y: posY,
 					scopeId,
 					app: this,
 				});
@@ -226,6 +228,26 @@ export const setupMethods = {
 
 		document.addEventListener("contextmenu", (e: MouseEvent) => {
 			e.preventDefault();
+			const target = e.target as HTMLElement | null;
+			const isBalloonClick = Boolean(
+				target?.closest?.(
+					".balloon-display, .balloon, .balloon-text, .kero-balloon",
+				),
+			);
+			if (isBalloonClick) {
+				const scopeId = target?.closest?.(
+					"#kero-balloon-display, .kero-balloon",
+				)
+					? 1
+					: 0;
+				showBalloonContextMenu({
+					x: e.clientX || e.pageX || 100,
+					y: e.clientY || e.pageY || 100,
+					scopeId,
+					app: this,
+				});
+				return;
+			}
 			(
 				this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 			).toggleMenu(e.screenX, e.screenY);

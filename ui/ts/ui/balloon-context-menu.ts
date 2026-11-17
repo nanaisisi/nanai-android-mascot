@@ -19,9 +19,11 @@ export function showBalloonContextMenu({
 	app,
 }: BalloonContextMenuOptions) {
 	if (isTauriAvailable()) {
-		void invoke("show_balloon_context_menu", { scope_id: scopeId }).catch(
-			() => {},
-		);
+		void invoke("show_balloon_context_menu", {
+			scope_id: scopeId,
+			x,
+			y,
+		}).catch(() => {});
 	}
 
 	if (typeof document === "undefined") return;
@@ -31,14 +33,26 @@ export function showBalloonContextMenu({
 		existing.remove();
 	}
 
+	const winW =
+		typeof window !== "undefined" && window.innerWidth > 200
+			? window.innerWidth
+			: 600;
+	const winH =
+		typeof window !== "undefined" && window.innerHeight > 200
+			? window.innerHeight
+			: 600;
+
+	const targetX = Math.max(5, Math.min(x, winW - 170));
+	const targetY = Math.max(5, Math.min(y, winH - 220));
+
 	const menuEl = document.createElement("div");
 	menuEl.id = "balloon-context-menu-popup";
 	menuEl.className = "balloon-context-menu-popup";
 	menuEl.style.cssText = `
 		position: fixed;
-		z-index: 999999;
-		left: ${Math.max(10, Math.min(x, window.innerWidth - 180))}px;
-		top: ${Math.max(10, Math.min(y, window.innerHeight - 200))}px;
+		z-index: 2147483647;
+		left: ${targetX}px;
+		top: ${targetY}px;
 		min-width: 160px;
 		background: #ffffff;
 		border: 1px solid rgba(0, 0, 0, 0.2);
@@ -99,12 +113,14 @@ export function showBalloonContextMenu({
 			e.stopPropagation();
 			menuEl.remove();
 
-			const mascotApp =
-				app ||
-				(globalThis as unknown as { mascotApp?: unknown }).mascotApp ||
-				(typeof window !== "undefined"
-					? (window as unknown as { app?: unknown }).app
-					: null);
+			const mascotApp = (app as { handleMenuAction?: unknown })
+				?.handleMenuAction
+				? app
+				: (app as { app?: unknown })?.app ||
+					(globalThis as unknown as { mascotApp?: unknown }).mascotApp ||
+					(typeof window !== "undefined"
+						? (window as unknown as { app?: unknown }).app
+						: null);
 			if (
 				mascotApp &&
 				typeof (mascotApp as { handleMenuAction?: unknown })

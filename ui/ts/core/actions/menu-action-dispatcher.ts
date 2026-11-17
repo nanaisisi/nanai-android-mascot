@@ -98,8 +98,12 @@ export function handleMenuActionImpl(
 			payload && typeof payload === "object" && "scope" in payload
 				? ((payload as NamedPayload).scope ?? 0)
 				: 0;
-		if (context.app?.sakuraPlayer?.isPlaying) {
-			context.app.sakuraPlayer.processStep();
+		const sp = (context.sakuraPlayer ||
+			(context.app as { sakuraPlayer?: unknown })?.sakuraPlayer) as
+			| { isPlaying?: boolean; processStep: () => void }
+			| undefined;
+		if (sp?.isPlaying) {
+			sp.processStep();
 		} else {
 			context.onGhostClick?.(undefined, undefined, undefined, scopeId);
 		}
@@ -110,8 +114,12 @@ export function handleMenuActionImpl(
 			payload && typeof payload === "object" && "scope" in payload
 				? ((payload as NamedPayload).scope ?? 0)
 				: 0;
-		if (context.app?.sakuraPlayer) {
-			context.app.sakuraPlayer.stop();
+		const sp = (context.sakuraPlayer ||
+			(context.app as { sakuraPlayer?: unknown })?.sakuraPlayer) as
+			| { stop: () => void }
+			| undefined;
+		if (sp?.stop) {
+			sp.stop();
 		}
 		return context.hideBalloon?.(scopeId, "break");
 	}
@@ -121,7 +129,8 @@ export function handleMenuActionImpl(
 				? ((payload as NamedPayload).scope ?? 0)
 				: 0;
 		const btm = (context.balloonThemeManager ||
-			context.app?.balloonThemeManager) as
+			(context.app as { balloonThemeManager?: unknown })
+				?.balloonThemeManager) as
 			| { toggleBalloonSide?: (scopeId: number) => void }
 			| undefined;
 		if (btm?.toggleBalloonSide) {

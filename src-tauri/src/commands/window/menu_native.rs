@@ -5,6 +5,8 @@ use tauri::menu::MenuBuilder;
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct ShowBalloonContextMenuParams {
     pub scope_id: Option<i32>,
+    pub x: Option<f64>,
+    pub y: Option<f64>,
 }
 
 /// バルーン専用 OS ネイティブコンテキストメニュー表示コマンド
@@ -40,7 +42,12 @@ pub async fn show_balloon_context_menu(
             .build()
             .map_err(|e| e.to_string())?;
 
-        window.popup_menu(&menu).map_err(|e| e.to_string())?;
+        if let (Some(px), Some(py)) = (params.x, params.y) {
+            let pos = tauri::Position::Logical(tauri::LogicalPosition::new(px, py));
+            let _ = window.popup_menu_at(&menu, pos);
+        } else {
+            let _ = window.popup_menu(&menu);
+        }
     }
     Ok(())
 }

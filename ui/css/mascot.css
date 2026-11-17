@@ -306,16 +306,32 @@
 	vertical-align: baseline;
 	margin: 0;
 	padding: 0 2px;
-	font-size: inherit;
-	font-family: inherit;
-	font-weight: inherit;
+	font-family: var(
+		--balloon-cursor-notselect-font-family,
+		var(--balloon-cursor-font-family, inherit)
+	);
+	font-size: var(
+		--balloon-cursor-notselect-font-size,
+		var(--balloon-cursor-font-size, inherit)
+	);
+	font-weight: var(
+		--balloon-cursor-notselect-font-weight,
+		var(--balloon-cursor-font-weight, inherit)
+	);
+	font-style: var(
+		--balloon-cursor-notselect-font-style,
+		var(--balloon-cursor-font-style, inherit)
+	);
 	line-height: inherit;
 	color: var(
 		--balloon-cursor-notselect-color,
 		var(--balloon-cursor-color, #0078d7)
 	);
-	text-decoration: underline;
-	background: transparent;
+	text-decoration: var(
+		--balloon-cursor-notselect-text-decoration,
+		var(--balloon-cursor-text-decoration, underline)
+	);
+	background: var(--balloon-cursor-notselect-brush-color, transparent);
 	border: none;
 	border-radius: 2px;
 	cursor: pointer;
@@ -328,9 +344,28 @@
 
 .balloon-choice-btn:hover,
 .balloon-choice-btn:focus {
+	font-family: var(
+		--balloon-cursor-font-family,
+		var(--balloon-cursor-notselect-font-family, inherit)
+	);
+	font-size: var(
+		--balloon-cursor-font-size,
+		var(--balloon-cursor-notselect-font-size, inherit)
+	);
+	font-weight: var(
+		--balloon-cursor-font-weight,
+		var(--balloon-cursor-notselect-font-weight, inherit)
+	);
+	font-style: var(
+		--balloon-cursor-font-style,
+		var(--balloon-cursor-notselect-font-style, inherit)
+	);
 	background: var(--balloon-cursor-brush-color, rgba(0, 120, 215, 0.12));
 	color: var(--balloon-cursor-color, var(--balloon-highlight-bg, #0056b3));
-	text-decoration: underline;
+	text-decoration: var(
+		--balloon-cursor-text-decoration,
+		var(--balloon-cursor-notselect-text-decoration, underline)
+	);
 	outline: none;
 }
 

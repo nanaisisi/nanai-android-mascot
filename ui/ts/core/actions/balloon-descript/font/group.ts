@@ -62,6 +62,53 @@ export function applyGroupProperties(
 		props[fontColorKey];
 	if (col) root.style.setProperty(`${cssPrefix}-color`, col);
 
+	// [anchor.color / cursor.color / *.color]: (短縮キー fallback)
+	const shortColorKey = `${prefix}.color`;
+	const shortCol =
+		rgbFromComponents(props, shortColorKey) || props[shortColorKey];
+	if (shortCol && !col) {
+		root.style.setProperty(`${cssPrefix}-color`, shortCol);
+	}
+
+	// [anchor.font.name / cursor.font.name / *.font.name]:
+	const fontNameVal =
+		props[`${prefix}.font.name`] || props[`${prefix}.font.family`];
+	if (fontNameVal) {
+		root.style.setProperty(
+			`${cssPrefix}-font-family`,
+			`"${fontNameVal}", Meiryo, sans-serif`,
+		);
+	}
+
+	// [anchor.font.height / cursor.font.height / *.font.height]:
+	const fontHeightVal =
+		props[`${prefix}.font.height`] || props[`${prefix}.font.size`];
+	if (fontHeightVal) {
+		const fh = parseInt(fontHeightVal, 10);
+		if (!Number.isNaN(fh) && fh > 0) {
+			root.style.setProperty(`${cssPrefix}-font-size`, `${fh}px`);
+		}
+	}
+
+	// [anchor.font.bold / cursor.font.bold]:
+	const fontBoldVal = props[`${prefix}.font.bold`];
+	if (fontBoldVal === "1" || fontBoldVal?.toLowerCase() === "true") {
+		root.style.setProperty(`${cssPrefix}-font-weight`, "bold");
+	} else if (fontBoldVal === "0" || fontBoldVal?.toLowerCase() === "false") {
+		root.style.setProperty(`${cssPrefix}-font-weight`, "normal");
+	}
+
+	// [anchor.font.italic / cursor.font.italic]:
+	const fontItalicVal = props[`${prefix}.font.italic`];
+	if (fontItalicVal === "1" || fontItalicVal?.toLowerCase() === "true") {
+		root.style.setProperty(`${cssPrefix}-font-style`, "italic");
+	} else if (
+		fontItalicVal === "0" ||
+		fontItalicVal?.toLowerCase() === "false"
+	) {
+		root.style.setProperty(`${cssPrefix}-font-style`, "normal");
+	}
+
 	// [anchor.font.shadowcolor / *.font.shadowcolor.r,g,b]:
 	const shadowKey = `${prefix}.font.shadowcolor`;
 	const shadowCol =

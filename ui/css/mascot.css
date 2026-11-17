@@ -298,32 +298,40 @@
 
 /* バルーン内の選択肢ボタン */
 .balloon-choice-btn {
-	display: inline-block;
-	vertical-align: middle;
-	margin-top: 0.3em;
-	margin-right: 0.25em;
-	padding: 0.25em 0.6em;
-	font-size: 1em;
+	display: inline;
+	vertical-align: baseline;
+	margin: 0;
+	padding: 0 2px;
+	font-size: inherit;
 	font-family: inherit;
-	line-height: 1.2;
-	color: #0078d7;
-	background: rgba(0, 120, 215, 0.08);
-	border: 1px solid rgba(0, 120, 215, 0.3);
-	border-radius: 0.25rem;
+	font-weight: inherit;
+	line-height: inherit;
+	color: var(
+		--balloon-cursor-notselect-color,
+		var(--balloon-cursor-color, #0078d7)
+	);
+	text-decoration: underline;
+	background: transparent;
+	border: none;
+	border-radius: 2px;
 	cursor: pointer;
 	min-height: auto;
 	min-width: auto;
-	transition: all 0.15s ease;
+	transition:
+		background-color 0.12s ease,
+		color 0.12s ease;
 }
 
-.balloon-choice-btn:hover {
-	background: #0078d7;
-	color: #ffffff;
-	transform: translateY(-1px);
+.balloon-choice-btn:hover,
+.balloon-choice-btn:focus {
+	background: var(--balloon-cursor-brush-color, rgba(0, 120, 215, 0.12));
+	color: var(--balloon-cursor-color, var(--balloon-highlight-bg, #0056b3));
+	text-decoration: underline;
+	outline: none;
 }
 
 .balloon-choice-btn:active {
-	transform: translateY(0);
+	opacity: 0.8;
 }
 
 /* バルーン内のアンカーリンク (\_a) */

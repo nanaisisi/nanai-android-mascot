@@ -116,35 +116,33 @@ body {
 }
 
 .balloon-choice-btn {
-	display: inline-block;
-	vertical-align: middle;
-	margin: 0.25em;
-	padding: 0.35em 0.65em;
-	min-height: 28px;
+	display: inline;
+	vertical-align: baseline;
+	margin: 0;
+	padding: 0 2px;
+	min-height: auto;
 	white-space: normal;
 	touch-action: manipulation;
 	-webkit-tap-highlight-color: transparent;
-	font-size: 1em;
+	font-size: inherit;
 	font-family: inherit;
-	line-height: 1.2;
-	writing-mode: horizontal-tb;
-	-webkit-writing-mode: horizontal-tb;
+	font-weight: inherit;
+	line-height: inherit;
+	writing-mode: inherit;
+	-webkit-writing-mode: inherit;
 	color: var(
 		--balloon-cursor-notselect-color,
 		var(--balloon-cursor-color, #0078d7)
 	);
-	background: var(
-		--balloon-cursor-notselect-brush-color,
-		var(--balloon-cursor-brush-color, rgba(0, 120, 215, 0.08))
-	);
-	border: 1px solid
-		var(
-			--balloon-cursor-notselect-pen-color,
-			var(--balloon-cursor-pen-color, rgba(0, 120, 215, 0.3))
-		);
-	border-radius: 4px;
+	text-decoration: underline;
+	background: transparent;
+	border: none;
+	border-radius: 2px;
+	box-shadow: none;
 	cursor: pointer;
-	transition: all 0.15s ease;
+	transition:
+		background-color 0.12s ease,
+		color 0.12s ease;
 }
 
 .balloon-input {
@@ -152,16 +150,16 @@ body {
 	-webkit-tap-highlight-color: transparent;
 }
 
-.balloon-choice-btn:hover {
-	background: var(
-		--balloon-cursor-brush-color,
-		var(--balloon-highlight-bg, #0078d7)
-	);
-	color: var(--balloon-cursor-color, var(--balloon-highlight-text, #ffffff));
-	border-color: var(
-		--balloon-cursor-pen-color,
-		var(--balloon-highlight-bg, #0078d7)
-	);
+.balloon-choice-btn:hover,
+.balloon-choice-btn:focus {
+	background: var(--balloon-cursor-brush-color, rgba(0, 120, 215, 0.12));
+	color: var(--balloon-cursor-color, var(--balloon-highlight-bg, #0056b3));
+	text-decoration: underline;
+	outline: none;
+}
+
+.balloon-choice-btn:active {
+	opacity: 0.8;
 }
 
 .balloon-anchor {

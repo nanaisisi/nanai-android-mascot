@@ -12,7 +12,12 @@ export function setupExplorerListeners(modalManager: unknown, app: unknown) {
 	let sortAsc = true;
 	let _searchIndex = -1;
 
-	const format = (value: unknown) => value || "—";
+	const format = (value: unknown) => {
+		if (!value) return "—";
+		const str = String(value);
+		if (str.startsWith("1970")) return "—";
+		return str;
+	};
 	const updateSortHeaderIndicators = () => {
 		modalManager.content
 			?.querySelectorAll("th[data-sort]")

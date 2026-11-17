@@ -1,6 +1,12 @@
 pub fn format_system_time(sys_time: std::time::SystemTime) -> Option<String> {
     let dur = sys_time.duration_since(std::time::UNIX_EPOCH).ok()?;
     let secs = dur.as_secs();
+
+    // 1971年以前 (エポック秒 86400 * 365 未満、例: 1970/01/01 09:00:00) のファイルメタデータ未取得・ダミー初期値は無効/未設定扱い
+    if secs < 86400 * 365 {
+        return None;
+    }
+
     let days = secs / 86400;
     let remainder = secs % 86400;
     let hours = remainder / 3600;
@@ -60,6 +66,33 @@ pub fn compute_ghost_dates(path: &std::path::Path) -> (Option<String>, Option<St
     let master_dir = path.join("ghost").join("master");
     let master_desc_path = master_dir.join("descript.txt");
 
+    let mut script_update_time = None;
+    for desc_p in [path.join("descript.txt"), master_desc_path.clone()] {
+        if desc_p.is_file()
+            && let Ok(content) = std::fs::read_to_string(&desc_p)
+        {
+            for line in content.lines() {
+                let trimmed = line.trim();
+                if let Some((k, v)) = trimmed.split_once(',') {
+                    let key = k.trim().to_lowercase();
+                    if key == "update.lasttime" || key == "history.update.lasttime" {
+                        let val = v.trim();
+                        if !val.is_empty() {
+                            if let Ok(ts) = val.parse::<u64>()
+                                && ts > 86400 * 365
+                            {
+                                let st = std::time::UNIX_EPOCH + std::time::Duration::from_secs(ts);
+                                script_update_time = format_system_time(st);
+                            } else if val.len() >= 8 && !val.starts_with("1970") {
+                                script_update_time = Some(val.to_string());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     let mut latest_mtime: Option<std::time::SystemTime> = None;
     let mut consider = |p: &std::path::Path| {
         if let Ok(meta) = std::fs::metadata(p)
@@ -97,8 +130,8 @@ pub fn compute_ghost_dates(path: &std::path::Path) -> (Option<String>, Option<St
         }
     }
 
-    let update_date = latest_mtime
-        .and_then(format_system_time)
+    let update_date = script_update_time
+        .or_else(|| latest_mtime.and_then(format_system_time))
         .or_else(|| install_date.clone());
 
     (install_date, update_date)

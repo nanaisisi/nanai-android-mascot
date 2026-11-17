@@ -92,6 +92,11 @@ pub(crate) fn handle_set(parts: &[String], callback: &mut dyn FnMut(SakuraComman
             };
             callback(SakuraCommand::BalloonSetting { key, value, extra });
         }
+        "alignmenttodesktop" | "alignmentondesktop" => {
+            callback(SakuraCommand::Command {
+                args: parts.to_vec(),
+            });
+        }
         _ => {
             callback(SakuraCommand::Command {
                 args: parts.to_vec(),

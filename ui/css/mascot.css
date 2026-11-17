@@ -298,6 +298,8 @@
 	margin: 0;
 	line-height: 1.5;
 	word-break: break-word;
+	user-select: none;
+	-webkit-user-select: none;
 }
 
 /* バルーン内の選択肢ボタン */

@@ -108,7 +108,7 @@ export const setupMethods = {
 			scopeId: number,
 		) => {
 			if (!el) return;
-			el.addEventListener("contextmenu", (e: MouseEvent) => {
+			const handler = (e: MouseEvent) => {
 				e.preventDefault();
 				e.stopPropagation();
 				showBalloonContextMenu({
@@ -117,7 +117,9 @@ export const setupMethods = {
 					scopeId,
 					app: this,
 				});
-			});
+				return false;
+			};
+			el.addEventListener("contextmenu", handler as EventListener, true);
 		};
 
 		bindBalloon(

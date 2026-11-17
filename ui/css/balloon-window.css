@@ -111,6 +111,8 @@ body {
 	text-shadow: var(--balloon-text-shadow, none);
 	writing-mode: inherit;
 	-webkit-writing-mode: inherit;
+	user-select: none;
+	-webkit-user-select: none;
 }
 
 .balloon img,

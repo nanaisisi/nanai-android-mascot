@@ -20,6 +20,17 @@ body[class*="overhead"] {
 	transform-origin: top left;
 }
 
+/* バルーン内のテキスト・全子要素の選択（テキストコピー用選択）を完全無効化 */
+.balloon,
+.balloon *,
+.balloon-display,
+.balloon-display * {
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+}
+
 .balloon,
 .kero-balloon .balloon {
 	background-color: var(--balloon-bg, transparent);

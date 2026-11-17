@@ -61,8 +61,8 @@ export function setupWindowGestures(
 		void emit("balloon-clicked", { scopeId });
 	});
 
-	// バルーン右クリックで OS ネイティブのバルーンコンテキストメニューを表示
-	balloonBox.addEventListener("contextmenu", (e: MouseEvent) => {
+	// バルーン右クリックで WebView2 デフォルトメニューを阻止しバルーンコンテキストメニューを表示
+	const onContextMenu = (e: MouseEvent) => {
 		e.preventDefault();
 		e.stopPropagation();
 		if (isTauriAvailable()) {
@@ -70,7 +70,25 @@ export function setupWindowGestures(
 				() => {},
 			);
 		}
-	});
+		return false;
+	};
+	balloonBox.addEventListener(
+		"contextmenu",
+		onContextMenu as EventListener,
+		true,
+	);
+	if (typeof document !== "undefined") {
+		document.addEventListener(
+			"contextmenu",
+			(e: MouseEvent) => {
+				if (balloonBox.contains(e.target as Node)) {
+					e.preventDefault();
+					e.stopPropagation();
+				}
+			},
+			true,
+		);
+	}
 
 	// ドラッグ移動 (Tauri v2 startDragging)
 	let isDragging = false;

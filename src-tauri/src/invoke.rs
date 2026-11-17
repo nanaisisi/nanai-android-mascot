@@ -56,7 +56,6 @@ pub fn get_invoke_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         commands::window::exit_app,
         commands::window::show_modal_window,
         commands::window::hide_modal_window,
-        commands::window::show_context_menu,
         commands::window::show_balloon_context_menu,
         commands::window::show_menu_window,
         commands::window::hide_menu_window,

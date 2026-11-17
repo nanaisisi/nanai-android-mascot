@@ -287,6 +287,10 @@
 }
 
 .balloon-text {
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+	overflow-wrap: anywhere;
 	color: var(--balloon-text-color);
 	font-family: inherit;
 	font-size: var(--balloon-font-size);

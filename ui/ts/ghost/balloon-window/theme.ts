@@ -199,11 +199,17 @@ export async function applyBalloonDescript({
 			);
 		onDontMoveChange?.(isBalloonDontMove);
 
-		// 折り返し幅 (wordwrappoint.x は原点右基準の負オフセット指定)
+		// 折り返し幅 (wordwrappoint.x)
 		const ww = parseInt(props["wordwrappoint.x"], 10);
 		if (!Number.isNaN(ww)) {
 			const textEl = document.getElementById("balloon-text");
-			textEl?.style.setProperty("max-width", `calc(100% + ${Math.abs(ww)}px)`);
+			if (textEl) {
+				if (ww > 50) {
+					textEl.style.maxWidth = `${ww}px`;
+				} else if (ww < 0) {
+					textEl.style.maxWidth = `calc(100% - ${Math.abs(ww)}px)`;
+				}
+			}
 		}
 
 		let bgImage = await loadBalloonSkinImages(theme, scopeId);

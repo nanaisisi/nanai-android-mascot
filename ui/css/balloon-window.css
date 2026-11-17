@@ -93,7 +93,11 @@ body {
 }
 
 .balloon-text {
-	max-width: var(--balloon-max-width, 600px);
+	width: 100%;
+	max-width: var(--balloon-max-width, 100%);
+	box-sizing: border-box;
+	overflow-wrap: anywhere;
+	word-break: break-word;
 	color: var(--balloon-text-color, #111111);
 	font-size: var(--balloon-font-size, 0.85rem);
 	font-family: var(--balloon-font-family, inherit);

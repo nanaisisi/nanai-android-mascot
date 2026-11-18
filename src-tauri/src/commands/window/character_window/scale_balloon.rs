@@ -10,27 +10,50 @@ pub async fn sync_character_balloon(
 }
 
 /// キャラクター（スコープ N）ウィンドウのサイズ変更コマンド（シェル倍率変更用）
-#[tauri::command]
+#[tauri::command(rename_all = "snake_case")]
+#[allow(non_snake_case)]
 pub async fn set_character_scale(
     _app_handle: tauri::AppHandle,
-    _scale_percent: u32,
+    scale_percent: Option<u32>,
+    scalePercent: Option<u32>,
+    _scale_percent: Option<u32>,
+    scale: Option<f64>,
 ) -> Result<(), String> {
     #[cfg(desktop)]
     {
+        use tauri::{Emitter, Manager};
         let app_handle = _app_handle;
-        let scale_percent = _scale_percent;
-        use tauri::Manager;
-        let factor = (scale_percent as f64) / 100.0;
-        let win_width = (200.0 * factor).round().max(80.0);
-        let win_height = (360.0 * factor).round().max(140.0);
+        let raw_factor = if let Some(pct) = scale_percent.or(scalePercent).or(_scale_percent) {
+            (pct as f64) / 100.0
+        } else if let Some(s) = scale {
+            if s > 10.0 { s / 100.0 } else { s }
+        } else {
+            1.0
+        };
+        let factor = if raw_factor.is_finite() {
+            raw_factor.clamp(0.25, 3.0)
+        } else {
+            1.0
+        };
+        let payload = serde_json::json!({
+            "scale": factor,
+            "scalePercent": (factor * 100.0).round() as u32,
+        });
         for (label, win) in app_handle.webview_windows() {
             if label.starts_with("subchar_window_") {
-                let _ = win.set_size(tauri::Size::Physical(tauri::PhysicalSize {
-                    width: win_width as u32,
-                    height: win_height as u32,
-                }));
+                let _ = win.emit("character-scale-changed", payload.clone());
             }
         }
+    }
+    #[cfg(not(desktop))]
+    {
+        let _ = (
+            &_app_handle,
+            scale_percent,
+            scalePercent,
+            _scale_percent,
+            scale,
+        );
     }
     Ok(())
 }

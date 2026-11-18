@@ -29,6 +29,10 @@ const imgEl = {
 	getBoundingClientRect: () => ({ left: 0, top: 0, width: 100, height: 100 }),
 	naturalWidth: 10,
 	naturalHeight: 10,
+	width: 0,
+	height: 0,
+	complete: false,
+	onload: undefined as (() => void) | undefined,
 	src: "",
 	style: {} as Record<string, string>,
 };
@@ -949,5 +953,146 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 				rect: expectedRect,
 			},
 		]);
+	});
+
+	test("resizes show_subchar_window from decoded image dimensions and rescales on character-scale-changed", async () => {
+		const prevImage = g.Image;
+		try {
+			// Reset state first
+			await listenCallbacks["character-scale-changed"]?.({
+				payload: { scale: 1.0, scalePercent: 100 },
+			});
+			invokedCommands.length = 0;
+
+			// 1. Fallback img.onload path (when Image constructor is unavailable)
+			imgEl.naturalWidth = 160;
+			imgEl.naturalHeight = 280;
+			imgEl.complete = false;
+			await listenCallbacks["update-subchar-image-1"]?.({
+				payload: { src: "char-160x280.png" },
+			});
+			imgEl.onload?.();
+
+			expect(imgEl.width).toBe(160);
+			expect(imgEl.height).toBe(280);
+			expect(invokedCommands).toContainEqual({
+				cmd: "show_subchar_window",
+				args: {
+					params: { scope_id: 1, width: 160, height: 280 },
+					scope_id: 1,
+					scopeId: 1,
+					width: 160,
+					height: 280,
+				},
+			});
+
+			// 2. Rescale via character-scale-changed (scale: 1.5)
+			invokedCommands.length = 0;
+			await listenCallbacks["character-scale-changed"]?.({
+				payload: { scale: 1.5, scalePercent: 150 },
+			});
+
+			expect(imgEl.width).toBe(240);
+			expect(imgEl.height).toBe(420);
+			expect(invokedCommands).toContainEqual({
+				cmd: "show_subchar_window",
+				args: {
+					params: { scope_id: 1, width: 240, height: 420 },
+					scope_id: 1,
+					scopeId: 1,
+					width: 240,
+					height: 420,
+				},
+			});
+
+			// 3. Rescale via scalePercent only (scalePercent: 50)
+			invokedCommands.length = 0;
+			await listenCallbacks["character-scale-changed"]?.({
+				payload: { scalePercent: 50 },
+			});
+
+			expect(imgEl.width).toBe(80);
+			expect(imgEl.height).toBe(140);
+			expect(invokedCommands).toContainEqual({
+				cmd: "show_subchar_window",
+				args: {
+					params: { scope_id: 1, width: 80, height: 140 },
+					scope_id: 1,
+					scopeId: 1,
+					width: 80,
+					height: 140,
+				},
+			});
+
+			// 4. Image preloader decode path uses currentScale and clamps minimum size to 32
+			class MockImage {
+				naturalWidth = 200;
+				naturalHeight = 300;
+				complete = false;
+				onload: (() => void) | null = null;
+				onerror: (() => void) | null = null;
+				private _src = "";
+				get src() {
+					return this._src;
+				}
+				set src(val: string) {
+					this._src = val;
+					this.complete = true;
+					this.onload?.();
+				}
+				decode() {
+					return Promise.resolve();
+				}
+			}
+			g.Image = MockImage;
+			invokedCommands.length = 0;
+			await listenCallbacks["update-subchar-image-1"]?.({
+				payload: { src: "preloaded.png" },
+			});
+			await Promise.resolve();
+			await Promise.resolve();
+
+			// currentScale is 0.5 from step 3 -> 200*0.5 = 100, 300*0.5 = 150
+			expect(imgEl.width).toBe(100);
+			expect(imgEl.height).toBe(150);
+			expect(invokedCommands).toContainEqual({
+				cmd: "show_subchar_window",
+				args: {
+					params: { scope_id: 1, width: 100, height: 150 },
+					scope_id: 1,
+					scopeId: 1,
+					width: 100,
+					height: 150,
+				},
+			});
+
+			// Small image clamps to minimum 32x32
+			invokedCommands.length = 0;
+			imgEl.naturalWidth = 20;
+			imgEl.naturalHeight = 20;
+			delete g.Image;
+			await listenCallbacks["update-subchar-image-1"]?.({
+				payload: { src: "tiny.png" },
+			});
+			imgEl.onload?.();
+			expect(imgEl.width).toBe(32);
+			expect(imgEl.height).toBe(32);
+		} finally {
+			if (prevImage === undefined) {
+				delete g.Image;
+			} else {
+				g.Image = prevImage;
+			}
+			await listenCallbacks["character-scale-changed"]?.({
+				payload: { scale: 1.0, scalePercent: 100 },
+			});
+			await listenCallbacks["update-subchar-image-1"]?.({ payload: null });
+			imgEl.naturalWidth = 10;
+			imgEl.naturalHeight = 10;
+			imgEl.width = 0;
+			imgEl.height = 0;
+			imgEl.complete = false;
+			imgEl.onload = undefined;
+		}
 	});
 });

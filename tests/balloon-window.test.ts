@@ -577,11 +577,11 @@ test("balloon-window updates scroll on content, invokes resize_balloon_window on
 		});
 		assert.strictEqual(
 			(balloonBox.style as Record<string, string>).padding,
-			"10px 10px 10px 10px",
+			"10px 50px 10px 10px",
 		);
 		assert.strictEqual(
 			(balloonText.style as Record<string, string>).maxWidth,
-			"calc(100% - 50px)",
+			"100%",
 		);
 
 		// Scale change re-invokes resize_balloon_window using stored base dims
@@ -853,4 +853,118 @@ test("balloon-window reloads balloon images when balloonId or side changes under
 		internals.invoke = originalInvoke;
 		internals.transformCallback = originalTransformCallback;
 	}
+});
+
+test("parseValidRect validrect.right=0 fallback and applyCommunicateBoxProperties overflow guards", async () => {
+	const env = setupBalloonMockEnvironment();
+	const { parseValidRect } = await import(
+		"../ui/ts/core/actions/balloon-theme-dom.js"
+	);
+	const { applyBalloonDescript } = await import(
+		"../ui/ts/ghost/balloon-window/theme.js"
+	);
+	const { applyCommunicateBoxProperties } = await import(
+		"../ui/ts/core/actions/balloon-descript/layout/communicate-box.js"
+	);
+
+	// validrect.right = 0 without wordwrappoint.x falls back to padding-right >= 12px instead of 0px
+	const noWordWrap = parseValidRect(
+		{
+			"validrect.left": "8",
+			"validrect.top": "10",
+			"validrect.right": "0",
+			"validrect.bottom": "0",
+		},
+		280,
+		140,
+	);
+	assert.strictEqual(noWordWrap.right, 12);
+	assert.strictEqual(noWordWrap.bottom, 12);
+
+	const largerLeft = parseValidRect(
+		{
+			"validrect.left": "18",
+			"validrect.top": "20",
+			"validrect.right": "0",
+			"validrect.bottom": "0",
+		},
+		280,
+		140,
+	);
+	assert.strictEqual(largerLeft.right, 18);
+	assert.strictEqual(largerLeft.bottom, 20);
+
+	// validrect.right = 0 with negative wordwrappoint.x adopts Math.abs(ww)
+	const withWordWrap = parseValidRect(
+		{
+			"validrect.left": "10",
+			"validrect.top": "10",
+			"validrect.right": "0",
+			"validrect.bottom": "0",
+			"wordwrappoint.x": "-26",
+		},
+		280,
+		140,
+	);
+	assert.strictEqual(withWordWrap.right, 26);
+
+	// applyBalloonDescript with validrect.right=0 and no wordwrappoint.x yields padding-right >= 12px
+	const internals = (
+		globalThis as unknown as {
+			__TAURI_INTERNALS__: {
+				invoke: (cmd: string, args?: unknown) => Promise<unknown>;
+			};
+		}
+	).__TAURI_INTERNALS__;
+	const originalInvoke = internals.invoke;
+	internals.invoke = async (cmd: string, args?: unknown) => {
+		if (cmd === "balloon_manifest") {
+			return {
+				dpi: "96",
+				"validrect.left": "10",
+				"validrect.top": "10",
+				"validrect.right": "0",
+				"validrect.bottom": "0",
+			};
+		}
+		return await originalInvoke(cmd, args);
+	};
+
+	try {
+		await applyBalloonDescript({
+			theme: "emily4",
+			scopeId: 0,
+			currentUserScale: 1.0,
+		});
+		const balloonBox = env.getEl("balloon-box") as {
+			style: Record<string, string>;
+		};
+		const parts = balloonBox.style.padding.split(/\s+/);
+		assert.strictEqual(parts.length, 4);
+		assert.ok(parseInt(parts[1], 10) >= 12);
+		assert.ok(parseInt(parts[2], 10) >= 12);
+	} finally {
+		internals.invoke = originalInvoke;
+	}
+
+	// applyCommunicateBoxProperties sets maxWidth and boxSizing: "border-box"
+	const cbEl = env.getEl(".communicate-box") as {
+		style: Record<string, string>;
+	};
+	applyCommunicateBoxProperties({
+		"communicatebox.width": "400",
+		"communicatebox.x": "20",
+	});
+	assert.strictEqual(cbEl.style.width, "400px");
+	assert.strictEqual(cbEl.style.maxWidth, "calc(100% - 20px - 8px)");
+	assert.strictEqual(cbEl.style.boxSizing, "border-box");
+
+	const cbElNoX = env.getEl(".communicate-box") as {
+		style: Record<string, string>;
+	};
+	applyCommunicateBoxProperties({
+		"communicatebox.width": "320",
+	});
+	assert.strictEqual(cbElNoX.style.maxWidth, "calc(100% - 16px)");
+	assert.strictEqual(cbElNoX.style.boxSizing, "border-box");
 });

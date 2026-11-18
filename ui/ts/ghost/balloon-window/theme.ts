@@ -383,19 +383,6 @@ export async function applyBalloonDescript({
 			);
 		onDontMoveChange?.(isBalloonDontMove);
 
-		// 折り返し幅 (wordwrappoint.x)
-		const textEl = document.getElementById("balloon-text");
-		const ww = parseInt(props["wordwrappoint.x"], 10);
-		if (textEl) {
-			if (!Number.isNaN(ww) && ww > 50) {
-				textEl.style.maxWidth = `${ww}px`;
-			} else if (!Number.isNaN(ww) && ww < 0) {
-				textEl.style.maxWidth = `calc(100% - ${Math.abs(ww)}px)`;
-			} else {
-				textEl.style.maxWidth = "";
-			}
-		}
-
 		let bgImage = await loadBalloonSkinImages(theme, scopeId, side, balloonId);
 		if (!bgImage && theme !== "default" && theme !== "nsm") {
 			bgImage = await loadBalloonSkinImages("nsm", scopeId, side, balloonId);
@@ -403,42 +390,82 @@ export async function applyBalloonDescript({
 
 		let baseWidth = DEFAULT_BALLOON_WIDTH;
 		let baseHeight = DEFAULT_BALLOON_HEIGHT;
+		let dims = { width: 0, height: 0 };
 
 		if (bgImage) {
-			const dims = await getImageDimensions(bgImage);
-
-			const {
-				top: sliceTop,
-				right: sliceRight,
-				bottom: sliceBottom,
-				left: sliceLeft,
-			} = parseValidRect(props, dims.width, dims.height);
-
-			const paddingValue = `${sliceTop}px ${sliceRight}px ${sliceBottom}px ${sliceLeft}px`;
-			root.style.setProperty("--balloon-bg-image", `url("${bgImage}")`);
-			root.style.setProperty("--balloon-padding", paddingValue);
-			if (balloonBox?.style) {
-				balloonBox.style.setProperty("--balloon-bg-image", `url("${bgImage}")`);
-				balloonBox.style.backgroundImage = `url("${bgImage}")`;
-				balloonBox.style.setProperty("--balloon-padding", paddingValue);
-				balloonBox.style.padding = paddingValue;
-			}
-
+			dims = await getImageDimensions(bgImage);
 			if (dims.width > 0) {
 				baseWidth = dims.width;
 			}
 			if (dims.height > 0) {
 				baseHeight = dims.height;
 			}
+
+			root.style.setProperty("--balloon-bg-image", `url("${bgImage}")`);
+			if (balloonBox?.style) {
+				balloonBox.style.setProperty("--balloon-bg-image", `url("${bgImage}")`);
+				balloonBox.style.backgroundImage = `url("${bgImage}")`;
+			}
 		}
 
+		const {
+			top: sliceTop,
+			right: sliceRight,
+			bottom: sliceBottom,
+			left: sliceLeft,
+		} = parseValidRect(
+			props,
+			dims.width > 0 ? dims.width : baseWidth,
+			dims.height > 0 ? dims.height : baseHeight,
+		);
+
+		const scopePrefix = scopeId === 1 ? "kero" : "sakura";
+		const ww = parseInt(
+			props["wordwrappoint.x"] ||
+				props[`${scopePrefix}.wordwrappoint.x`] ||
+				props["sakura.wordwrappoint.x"] ||
+				props["kero.wordwrappoint.x"] ||
+				"",
+			10,
+		);
+		let effectiveRight = sliceRight;
+		if (!Number.isNaN(ww) && ww < 0) {
+			effectiveRight = Math.max(sliceRight, Math.abs(ww));
+		} else if (!Number.isNaN(ww) && ww > 50 && baseWidth > ww) {
+			effectiveRight = Math.max(sliceRight, baseWidth - ww);
+		}
+
+		const paddingValue = `${sliceTop}px ${effectiveRight}px ${sliceBottom}px ${sliceLeft}px`;
+		root.style.setProperty("--balloon-padding", paddingValue);
+		root.style.setProperty("--balloon-max-width", "100%");
 		root.style.setProperty("--balloon-width", `${baseWidth}px`);
 		root.style.setProperty("--balloon-height", `${baseHeight}px`);
 		root.style.setProperty("--balloon-min-height", `${baseHeight}px`);
+		root.style.setProperty("--balloon-max-height", `${baseHeight}px`);
 		if (balloonBox?.style) {
+			balloonBox.style.setProperty("--balloon-padding", paddingValue);
+			balloonBox.style.padding = paddingValue;
+			balloonBox.style.setProperty("--balloon-max-width", "100%");
 			balloonBox.style.setProperty("--balloon-width", `${baseWidth}px`);
 			balloonBox.style.setProperty("--balloon-height", `${baseHeight}px`);
 			balloonBox.style.setProperty("--balloon-min-height", `${baseHeight}px`);
+			balloonBox.style.setProperty("--balloon-max-height", `${baseHeight}px`);
+		}
+
+		const textEl = document.getElementById("balloon-text");
+		const wwY = parseInt(
+			props["wordwrappoint.y"] ||
+				props[`${scopePrefix}.wordwrappoint.y`] ||
+				props["sakura.wordwrappoint.y"] ||
+				props["kero.wordwrappoint.y"] ||
+				"",
+			10,
+		);
+		if (textEl?.style) {
+			textEl.style.width = "100%";
+			textEl.style.maxWidth = "100%";
+			textEl.style.maxHeight =
+				!Number.isNaN(wwY) && wwY > 20 ? `min(100%, ${wwY}px)` : "";
 		}
 
 		setBalloonBaseDimensions(balloonBox, scopeId, baseWidth, baseHeight);

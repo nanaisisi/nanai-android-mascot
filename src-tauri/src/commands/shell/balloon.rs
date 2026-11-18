@@ -184,10 +184,13 @@ pub fn balloon_manifest(
     #[allow(non_snake_case)] scopeId: Option<i32>,
     surface_id: Option<i32>,
     #[allow(non_snake_case)] surfaceId: Option<i32>,
+    balloon_id: Option<i32>,
+    #[allow(non_snake_case)] balloonId: Option<i32>,
     app_handle: tauri::AppHandle,
 ) -> Result<std::collections::BTreeMap<String, String>, String> {
     let s_id = scope_id.or(scopeId);
     let surf_id = surface_id.or(surfaceId);
+    let b_id = balloon_id.or(balloonId);
     let dir = resolve_balloon_dir(&name, &app_handle)?;
     let mut map = balloon_descript_map(&dir);
 
@@ -208,6 +211,34 @@ pub fn balloon_manifest(
         {
             for (k, v) in sub_map {
                 map.entry(k).or_insert(v);
+            }
+        }
+    }
+
+    if let Some(b) = b_id {
+        let prefix = if s_id == Some(1) { "balloonk" } else { "balloons" };
+        let menu_spec_files = if b == 2 {
+            vec![
+                format!("{}2s.txt", prefix),
+                format!("{}ss.txt", prefix),
+                format!("{}s.txt", prefix),
+            ]
+        } else {
+            vec![
+                format!("{}{}s.txt", prefix, b),
+                format!("{}s.txt", prefix),
+            ]
+        };
+        for spec_file in menu_spec_files {
+            let p = dir.join(&spec_file);
+            if p.is_file()
+                && let Some(sub_map) = resolve_vfs_path(&dir, &spec_file)
+                    .and_then(|fp| crate::ghost::scan::read_descript_file(&fp))
+            {
+                for (k, v) in sub_map {
+                    map.insert(k, v);
+                }
+                break;
             }
         }
     }
@@ -293,6 +324,20 @@ pub fn load_balloon_image(
                 }
             }
         }
+        if matched.is_none() {
+            let fallback_files = if stem.starts_with("balloonk") {
+                vec!["balloonk0.png", "balloonk0.bmp", "balloonk.png", "balloonk.bmp"]
+            } else {
+                vec!["balloons0.png", "balloons0.bmp", "balloons.png", "balloons.bmp"]
+            };
+            for fb in fallback_files {
+                let p = dir.join(fb);
+                if p.is_file() {
+                    matched = Some(p);
+                    break;
+                }
+            }
+        }
         matched
     } else {
         None
@@ -332,10 +377,11 @@ pub fn resolve_balloon_dir(name: &str, app_handle: &tauri::AppHandle) -> Result<
     println!("🔍 [Balloon] resolve_balloon_dir 呼び出し: name='{}'", name);
     let effective_name = if name.is_empty() { "default" } else { name };
 
-    // 1. スキャン一覧の中から dir_name や name (表示名) が一致するフォルダを探索
+    // 1. スキャン一覧の中から dir_name や name (表示名) が一致するフォルダを優先探索
     if let Ok(scanned) = scan_balloons(app_handle.clone()) {
         let norm_target = effective_name.trim().to_lowercase();
-        for b in scanned {
+        // 1-A. 完全一致
+        for b in &scanned {
             let b_dir = b.dir_name.trim().to_lowercase();
             let b_name = b.name.trim().to_lowercase();
             if b_dir == norm_target || b_name == norm_target {
@@ -343,12 +389,47 @@ pub fn resolve_balloon_dir(name: &str, app_handle: &tauri::AppHandle) -> Result<
                     format!("assets/balloon/{}", b.dir_name),
                     format!("balloon/{}", b.dir_name),
                 ];
-                for base in bases {
-                    if let Ok(resolved) = resolve_asset_path(&base, app_handle)
+                for base in &bases {
+                    if let Ok(resolved) = resolve_asset_path(base, app_handle)
                         && resolved.is_dir()
                     {
                         return Ok(resolved);
                     }
+                }
+            }
+        }
+        // 1-B. あいまい・部分一致 (例: "emily" ⇄ "emily4")
+        for b in &scanned {
+            let b_dir = b.dir_name.trim().to_lowercase();
+            let b_name = b.name.trim().to_lowercase();
+            if b_dir.contains(&norm_target)
+                || norm_target.contains(&b_dir)
+                || b_name.contains(&norm_target)
+            {
+                let bases = vec![
+                    format!("assets/balloon/{}", b.dir_name),
+                    format!("balloon/{}", b.dir_name),
+                ];
+                for base in &bases {
+                    if let Ok(resolved) = resolve_asset_path(base, app_handle)
+                        && resolved.is_dir()
+                    {
+                        return Ok(resolved);
+                    }
+                }
+            }
+        }
+        // 1-C. 最初に見つかったスキャン結果へのフォールバック
+        if let Some(first) = scanned.first() {
+            let bases = vec![
+                format!("assets/balloon/{}", first.dir_name),
+                format!("balloon/{}", first.dir_name),
+            ];
+            for base in &bases {
+                if let Ok(resolved) = resolve_asset_path(base, app_handle)
+                    && resolved.is_dir()
+                {
+                    return Ok(resolved);
                 }
             }
         }

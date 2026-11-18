@@ -3,6 +3,10 @@
  * @file balloon-theme.js
  * @brief バルーンスキンテーマ切替およびスキャン・リセット処理 (BalloonThemeManager)
  */
+import {
+	applyBalloonDescript,
+	loadBalloonSkinImages,
+} from "../../ghost/balloon-window/theme.js";
 import { invoke, isTauriAvailable, listen } from "../tauri-helper.js";
 import {
 	applyBalloonScale,
@@ -153,6 +157,19 @@ export class BalloonThemeManager {
 	 */
 	async setTheme(themeName) {
 		return setBalloonThemeImpl(this, themeName);
+	}
+
+	async loadSkinImages(
+		theme = "default",
+		scopeId = 0,
+		side = "auto",
+		balloonId = null,
+	) {
+		return loadBalloonSkinImages(theme, scopeId, side, balloonId);
+	}
+
+	async applyDescript(params) {
+		return applyBalloonDescript(params);
 	}
 
 	/**

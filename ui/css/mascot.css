@@ -261,7 +261,7 @@
 
 .balloon {
 	background-color: var(--balloon-bg, rgba(255, 255, 255, 0.95));
-	background-image: var(--balloon-pattern, none);
+	background-image: var(--balloon-bg-image, var(--balloon-pattern, none));
 	background-repeat: var(--balloon-bg-repeat, no-repeat);
 	background-size: var(--balloon-bg-size, 100% 100%);
 	background-position: var(--balloon-bg-position, center);

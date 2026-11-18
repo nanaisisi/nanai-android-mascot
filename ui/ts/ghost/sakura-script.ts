@@ -175,13 +175,44 @@ export class SakuraScriptPlayer {
 				const balloonId = stepRes.data?.balloon_id ?? 0;
 				if (balloonId === -1) {
 					this.clearBalloon(app, scope);
-				} else if (app?.balloonThemeManager?.loadSkinImages) {
-					void app.balloonThemeManager.loadSkinImages(
-						app.currentBalloonTheme || "default",
-						scope,
-						"auto",
-						balloonId,
-					);
+				} else {
+					const targetApp = app || this.getApp();
+					const btm =
+						targetApp?.balloonThemeManager ||
+						(targetApp as unknown as { balloonTheme?: unknown })?.balloonTheme;
+					const themeName = targetApp?.currentBalloonTheme || "default";
+
+					if (
+						btm &&
+						typeof (btm as { loadSkinImages?: unknown }).loadSkinImages ===
+							"function"
+					) {
+						void (
+							btm as {
+								loadSkinImages: (
+									theme: string,
+									scope: number,
+									side: string,
+									balloonId: number,
+								) => Promise<unknown>;
+							}
+						).loadSkinImages(themeName, scope, "auto", balloonId);
+					}
+					if (
+						btm &&
+						typeof (btm as { applyDescript?: unknown }).applyDescript ===
+							"function"
+					) {
+						void (
+							btm as {
+								applyDescript: (params: unknown) => Promise<unknown>;
+							}
+						).applyDescript({
+							theme: themeName,
+							scopeId: scope,
+							balloonId,
+						});
+					}
 				}
 				break;
 			}

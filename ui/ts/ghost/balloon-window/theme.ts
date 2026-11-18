@@ -286,12 +286,14 @@ export async function loadBalloonSkinImages(
 export async function applyBalloonDescript({
 	theme,
 	scopeId,
+	balloonId = null,
 	currentUserScale,
 	onDpiScaleChange,
 	onDontMoveChange,
 }: {
 	theme: string;
 	scopeId: number;
+	balloonId?: number | null;
 	currentUserScale?: number;
 	onDpiScaleChange?: (scale: number) => void;
 	onDontMoveChange?: (dontMove: boolean) => void;
@@ -305,12 +307,14 @@ export async function applyBalloonDescript({
 		const rawProps = await invoke("balloon_manifest", {
 			name: theme,
 			scopeId,
+			balloonId,
 		}).catch(() => null);
 		if (!rawProps || typeof rawProps !== "object") {
 			if (theme !== "default" && theme !== "nsm") {
 				return await applyBalloonDescript({
 					theme: "nsm",
 					scopeId,
+					balloonId,
 					currentUserScale,
 					onDpiScaleChange,
 					onDontMoveChange,
@@ -373,7 +377,12 @@ export async function applyBalloonDescript({
 			}
 		}
 
-		let bgImage = await loadBalloonSkinImages(theme, scopeId);
+		let bgImage = await loadBalloonSkinImages(
+			theme,
+			scopeId,
+			"auto",
+			balloonId,
+		);
 		if (!bgImage && theme !== "default" && theme !== "nsm") {
 			bgImage = await loadBalloonSkinImages("nsm", scopeId);
 		}
@@ -395,6 +404,8 @@ export async function applyBalloonDescript({
 			root.style.setProperty("--balloon-bg-image", `url("${bgImage}")`);
 			root.style.setProperty("--balloon-padding", paddingValue);
 			if (balloonBox?.style) {
+				balloonBox.style.setProperty("--balloon-bg-image", `url("${bgImage}")`);
+				balloonBox.style.backgroundImage = `url("${bgImage}")`;
 				balloonBox.style.setProperty("--balloon-padding", paddingValue);
 				balloonBox.style.padding = paddingValue;
 			}

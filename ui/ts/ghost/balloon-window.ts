@@ -7,7 +7,10 @@ import { emit, isTauriAvailable, listen } from "../core/tauri-helper.js";
 import { setupWindowGestures } from "./balloon-window/gesture.js";
 import { setupInteractiveElements } from "./balloon-window/interactive.js";
 import { updateBalloonWindowScale } from "./balloon-window/scale.js";
-import { applyBalloonDescript as applyThemeDescript } from "./balloon-window/theme.js";
+import {
+	applyBalloonDescript as applyThemeDescript,
+	resizeBalloonWindowForScale,
+} from "./balloon-window/theme.js";
 
 const urlParams = new URLSearchParams(globalThis.location?.search || "");
 const scopeId = parseInt(urlParams.get("scope") || "0", 10);
@@ -16,6 +19,233 @@ let applyingTheme: string | null = null;
 let currentDpiScale = 1;
 let currentUserScale = 1;
 let _isBalloonDontMove = false;
+
+const ARROW_CLICK_SCROLL_STEP = 36;
+const WHEEL_SCROLL_STEP = 28;
+const boundScrollBoxes = new WeakSet<object>();
+const boundScrollTexts = new WeakSet<object>();
+const boundScrollArrows = new WeakSet<object>();
+
+function findArrowElement(
+	balloonBox: HTMLElement | null,
+	selector: string,
+	fallbackId: string,
+): HTMLElement | null {
+	const boxAny = balloonBox as unknown as {
+		querySelector?: (s: string) => HTMLElement | null;
+	} | null;
+	if (typeof boxAny?.querySelector === "function") {
+		const found = boxAny.querySelector(selector);
+		if (found) return found;
+	}
+	if (typeof document !== "undefined") {
+		if (typeof document.getElementById === "function") {
+			const byId = document.getElementById(fallbackId);
+			if (byId) return byId;
+		}
+		if (typeof document.querySelector === "function") {
+			const bySel = document.querySelector(selector) as HTMLElement | null;
+			if (bySel) return bySel;
+		}
+	}
+	return null;
+}
+
+function readCssVar(el: HTMLElement | null, propName: string): string {
+	if (!el?.style) return "";
+	if (typeof el.style.getPropertyValue === "function") {
+		return el.style.getPropertyValue(propName).trim();
+	}
+	return String(
+		(el.style as unknown as Record<string, unknown>)[propName] || "",
+	).trim();
+}
+
+function syncArrowImageFlag(
+	arrowEl: HTMLElement | null,
+	balloonBox: HTMLElement | null,
+	cssVarName: string,
+) {
+	if (!arrowEl || typeof arrowEl.setAttribute !== "function") return;
+	const root =
+		typeof document !== "undefined" ? document.documentElement : null;
+	let value =
+		readCssVar(balloonBox, cssVarName) || readCssVar(root, cssVarName);
+	if (!value && typeof globalThis.getComputedStyle === "function") {
+		try {
+			value = globalThis
+				.getComputedStyle(arrowEl)
+				.getPropertyValue(cssVarName)
+				.trim();
+		} catch (_e) {}
+	}
+	const hasImage = Boolean(value && value !== "none" && value.includes("url("));
+	if (hasImage) {
+		arrowEl.setAttribute("data-has-image", "true");
+	} else if (typeof arrowEl.removeAttribute === "function") {
+		arrowEl.removeAttribute("data-has-image");
+	}
+}
+
+function setArrowVisible(arrowEl: HTMLElement | null, visible: boolean) {
+	if (!arrowEl) return;
+	if (visible) {
+		if (typeof arrowEl.setAttribute === "function") {
+			arrowEl.setAttribute("data-visible", "true");
+		}
+	} else if (typeof arrowEl.removeAttribute === "function") {
+		arrowEl.removeAttribute("data-visible");
+	}
+}
+
+function applyScrollDelta(balloonText: HTMLElement, delta: number) {
+	const current =
+		typeof balloonText.scrollTop === "number" ? balloonText.scrollTop : 0;
+	let next = Math.max(0, current + delta);
+	if (
+		typeof balloonText.scrollHeight === "number" &&
+		typeof balloonText.clientHeight === "number"
+	) {
+		const maxScroll = Math.max(
+			0,
+			balloonText.scrollHeight - balloonText.clientHeight,
+		);
+		next = Math.min(maxScroll, next);
+	}
+	balloonText.scrollTop = next;
+}
+
+export function updateBalloonScrollArrows(
+	balloonBox: HTMLElement | null,
+	balloonText: HTMLElement | null,
+) {
+	if (!balloonBox || !balloonText) return;
+	const arrowUp = findArrowElement(
+		balloonBox,
+		".balloon-scroll-arrow-up",
+		"balloon-arrow-up",
+	);
+	const arrowDown = findArrowElement(
+		balloonBox,
+		".balloon-scroll-arrow-down",
+		"balloon-arrow-down",
+	);
+
+	syncArrowImageFlag(arrowUp, balloonBox, "--balloon-arrow0-image");
+	syncArrowImageFlag(arrowDown, balloonBox, "--balloon-arrow1-image");
+
+	if (
+		typeof balloonText.scrollHeight !== "number" ||
+		typeof balloonText.clientHeight !== "number"
+	) {
+		setArrowVisible(arrowUp, false);
+		setArrowVisible(arrowDown, false);
+		return;
+	}
+
+	const scrollTop =
+		typeof balloonText.scrollTop === "number" ? balloonText.scrollTop : 0;
+	const canScrollUp = scrollTop > 0;
+	const canScrollDown =
+		scrollTop + balloonText.clientHeight < balloonText.scrollHeight - 1;
+
+	setArrowVisible(arrowUp, canScrollUp);
+	setArrowVisible(arrowDown, canScrollDown);
+}
+
+export function setupBalloonScroll(
+	balloonBox: HTMLElement | null,
+	balloonText: HTMLElement | null,
+) {
+	if (!balloonBox || !balloonText) return;
+
+	const onWheel = (e: Event) => {
+		const we = e as WheelEvent;
+		we?.preventDefault?.();
+		we?.stopPropagation?.();
+		const deltaY = typeof we?.deltaY === "number" ? we.deltaY : 0;
+		if (deltaY === 0) return;
+		applyScrollDelta(
+			balloonText,
+			deltaY > 0 ? WHEEL_SCROLL_STEP : -WHEEL_SCROLL_STEP,
+		);
+		updateBalloonScrollArrows(balloonBox, balloonText);
+	};
+
+	if (!boundScrollTexts.has(balloonText)) {
+		boundScrollTexts.add(balloonText);
+		balloonText.addEventListener("scroll", () => {
+			updateBalloonScrollArrows(balloonBox, balloonText);
+		});
+		balloonText.addEventListener("wheel", onWheel, { passive: false });
+
+		if (typeof MutationObserver === "function") {
+			try {
+				const textObserver = new MutationObserver(() => {
+					updateBalloonScrollArrows(balloonBox, balloonText);
+				});
+				textObserver.observe(balloonText, {
+					childList: true,
+					characterData: true,
+					subtree: true,
+				});
+			} catch (_e) {}
+		}
+	}
+
+	if (!boundScrollBoxes.has(balloonBox)) {
+		boundScrollBoxes.add(balloonBox);
+		balloonBox.addEventListener("wheel", onWheel, { passive: false });
+
+		if (typeof MutationObserver === "function") {
+			try {
+				const styleObserver = new MutationObserver(() => {
+					updateBalloonScrollArrows(balloonBox, balloonText);
+				});
+				styleObserver.observe(balloonBox, {
+					attributes: true,
+					attributeFilter: ["style"],
+				});
+				if (typeof document !== "undefined" && document.documentElement) {
+					styleObserver.observe(document.documentElement, {
+						attributes: true,
+						attributeFilter: ["style"],
+					});
+				}
+			} catch (_e) {}
+		}
+	}
+
+	const bindArrow = (arrowEl: HTMLElement | null, delta: number) => {
+		if (!arrowEl || boundScrollArrows.has(arrowEl)) return;
+		boundScrollArrows.add(arrowEl);
+		const stop = (e: Event) => {
+			e?.stopPropagation?.();
+		};
+		arrowEl.addEventListener("mousedown", stop);
+		arrowEl.addEventListener("touchstart", stop, { passive: true });
+		arrowEl.addEventListener("click", (e: Event) => {
+			e?.stopPropagation?.();
+			applyScrollDelta(balloonText, delta);
+			updateBalloonScrollArrows(balloonBox, balloonText);
+		});
+	};
+
+	const arrowUp = findArrowElement(
+		balloonBox,
+		".balloon-scroll-arrow-up",
+		"balloon-arrow-up",
+	);
+	const arrowDown = findArrowElement(
+		balloonBox,
+		".balloon-scroll-arrow-down",
+		"balloon-arrow-down",
+	);
+	bindArrow(arrowUp, -ARROW_CLICK_SCROLL_STEP);
+	bindArrow(arrowDown, ARROW_CLICK_SCROLL_STEP);
+
+	updateBalloonScrollArrows(balloonBox, balloonText);
+}
 
 export {
 	setupInteractiveElements,
@@ -44,6 +274,12 @@ export async function applyBalloonDescript(theme: string) {
 			currentDpiScale = result.dpiScale ?? currentDpiScale;
 			_isBalloonDontMove = result.isBalloonDontMove ?? _isBalloonDontMove;
 			appliedTheme = theme;
+			if (typeof document !== "undefined") {
+				updateBalloonScrollArrows(
+					document.getElementById("balloon-box"),
+					document.getElementById("balloon-text"),
+				);
+			}
 		}
 	} catch (_e) {
 	} finally {
@@ -53,7 +289,7 @@ export async function applyBalloonDescript(theme: string) {
 
 export function initBalloonWindow() {
 	const balloonBox = document.getElementById("balloon-box");
-	const _balloonText = document.getElementById("balloon-text");
+	const balloonText = document.getElementById("balloon-text");
 
 	const savedTheme =
 		urlParams.get("theme") ||
@@ -62,6 +298,7 @@ export function initBalloonWindow() {
 	document.documentElement.setAttribute("data-balloon-theme", savedTheme);
 	void applyBalloonDescript(savedTheme);
 
+	setupBalloonScroll(balloonBox, balloonText);
 	setupWindowGestures(balloonBox, {
 		scopeId,
 		getIsBalloonDontMove: () => _isBalloonDontMove,
@@ -85,9 +322,11 @@ export function initBalloonWindow() {
 		if (targetText && html !== undefined) {
 			targetText.innerHTML = html;
 			setupInteractiveElements(targetText, scopeId);
-			if (balloonBox) {
-				balloonBox.scrollTop = balloonBox.scrollHeight;
-			}
+			targetText.scrollTop =
+				typeof targetText.scrollHeight === "number"
+					? targetText.scrollHeight
+					: 0;
+			updateBalloonScrollArrows(balloonBox, targetText);
 		}
 	});
 
@@ -119,6 +358,12 @@ export function initBalloonWindow() {
 			currentUserScale = scale;
 			if (balloonBox) {
 				updateBalloonWindowScale(balloonBox, currentUserScale, currentDpiScale);
+				resizeBalloonWindowForScale(
+					balloonBox,
+					scopeId,
+					currentUserScale,
+					currentDpiScale,
+				);
 			}
 		}
 	});

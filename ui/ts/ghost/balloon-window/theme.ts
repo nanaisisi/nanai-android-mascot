@@ -10,6 +10,140 @@ import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 import { processChromaKey } from "../../surface/surface-compositor.js";
 import { updateBalloonWindowScale } from "./scale.js";
 
+const DEFAULT_BALLOON_WIDTH = 280;
+const DEFAULT_BALLOON_HEIGHT = 140;
+const BALLOON_WINDOW_PADDING = 16;
+
+const balloonBaseDimensions = new Map<
+	number,
+	{ width: number; height: number }
+>();
+
+const STALE_THEME_CSS_PROPS = [
+	"--balloon-bg-image",
+	"--balloon-max-width",
+	"--balloon-max-height",
+	"--balloon-arrow-display",
+	"--balloon-arrow-image",
+	"--balloon-arrow0-image",
+	"--balloon-arrow0-width",
+	"--balloon-arrow0-height",
+	"--balloon-arrow0-x",
+	"--balloon-arrow0-y",
+	"--balloon-arrow0-left",
+	"--balloon-arrow0-right",
+	"--balloon-arrow0-top",
+	"--balloon-arrow0-bottom",
+	"--balloon-arrow1-image",
+	"--balloon-arrow1-width",
+	"--balloon-arrow1-height",
+	"--balloon-arrow1-x",
+	"--balloon-arrow1-y",
+	"--balloon-arrow1-left",
+	"--balloon-arrow1-right",
+	"--balloon-arrow1-top",
+	"--balloon-arrow1-bottom",
+];
+
+function clearCssProperty(el: HTMLElement | null, prop: string) {
+	if (!el?.style) return;
+	if (typeof el.style.removeProperty === "function") {
+		el.style.removeProperty(prop);
+	}
+}
+
+function readCssProperty(el: HTMLElement | null, prop: string): string {
+	if (!el?.style) return "";
+	if (typeof el.style.getPropertyValue === "function") {
+		return el.style.getPropertyValue(prop).trim();
+	}
+	return String(
+		(el.style as unknown as Record<string, unknown>)[prop] || "",
+	).trim();
+}
+
+function findArrowElement(
+	balloonBox: HTMLElement | null,
+	selector: string,
+	fallbackId: string,
+): HTMLElement | null {
+	const boxAny = balloonBox as unknown as {
+		querySelector?: (s: string) => HTMLElement | null;
+	} | null;
+	if (typeof boxAny?.querySelector === "function") {
+		const found = boxAny.querySelector(selector);
+		if (found) return found;
+	}
+	return typeof document !== "undefined" &&
+		typeof document.getElementById === "function"
+		? document.getElementById(fallbackId)
+		: null;
+}
+
+export function setBalloonBaseDimensions(
+	balloonBox: HTMLElement | null,
+	scopeId: number,
+	width: number,
+	height: number,
+) {
+	const safeWidth = width > 0 ? width : DEFAULT_BALLOON_WIDTH;
+	const safeHeight = height > 0 ? height : DEFAULT_BALLOON_HEIGHT;
+	balloonBaseDimensions.set(scopeId, {
+		width: safeWidth,
+		height: safeHeight,
+	});
+	if (balloonBox?.dataset) {
+		balloonBox.dataset.baseWidth = String(safeWidth);
+		balloonBox.dataset.baseHeight = String(safeHeight);
+	}
+}
+
+export function getBalloonBaseDimensions(
+	balloonBox: HTMLElement | null,
+	scopeId = 0,
+): { width: number; height: number } {
+	const dsWidth = Number(balloonBox?.dataset?.baseWidth);
+	const dsHeight = Number(balloonBox?.dataset?.baseHeight);
+	if (
+		Number.isFinite(dsWidth) &&
+		dsWidth > 0 &&
+		Number.isFinite(dsHeight) &&
+		dsHeight > 0
+	) {
+		return { width: dsWidth, height: dsHeight };
+	}
+	return (
+		balloonBaseDimensions.get(scopeId) ?? {
+			width: DEFAULT_BALLOON_WIDTH,
+			height: DEFAULT_BALLOON_HEIGHT,
+		}
+	);
+}
+
+export function resizeBalloonWindowForScale(
+	balloonBox: HTMLElement | null,
+	scopeId: number,
+	userScale: number,
+	dpiScale: number,
+) {
+	if (!isTauriAvailable()) return;
+	const { width, height } = getBalloonBaseDimensions(balloonBox, scopeId);
+	const finalScale = +((userScale || 1) * (dpiScale || 1)).toFixed(4);
+	const safeWidth = Math.ceil(width * finalScale + BALLOON_WINDOW_PADDING);
+	const safeHeight = Math.ceil(height * finalScale + BALLOON_WINDOW_PADDING);
+	void invoke("resize_balloon_window", {
+		params: {
+			scope_id: scopeId,
+			width: safeWidth,
+			height: safeHeight,
+		},
+		scope_id: scopeId,
+		scopeId,
+		width: safeWidth,
+		height: safeHeight,
+	}).catch(() => {});
+}
+
 const getImageDimensions = (
 	url: string,
 ): Promise<{ width: number; height: number }> => {
@@ -171,6 +305,15 @@ export async function applyBalloonDescript({
 		const balloonBox = document.getElementById("balloon-box");
 		const root = document.documentElement;
 
+		for (const prop of STALE_THEME_CSS_PROPS) {
+			clearCssProperty(root, prop);
+			clearCssProperty(balloonBox, prop);
+		}
+		const initialTextEl = document.getElementById("balloon-text");
+		if (initialTextEl?.style) {
+			initialTextEl.style.maxHeight = "";
+		}
+
 		// 推奨 DPI (dpi,推奨DPI / 既定値: 96, SSP 2.7.21準拠)
 		const parsedDpi = parseInt(props.dpi || props.推奨DPI || "96", 10);
 		const balloonDpi =
@@ -181,6 +324,7 @@ export async function applyBalloonDescript({
 		onDpiScaleChange?.(nextDpiScale);
 
 		const instanceContext = {
+			scopeId,
 			balloonDpiScale: nextDpiScale,
 			balloonUserScale: currentUserScale,
 			currentBalloonTheme: theme,
@@ -200,15 +344,15 @@ export async function applyBalloonDescript({
 		onDontMoveChange?.(isBalloonDontMove);
 
 		// 折り返し幅 (wordwrappoint.x)
+		const textEl = document.getElementById("balloon-text");
 		const ww = parseInt(props["wordwrappoint.x"], 10);
-		if (!Number.isNaN(ww)) {
-			const textEl = document.getElementById("balloon-text");
-			if (textEl) {
-				if (ww > 50) {
-					textEl.style.maxWidth = `${ww}px`;
-				} else if (ww < 0) {
-					textEl.style.maxWidth = `calc(100% - ${Math.abs(ww)}px)`;
-				}
+		if (textEl) {
+			if (!Number.isNaN(ww) && ww > 50) {
+				textEl.style.maxWidth = `${ww}px`;
+			} else if (!Number.isNaN(ww) && ww < 0) {
+				textEl.style.maxWidth = `calc(100% - ${Math.abs(ww)}px)`;
+			} else {
+				textEl.style.maxWidth = "";
 			}
 		}
 
@@ -216,6 +360,9 @@ export async function applyBalloonDescript({
 		if (!bgImage && theme !== "default" && theme !== "nsm") {
 			bgImage = await loadBalloonSkinImages("nsm", scopeId);
 		}
+
+		let baseWidth = DEFAULT_BALLOON_WIDTH;
+		let baseHeight = DEFAULT_BALLOON_HEIGHT;
 
 		if (bgImage) {
 			const dims = await getImageDimensions(bgImage);
@@ -227,28 +374,129 @@ export async function applyBalloonDescript({
 				left: sliceLeft,
 			} = parseValidRect(props, dims.width, dims.height);
 
+			const paddingValue = `${sliceTop}px ${sliceRight}px ${sliceBottom}px ${sliceLeft}px`;
 			root.style.setProperty("--balloon-bg-image", `url("${bgImage}")`);
-			root.style.setProperty(
-				"--balloon-padding",
-				`${sliceTop}px ${sliceRight}px ${sliceBottom}px ${sliceLeft}px`,
-			);
+			root.style.setProperty("--balloon-padding", paddingValue);
+			if (balloonBox?.style) {
+				balloonBox.style.setProperty("--balloon-padding", paddingValue);
+				balloonBox.style.padding = paddingValue;
+			}
 
 			if (dims.width > 0) {
-				root.style.setProperty("--balloon-width", `${dims.width}px`);
+				baseWidth = dims.width;
 			}
 			if (dims.height > 0) {
-				root.style.setProperty("--balloon-min-height", `${dims.height}px`);
-			}
-			if (dims.width > 0 && dims.height > 0) {
-				const safeWidth = Math.ceil(dims.width + 24);
-				const safeHeight = Math.ceil(dims.height + 24);
-				void invoke("resize_balloon_window", {
-					scopeId,
-					width: safeWidth,
-					height: safeHeight,
-				}).catch(() => {});
+				baseHeight = dims.height;
 			}
 		}
+
+		root.style.setProperty("--balloon-width", `${baseWidth}px`);
+		root.style.setProperty("--balloon-height", `${baseHeight}px`);
+		root.style.setProperty("--balloon-min-height", `${baseHeight}px`);
+		if (balloonBox?.style) {
+			balloonBox.style.setProperty("--balloon-width", `${baseWidth}px`);
+			balloonBox.style.setProperty("--balloon-height", `${baseHeight}px`);
+			balloonBox.style.setProperty("--balloon-min-height", `${baseHeight}px`);
+		}
+
+		setBalloonBaseDimensions(balloonBox, scopeId, baseWidth, baseHeight);
+		resizeBalloonWindowForScale(
+			balloonBox,
+			scopeId,
+			currentUserScale || 1,
+			nextDpiScale,
+		);
+
+		const arrowDefs = [
+			{
+				file: "arrow0.png",
+				imageVar: "--balloon-arrow0-image",
+				widthVar: "--balloon-arrow0-width",
+				heightVar: "--balloon-arrow0-height",
+				selector: ".balloon-scroll-arrow-up",
+				fallbackId: "balloon-arrow-up",
+			},
+			{
+				file: "arrow1.png",
+				imageVar: "--balloon-arrow1-image",
+				widthVar: "--balloon-arrow1-width",
+				heightVar: "--balloon-arrow1-height",
+				selector: ".balloon-scroll-arrow-down",
+				fallbackId: "balloon-arrow-down",
+			},
+		];
+
+		await Promise.all(
+			arrowDefs.map(
+				async ({
+					file,
+					imageVar,
+					widthVar,
+					heightVar,
+					selector,
+					fallbackId,
+				}) => {
+					const arrowEl = findArrowElement(balloonBox, selector, fallbackId);
+					const existingImage =
+						readCssProperty(balloonBox, imageVar) ||
+						readCssProperty(root, imageVar);
+
+					if (!props["arrow.filename"] && !existingImage) {
+						const raw = (await invoke("load_balloon_image", {
+							name: theme,
+							file,
+						}).catch(() => null)) as string | null;
+						if (raw) {
+							const pnaFile = file.replace(/\.png$/i, ".pna");
+							const pna = (await invoke("load_balloon_image", {
+								name: theme,
+								file: pnaFile,
+							}).catch(() => null)) as string | null;
+							const processed = await processChromaKey(raw, pna);
+							if (processed) {
+								const arrowDims = await getImageDimensions(processed);
+								const cssUrl = `url("${processed}")`;
+								root.style.setProperty(imageVar, cssUrl);
+								balloonBox?.style?.setProperty(imageVar, cssUrl);
+								if (arrowDims.width > 0) {
+									root.style.setProperty(widthVar, `${arrowDims.width}px`);
+									balloonBox?.style?.setProperty(
+										widthVar,
+										`${arrowDims.width}px`,
+									);
+								}
+								if (arrowDims.height > 0) {
+									root.style.setProperty(heightVar, `${arrowDims.height}px`);
+									balloonBox?.style?.setProperty(
+										heightVar,
+										`${arrowDims.height}px`,
+									);
+								}
+							}
+						}
+					}
+
+					const resolvedImage =
+						readCssProperty(balloonBox, imageVar) ||
+						readCssProperty(root, imageVar);
+					const hasImage = Boolean(
+						resolvedImage &&
+							resolvedImage !== "none" &&
+							resolvedImage.includes("url("),
+					);
+					if (arrowEl) {
+						if (hasImage && typeof arrowEl.setAttribute === "function") {
+							arrowEl.setAttribute("data-has-image", "true");
+						} else if (
+							!hasImage &&
+							typeof arrowEl.removeAttribute === "function"
+						) {
+							arrowEl.removeAttribute("data-has-image");
+						}
+					}
+				},
+			),
+		);
 
 		return {
 			dpiScale: nextDpiScale,

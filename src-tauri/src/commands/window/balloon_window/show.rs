@@ -182,44 +182,81 @@ pub async fn show_balloon_window(
     Ok(())
 }
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
+#[serde(default)]
 pub struct ResizeBalloonWindowParams {
-    scope_id: i32,
-    width: f64,
-    height: f64,
+    #[serde(alias = "scopeId")]
+    scope_id: Option<i32>,
+    width: Option<f64>,
+    height: Option<f64>,
 }
 
 impl ResizeBalloonWindowParams {
     // Add getter methods
+    #[allow(dead_code)]
     pub fn scope_id(&self) -> i32 {
-        self.scope_id
+        self.scope_id.unwrap_or(0)
     }
 
+    #[allow(dead_code)]
     pub fn width(&self) -> f64 {
-        self.width
+        self.width.unwrap_or(280.0)
     }
 
+    #[allow(dead_code)]
     pub fn height(&self) -> f64 {
-        self.height
+        self.height.unwrap_or(200.0)
     }
 }
 
+#[cfg(any(desktop, test))]
+fn resolve_resize_balloon_args(
+    params: Option<ResizeBalloonWindowParams>,
+    scope_id: Option<i32>,
+    scope_id_camel: Option<i32>,
+    width: Option<f64>,
+    height: Option<f64>,
+) -> (i32, f64, f64) {
+    let resolved_params = params.unwrap_or_default();
+    let target_scope = resolved_params
+        .scope_id
+        .or(scope_id)
+        .or(scope_id_camel)
+        .unwrap_or(0);
+    let target_width = resolved_params.width.or(width).unwrap_or(0.0);
+    let target_height = resolved_params.height.or(height).unwrap_or(0.0);
+    (target_scope, target_width, target_height)
+}
+
 /// バルーンウィンドウのサイズを画像実寸法に合せてリサイズするコマンド
-#[tauri::command]
+#[tauri::command(rename_all = "snake_case")]
+#[allow(non_snake_case)]
+#[cfg_attr(not(desktop), allow(unused_variables))]
 pub async fn resize_balloon_window(
     app_handle: tauri::AppHandle,
-    params: ResizeBalloonWindowParams,
+    params: Option<ResizeBalloonWindowParams>,
+    scope_id: Option<i32>,
+    scopeId: Option<i32>,
+    width: Option<f64>,
+    height: Option<f64>,
 ) -> Result<(), String> {
     #[cfg(desktop)]
     {
-        let scope_id = params.scope_id();
-        let width = params.width();
-        let height = params.height();
-        use tauri::Manager;
-        let label = format!("balloon_window_{}", scope_id);
-        if let Some(balloon_win) = app_handle.get_webview_window(&label) {
-            let _ =
-                balloon_win.set_size(tauri::Size::Logical(tauri::LogicalSize { width, height }));
+        let (target_scope, target_width, target_height) =
+            resolve_resize_balloon_args(params, scope_id, scopeId, width, height);
+        if target_width.is_finite()
+            && target_height.is_finite()
+            && target_width > 0.0
+            && target_height > 0.0
+        {
+            use tauri::Manager;
+            let label = format!("balloon_window_{}", target_scope);
+            if let Some(balloon_win) = app_handle.get_webview_window(&label) {
+                let _ = balloon_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
+                    width: target_width,
+                    height: target_height,
+                }));
+            }
         }
     }
     Ok(())
@@ -242,4 +279,61 @@ pub async fn hide_balloon_window(
         }
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn resize_params_deserialize_camel_snake_and_defaults() {
+        let camel: ResizeBalloonWindowParams =
+            serde_json::from_str(r#"{"scopeId": 2, "width": 360.0, "height": 240.0}"#).unwrap();
+        assert_eq!(camel.scope_id(), 2);
+        assert_eq!(camel.width(), 360.0);
+        assert_eq!(camel.height(), 240.0);
+
+        let snake: ResizeBalloonWindowParams =
+            serde_json::from_str(r#"{"scope_id": 1, "width": 320.0, "height": 210.0}"#).unwrap();
+        assert_eq!(snake.scope_id(), 1);
+        assert_eq!(snake.width(), 320.0);
+        assert_eq!(snake.height(), 210.0);
+
+        let empty: ResizeBalloonWindowParams = serde_json::from_str(r#"{}"#).unwrap();
+        assert_eq!(empty.scope_id(), 0);
+        assert_eq!(empty.width(), 280.0);
+        assert_eq!(empty.height(), 200.0);
+    }
+
+    #[test]
+    fn resolve_resize_args_supports_nested_flat_and_fallbacks() {
+        let nested: ResizeBalloonWindowParams =
+            serde_json::from_str(r#"{"scopeId": 1, "width": 410.0, "height": 290.0}"#).unwrap();
+        assert_eq!(
+            resolve_resize_balloon_args(Some(nested), Some(9), Some(8), Some(100.0), Some(100.0)),
+            (1, 410.0, 290.0)
+        );
+
+        assert_eq!(
+            resolve_resize_balloon_args(None, None, Some(2), Some(380.0), Some(260.0)),
+            (2, 380.0, 260.0)
+        );
+
+        assert_eq!(
+            resolve_resize_balloon_args(None, Some(3), None, Some(300.0), Some(220.0)),
+            (3, 300.0, 220.0)
+        );
+
+        let partial: ResizeBalloonWindowParams =
+            serde_json::from_str(r#"{"width": 350.0}"#).unwrap();
+        assert_eq!(
+            resolve_resize_balloon_args(Some(partial), None, Some(1), Some(999.0), Some(250.0)),
+            (1, 350.0, 250.0)
+        );
+
+        assert_eq!(
+            resolve_resize_balloon_args(None, None, None, None, None),
+            (0, 0.0, 0.0)
+        );
+    }
 }

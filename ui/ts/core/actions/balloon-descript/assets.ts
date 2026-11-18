@@ -258,19 +258,52 @@ export function applyAssetProperties(
 	setMouseCursor("mousecursor.wait", "--balloon-cursor-wait");
 
 	// [arrow0.x,座標], [arrow0.y,座標], [arrow1.x,座標], [arrow1.y,座標]:
-	const arrow0x = parseInt(props["arrow0.x"], 10);
-	const arrow0y = parseInt(props["arrow0.y"], 10);
-	if (!Number.isNaN(arrow0x))
-		root.style.setProperty("--balloon-arrow0-x", `${arrow0x}px`);
-	if (!Number.isNaN(arrow0y))
-		root.style.setProperty("--balloon-arrow0-y", `${arrow0y}px`);
+	const applyArrowCoord = (
+		value: number,
+		prefix: string,
+		axis: "x" | "y",
+		posEdge: "left" | "top",
+		negEdge: "right" | "bottom",
+	) => {
+		if (Number.isNaN(value)) return;
+		root.style.setProperty(`${prefix}-${axis}`, `${value}px`);
+		if (value >= 0) {
+			root.style.setProperty(`${prefix}-${posEdge}`, `${value}px`);
+			root.style.setProperty(`${prefix}-${negEdge}`, "auto");
+		} else {
+			root.style.setProperty(`${prefix}-${negEdge}`, `${Math.abs(value)}px`);
+			root.style.setProperty(`${prefix}-${posEdge}`, "auto");
+		}
+	};
 
-	const arrow1x = parseInt(props["arrow1.x"], 10);
-	const arrow1y = parseInt(props["arrow1.y"], 10);
-	if (!Number.isNaN(arrow1x))
-		root.style.setProperty("--balloon-arrow1-x", `${arrow1x}px`);
-	if (!Number.isNaN(arrow1y))
-		root.style.setProperty("--balloon-arrow1-y", `${arrow1y}px`);
+	applyArrowCoord(
+		parseInt(props["arrow0.x"], 10),
+		"--balloon-arrow0",
+		"x",
+		"left",
+		"right",
+	);
+	applyArrowCoord(
+		parseInt(props["arrow0.y"], 10),
+		"--balloon-arrow0",
+		"y",
+		"top",
+		"bottom",
+	);
+	applyArrowCoord(
+		parseInt(props["arrow1.x"], 10),
+		"--balloon-arrow1",
+		"x",
+		"left",
+		"right",
+	);
+	applyArrowCoord(
+		parseInt(props["arrow1.y"], 10),
+		"--balloon-arrow1",
+		"y",
+		"top",
+		"bottom",
+	);
 
 	// [clickwaitmarker.x,座標], [clickwaitmarker.y,座標]:
 	const cwX = parseInt(props["clickwaitmarker.x"], 10);

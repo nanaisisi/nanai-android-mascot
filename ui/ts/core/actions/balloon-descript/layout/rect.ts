@@ -28,14 +28,15 @@ export function applyValidRectProperties(
 	// [wordwrappoint.x,座標], [wordwrappoint.y,座標]:
 	if (props["wordwrappoint.x"]) {
 		const ww = parseInt(props["wordwrappoint.x"], 10);
-		if (!Number.isNaN(ww) && ww > 50) {
+		if (!Number.isNaN(ww) && (ww > 50 || ww < 0)) {
+			const maxWidth = ww > 50 ? `${ww}px` : `calc(100% - ${Math.abs(ww)}px)`;
 			const textEl = document.querySelector(
 				".balloon-text",
 			) as HTMLElement | null;
 			if (textEl) {
-				textEl.style.maxWidth = `${ww}px`;
+				textEl.style.maxWidth = maxWidth;
 			}
-			root.style.setProperty("--balloon-max-width", `${ww}px`);
+			root.style.setProperty("--balloon-max-width", maxWidth);
 		}
 	}
 

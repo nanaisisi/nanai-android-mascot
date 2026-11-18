@@ -20,12 +20,14 @@ body {
 	width: 100%;
 	height: 100%;
 	display: flex;
-	align-items: center;
-	justify-content: center;
+	align-items: flex-start;
+	justify-content: flex-start;
 	overflow: visible;
 }
 
 .balloon {
+	position: relative;
+	flex: 0 0 auto;
 	-webkit-app-region: no-drag;
 	app-region: no-drag;
 	background-color: var(--balloon-bg, transparent);
@@ -42,11 +44,13 @@ body {
 	box-sizing: border-box;
 	width: var(--balloon-width, 280px);
 	min-width: var(--balloon-min-width, 150px);
-	max-width: 100%;
+	max-width: none;
+	height: var(--balloon-height, var(--balloon-min-height, 140px));
 	min-height: var(--balloon-min-height, 70px);
-	max-height: var(--balloon-max-height, none);
-	overflow-y: auto;
-	overflow-x: hidden;
+	max-height: var(--balloon-max-height, var(--balloon-height, 240px));
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
 	overflow-wrap: anywhere;
 	word-break: break-word;
 	font-family: var(--balloon-font-family, sans-serif);
@@ -57,33 +61,11 @@ body {
 	-webkit-writing-mode: var(--balloon-writing-mode, horizontal-tb);
 	contain: layout paint;
 	will-change: contents;
-	scrollbar-width: thin;
-	scrollbar-color: var(--balloon-border-color, rgba(0, 0, 0, 0.25)) transparent;
+	scrollbar-width: none;
 }
 
 .balloon::-webkit-scrollbar {
-	width: 6px;
-	height: 6px;
-}
-
-.balloon::-webkit-scrollbar-track {
-	background: transparent;
-}
-
-.balloon::-webkit-scrollbar-thumb {
-	background-color: var(--balloon-border-color, rgba(0, 0, 0, 0.25));
-	border-radius: 3px;
-}
-
-.balloon::-webkit-scrollbar-thumb:hover {
-	background-color: var(--balloon-highlight-bg, rgba(0, 120, 215, 0.5));
-}
-
-@media (max-width: 600px) {
-	.balloon {
-		max-width: 95vw;
-		box-sizing: border-box;
-	}
+	display: none;
 }
 
 .balloon:active {
@@ -91,9 +73,16 @@ body {
 }
 
 .balloon-text {
-	pointer-events: none;
+	pointer-events: auto;
+	flex: 1 1 auto;
+	min-height: 0;
 	width: 100%;
 	max-width: var(--balloon-max-width, 100%);
+	height: 100%;
+	max-height: 100%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	scrollbar-width: none;
 	box-sizing: border-box;
 	overflow-wrap: anywhere;
 	word-break: break-word;
@@ -110,6 +99,14 @@ body {
 	text-shadow: var(--balloon-text-shadow, none);
 	writing-mode: inherit;
 	-webkit-writing-mode: inherit;
+}
+
+.balloon-text::-webkit-scrollbar {
+	display: none;
+}
+
+.balloon-text,
+.balloon-text * {
 	user-select: none;
 	-webkit-user-select: none;
 }
@@ -252,37 +249,70 @@ body {
 }
 
 /* バルーンオプション画像 (arrow.filename, clickwaitmarker.filename 等) */
-.balloon {
-	position: relative;
+/* スクロール矢印 (arrow.filename: arrow0=上, arrow1=下) */
+.balloon-scroll-arrow-up,
+.balloon-scroll-arrow-down {
+	display: none;
+	position: absolute;
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-position: center;
+	cursor: pointer;
+	z-index: 100;
+	pointer-events: auto;
+	user-select: none;
+	-webkit-user-select: none;
 }
 
-/* スクロール矢印 (arrow.filename: arrow0=上, arrow1=下) */
+.balloon-scroll-arrow-up[data-visible="true"],
+.balloon-scroll-arrow-down[data-visible="true"] {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
 .balloon-scroll-arrow-up {
-	display: var(--balloon-arrow-display, none);
-	position: absolute;
-	top: var(--balloon-arrow0-y, 6px);
-	right: var(--balloon-arrow0-x, 8px);
+	top: var(--balloon-arrow0-top, var(--balloon-arrow0-y, 6px));
+	bottom: var(--balloon-arrow0-bottom, auto);
+	left: var(--balloon-arrow0-left, auto);
+	right: var(--balloon-arrow0-right, var(--balloon-arrow0-x, 8px));
 	width: var(--balloon-arrow0-width, 16px);
 	height: var(--balloon-arrow0-height, 16px);
 	background-image: var(--balloon-arrow0-image, none);
-	background-repeat: no-repeat;
-	background-size: contain;
-	cursor: pointer;
-	z-index: 100;
 }
 
 .balloon-scroll-arrow-down {
-	display: var(--balloon-arrow-display, none);
-	position: absolute;
-	bottom: var(--balloon-arrow1-y, 6px);
-	right: var(--balloon-arrow1-x, 8px);
+	top: var(--balloon-arrow1-top, auto);
+	bottom: var(--balloon-arrow1-bottom, var(--balloon-arrow1-y, 6px));
+	left: var(--balloon-arrow1-left, auto);
+	right: var(--balloon-arrow1-right, var(--balloon-arrow1-x, 8px));
 	width: var(--balloon-arrow1-width, 16px);
 	height: var(--balloon-arrow1-height, 16px);
 	background-image: var(--balloon-arrow1-image, none);
-	background-repeat: no-repeat;
-	background-size: contain;
-	cursor: pointer;
-	z-index: 100;
+}
+
+.balloon-scroll-arrow-up::after {
+	content: "▲";
+	font-size: 10px;
+	line-height: 1;
+	color: var(--balloon-text-color, #333333);
+	opacity: 0.75;
+	pointer-events: none;
+}
+
+.balloon-scroll-arrow-down::after {
+	content: "▼";
+	font-size: 10px;
+	line-height: 1;
+	color: var(--balloon-text-color, #333333);
+	opacity: 0.75;
+	pointer-events: none;
+}
+
+.balloon-scroll-arrow-up[data-has-image="true"]::after,
+.balloon-scroll-arrow-down[data-has-image="true"]::after {
+	content: none;
+	display: none;
 }
 
 /* クリック待ちマーカー (clickwaitmarker.filename) */

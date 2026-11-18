@@ -23,15 +23,16 @@ body[class*="overhead"] {
 	app-region: no-drag;
 }
 
-.balloon-text,
-.balloon-text * {
-	pointer-events: none;
+.balloon-text {
+	pointer-events: auto;
 }
 
 .balloon button,
 .balloon a,
 .balloon .balloon-choice-btn,
-.balloon .balloon-anchor {
+.balloon .balloon-anchor,
+.balloon .balloon-scroll-arrow-up,
+.balloon .balloon-scroll-arrow-down {
 	pointer-events: auto;
 	cursor: pointer;
 	-webkit-app-region: no-drag;

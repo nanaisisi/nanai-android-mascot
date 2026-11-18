@@ -1,11 +1,11 @@
 /**
- * 設定・プラグイン用 HTML テンプレート (SSP: 設定 準拠ダイナミックタブ対応)
+ * 設定・プラグイン用 HTML テンプレート (NAM: 設定 準拠ダイナミックタブ対応)
  */
 export const settingsTemplates = {
 	"settings-modal-content": `
     <div class="ssp-settings-dialog">
       <div class="ssp-settings-header">
-        <h2 style="font-size: 14px; margin: 0; padding: 4px 8px; font-weight: bold; background: #0078d7; color: white;">SSP: 設定</h2>
+        <h2 style="font-size: 14px; margin: 0; padding: 4px 8px; font-weight: bold; background: #0078d7; color: white;">NAM: 設定</h2>
       </div>
 
       <!-- 設定タブナビゲーション -->
@@ -25,16 +25,16 @@ export const settingsTemplates = {
         <button type="button" class="ssp-tab-btn" data-tab="im" style="padding: 3px 8px; margin-right: 2px; border: 1px solid #ccc; border-bottom: none; background: #eee; cursor: pointer;">IM</button>
         <button type="button" class="ssp-tab-btn" data-tab="i18n" style="padding: 3px 8px; margin-right: 2px; border: 1px solid #ccc; border-bottom: none; background: #eee; cursor: pointer;">国際化</button>
         <button type="button" class="ssp-tab-btn" data-tab="stream" style="padding: 3px 8px; margin-right: 2px; border: 1px solid #ccc; border-bottom: none; background: #eee; cursor: pointer;">配信</button>
-        <button type="button" class="ssp-tab-btn" data-tab="dev" style="padding: 3px 8px; border: 1px solid #ccc; border-bottom: none; background: #eee; cursor: pointer;">開発/その他</button>
+        <button type="button" class="ssp-tab-btn" id="ssp-tab-btn-dev" data-tab="dev" style="display: none; padding: 3px 8px; border: 1px solid #ccc; border-bottom: none; background: #eee; cursor: pointer;">開発/その他</button>
       </div>
 
       <!-- 一般タブコンテンツ -->
       <div class="ssp-tab-content" id="ssp-tab-general" style="padding: 12px; font-size: 12px; background: #fff;">
         <fieldset style="border: 1px solid #ccc; padding: 8px; margin-bottom: 8px;">
-          <legend style="font-weight: bold; color: #333;">一般: SSP全体の設定</legend>
+          <legend style="font-weight: bold; color: #333;">一般: NAM全体の設定</legend>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; font-size: 11px;">
-            <label><input type="checkbox" id="auto-update-check" checked /> SSPが更新されているか自動でチェックする</label>
-            <label><input type="checkbox" id="file-association" checked /> ファイルをSSPに関連づける</label>
+            <label><input type="checkbox" id="auto-update-check" checked /> NAMが更新されているか自動でチェックする</label>
+            <label><input type="checkbox" id="file-association" checked /> ファイルをNAMに関連づける</label>
             <label><input type="checkbox" id="always-show-uninstall" /> 常にアンインストールメニューを表示</label>
             <label><input type="checkbox" id="always-show-tray-icon" checked /> 常にタスクトレイアイコンを表示</label>
             <label><input type="checkbox" id="show-readme-on-install" checked /> インストール時にREADMEを表示する</label>
@@ -47,7 +47,7 @@ export const settingsTemplates = {
 
         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 8px;">
           <fieldset style="border: 1px solid #ccc; padding: 6px; font-size: 11px;">
-            <legend style="font-weight: bold;">ダークモード [SSPの再起動が必要]</legend>
+            <legend style="font-weight: bold;">ダークモード [NAMの再起動が必要]</legend>
             <label><input type="radio" name="dark-mode-opt" value="auto" checked /> 自動(OS設定)</label><br>
             <label><input type="radio" name="dark-mode-opt" value="dark" /> 常にダーク</label><br>
             <label><input type="radio" name="dark-mode-opt" value="light" /> 常にライト</label>
@@ -80,6 +80,72 @@ export const settingsTemplates = {
             <label><input type="radio" name="user-gender" value="male" /> 男</label>
             <label><input type="radio" name="user-gender" value="female" /> 女</label>
             <label><input type="radio" name="user-gender" value="none" checked /> 未設定</label>
+          </div>
+        </fieldset>
+      </div>
+
+      <!-- 開発/その他タブコンテンツ (SSP本物互換) -->
+      <div class="ssp-tab-content" id="ssp-tab-dev" style="display: none; padding: 12px; font-size: 11px; background: #fff; max-height: 420px; overflow-y: auto;">
+        <div style="font-weight: bold; margin-bottom: 6px; color: #333;">開発/その他: 開発用やその他細かい設定</div>
+
+        <!-- FMO / ドロップ / 更新属性 -->
+        <fieldset style="border: 1px solid #ccc; padding: 6px; margin-bottom: 6px;">
+          <legend style="font-weight: bold;">FMO・ファイル更新操作</legend>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+            <label><input type="checkbox" id="change-fmo-name" /> FMO名を変更する</label>
+            <span>名前: <input type="text" id="fmo-name-input" value="Sakura" style="width: 90px; padding: 2px;" /></span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 3px;">
+            <label><input type="checkbox" id="drop-make-nar" /> フォルダをドロップした際に更新ファイルやNARを作成</label>
+            <label><input type="checkbox" id="keep-old-update-files" /> ネットワーク更新時に旧ファイルを残す</label>
+            <label><input type="checkbox" id="ignore-readonly-files" checked /> 読み取り専用属性ファイルは更新対象にしない</label>
+            <label><input type="checkbox" id="hide-missing-surface" /> サーフィスが存在しない時に非表示とする</label>
+          </div>
+        </fieldset>
+
+        <!-- 互換性・システム制御 -->
+        <fieldset style="border: 1px solid #ccc; padding: 6px; margin-bottom: 6px;">
+          <legend style="font-weight: bold;">互換性・起動ロック</legend>
+          <div style="display: flex; flex-direction: column; gap: 3px;">
+            <label><input type="checkbox" id="fake-materia-mutex" /> Materiaが起動しているように見せかける ("sakura" Mutex)</label>
+            <label><input type="checkbox" id="suppress-vanish" /> Vanish (アンインストール)実行を抑制</label>
+            <label><input type="checkbox" id="unlock-multiple-instance" style="accent-color: #d32f2f;" /> 複数起動ロックを解除(危険)</label>
+            <label><input type="checkbox" id="use-vcs-for-update" /> 利用可能な場合は更新にバージョン管理ツールを使う</label>
+          </div>
+        </fieldset>
+
+        <!-- エラー・デバッグ通知 -->
+        <fieldset style="border: 1px solid #ccc; padding: 6px; margin-bottom: 6px;">
+          <legend style="font-weight: bold;">エラー・例外処理</legend>
+          <div style="display: flex; flex-direction: column; gap: 3px;">
+            <label><input type="checkbox" id="notify-warning-error" checked /> Warning レベル以上のエラー発生を通知</label>
+            <label><input type="checkbox" id="use-exception-handler" checked /> 例外ハンドラを使う</label>
+            <label><input type="checkbox" id="include-beta-on-autoupdate" /> 自動更新の際にテスト版も対象にする</label>
+          </div>
+        </fieldset>
+
+        <!-- 更新定義ファイル -->
+        <fieldset style="border: 1px solid #ccc; padding: 6px; margin-bottom: 6px;">
+          <legend style="font-weight: bold;">更新定義ファイル</legend>
+          <div style="display: flex; flex-direction: column; gap: 3px;">
+            <label><input type="checkbox" id="make-updates2-dau" checked /> updates2.dauを作成</label>
+            <label><input type="checkbox" id="make-updates-txt" checked /> updates.txtを作成</label>
+            <label><input type="checkbox" id="always-utf8-charset" /> 常にUTF-8文字コードを使用する(互換性に問題あり)</label>
+            <label><input type="checkbox" id="cache-hash-calculation" checked /> ファイルのハッシュ値計算処理キャッシュ</label>
+          </div>
+        </fieldset>
+
+        <!-- NAR作成位置 -->
+        <fieldset style="border: 1px solid #ccc; padding: 6px;">
+          <legend style="font-weight: bold;">NAR作成位置</legend>
+          <div style="display: flex; flex-direction: column; gap: 3px;">
+            <label><input type="radio" name="nar-location-opt" value="ask" checked /> 毎回指定</label>
+            <label><input type="radio" name="nar-location-opt" value="same" /> フォルダと同じ</label>
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <label><input type="radio" name="nar-location-opt" value="custom" /> 指定したフォルダ</label>
+              <input type="text" id="nar-custom-dir-path" placeholder="C:\\path\\to\\dir" style="flex: 1; padding: 2px;" />
+              <button type="button" id="browse-nar-dir-btn" style="padding: 2px 8px;">参照...</button>
+            </div>
           </div>
         </fieldset>
       </div>

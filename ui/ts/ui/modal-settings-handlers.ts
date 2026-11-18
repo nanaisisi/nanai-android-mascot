@@ -22,17 +22,42 @@ export class ModalSettingsHandlers {
 	setupSettingsListeners() {
 		// タブ切り替えリスナー
 		const tabBtns = document.querySelectorAll(".ssp-tab-btn");
+		const tabContents = document.querySelectorAll(".ssp-tab-content");
 		tabBtns.forEach((btn) => {
 			btn.addEventListener("click", (e) => {
 				tabBtns.forEach((b) => {
 					(b as HTMLElement).style.background = "#eee";
 					b.classList.remove("active");
 				});
+				tabContents.forEach((c) => {
+					(c as HTMLElement).style.display = "none";
+				});
 				const targetBtn = e.currentTarget as HTMLElement;
 				targetBtn.style.background = "#fff";
 				targetBtn.classList.add("active");
+				const tabId = targetBtn.getAttribute("data-tab");
+				const activeContent = document.getElementById(`ssp-tab-${tabId}`);
+				if (activeContent) {
+					activeContent.style.display = "block";
+				} else {
+					const defaultContent = document.getElementById("ssp-tab-general");
+					if (defaultContent) defaultContent.style.display = "block";
+				}
 			});
 		});
+
+		// デバッグモード判定: 基本非表示、debug時はデフォルトオン (inline-block)
+		const devTabBtn = document.getElementById("ssp-tab-btn-dev");
+		const s = (this.app?.settings as Record<string, unknown>) || {};
+		const isDevMode =
+			Boolean(s.developerModeEnabled) ||
+			Boolean(s.devModeEnabled) ||
+			s.debugLevel === "debug" ||
+			isTauriAvailable();
+
+		if (devTabBtn?.style) {
+			devTabBtn.style.display = isDevMode ? "inline-block" : "none";
+		}
 
 		// フォームエレメント取得ヘルパー
 		const getCheck = (id: string) =>
@@ -67,6 +92,26 @@ export class ModalSettingsHandlers {
 		const userNickname = getText("user-nickname");
 		const userBirthday = getText("user-birthday");
 
+		// 開発/その他タブエレメント参照 (SSP本物互換)
+		const changeFmoName = getCheck("change-fmo-name");
+		const fmoNameInput = getText("fmo-name-input");
+		const dropMakeNar = getCheck("drop-make-nar");
+		const keepOldUpdateFiles = getCheck("keep-old-update-files");
+		const ignoreReadonlyFiles = getCheck("ignore-readonly-files");
+		const hideMissingSurface = getCheck("hide-missing-surface");
+		const fakeMateriaMutex = getCheck("fake-materia-mutex");
+		const suppressVanish = getCheck("suppress-vanish");
+		const unlockMultipleInstance = getCheck("unlock-multiple-instance");
+		const useVcsForUpdate = getCheck("use-vcs-for-update");
+		const notifyWarningError = getCheck("notify-warning-error");
+		const useExceptionHandler = getCheck("use-exception-handler");
+		const includeBetaOnAutoupdate = getCheck("include-beta-on-autoupdate");
+		const makeUpdates2Dau = getCheck("make-updates2-dau");
+		const makeUpdatesTxt = getCheck("make-updates-txt");
+		const alwaysUtf8Charset = getCheck("always-utf8-charset");
+		const cacheHashCalculation = getCheck("cache-hash-calculation");
+		const narCustomDirPath = getText("nar-custom-dir-path");
+
 		// 初期設定値のフォームへのセット
 		if (this.app?.settings) {
 			const s = this.app.settings as Record<string, unknown>;
@@ -100,6 +145,51 @@ export class ModalSettingsHandlers {
 			if (userBirthday && s.userBirthday)
 				userBirthday.value = String(s.userBirthday);
 			if (s.userGender) setRadio("user-gender", String(s.userGender));
+
+			// 開発/その他タブ初期セット
+			if (changeFmoName)
+				changeFmoName.checked = (s.changeFmoName as boolean) ?? false;
+			if (fmoNameInput && s.fmoNameInput)
+				fmoNameInput.value = String(s.fmoNameInput);
+			if (dropMakeNar)
+				dropMakeNar.checked = (s.dropMakeNar as boolean) ?? false;
+			if (keepOldUpdateFiles)
+				keepOldUpdateFiles.checked = (s.keepOldUpdateFiles as boolean) ?? false;
+			if (ignoreReadonlyFiles)
+				ignoreReadonlyFiles.checked =
+					(s.ignoreReadonlyFiles as boolean) ?? true;
+			if (hideMissingSurface)
+				hideMissingSurface.checked = (s.hideMissingSurface as boolean) ?? false;
+			if (fakeMateriaMutex)
+				fakeMateriaMutex.checked = (s.fakeMateriaMutex as boolean) ?? false;
+			if (suppressVanish)
+				suppressVanish.checked = (s.suppressVanish as boolean) ?? false;
+			if (unlockMultipleInstance)
+				unlockMultipleInstance.checked =
+					(s.unlockMultipleInstance as boolean) ?? false;
+			if (useVcsForUpdate)
+				useVcsForUpdate.checked = (s.useVcsForUpdate as boolean) ?? false;
+			if (notifyWarningError)
+				notifyWarningError.checked = (s.notifyWarningError as boolean) ?? true;
+			if (useExceptionHandler)
+				useExceptionHandler.checked =
+					(s.useExceptionHandler as boolean) ?? true;
+			if (includeBetaOnAutoupdate)
+				includeBetaOnAutoupdate.checked =
+					(s.includeBetaOnAutoupdate as boolean) ?? false;
+			if (makeUpdates2Dau)
+				makeUpdates2Dau.checked = (s.makeUpdates2Dau as boolean) ?? true;
+			if (makeUpdatesTxt)
+				makeUpdatesTxt.checked = (s.makeUpdatesTxt as boolean) ?? true;
+			if (alwaysUtf8Charset)
+				alwaysUtf8Charset.checked = (s.alwaysUtf8Charset as boolean) ?? false;
+			if (cacheHashCalculation)
+				cacheHashCalculation.checked =
+					(s.cacheHashCalculation as boolean) ?? true;
+			if (s.narLocationOpt)
+				setRadio("nar-location-opt", String(s.narLocationOpt));
+			if (narCustomDirPath && s.narCustomDirPath)
+				narCustomDirPath.value = String(s.narCustomDirPath);
 		}
 
 		const overlayBtn = document.getElementById("open-overlay-settings-btn");
@@ -146,6 +236,26 @@ export class ModalSettingsHandlers {
 					showStatusWindow: showStatusWindow?.checked ?? false,
 					virusCheckEnabled: virusCheckEnabled?.checked ?? true,
 					developerModeEnabled: developerModeEnabled?.checked ?? false,
+					// 開発/その他タブ本物互換項目
+					changeFmoName: changeFmoName?.checked ?? false,
+					fmoNameInput: fmoNameInput?.value || "Sakura",
+					dropMakeNar: dropMakeNar?.checked ?? false,
+					keepOldUpdateFiles: keepOldUpdateFiles?.checked ?? false,
+					ignoreReadonlyFiles: ignoreReadonlyFiles?.checked ?? true,
+					hideMissingSurface: hideMissingSurface?.checked ?? false,
+					fakeMateriaMutex: fakeMateriaMutex?.checked ?? false,
+					suppressVanish: suppressVanish?.checked ?? false,
+					unlockMultipleInstance: unlockMultipleInstance?.checked ?? false,
+					useVcsForUpdate: useVcsForUpdate?.checked ?? false,
+					notifyWarningError: notifyWarningError?.checked ?? true,
+					useExceptionHandler: useExceptionHandler?.checked ?? true,
+					includeBetaOnAutoupdate: includeBetaOnAutoupdate?.checked ?? false,
+					makeUpdates2Dau: makeUpdates2Dau?.checked ?? true,
+					makeUpdatesTxt: makeUpdatesTxt?.checked ?? true,
+					alwaysUtf8Charset: alwaysUtf8Charset?.checked ?? false,
+					cacheHashCalculation: cacheHashCalculation?.checked ?? true,
+					narLocationOpt: getRadio("nar-location-opt")?.value || "ask",
+					narCustomDirPath: narCustomDirPath?.value || "",
 					darkModeOpt,
 					darkMode: isDark,
 					locationOpt: getRadio("location-opt")?.value || "auto",

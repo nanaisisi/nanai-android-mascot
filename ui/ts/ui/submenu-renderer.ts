@@ -225,12 +225,12 @@ export function renderSubmenuContent({
 			{ action: "updatecheck", label: "本体更新をチェック (U)", shortcut: "" },
 			{ action: "speech-recognition", label: "音声認識", shortcut: "" },
 			{ action: "speech-synthesis", label: "音声合成 (V)", shortcut: "" },
-			{ action: "addressbar", label: "アドレスバー (A)", shortcut: "" },
+			{ action: "addressbar", label: "アドレスバー (A)", shortcut: "Ctrl+Shift+U" },
 			{ action: "open-file", label: "ファイルを開く (1)", shortcut: "Ctrl+O" },
 			{
 				action: "open-folder",
 				label: "フォルダを選択する (S)",
-				shortcut: "Ctrl+Shift+U",
+				shortcut: "Ctrl+F",
 			},
 			{
 				action: "clear-cache",
@@ -260,8 +260,43 @@ export function renderSubmenuContent({
 				label: "バルーンを消す (B)",
 				shortcut: "Ctrl+Shift+Del",
 			},
+			{ type: "separator", isDevOnly: true },
+			{
+				action: "script-log",
+				label: "スクリプトログ (L)",
+				shortcut: "Ctrl+L",
+				isDevOnly: true,
+			},
+			{
+				action: "dev-palette",
+				label: "開発用パレット (D)",
+				shortcut: "Ctrl+Shift+D",
+				isDevOnly: true,
+			},
 		];
+
+		let isDevMode = false;
+		try {
+			const saved = localStorage.getItem("nanai-android-mascot-settings");
+			if (saved) {
+				const s = JSON.parse(saved);
+				isDevMode = Boolean(
+					s.developerModeEnabled ||
+						s.devModeEnabled ||
+						s.debugLevel === "debug",
+				);
+			}
+		} catch (_) {}
+
 		utilityItems.forEach((item) => {
+			if (item.isDevOnly && !isDevMode) return;
+			if (item.type === "separator") {
+				const separator = document.createElement("hr");
+				separator.className = "menu-separator";
+				container.appendChild(separator);
+				return;
+			}
+
 			const btn = document.createElement("button");
 			btn.type = "button";
 			btn.className = "menu-item";
@@ -353,6 +388,79 @@ export function renderSubmenuContent({
 			btn.addEventListener("click", () => {
 				dispatchSubmenuAction(`balloon-scale-${pct}`);
 			});
+			container.appendChild(btn);
+		});
+	} else if (
+		currentSubmenuType === "settings" ||
+		currentSubmenuType === "settings-root" ||
+		currentSubmenuType === "preferences"
+	) {
+		const settingsItems = [
+			{ action: "settings-main", label: "本体設定...(P)" },
+			{ action: "settings-ghost", label: "ゴーストごとの設定...(G)" },
+			{ type: "separator" },
+			{
+				action: "window-mode-all",
+				label: "ウインドウモード - 全ゴースト",
+				checked: true,
+			},
+			{
+				action: "window-mode-per-ghost",
+				label: "ウインドウモード - ゴーストごと",
+				checked: false,
+			},
+			{ action: "toggle-proxy", label: "プロキシサーバを有効にする(X)" },
+			{ action: "charset-settings", label: "文字コード設定(C)" },
+			{ type: "separator" },
+			{
+				label: "[旧互換機能]",
+				isHeader: true,
+				disabled: true,
+			},
+			{
+				action: "talk-interval-ghost-choice",
+				label: "　話すタイミングをゴースト任せ(L)",
+				checked: true,
+			},
+			{
+				action: "legacy-spec-support",
+				label: "　旧仕様サポート(0)",
+				disabled: true,
+			},
+		];
+
+		settingsItems.forEach((item) => {
+			if (item.type === "separator") {
+				const separator = document.createElement("hr");
+				separator.className = "menu-separator";
+				container.appendChild(separator);
+				return;
+			}
+			if (item.isHeader) {
+				const header = document.createElement("div");
+				header.className = "menu-item is-disabled";
+				header.style.cssText =
+					"font-weight: bold; opacity: 0.5; color: #888888; font-size: 11px; padding: 2px 8px; cursor: not-allowed; user-select: none;";
+				header.textContent = item.label;
+				container.appendChild(header);
+				return;
+			}
+
+			const btn = document.createElement("button");
+			btn.type = "button";
+			const isDisabled = Boolean(item.disabled);
+			btn.disabled = isDisabled;
+			btn.className = `menu-item${item.checked ? " is-current" : ""}${isDisabled ? " is-disabled" : ""}`;
+			if (isDisabled) {
+				btn.style.cssText =
+					"opacity: 0.5; color: #888888; cursor: not-allowed;";
+			}
+			btn.innerHTML = `<span class="menu-item-indicator">${item.checked ? "✓" : ""}</span><span class="menu-item-label">${item.label}</span>`;
+			if (!isDisabled) {
+				btn.addEventListener("click", () => {
+					dispatchSubmenuAction(item.action);
+				});
+			}
 			container.appendChild(btn);
 		});
 	}

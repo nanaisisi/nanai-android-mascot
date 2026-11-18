@@ -189,6 +189,60 @@ export function handleMenuActionImpl(
 		return context.showGhostInformation?.();
 	}
 
+	// 設定サブメニュー本物仕様アクション
+	if (action === "settings-main" || action === "settings-dialog") {
+		context.modalManager?.show?.("settings-modal-content");
+		return;
+	}
+	if (action === "settings-ghost") {
+		context.modalManager?.show?.("settings-modal-content");
+		return;
+	}
+	if (action === "window-mode-all" || action === "window-mode-per-ghost") {
+		if (context.app?.settings) {
+			(context.app.settings as Record<string, unknown>).windowModePerGhost =
+				action === "window-mode-per-ghost";
+		}
+		return;
+	}
+	if (action === "toggle-proxy") {
+		if (context.app?.settings) {
+			const s = context.app.settings as Record<string, unknown>;
+			s.enableProxy = !s.enableProxy;
+		}
+		return;
+	}
+	if (action === "charset-settings") {
+		context.modalManager?.show?.("settings-modal-content");
+		return;
+	}
+	if (action === "talk-interval-ghost-choice") {
+		if (context.app?.settings) {
+			const s = context.app.settings as Record<string, unknown>;
+			s.talkIntervalGhostChoice = !s.talkIntervalGhostChoice;
+		}
+		return;
+	}
+	if (action === "legacy-spec-support") {
+		if (context.app?.settings) {
+			const s = context.app.settings as Record<string, unknown>;
+			s.legacySpecSupport = !s.legacySpecSupport;
+		}
+		return;
+	}
+	if (action === "script-log" || action === "show-script-log") {
+		if (isTauriAvailable()) {
+			void invoke("show_ssp_log_window").catch(() => {});
+		} else {
+			context.modalManager?.show?.("plugins-modal-content");
+		}
+		return;
+	}
+	if (action === "dev-palette" || action === "show-dev-palette") {
+		context.modalManager?.show?.("settings-modal-content");
+		return;
+	}
+
 	if (action === "headlines" || action === "headline") {
 		gc?.sendShioriEvent?.("OnHeadline");
 		return;

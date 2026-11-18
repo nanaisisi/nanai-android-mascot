@@ -968,3 +968,92 @@ test("parseValidRect validrect.right=0 fallback and applyCommunicateBoxPropertie
 	assert.strictEqual(cbElNoX.style.maxWidth, "calc(100% - 16px)");
 	assert.strictEqual(cbElNoX.style.boxSizing, "border-box");
 });
+
+test("balloon-window binds Ctrl+Shift+F10 to reset_balloon_positions and ignores unrelated modifiers", async () => {
+	const env = setupBalloonMockEnvironment();
+	const internals = (
+		globalThis as unknown as {
+			__TAURI_INTERNALS__: {
+				invoke: (cmd: string, args?: unknown) => Promise<unknown>;
+			};
+		}
+	).__TAURI_INTERNALS__;
+	const origInvoke = internals.invoke;
+	const resetCalls: Array<{ cmd: string; args: unknown }> = [];
+
+	internals.invoke = async (cmd: string, args?: unknown) => {
+		if (cmd === "reset_balloon_positions") {
+			resetCalls.push({ cmd, args });
+			return;
+		}
+		return await origInvoke(cmd, args);
+	};
+
+	try {
+		const { initBalloonWindow, handleBalloonWindowKeydown } = await import(
+			"../ui/ts/ghost/balloon-window.js"
+		);
+		initBalloonWindow();
+		await new Promise((r) => setTimeout(r, 20));
+
+		const keydownListener = env.docListeners.keydown as unknown as (
+			e: unknown,
+		) => void;
+		assert.ok(typeof keydownListener === "function");
+
+		// Ctrl+Shift+F10 triggers reset_balloon_positions and calls preventDefault
+		let prevented = false;
+		keydownListener({
+			key: "F10",
+			ctrlKey: true,
+			shiftKey: true,
+			altKey: false,
+			metaKey: false,
+			preventDefault() {
+				prevented = true;
+			},
+		});
+		assert.strictEqual(prevented, true);
+		assert.strictEqual(resetCalls.length, 1);
+
+		// Lowercase f10 also triggers
+		let preventedLower = false;
+		assert.strictEqual(
+			handleBalloonWindowKeydown({
+				key: "f10",
+				ctrlKey: true,
+				shiftKey: true,
+				preventDefault() {
+					preventedLower = true;
+				},
+			} as unknown as KeyboardEvent),
+			true,
+		);
+		assert.strictEqual(preventedLower, true);
+		assert.strictEqual(resetCalls.length, 2);
+
+		// Unrelated modifiers / missing shift / wrong key / repeat must be ignored
+		const ignoredEvents = [
+			{ key: "F10", ctrlKey: true, shiftKey: true, altKey: true },
+			{ key: "F10", ctrlKey: true, shiftKey: true, metaKey: true },
+			{ key: "F10", ctrlKey: true, shiftKey: false },
+			{ key: "F10", ctrlKey: false, shiftKey: true },
+			{ key: "F10", ctrlKey: true, shiftKey: true, repeat: true },
+			{ key: "F12", ctrlKey: true, shiftKey: true },
+		];
+		for (const ev of ignoredEvents) {
+			let calledPrevent = false;
+			const handled = handleBalloonWindowKeydown({
+				...ev,
+				preventDefault() {
+					calledPrevent = true;
+				},
+			} as unknown as KeyboardEvent);
+			assert.strictEqual(handled, false);
+			assert.strictEqual(calledPrevent, false);
+		}
+		assert.strictEqual(resetCalls.length, 2);
+	} finally {
+		internals.invoke = origInvoke;
+	}
+});

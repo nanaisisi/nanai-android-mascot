@@ -5,7 +5,12 @@
 
 import assert from "node:assert/strict";
 import { test } from "vitest";
-import { setupWindowGestures } from "../../ui/ts/ghost/balloon-window/gesture.js";
+import {
+	BALLOON_RESET_HINT_TEXT,
+	formatBalloonOffsetText,
+	renderBalloonCoordPopup,
+	setupWindowGestures,
+} from "../../ui/ts/ghost/balloon-window/gesture.js";
 import { setupBalloonMockEnvironment } from "./mock-balloon-env.js";
 
 test("setupWindowGestures handles click, drag, double-tap zoom, and pinch gestures", () => {
@@ -164,5 +169,150 @@ test("setupWindowGestures invokes show_balloon_context_menu on contextmenu and d
 		);
 	} finally {
 		internals.invoke = origInvoke;
+	}
+});
+
+test("setupWindowGestures renders 2-line #coord-popup with character-relative offset during drag and hides on release", async () => {
+	assert.strictEqual(formatBalloonOffsetText(-84.4, 79.6), "Offset: -84,80");
+	assert.strictEqual(BALLOON_RESET_HINT_TEXT, "Reset: Ctrl+Shift+F10");
+
+	const env = setupBalloonMockEnvironment();
+	const internals = (
+		globalThis as unknown as {
+			__TAURI_INTERNALS__: {
+				invoke: (cmd: string, args?: unknown) => Promise<unknown>;
+			};
+		}
+	).__TAURI_INTERNALS__;
+	const origInvoke = internals.invoke;
+	const docAny = globalThis.document as unknown as {
+		createElement: (tag: string) => unknown;
+		getElementById: (id: string) => unknown;
+	};
+	const origCreateElement = docAny.createElement;
+	const origGetElementById = docAny.getElementById;
+
+	let balloonPos = { x: 100, y: 200 };
+	const charPos = { x: 184, y: 120 };
+	const savedCalls: unknown[] = [];
+
+	const createMockNode = () => {
+		const node = {
+			className: "",
+			textContent: "",
+			innerHTML: "UNTOUCHED",
+			style: { display: "none" } as Record<string, string>,
+			children: [] as Array<{ className: string; textContent: string }>,
+			replaceChildren(
+				...nodes: Array<{ className: string; textContent: string }>
+			) {
+				node.children = nodes;
+			},
+			appendChild(child: { className: string; textContent: string }) {
+				node.children.push(child);
+			},
+		};
+		return node;
+	};
+	const coordPopupEl = createMockNode();
+
+	docAny.createElement = (tag: string) => {
+		if (tag === "div") {
+			return { className: "", textContent: "", style: {} };
+		}
+		return origCreateElement(tag);
+	};
+	docAny.getElementById = (id: string) => {
+		if (id === "coord-popup") return coordPopupEl;
+		return origGetElementById(id);
+	};
+
+	internals.invoke = async (cmd: string, args: unknown) => {
+		if (cmd === "plugin:window|get_all_windows") {
+			return ["balloon_window_0", "subchar_window_0"];
+		}
+		if (cmd === "plugin:window|outer_position") {
+			const label = (args as { label?: string })?.label;
+			if (label === "subchar_window_0") return { ...charPos };
+			return { ...balloonPos };
+		}
+		if (cmd === "save_balloon_offset_from_position") {
+			savedCalls.push(args);
+			return;
+		}
+		return origInvoke(cmd, args);
+	};
+
+	try {
+		// Direct safe DOM rendering test
+		renderBalloonCoordPopup(
+			coordPopupEl as unknown as HTMLElement,
+			-84.2,
+			80.4,
+		);
+		assert.strictEqual(coordPopupEl.style.display, "block");
+		assert.strictEqual(coordPopupEl.innerHTML, "UNTOUCHED");
+		assert.strictEqual(coordPopupEl.children.length, 2);
+		assert.strictEqual(coordPopupEl.children[0].className, "coord-popup-line");
+		assert.strictEqual(coordPopupEl.children[0].textContent, "Offset: -84,80");
+		assert.strictEqual(coordPopupEl.children[1].className, "coord-popup-hint");
+		assert.strictEqual(
+			coordPopupEl.children[1].textContent,
+			"Reset: Ctrl+Shift+F10",
+		);
+
+		coordPopupEl.style.display = "none";
+		const mockGestureBox = {
+			style: { transform: "", transformOrigin: "" },
+			listeners: {} as Record<string, (e?: unknown) => void>,
+			addEventListener(ev: string, cb: (e?: unknown) => void) {
+				this.listeners[ev] = cb;
+			},
+		};
+
+		setupWindowGestures(mockGestureBox as unknown as HTMLElement, {
+			scopeId: 0,
+			getIsBalloonDontMove: () => false,
+			getUserScale: () => 1.0,
+			getDpiScale: () => 1.0,
+			onUserScaleChange: () => {},
+		});
+
+		// Drag start displays Offset: -84,80 + Reset: Ctrl+Shift+F10
+		mockGestureBox.listeners.mousedown({ button: 0 });
+		await new Promise((r) => setTimeout(r, 20));
+		assert.strictEqual(coordPopupEl.style.display, "block");
+		assert.strictEqual(coordPopupEl.children[0].textContent, "Offset: -84,80");
+		assert.strictEqual(
+			coordPopupEl.children[1].textContent,
+			"Reset: Ctrl+Shift+F10",
+		);
+
+		// Dragging balloon moves live offset
+		balloonPos = { x: 150, y: 245 };
+		(env.docListeners.mousemove as unknown as (() => void) | undefined)?.();
+		await new Promise((r) => setTimeout(r, 20));
+		assert.strictEqual(coordPopupEl.children[0].textContent, "Offset: -34,125");
+
+		// Release hides popup and saves offset once
+		mockGestureBox.listeners.mouseup();
+		assert.strictEqual(coordPopupEl.style.display, "none");
+		assert.deepStrictEqual(savedCalls, [{ scopeId: 0 }]);
+
+		// Touch drag also updates & hides popup
+		balloonPos = { x: 84, y: 140 };
+		mockGestureBox.listeners.touchstart({
+			touches: [{ clientX: 10, clientY: 10 }],
+		});
+		await new Promise((r) => setTimeout(r, 20));
+		assert.strictEqual(coordPopupEl.style.display, "block");
+		assert.strictEqual(coordPopupEl.children[0].textContent, "Offset: -100,20");
+		mockGestureBox.listeners.touchend({ touches: [] });
+		assert.strictEqual(coordPopupEl.style.display, "none");
+		assert.strictEqual(savedCalls.length, 2);
+	} finally {
+		internals.invoke = origInvoke;
+		docAny.createElement = origCreateElement;
+		docAny.getElementById = origGetElementById;
 	}
 });

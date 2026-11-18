@@ -46,10 +46,36 @@ const rootEl = {
 	style: {} as Record<string, string>,
 };
 
+const coordPopupEl = {
+	textContent: "",
+	style: { display: "none" } as Record<string, string>,
+};
+
+interface MockWindowState {
+	visible: boolean;
+	pos: { x: number; y: number };
+	size: { width: number; height: number };
+}
+
+let mockSelfPos: { x: number; y: number } | null = null;
+let mockSelfSize: { width: number; height: number } | null = null;
+let mockMonitors: Array<{
+	name: string | null;
+	scaleFactor: number;
+	position: { x: number; y: number };
+	size: { width: number; height: number };
+	workArea: {
+		position: { x: number; y: number };
+		size: { width: number; height: number };
+	};
+}> | null = null;
+let mockOtherWindows: Record<string, MockWindowState> | null = null;
+
 g.document = {
 	getElementById(id: string) {
 		if (id === "subchar-img") return imgEl;
 		if (id === "subchar-root") return rootEl;
+		if (id === "coord-popup") return coordPopupEl;
 		return null;
 	},
 	createElement(tag: string) {
@@ -94,11 +120,48 @@ g.__TAURI_INTERNALS__ = {
 		}
 		invokedCommands.push({ cmd, args });
 		if (cmd === "plugin:window|position") return { x: 100, y: 100 };
+		if (cmd === "plugin:window|outer_position") {
+			const label = (args as { label?: string } | undefined)?.label;
+			if (label && mockOtherWindows?.[label]) {
+				return mockOtherWindows[label].pos;
+			}
+			return mockSelfPos ?? { x: 100, y: 100 };
+		}
+		if (cmd === "plugin:window|outer_size") {
+			const label = (args as { label?: string } | undefined)?.label;
+			if (label && mockOtherWindows?.[label]) {
+				return mockOtherWindows[label].size;
+			}
+			return mockSelfSize ?? { width: 200, height: 360 };
+		}
+		if (cmd === "plugin:window|is_visible") {
+			const label = (args as { label?: string } | undefined)?.label;
+			if (label && mockOtherWindows?.[label]) {
+				return mockOtherWindows[label].visible;
+			}
+			return true;
+		}
+		if (cmd === "plugin:window|get_all_windows") {
+			if (!mockOtherWindows) return [];
+			return ["subchar_1", ...Object.keys(mockOtherWindows)];
+		}
+		if (cmd === "plugin:window|available_monitors") {
+			return mockMonitors ?? [];
+		}
+		if (
+			cmd === "plugin:window|current_monitor" ||
+			cmd === "plugin:window|primary_monitor"
+		) {
+			return mockMonitors?.[0] ?? null;
+		}
 		if (cmd === "plugin:window|set_position") return;
 		if (cmd === "plugin:window|start_dragging") return;
 		if (cmd === "show_menu_window") return;
+		if (cmd === "show_subchar_window") return;
 		if (cmd === "sync_character_balloon") return;
 		if (cmd === "set_character_scale") return;
+		if (cmd === "reset_character_positions") return;
+		if (cmd === "reset_balloon_positions") return;
 	},
 	transformCallback: (cb: unknown) => cb,
 	plugins: {
@@ -198,12 +261,23 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 		vi.useFakeTimers();
 		vi.setSystemTime(fakeNow);
 		transparentAlpha = 255;
+		mockSelfPos = null;
+		mockSelfSize = null;
+		mockMonitors = null;
+		mockOtherWindows = null;
+		coordPopupEl.textContent = "";
+		coordPopupEl.style.display = "none";
 		rootEl._listeners?.mouseleave?.();
 		emittedEvents.length = 0;
 		invokedCommands.length = 0;
 	});
 
 	afterEach(() => {
+		mockSelfPos = null;
+		mockSelfSize = null;
+		mockMonitors = null;
+		mockOtherWindows = null;
+		globalListeners.blur?.();
 		rootEl._listeners?.mouseleave?.();
 		vi.useRealTimers();
 	});
@@ -1094,5 +1168,213 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 			imgEl.complete = false;
 			imgEl.onload = undefined;
 		}
+	});
+
+	test("snaps to Monitor workArea, visible Character windows, and Initial position while updating #coord-popup and honoring Ctrl bypass", async () => {
+		const flushMicrotasks = async () => {
+			for (let i = 0; i < 30; i++) {
+				await Promise.resolve();
+			}
+		};
+
+		// Setup monitor with 48px bottom taskbar (workArea height 1032 vs monitor height 1080)
+		mockMonitors = [
+			{
+				name: "Primary",
+				scaleFactor: 1,
+				position: { x: 0, y: 0 },
+				size: { width: 1920, height: 1080 },
+				workArea: {
+					position: { x: 0, y: 0 },
+					size: { width: 1920, height: 1032 },
+				},
+			},
+		];
+		mockSelfSize = { width: 200, height: 300 };
+
+		// Reset initial position to (1640, 732) so it doesn't interfere near target (1363, 842)
+		await listenCallbacks["character-positions-reset"]?.({
+			payload: { scopeId: 1, x: 1640, y: 732 },
+		});
+
+		// 1. Character snap: snap to visible subchar_window_0, ignoring balloon_window_0 & hidden subchar_window_2
+		mockOtherWindows = {
+			subchar_window_0: {
+				visible: true,
+				pos: { x: 1563, y: 800 },
+				size: { width: 200, height: 300 },
+			},
+			balloon_window_0: {
+				visible: true,
+				pos: { x: 1300, y: 845 },
+				size: { width: 280, height: 200 },
+			},
+			subchar_window_2: {
+				visible: false,
+				pos: { x: 1365, y: 845 },
+				size: { width: 200, height: 300 },
+			},
+		};
+
+		mockSelfPos = { x: 500, y: 500 };
+		rootEl._listeners?.mousedown?.({ button: 0, clientX: 20, clientY: 20 });
+		await flushMicrotasks();
+
+		// Drag near left of subchar_window_0: 1563 - 200 = 1363 (current x = 1368, within 12px)
+		mockSelfPos = { x: 1368, y: 842 };
+		globalListeners.mousemove?.({ clientX: 40, clientY: 40 });
+		await flushMicrotasks();
+
+		expect(coordPopupEl.style.display).toBe("block");
+		expect(coordPopupEl.textContent).toBe(
+			"1363,842 (Snap X:Character)\nPress Ctrl to disable",
+		);
+
+		// Releasing mouse commits snapped position via show_subchar_window
+		invokedCommands.length = 0;
+		globalListeners.mouseup?.({ button: 0, clientX: 40, clientY: 40 });
+		await flushMicrotasks();
+
+		expect(coordPopupEl.style.display).toBe("none");
+		expect(invokedCommands).toContainEqual({
+			cmd: "show_subchar_window",
+			args: {
+				params: { scope_id: 1, x: 1363, y: 842 },
+				scope_id: 1,
+				scopeId: 1,
+				x: 1363,
+				y: 842,
+			},
+		});
+
+		// 2. Monitor workArea bottom snap (workArea bottom = 1032 => y = 1032 - 300 = 732; monitor bottom would be 780)
+		// Also test Initial X snap together with Monitor Y snap
+		mockOtherWindows = {};
+		await listenCallbacks["character-positions-reset"]?.({
+			payload: { scopeId: 1, x: 500, y: 200 },
+		});
+		mockSelfPos = { x: 300, y: 300 };
+		rootEl._listeners?.mousedown?.({ button: 0, clientX: 10, clientY: 10 });
+		await flushMicrotasks();
+
+		mockSelfPos = { x: 506, y: 726 };
+		globalListeners.mousemove?.({ clientX: 30, clientY: 30 });
+		await flushMicrotasks();
+
+		expect(coordPopupEl.textContent).toBe(
+			"500,732 (Snap X:Initial, Snap Y:Monitor)\nPress Ctrl to disable",
+		);
+
+		// 3. Holding Ctrl (via event ctrlKey or keydown Control) disables snapping
+		invokedCommands.length = 0;
+		globalListeners.mousemove?.({ clientX: 35, clientY: 35, ctrlKey: true });
+		await flushMicrotasks();
+
+		expect(coordPopupEl.textContent).toBe("506,726\nPress Ctrl to disable");
+
+		// Releasing Ctrl via keyup restores snap on coordInterval tick
+		globalListeners.keyup?.({ key: "Control", ctrlKey: false });
+		await vi.advanceTimersByTimeAsync(60);
+		await flushMicrotasks();
+		expect(coordPopupEl.textContent).toBe(
+			"500,732 (Snap X:Initial, Snap Y:Monitor)\nPress Ctrl to disable",
+		);
+		expect(
+			invokedCommands.some((c) => c.cmd === "sync_character_balloon"),
+		).toBe(true);
+
+		// Pressing Ctrl via keydown mid-drag disables snap immediately
+		globalListeners.keydown?.({ key: "Control", ctrlKey: true });
+		await flushMicrotasks();
+		expect(coordPopupEl.textContent).toBe("506,726\nPress Ctrl to disable");
+
+		invokedCommands.length = 0;
+		globalListeners.mouseup?.({
+			button: 0,
+			clientX: 35,
+			clientY: 35,
+			ctrlKey: true,
+		});
+		await flushMicrotasks();
+		expect(invokedCommands.some((c) => c.cmd === "show_subchar_window")).toBe(
+			false,
+		);
+		globalListeners.keyup?.({ key: "Control", ctrlKey: false });
+
+		// 4. HiDPI scaleFactor (1.5) scales snap threshold (18 physical px) and allows unrestricted negative/offscreen coordinates
+		mockMonitors = [
+			{
+				name: "HiDPI",
+				scaleFactor: 1.5,
+				position: { x: 0, y: 0 },
+				size: { width: 3840, height: 2160 },
+				workArea: {
+					position: { x: 0, y: 0 },
+					size: { width: 3840, height: 2088 },
+				},
+			},
+		];
+		await listenCallbacks["character-positions-reset"]?.({
+			payload: { scopeId: 1, x: 2400, y: 1200 },
+		});
+		mockSelfPos = { x: 2400, y: 1200 };
+		rootEl._listeners?.mousedown?.({ button: 0, clientX: 10, clientY: 10 });
+		await flushMicrotasks();
+
+		// 15 physical px from left edge (0) is within 12 * 1.5 = 18px threshold; -250 is unrestricted offscreen Y
+		mockSelfPos = { x: 15, y: -250 };
+		globalListeners.mousemove?.({ clientX: 30, clientY: 30 });
+		await flushMicrotasks();
+		expect(coordPopupEl.textContent).toBe(
+			"0,-250 (Snap X:Monitor)\nPress Ctrl to disable",
+		);
+		globalListeners.mouseup?.({ button: 0, clientX: 30, clientY: 30 });
+		await flushMicrotasks();
+		expect(invokedCommands).toContainEqual({
+			cmd: "show_subchar_window",
+			args: {
+				params: { scope_id: 1, x: 0, y: -250 },
+				scope_id: 1,
+				scopeId: 1,
+				x: 0,
+				y: -250,
+			},
+		});
+	});
+
+	test("handles Ctrl+Shift+F12 (reset_character_positions) and Ctrl+Shift+F10 (reset_balloon_positions) shortcuts", async () => {
+		const preventF12 = vi.fn();
+		mockSelfPos = { x: 1180, y: 672 };
+
+		globalListeners.keydown?.({
+			key: "F12",
+			ctrlKey: true,
+			shiftKey: true,
+			altKey: false,
+			preventDefault: preventF12,
+		});
+		await Promise.resolve();
+
+		expect(preventF12).toHaveBeenCalledTimes(1);
+		expect(invokedCommands).toContainEqual({
+			cmd: "reset_character_positions",
+			args: {},
+		});
+
+		const preventF10 = vi.fn();
+		globalListeners.keydown?.({
+			key: "F10",
+			ctrlKey: true,
+			shiftKey: true,
+			altKey: false,
+			preventDefault: preventF10,
+		});
+		await Promise.resolve();
+
+		expect(preventF10).toHaveBeenCalledTimes(1);
+		expect(invokedCommands).toContainEqual({
+			cmd: "reset_balloon_positions",
+			args: {},
+		});
 	});
 });

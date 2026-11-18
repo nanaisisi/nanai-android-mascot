@@ -299,6 +299,30 @@ export {
 	updateBalloonWindowScale,
 };
 
+let registeredShortcutHandler: ((e: KeyboardEvent) => void) | null = null;
+
+/**
+ * バルーンウィンドウ内のキーボードショートカット処理 (`Ctrl+Shift+F10` でバルーン位置初期化)
+ */
+export function handleBalloonWindowKeydown(e: KeyboardEvent): boolean {
+	const key = typeof e?.key === "string" ? e.key.toLowerCase() : "";
+	if (
+		e?.ctrlKey &&
+		e?.shiftKey &&
+		!e?.altKey &&
+		!e?.metaKey &&
+		!e?.repeat &&
+		key === "f10"
+	) {
+		e.preventDefault?.();
+		if (isTauriAvailable()) {
+			void invoke("reset_balloon_positions").catch(() => {});
+		}
+		return true;
+	}
+	return false;
+}
+
 export async function applyBalloonDescript(
 	theme: string,
 	balloonId: number | null = currentBalloonId,
@@ -376,6 +400,22 @@ export function initBalloonWindow() {
 			currentUserScale = newScale;
 		},
 	});
+
+	if (
+		typeof document !== "undefined" &&
+		typeof document.addEventListener === "function"
+	) {
+		if (
+			registeredShortcutHandler &&
+			typeof document.removeEventListener === "function"
+		) {
+			document.removeEventListener("keydown", registeredShortcutHandler);
+		}
+		registeredShortcutHandler = (e: KeyboardEvent) => {
+			handleBalloonWindowKeydown(e);
+		};
+		document.addEventListener("keydown", registeredShortcutHandler);
+	}
 
 	if (!isTauriAvailable()) return;
 

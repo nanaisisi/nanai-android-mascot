@@ -2,6 +2,13 @@
  * Nanai Android Mascot - キャラクターウィンドウ制御スクリプト
  */
 import {
+	availableMonitors,
+	currentMonitor,
+	getAllWindows,
+	getCurrentWindow,
+	primaryMonitor,
+} from "@tauri-apps/api/window";
+import {
 	emit,
 	getCurrentWindowPosition,
 	invoke,
@@ -10,6 +17,16 @@ import {
 	moveCurrentWindowBy,
 	startDraggingWindow,
 } from "../core/tauri-helper.js";
+import {
+	calculateWindowSnap,
+	formatSnapTooltipText,
+	type MonitorLike,
+	pickMonitorWorkArea,
+	type ResolvedMonitorWorkArea,
+	type SnapResult,
+	type SnapTargetType,
+	type SnapWindowRect,
+} from "./interaction/drag/snap.js";
 
 const urlParams = new URLSearchParams(globalThis.location.search);
 const scopeId = parseInt(urlParams.get("scope") || "0", 10);
@@ -30,6 +47,8 @@ interface TouchPointLike {
 
 interface InteractionEvent {
 	button?: number;
+	buttons?: number;
+	ctrlKey?: boolean;
 	clientX?: number;
 	clientY?: number;
 	screenX?: number;
@@ -50,6 +69,7 @@ const HOVER_DELAY = 300;
 const STROKE_THRESHOLD = 40;
 const MOUSEMOVE_THROTTLE_MS = 50;
 const MOUSEMOVE_MIN_DISTANCE = 4;
+const SNAP_THRESHOLD_LOGICAL_PX = 12;
 
 const EX_BUTTON_MAP: Record<number, string> = {
 	1: "middle",
@@ -232,6 +252,15 @@ function initCharacterWindow() {
 	let currentScale = 1.0;
 	let lastNaturalWidth = 0;
 	let lastNaturalHeight = 0;
+	let initialPos: { x: number; y: number } | null = null;
+
+	const refreshInitialPositionFromWindow = async () => {
+		if (!isTauriAvailable()) return;
+		const pos = await getCurrentWindowPosition();
+		if (pos && Number.isFinite(pos.x) && Number.isFinite(pos.y)) {
+			initialPos = { x: pos.x, y: pos.y };
+		}
+	};
 
 	const syncCharacterWindowSize = (naturalW: number, naturalH: number) => {
 		if (naturalW <= 0 || naturalH <= 0) return;
@@ -254,11 +283,45 @@ function initCharacterWindow() {
 				scopeId,
 				width: targetW,
 				height: targetH,
-			}).catch(() => {});
+			})
+				.then(() => {
+					if (initialPos === null) {
+						void refreshInitialPositionFromWindow();
+					}
+				})
+				.catch(() => {});
 		}
 	};
 
 	if (isTauriAvailable()) {
+		void refreshInitialPositionFromWindow();
+
+		void listen("character-positions-reset", (event: unknown) => {
+			const payload = (
+				event as {
+					payload?: { scopeId?: unknown; x?: unknown; y?: unknown };
+				}
+			)?.payload;
+			if (
+				payload &&
+				typeof payload.scopeId === "number" &&
+				payload.scopeId !== scopeId
+			) {
+				return;
+			}
+			if (
+				payload &&
+				typeof payload.x === "number" &&
+				Number.isFinite(payload.x) &&
+				typeof payload.y === "number" &&
+				Number.isFinite(payload.y)
+			) {
+				initialPos = { x: payload.x, y: payload.y };
+			} else {
+				void refreshInitialPositionFromWindow();
+			}
+		});
+
 		void listen("character-scale-changed", (event: unknown) => {
 			const payload = (
 				event as {
@@ -403,6 +466,17 @@ function initCharacterWindow() {
 	let longPressTriggered = false;
 	let coordInterval: unknown = null;
 	const LONG_PRESS_DELAY = 600;
+	let isCtrlPressed = false;
+	let dragSessionId = 0;
+
+	interface DragSnapContext {
+		winWidth: number;
+		winHeight: number;
+		monitors: MonitorLike[];
+		otherWindows: SnapWindowRect[];
+	}
+	let snapContextPromise: Promise<DragSnapContext> | null = null;
+	let resolvedSnapContext: DragSnapContext | null = null;
 
 	let hoverTimer: unknown = null;
 	let strokeLastX: number | null = null;
@@ -483,24 +557,252 @@ function initCharacterWindow() {
 		lastMouseMoveEmitY = null;
 	};
 
-	const startCoordInterval = () => {
+	const getFallbackWorkArea = (): ResolvedMonitorWorkArea => {
+		const scr = globalThis.screen as
+			| {
+					availLeft?: number;
+					availTop?: number;
+					availWidth?: number;
+					availHeight?: number;
+					width?: number;
+					height?: number;
+			  }
+			| undefined;
+		const dpr =
+			typeof globalThis.devicePixelRatio === "number" &&
+			Number.isFinite(globalThis.devicePixelRatio) &&
+			globalThis.devicePixelRatio > 0
+				? globalThis.devicePixelRatio
+				: 1;
+		const availW =
+			scr?.availWidth ?? scr?.width ?? globalThis.innerWidth ?? 1920;
+		const availH =
+			scr?.availHeight ?? scr?.height ?? globalThis.innerHeight ?? 1080;
+		return {
+			x: Math.round((scr?.availLeft ?? 0) * dpr),
+			y: Math.round((scr?.availTop ?? 0) * dpr),
+			width: Math.max(1, Math.round(availW * dpr)),
+			height: Math.max(1, Math.round(availH * dpr)),
+			scaleFactor: dpr,
+		};
+	};
+
+	const getFallbackWindowSize = (scaleFactor = 1) => {
+		const rect = getImageRect(img, root);
+		const logicalW =
+			lastNaturalWidth > 0
+				? Math.max(32, Math.ceil(lastNaturalWidth * currentScale))
+				: Math.max(32, rect.width || 200);
+		const logicalH =
+			lastNaturalHeight > 0
+				? Math.max(32, Math.ceil(lastNaturalHeight * currentScale))
+				: Math.max(32, rect.height || 360);
+		return {
+			width: Math.round(logicalW * scaleFactor),
+			height: Math.round(logicalH * scaleFactor),
+		};
+	};
+
+	const loadSnapContext = async (): Promise<DragSnapContext> => {
+		const fallbackArea = getFallbackWorkArea();
+		const fallbackSize = getFallbackWindowSize(fallbackArea.scaleFactor);
+		if (!isTauriAvailable()) {
+			const ctx = {
+				winWidth: fallbackSize.width,
+				winHeight: fallbackSize.height,
+				monitors: [],
+				otherWindows: [],
+			};
+			resolvedSnapContext = ctx;
+			return ctx;
+		}
+
+		let winWidth = fallbackSize.width;
+		let winHeight = fallbackSize.height;
+		const monitors: MonitorLike[] = [];
+		const otherWindows: SnapWindowRect[] = [];
+
+		let selfLabel = `subchar_window_${scopeId}`;
+		const currentWin = (() => {
+			try {
+				return getCurrentWindow();
+			} catch {
+				return null;
+			}
+		})();
+		if (currentWin?.label) selfLabel = currentWin.label;
+
+		const [sizeRes, availRes, allWindowsRes] = await Promise.all([
+			currentWin
+				? currentWin.outerSize().catch(() => null)
+				: Promise.resolve(null),
+			availableMonitors().catch(() => null),
+			getAllWindows().catch(() => null),
+		]);
+
+		if (
+			sizeRes &&
+			Number.isFinite(sizeRes.width) &&
+			sizeRes.width > 0 &&
+			Number.isFinite(sizeRes.height) &&
+			sizeRes.height > 0
+		) {
+			winWidth = sizeRes.width;
+			winHeight = sizeRes.height;
+		}
+
+		if (Array.isArray(availRes) && availRes.length > 0) {
+			for (const m of availRes) {
+				if (m) monitors.push(m);
+			}
+		}
+		if (monitors.length === 0) {
+			try {
+				const mon = (await currentMonitor()) ?? (await primaryMonitor());
+				if (mon) monitors.push(mon);
+			} catch {}
+		}
+
+		if (Array.isArray(allWindowsRes)) {
+			const expectedSelfLabel = `subchar_window_${scopeId}`;
+			const candidates = allWindowsRes.filter(
+				(w) =>
+					w &&
+					w.label !== selfLabel &&
+					w.label !== expectedSelfLabel &&
+					w.label.startsWith("subchar_window_"),
+			);
+			const rects = await Promise.all(
+				candidates.map(async (w) => {
+					try {
+						const visible = await w.isVisible();
+						if (!visible) return null;
+						const [pos, size] = await Promise.all([
+							w.outerPosition(),
+							w.outerSize(),
+						]);
+						if (
+							!pos ||
+							!size ||
+							!Number.isFinite(pos.x) ||
+							!Number.isFinite(pos.y) ||
+							!Number.isFinite(size.width) ||
+							!Number.isFinite(size.height) ||
+							size.width <= 0 ||
+							size.height <= 0
+						) {
+							return null;
+						}
+						return {
+							x: pos.x,
+							y: pos.y,
+							width: size.width,
+							height: size.height,
+						};
+					} catch {
+						return null;
+					}
+				}),
+			);
+			for (const r of rects) {
+				if (r) otherWindows.push(r);
+			}
+		}
+
+		const ctx = { winWidth, winHeight, monitors, otherWindows };
+		resolvedSnapContext = ctx;
+		return ctx;
+	};
+
+	const computeSnapForPosition = (
+		rawX: number,
+		rawY: number,
+		context: DragSnapContext,
+	): SnapResult => {
+		const fallbackArea = getFallbackWorkArea();
+		const workArea = pickMonitorWorkArea(
+			context.monitors,
+			rawX,
+			rawY,
+			context.winWidth,
+			context.winHeight,
+			fallbackArea,
+		);
+		const snapThreshold = Math.max(
+			1,
+			Math.round(SNAP_THRESHOLD_LOGICAL_PX * workArea.scaleFactor),
+		);
+		return calculateWindowSnap(
+			rawX,
+			rawY,
+			context.winWidth,
+			context.winHeight,
+			context.otherWindows,
+			workArea,
+			initialPos,
+			isCtrlPressed,
+			snapThreshold,
+		);
+	};
+
+	const updateDragPopupFromCurrentPosition = async (sessionId: number) => {
+		const context = snapContextPromise
+			? await snapContextPromise
+			: await loadSnapContext();
+		const pos = await getCurrentWindowPosition();
+		if (
+			!isInteracting ||
+			sessionId !== dragSessionId ||
+			!pos ||
+			!Number.isFinite(pos.x) ||
+			!Number.isFinite(pos.y)
+		) {
+			return;
+		}
+		const snap = computeSnapForPosition(pos.x, pos.y, context);
+		showCoordPopup(snap.x, snap.y, snap.snapXType, snap.snapYType);
+	};
+
+	const commitSnapOnDragEnd = async (
+		sessionId: number,
+		pendingContext: Promise<DragSnapContext> | null,
+	) => {
+		if (sessionId !== dragSessionId || isCtrlPressed) return;
+		const context = pendingContext
+			? await pendingContext
+			: await loadSnapContext();
+		const pos = await getCurrentWindowPosition();
+		if (!pos || !Number.isFinite(pos.x) || !Number.isFinite(pos.y)) return;
+		const snap = computeSnapForPosition(pos.x, pos.y, context);
+		if (snap.snapXType === "None" && snap.snapYType === "None") return;
+		const targetX = Math.round(snap.x);
+		const targetY = Math.round(snap.y);
+		if (targetX === Math.round(pos.x) && targetY === Math.round(pos.y)) {
+			return;
+		}
+		await invoke("show_subchar_window", {
+			params: {
+				scope_id: scopeId,
+				x: targetX,
+				y: targetY,
+			},
+			scope_id: scopeId,
+			scopeId,
+			x: targetX,
+			y: targetY,
+		}).catch(() => {});
+		void invoke("sync_character_balloon", { scopeId }).catch(() => {});
+	};
+
+	const startCoordInterval = (sessionId: number) => {
 		if (coordInterval) clearInterval(coordInterval as number);
-		coordInterval = setInterval(async () => {
-			if (!isInteracting) {
+		coordInterval = setInterval(() => {
+			if (!isInteracting || sessionId !== dragSessionId) {
 				clearInterval(coordInterval as number);
 				coordInterval = null;
 				return;
 			}
-			if (!coordPopupEl) {
-				coordPopupEl = document.getElementById("coord-popup");
-			}
-			if (coordPopupEl) {
-				const pos = await getCurrentWindowPosition();
-				if (pos) {
-					coordPopupEl.textContent = `X: ${pos.x}, Y: ${pos.y}`;
-					coordPopupEl.style.display = "block";
-				}
-			}
+			void updateDragPopupFromCurrentPosition(sessionId);
 			if (isTauriAvailable()) {
 				void invoke("sync_character_balloon", { scopeId });
 			}
@@ -579,6 +881,12 @@ function initCharacterWindow() {
 		}
 
 		clearHoverTimer();
+		const sessionId = ++dragSessionId;
+		snapContextPromise = null;
+		resolvedSnapContext = null;
+		if (typeof e.ctrlKey === "boolean") {
+			isCtrlPressed = e.ctrlKey;
+		}
 		isInteracting = true;
 		hasMoved = false;
 		longPressTriggered = false;
@@ -599,7 +907,18 @@ function initCharacterWindow() {
 		});
 
 		void getCurrentWindowPosition().then((position) => {
-			if (isInteracting && position) origin = position;
+			if (
+				isInteracting &&
+				sessionId === dragSessionId &&
+				position &&
+				Number.isFinite(position.x) &&
+				Number.isFinite(position.y)
+			) {
+				origin = position;
+				if (initialPos === null) {
+					initialPos = { x: position.x, y: position.y };
+				}
+			}
 		});
 
 		if (longPressTimer) clearTimeout(longPressTimer as number);
@@ -612,12 +931,22 @@ function initCharacterWindow() {
 	};
 
 	let coordPopupEl: HTMLElement | null = null;
-	function showCoordPopup(x: number, y: number) {
+	function showCoordPopup(
+		x: number,
+		y: number,
+		snapXType: SnapTargetType = "None",
+		snapYType: SnapTargetType = "None",
+	) {
 		if (!coordPopupEl) {
 			coordPopupEl = document.getElementById("coord-popup");
 		}
 		if (coordPopupEl) {
-			coordPopupEl.textContent = `X: ${x}, Y: ${y}`;
+			coordPopupEl.textContent = formatSnapTooltipText(
+				x,
+				y,
+				snapXType,
+				snapYType,
+			);
 			coordPopupEl.style.display = "block";
 		}
 	}
@@ -705,6 +1034,19 @@ function initCharacterWindow() {
 			return;
 		}
 
+		if (typeof e.ctrlKey === "boolean") {
+			isCtrlPressed = e.ctrlKey;
+		}
+		if (
+			isInteracting &&
+			startDevice === "mouse" &&
+			typeof e.buttons === "number" &&
+			(e.buttons & 1) === 0
+		) {
+			onPointerUp(e);
+			return;
+		}
+
 		lastX = clientX;
 		lastY = clientY;
 
@@ -713,14 +1055,17 @@ function initCharacterWindow() {
 
 		if (!hasMoved && Math.hypot(deltaX, deltaY) > DRAG_THRESHOLD) {
 			hasMoved = true;
+			snapContextPromise = loadSnapContext();
 			if (longPressTimer) {
 				clearTimeout(longPressTimer as number);
 				longPressTimer = null;
 			}
 			const rect = getImageRect(img, root);
 			if (isTauriAvailable()) {
+				// Tauri デスクトップでは OS ネイティブの startDraggingWindow() で滑らかに移動しつつ、
+				// 50ms ポーリングでスナップ予測と #coord-popup 更新を行い、ドロップ時に確定座標を適用する
 				void startDraggingWindow();
-				startCoordInterval();
+				startCoordInterval(dragSessionId);
 			}
 			emitGhostMouseEvent({
 				type: "dragstart",
@@ -732,14 +1077,26 @@ function initCharacterWindow() {
 
 		if (hasMoved) {
 			if (!isTauriAvailable() && origin) {
-				void moveCurrentWindowBy(deltaX, deltaY, origin);
+				const fallbackArea = getFallbackWorkArea();
+				const fallbackSize = getFallbackWindowSize(fallbackArea.scaleFactor);
+				const ctx = resolvedSnapContext ?? {
+					winWidth: fallbackSize.width,
+					winHeight: fallbackSize.height,
+					monitors: [],
+					otherWindows: [],
+				};
+				const snap = computeSnapForPosition(
+					origin.x + deltaX,
+					origin.y + deltaY,
+					ctx,
+				);
+				void moveCurrentWindowBy(snap.x - origin.x, snap.y - origin.y, origin);
+				showCoordPopup(snap.x, snap.y, snap.snapXType, snap.snapYType);
 			}
 			if (isTauriAvailable()) {
 				void invoke("sync_character_balloon", { scopeId });
+				void updateDragPopupFromCurrentPosition(dragSessionId);
 			}
-			void getCurrentWindowPosition().then((pos) => {
-				if (pos) showCoordPopup(pos.x, pos.y);
-			});
 		}
 	};
 
@@ -856,6 +1213,13 @@ function initCharacterWindow() {
 		if (!isInteracting) return;
 		if (e?.button !== undefined && e.button !== 0) return;
 
+		if (typeof e?.ctrlKey === "boolean") {
+			isCtrlPressed = e.ctrlKey;
+		}
+		const sessionId = dragSessionId;
+		const pendingSnapContext = snapContextPromise;
+		snapContextPromise = null;
+
 		isInteracting = false;
 		hideCoordPopup();
 		if (coordInterval) {
@@ -882,6 +1246,9 @@ function initCharacterWindow() {
 		const rect = getImageRect(img, root);
 
 		if (hasMoved) {
+			if (isTauriAvailable()) {
+				void commitSnapOnDragEnd(sessionId, pendingSnapContext);
+			}
 			emitGhostMouseEvent({
 				type: "dragend",
 				clientX,
@@ -1018,6 +1385,42 @@ function initCharacterWindow() {
 		);
 	};
 
+	const onKeyDown = (e: KeyboardEvent) => {
+		isCtrlPressed = Boolean(e?.ctrlKey || e?.key === "Control");
+		if (isInteracting && hasMoved && isTauriAvailable()) {
+			void updateDragPopupFromCurrentPosition(dragSessionId);
+		}
+		const key = e?.key?.toLowerCase?.() ?? "";
+		if (e?.ctrlKey && e?.shiftKey && !e?.altKey && key === "f12") {
+			e.preventDefault?.();
+			if (isTauriAvailable()) {
+				void invoke("reset_character_positions")
+					.then(() => refreshInitialPositionFromWindow())
+					.catch(() => {});
+			}
+		} else if (e?.ctrlKey && e?.shiftKey && !e?.altKey && key === "f10") {
+			e.preventDefault?.();
+			if (isTauriAvailable()) {
+				void invoke("reset_balloon_positions").catch(() => {});
+			}
+		}
+	};
+
+	const onKeyUp = (e: KeyboardEvent) => {
+		if (e?.key === "Control") {
+			isCtrlPressed = false;
+		} else if (typeof e?.ctrlKey === "boolean") {
+			isCtrlPressed = e.ctrlKey;
+		}
+		if (isInteracting && hasMoved && isTauriAvailable()) {
+			void updateDragPopupFromCurrentPosition(dragSessionId);
+		}
+	};
+
+	const onWindowBlur = () => {
+		isCtrlPressed = false;
+	};
+
 	if (typeof img?.addEventListener === "function") {
 		img.addEventListener("mousedown", onPointerDown as EventListener);
 		img.addEventListener("wheel", onWheel as EventListener, { passive: false });
@@ -1041,6 +1444,9 @@ function initCharacterWindow() {
 	globalThis.addEventListener("contextmenu", onContextMenu as EventListener);
 	globalThis.addEventListener("mousemove", onPointerMove as EventListener);
 	globalThis.addEventListener("mouseup", onPointerUp as EventListener);
+	globalThis.addEventListener("keydown", onKeyDown as EventListener);
+	globalThis.addEventListener("keyup", onKeyUp as EventListener);
+	globalThis.addEventListener("blur", onWindowBlur as EventListener);
 
 	if (typeof img?.addEventListener === "function") {
 		img.addEventListener("touchstart", onPointerDown as EventListener, {

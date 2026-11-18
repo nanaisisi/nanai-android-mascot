@@ -262,18 +262,51 @@ pub async fn resize_balloon_window(
     Ok(())
 }
 
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct HideBalloonWindowParams {
+    #[serde(alias = "scopeId")]
+    scope_id: Option<i32>,
+}
+
+impl HideBalloonWindowParams {
+    #[allow(dead_code)]
+    pub fn scope_id(&self) -> i32 {
+        self.scope_id.unwrap_or(0)
+    }
+}
+
+#[cfg(any(desktop, test))]
+fn resolve_hide_balloon_scope(
+    params: Option<HideBalloonWindowParams>,
+    scope_id: Option<i32>,
+    scope_id_camel: Option<i32>,
+    scope_id_legacy: Option<i32>,
+) -> i32 {
+    params
+        .and_then(|p| p.scope_id)
+        .or(scope_id)
+        .or(scope_id_camel)
+        .or(scope_id_legacy)
+        .unwrap_or(0)
+}
+
 /// 独立バルーン（スコープ N）ウィンドウ非表示コマンド (\b[-1])
-#[tauri::command]
+#[tauri::command(rename_all = "snake_case")]
+#[allow(non_snake_case)]
+#[cfg_attr(not(desktop), allow(unused_variables))]
 pub async fn hide_balloon_window(
-    _app_handle: tauri::AppHandle,
-    _scope_id: i32,
+    app_handle: tauri::AppHandle,
+    params: Option<HideBalloonWindowParams>,
+    scope_id: Option<i32>,
+    scopeId: Option<i32>,
+    _scope_id: Option<i32>,
 ) -> Result<(), String> {
     #[cfg(desktop)]
     {
-        let app_handle = _app_handle;
-        let scope_id = _scope_id;
+        let target_scope = resolve_hide_balloon_scope(params, scope_id, scopeId, _scope_id);
         use tauri::Manager;
-        let label = format!("balloon_window_{}", scope_id);
+        let label = format!("balloon_window_{}", target_scope);
         if let Some(balloon_win) = app_handle.get_webview_window(&label) {
             let _ = balloon_win.hide();
         }
@@ -335,5 +368,23 @@ mod tests {
             resolve_resize_balloon_args(None, None, None, None, None),
             (0, 0.0, 0.0)
         );
+    }
+
+    #[test]
+    fn hide_params_and_scope_resolution_support_all_forms() {
+        let camel: HideBalloonWindowParams = serde_json::from_str(r#"{"scopeId": 2}"#).unwrap();
+        assert_eq!(camel.scope_id(), 2);
+        assert_eq!(
+            resolve_hide_balloon_scope(Some(camel), Some(9), Some(8), Some(7)),
+            2
+        );
+
+        let snake: HideBalloonWindowParams = serde_json::from_str(r#"{"scope_id": 1}"#).unwrap();
+        assert_eq!(resolve_hide_balloon_scope(Some(snake), None, None, None), 1);
+
+        assert_eq!(resolve_hide_balloon_scope(None, Some(3), None, None), 3);
+        assert_eq!(resolve_hide_balloon_scope(None, None, Some(4), None), 4);
+        assert_eq!(resolve_hide_balloon_scope(None, None, None, Some(5)), 5);
+        assert_eq!(resolve_hide_balloon_scope(None, None, None, None), 0);
     }
 }

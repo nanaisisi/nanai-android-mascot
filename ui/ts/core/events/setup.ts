@@ -387,11 +387,17 @@ export const setupMethods = {
 
 		(
 			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-		).elements?.balloonDisplay?.addEventListener("click", () =>
-			(
-				this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-			).sakuraPlayer?.skip(),
-		);
+		).elements?.balloonDisplay?.addEventListener("click", () => {
+			const app = this as unknown as SetupAppContext & {
+				sakuraPlayer?: { isPlaying?: boolean; skip?: () => void };
+				hideBalloon?: (scopeId?: number, reason?: string) => void;
+			};
+			if (app.sakuraPlayer?.isPlaying) {
+				app.sakuraPlayer.skip?.();
+			} else {
+				app.hideBalloon?.(0, "close");
+			}
+		});
 	},
 
 	setupGlobalListeners() {
@@ -517,6 +523,20 @@ export const setupMethods = {
 		};
 		await listen("menu-action", forward);
 		await listen("native-menu-action", forward);
+
+		await listen("balloon-clicked", (event: unknown) => {
+			const scopeId =
+				(event as { payload?: { scopeId?: number } })?.payload?.scopeId ?? 0;
+			const clickApp = app as SetupAppContext & {
+				sakuraPlayer?: { isPlaying?: boolean; skip?: () => void };
+				hideBalloon?: (scopeId?: number, reason?: string) => void;
+			};
+			if (clickApp.sakuraPlayer?.isPlaying) {
+				clickApp.sakuraPlayer.skip?.();
+			} else {
+				clickApp.hideBalloon?.(scopeId, "close");
+			}
+		});
 
 		await listen("request-subchar-image", (event: unknown) => {
 			const scopeId = (event as { payload?: { scopeId?: number } })?.payload

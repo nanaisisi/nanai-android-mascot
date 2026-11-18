@@ -3,7 +3,12 @@
  * @brief Nanai Android Mascot - 独立バルーンウィンドウ制御スクリプト
  */
 
-import { emit, isTauriAvailable, listen } from "../core/tauri-helper.js";
+import {
+	emit,
+	invoke,
+	isTauriAvailable,
+	listen,
+} from "../core/tauri-helper.js";
 import { setupWindowGestures } from "./balloon-window/gesture.js";
 import { setupInteractiveElements } from "./balloon-window/interactive.js";
 import { updateBalloonWindowScale } from "./balloon-window/scale.js";
@@ -113,6 +118,18 @@ function applyScrollDelta(balloonText: HTMLElement, delta: number) {
 		next = Math.min(maxScroll, next);
 	}
 	balloonText.scrollTop = next;
+}
+
+function isBalloonHtmlBlank(html: string): boolean {
+	const raw = String(html ?? "");
+	if (/<(?:button|a|img|input|textarea|select)\b/i.test(raw)) {
+		return false;
+	}
+	const stripped = raw
+		.replace(/<[^>]*>/g, "")
+		.replace(/&nbsp;|\u00a0/gi, " ")
+		.trim();
+	return stripped.length === 0;
 }
 
 export function updateBalloonScrollArrows(
@@ -320,13 +337,40 @@ export function initBalloonWindow() {
 		}
 		const targetText = document.getElementById("balloon-text");
 		if (targetText && html !== undefined) {
-			targetText.innerHTML = html;
-			setupInteractiveElements(targetText, scopeId);
-			targetText.scrollTop =
-				typeof targetText.scrollHeight === "number"
-					? targetText.scrollHeight
-					: 0;
-			updateBalloonScrollArrows(balloonBox, targetText);
+			if (isBalloonHtmlBlank(html)) {
+				targetText.innerHTML = "";
+				targetText.scrollTop = 0;
+				if (balloonBox?.style) {
+					balloonBox.style.display = "none";
+				}
+				updateBalloonScrollArrows(balloonBox, targetText);
+				findArrowElement(
+					balloonBox,
+					".balloon-scroll-arrow-up",
+					"balloon-arrow-up",
+				)?.removeAttribute?.("data-visible");
+				findArrowElement(
+					balloonBox,
+					".balloon-scroll-arrow-down",
+					"balloon-arrow-down",
+				)?.removeAttribute?.("data-visible");
+				void invoke("hide_balloon_window", {
+					params: { scope_id: scopeId },
+					scope_id: scopeId,
+					scopeId,
+				}).catch(() => {});
+			} else {
+				if (balloonBox?.style && balloonBox.style.display === "none") {
+					balloonBox.style.display = "";
+				}
+				targetText.innerHTML = html;
+				setupInteractiveElements(targetText, scopeId);
+				targetText.scrollTop =
+					typeof targetText.scrollHeight === "number"
+						? targetText.scrollHeight
+						: 0;
+				updateBalloonScrollArrows(balloonBox, targetText);
+			}
 		}
 	});
 

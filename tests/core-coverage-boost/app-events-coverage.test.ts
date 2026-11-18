@@ -1009,4 +1009,57 @@ describe("core-coverage-boost: app-events edge cases", () => {
 			'shiori:OnShellChanged:["winter","master"]',
 		]);
 	});
+
+	it("handles balloon-clicked by skipping while playing and closing when idle", async () => {
+		globalThis.window = globalThis as unknown as Window & typeof globalThis;
+		globalThis.addEventListener = () => {};
+		const handlers = new Map<string, (event: unknown) => void>();
+
+		(globalThis as { __TAURI_INTERNALS__?: unknown }).__TAURI_INTERNALS__ = {
+			invoke: async (cmd: string, args: Record<string, unknown>) => {
+				if (cmd === "plugin:event|listen") {
+					handlers.set(
+						String(args.event),
+						args.handler as (event: unknown) => void,
+					);
+				}
+			},
+			transformCallback: (cb: unknown) => cb,
+		};
+
+		try {
+			let skipped = 0;
+			const closed: Array<{ scopeId: number; reason: string }> = [];
+			const app = {
+				...eventMethods,
+				sakuraPlayer: {
+					isPlaying: true,
+					skip: () => {
+						skipped += 1;
+					},
+				},
+				hideBalloon: (scopeId: number, reason: string) => {
+					closed.push({ scopeId, reason });
+				},
+				syncMenuGhosts: () => {},
+				handleMenuAction: () => {},
+			};
+
+			await app.setupExternalMenuListeners();
+			const onBalloonClicked = handlers.get("balloon-clicked");
+			assert.ok(typeof onBalloonClicked === "function");
+
+			onBalloonClicked({ payload: { scopeId: 1 } });
+			assert.equal(skipped, 1);
+			assert.deepEqual(closed, []);
+
+			app.sakuraPlayer.isPlaying = false;
+			onBalloonClicked({ payload: { scopeId: 1 } });
+			assert.equal(skipped, 1);
+			assert.deepEqual(closed, [{ scopeId: 1, reason: "close" }]);
+		} finally {
+			delete (globalThis as { __TAURI_INTERNALS__?: unknown })
+				.__TAURI_INTERNALS__;
+		}
+	});
 });

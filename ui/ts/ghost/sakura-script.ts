@@ -39,6 +39,24 @@ export class SakuraScriptPlayer {
 	private isLoopRunning = false;
 	public app: any = null;
 
+	private isBalloonContentBlank(
+		htmlOrText: string,
+		el?: HTMLElement | null,
+	): boolean {
+		const stripped = String(htmlOrText ?? "")
+			.replace(/<[^>]*>/g, "")
+			.replace(/\u00a0/g, " ")
+			.trim();
+		if (stripped.length > 0) return false;
+		if (el && typeof el.querySelector === "function") {
+			const interactive = el.querySelector(
+				"button, a, img, input, textarea, select",
+			);
+			if (interactive) return false;
+		}
+		return true;
+	}
+
 	public get isPlaying(): boolean {
 		return this.playerInstance !== null || this.isLoopRunning;
 	}
@@ -153,6 +171,13 @@ export class SakuraScriptPlayer {
 				}
 				break;
 			}
+			case "BalloonChange": {
+				const balloonId = stepRes.data?.balloon_id ?? 0;
+				if (balloonId === -1) {
+					this.clearBalloon(app, scope);
+				}
+				break;
+			}
 			case "ScopeChange": {
 				this.currentScope = scope;
 				if (scope >= 1) {
@@ -262,12 +287,36 @@ export class SakuraScriptPlayer {
 			}
 		}
 
+		const htmlContent = textEl
+			? textEl.innerHTML || textEl.textContent || ""
+			: text;
+		const isBlank = this.isBalloonContentBlank(
+			textEl ? htmlContent : text,
+			textEl,
+		);
+		const theme = app?.currentBalloonTheme || "default";
+		const targetScope = scope;
+
+		if (isBlank) {
+			if (dispEl?.style) {
+				dispEl.style.display = "none";
+			}
+			void invoke("hide_balloon_window", {
+				params: { scope_id: targetScope },
+				scope_id: targetScope,
+				scopeId: targetScope,
+			}).catch(() => {});
+			void emit(`update-balloon-content-${targetScope}`, {
+				html: "",
+				theme,
+			});
+			return;
+		}
+
 		if (dispEl?.style && isSinglePageUi()) {
 			dispEl.style.display = "block";
 		}
 
-		const theme = app?.currentBalloonTheme || "default";
-		const targetScope = scope;
 		frontendLog(
 			`💬 [SakuraScript] スコープ別独立バルーン表示要求: scope=${targetScope}, textLength=${text.length}`,
 		);
@@ -276,13 +325,15 @@ export class SakuraScriptPlayer {
 				scopeId: targetScope,
 				theme,
 			},
+			scope_id: targetScope,
+			scopeId: targetScope,
+			theme,
 		}).catch((err) => {
 			frontendLog(
 				`❌ show_balloon_window failed for scope ${targetScope}: ${err}`,
 				"error",
 			);
 		});
-		const htmlContent = textEl ? textEl.innerHTML : text;
 		void emit(`update-balloon-content-${targetScope}`, {
 			html: htmlContent,
 			theme,
@@ -303,10 +354,15 @@ export class SakuraScriptPlayer {
 			textEl.innerHTML = "";
 			textEl.textContent = "";
 		}
-		if (dispEl?.style && isSinglePageUi()) {
+		if (dispEl?.style) {
 			dispEl.style.display = "none";
 		}
 		const targetScope = scope;
+		void invoke("hide_balloon_window", {
+			params: { scope_id: targetScope },
+			scope_id: targetScope,
+			scopeId: targetScope,
+		}).catch(() => {});
 		void emit(`update-balloon-content-${targetScope}`, {
 			html: "",
 			theme: app?.currentBalloonTheme || "default",
@@ -425,6 +481,10 @@ export class SakuraScriptPlayer {
 						stepRes.data?.surface_id ?? 0,
 						scope,
 					);
+				}
+			} else if (stepRes.action === "BalloonChange") {
+				if ((stepRes.data?.balloon_id ?? 0) === -1) {
+					this.clearBalloon(app, scope);
 				}
 			} else if (stepRes.action === "Choice") {
 				this.addChoiceToBalloon(

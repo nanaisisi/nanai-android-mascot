@@ -66,6 +66,10 @@ export const settingsMethods = {
 	},
 
 	showBalloon(text: string, scopeId: number = 0) {
+		if (String(text ?? "").trim().length === 0) {
+			this.hideBalloon(scopeId, "silent");
+			return;
+		}
 		const app =
 			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
 		const getDocEl = (id: string) =>
@@ -139,11 +143,31 @@ export const settingsMethods = {
 					: getDocEl(`char-balloon-display-${scopeId}`) ||
 						app.elements?.balloonDisplay ||
 						getDocEl("balloon-display");
+		const balloonText =
+			scopeId === 0
+				? app.elements?.balloonText || getDocEl("balloon-text")
+				: scopeId === 1
+					? app.elements?.keroBalloonText || getDocEl("kero-balloon-text")
+					: getDocEl(`char-balloon-text-${scopeId}`) ||
+						app.elements?.balloonText ||
+						getDocEl("balloon-text");
+		if (balloonText) {
+			balloonText.innerHTML = "";
+			balloonText.textContent = "";
+		}
 		if (balloonDisplay && isSinglePageUi()) {
 			balloonDisplay.style.display = "none";
 		}
 		if (isNativeMultiWindow()) {
-			invoke("hide_balloon_window", { scope_id: scopeId }).catch(() => {});
+			invoke("hide_balloon_window", {
+				params: { scope_id: scopeId },
+				scope_id: scopeId,
+				scopeId,
+			}).catch(() => {});
+			emit(`update-balloon-content-${scopeId}`, {
+				html: "",
+				theme: app.currentBalloonTheme || "default",
+			}).catch(() => {});
 		}
 		if (reason === "close") {
 			const lastScript = app.sakuraPlayer?.lastScript || "";

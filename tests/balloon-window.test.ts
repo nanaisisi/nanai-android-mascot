@@ -449,6 +449,7 @@ test("balloon-window updates scroll on content, invokes resize_balloon_window on
 	const callbacks = new Map<unknown, (ev: unknown) => void>();
 	const capturedListeners: Record<string, (ev: unknown) => void> = {};
 	const resizeCalls: Record<string, unknown>[] = [];
+	const hideCalls: Record<string, unknown>[] = [];
 	let blockImages = false;
 
 	internals.transformCallback = (cb: unknown) => {
@@ -469,6 +470,10 @@ test("balloon-window updates scroll on content, invokes resize_balloon_window on
 		}
 		if (cmd === "resize_balloon_window") {
 			resizeCalls.push((args as Record<string, unknown>) ?? {});
+			return;
+		}
+		if (cmd === "hide_balloon_window") {
+			hideCalls.push((args as Record<string, unknown>) ?? {});
 			return;
 		}
 		if (blockImages && cmd === "load_balloon_image") {
@@ -522,6 +527,36 @@ test("balloon-window updates scroll on content, invokes resize_balloon_window on
 		assert.strictEqual(balloonBox.scrollTop, undefined);
 		assert.strictEqual(arrowUp.getAttribute("data-visible"), "true");
 		assert.strictEqual(arrowDown.getAttribute("data-visible"), null);
+
+		// Blank/whitespace content clears text, hides balloonBox & arrows, and invokes hide_balloon_window
+		hideCalls.length = 0;
+		await contentListener({
+			payload: { html: "   \n <br>  " },
+		});
+		assert.strictEqual(balloonText.innerHTML, "");
+		assert.strictEqual(
+			(balloonBox.style as Record<string, string>).display,
+			"none",
+		);
+		assert.strictEqual(arrowUp.getAttribute("data-visible"), null);
+		assert.strictEqual(arrowDown.getAttribute("data-visible"), null);
+		assert.deepStrictEqual(hideCalls, [
+			{
+				params: { scope_id: 0 },
+				scope_id: 0,
+				scopeId: 0,
+			},
+		]);
+
+		// Subsequent non-blank content restores display
+		await contentListener({
+			payload: { html: "<p>Visible again</p>" },
+		});
+		assert.strictEqual(
+			(balloonBox.style as Record<string, string>).display,
+			"",
+		);
+		assert.strictEqual(balloonText.innerHTML, "<p>Visible again</p>");
 
 		// applyBalloonDescript invokes resize_balloon_window with scaled image dims + 16px
 		resizeCalls.length = 0;

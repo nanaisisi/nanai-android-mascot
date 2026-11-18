@@ -3,7 +3,9 @@
  * @brief マウスホイール (OnMouseWheel) およびホバー (OnMouseHover) イベントの設定
  */
 
-interface HoverWheelOptions {
+const HOVER_STROKE_THRESHOLD = 40;
+
+export interface HoverWheelOptions {
 	onGhostWheel?: (
 		clientX: number,
 		clientY: number,
@@ -11,6 +13,19 @@ interface HoverWheelOptions {
 		delta: number,
 	) => void;
 	onGhostHover?: (clientX: number, clientY: number, rect: DOMRect) => void;
+	onGhostMouseEnter?: (
+		clientX: number,
+		clientY: number,
+		rect: DOMRect,
+		isWindow: boolean,
+	) => void;
+	onGhostMouseLeave?: (
+		clientX: number,
+		clientY: number,
+		rect: DOMRect,
+		isWindow: boolean,
+	) => void;
+	onGhostStroke?: (clientX: number, clientY: number, rect: DOMRect) => void;
 	[key: string]: unknown;
 }
 
@@ -22,7 +37,13 @@ export function setupHoverAndWheel(
 ) {
 	if (!target) return () => {};
 
-	const { onGhostWheel, onGhostHover } = options;
+	const {
+		onGhostWheel,
+		onGhostHover,
+		onGhostMouseEnter,
+		onGhostMouseLeave,
+		onGhostStroke,
+	} = options;
 	const delayMs = Number(hoverDelay || 300);
 
 	// マウスホイール (OnMouseWheel)
@@ -43,12 +64,43 @@ export function setupHoverAndWheel(
 		passive: true,
 	});
 
-	// マウスホバー (OnMouseHover)
+	// マウスホバー (OnMouseHover) およびホバー時撫で (Stroke)
 	let hoverTimer: ReturnType<typeof setTimeout> | null = null;
-	const onMouseMove = (e: { clientX: number; clientY: number }) => {
-		if (isInteractingOrDragging() || !onGhostHover) return;
-		const clientX = e.clientX ?? 0;
-		const clientY = e.clientY ?? 0;
+	let strokeDistance = 0;
+	let lastX: number | null = null;
+	let lastY: number | null = null;
+
+	const resetStrokeState = () => {
+		strokeDistance = 0;
+		lastX = null;
+		lastY = null;
+	};
+
+	const onMouseMove = (e: { clientX?: number; clientY?: number }) => {
+		if (isInteractingOrDragging()) {
+			resetStrokeState();
+			return;
+		}
+		const clientX = e?.clientX ?? 0;
+		const clientY = e?.clientY ?? 0;
+
+		if (onGhostStroke) {
+			if (lastX !== null && lastY !== null) {
+				const dist = Math.hypot(clientX - lastX, clientY - lastY);
+				if (dist > 0) {
+					strokeDistance += dist;
+					if (strokeDistance >= HOVER_STROKE_THRESHOLD) {
+						strokeDistance = 0;
+						const rect = target.getBoundingClientRect();
+						onGhostStroke(clientX, clientY, rect);
+					}
+				}
+			}
+			lastX = clientX;
+			lastY = clientY;
+		}
+
+		if (!onGhostHover) return;
 		if (hoverTimer) clearTimeout(hoverTimer);
 		hoverTimer = setTimeout(() => {
 			const rect = target.getBoundingClientRect();
@@ -56,10 +108,34 @@ export function setupHoverAndWheel(
 		}, delayMs);
 	};
 
-	const onMouseLeave = () => {
+	const onMouseEnter = (e?: { clientX?: number; clientY?: number }) => {
+		strokeDistance = 0;
+		if (typeof e?.clientX === "number" && typeof e?.clientY === "number") {
+			lastX = e.clientX;
+			lastY = e.clientY;
+		} else {
+			lastX = null;
+			lastY = null;
+		}
+		if (onGhostMouseEnter) {
+			const clientX = e?.clientX ?? 0;
+			const clientY = e?.clientY ?? 0;
+			const rect = target.getBoundingClientRect();
+			onGhostMouseEnter(clientX, clientY, rect, false);
+		}
+	};
+
+	const onMouseLeave = (e?: { clientX?: number; clientY?: number }) => {
 		if (hoverTimer) {
 			clearTimeout(hoverTimer);
 			hoverTimer = null;
+		}
+		resetStrokeState();
+		if (onGhostMouseLeave) {
+			const clientX = e?.clientX ?? 0;
+			const clientY = e?.clientY ?? 0;
+			const rect = target.getBoundingClientRect();
+			onGhostMouseLeave(clientX, clientY, rect, false);
 		}
 	};
 
@@ -70,7 +146,14 @@ export function setupHoverAndWheel(
 			passive: true,
 		},
 	);
-	target.addEventListener("mouseleave", onMouseLeave);
+	target.addEventListener(
+		"mouseenter",
+		onMouseEnter as unknown as EventListener,
+	);
+	target.addEventListener(
+		"mouseleave",
+		onMouseLeave as unknown as EventListener,
+	);
 
 	return () => {
 		target.removeEventListener("wheel", onWheel as unknown as EventListener);
@@ -78,10 +161,18 @@ export function setupHoverAndWheel(
 			"mousemove",
 			onMouseMove as unknown as EventListener,
 		);
-		target.removeEventListener("mouseleave", onMouseLeave);
+		target.removeEventListener(
+			"mouseenter",
+			onMouseEnter as unknown as EventListener,
+		);
+		target.removeEventListener(
+			"mouseleave",
+			onMouseLeave as unknown as EventListener,
+		);
 		if (hoverTimer) {
 			clearTimeout(hoverTimer);
 			hoverTimer = null;
 		}
+		resetStrokeState();
 	};
 }

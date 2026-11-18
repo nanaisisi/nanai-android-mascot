@@ -1,8 +1,15 @@
 import { BalloonDragManager } from "./balloon-drag.js";
-import { setupGhostDragging } from "./interaction/drag-handler.js";
-import { setupHoverAndWheel } from "./interaction/hover-wheel.js";
+import {
+	type DragOptions,
+	setupGhostDragging,
+} from "./interaction/drag-handler.js";
+import {
+	type HoverWheelOptions,
+	setupHoverAndWheel,
+} from "./interaction/hover-wheel.js";
 import { isPixelTransparent } from "./interaction/transparency.js";
 
+export type { DragOptions, HoverWheelOptions };
 export { isPixelTransparent, setupGhostDragging, setupHoverAndWheel };
 
 /**
@@ -67,19 +74,30 @@ export class InteractionManager {
 		target: HTMLElement,
 		onGhostClick: unknown,
 		onGhostStroke: unknown,
-		options: unknown = {},
+		options: DragOptions & HoverWheelOptions = {},
 	) {
 		if (!target) return;
 
-		const { onGhostWheel, onGhostHover, ...dragOptions } = options;
+		const {
+			onGhostWheel,
+			onGhostHover,
+			onGhostMouseEnter,
+			onGhostMouseLeave,
+			onGhostStroke: optionGhostStroke,
+			...dragOptions
+		} = options;
+		const resolvedOnGhostStroke = onGhostStroke ?? optionGhostStroke;
 
 		const { isInteractingOrDragging } = setupGhostDragging(
 			target,
 			onGhostClick,
-			onGhostStroke,
+			resolvedOnGhostStroke,
 			dragOptions,
 			{
-				toggleMenu: () => this.app?.toggleMenu(),
+				toggleMenu: () =>
+					(
+						this.app as { toggleMenu?: () => void } | null | undefined
+					)?.toggleMenu?.(),
 				updateFollowPosition: (newX: number, newY: number) => {
 					this.balloonDragManager.updateFollowPosition(newX, newY);
 				},
@@ -93,7 +111,14 @@ export class InteractionManager {
 
 		setupHoverAndWheel(
 			target,
-			{ onGhostWheel, onGhostHover },
+			{
+				onGhostWheel,
+				onGhostHover,
+				onGhostMouseEnter,
+				onGhostMouseLeave,
+				onGhostStroke:
+					resolvedOnGhostStroke as HoverWheelOptions["onGhostStroke"],
+			},
 			isInteractingOrDragging,
 		);
 

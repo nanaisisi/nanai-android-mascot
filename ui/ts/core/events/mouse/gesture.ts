@@ -3,6 +3,8 @@
  * @brief Gesture mouse event handler
  */
 
+import { dispatchShioriMouseEvent, isTimeCriticalPlaying } from "./click.js";
+
 export function onGhostGesture(
 	this: unknown,
 	startX: number,
@@ -14,17 +16,9 @@ export function onGhostGesture(
 	direction: string,
 	scopeId: number = 0,
 ) {
-	if (
-		(this as unknown as import("../../../../main.js").NanaiAndroidMascotApp)
-			.sakuraPlayer?.timeCritical &&
-		(this as unknown as import("../../../../main.js").NanaiAndroidMascotApp)
-			.sakuraPlayer?.isPlaying
-	)
-		return;
+	if (isTimeCriticalPlaying(this)) return;
 	const coord = (x: number, y: number) => `${x}\x01${y}`;
-	(
-		this as unknown as import("../../../../main.js").NanaiAndroidMascotApp
-	).ghostController.sendShioriEvent("OnMouseGesture", [
+	return dispatchShioriMouseEvent(this, "OnMouseGesture", [
 		scopeId,
 		coord(endX, endY),
 		endPart || "",

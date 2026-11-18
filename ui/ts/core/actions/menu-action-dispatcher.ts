@@ -23,6 +23,7 @@ export interface MenuActionContext {
 		arg1?: unknown,
 		arg2?: unknown,
 		scopeId?: number,
+		clickType?: "single" | "double",
 	) => unknown;
 	startNetworkUpdate?: (
 		target?: string | null,
@@ -70,6 +71,10 @@ interface NamedPayload {
 	ghostName?: string;
 	shellName?: string;
 	scope?: number;
+	clientX?: number;
+	clientY?: number;
+	rect?: unknown;
+	clickType?: "single" | "double";
 	[key: string]: unknown;
 }
 
@@ -82,11 +87,18 @@ export function handleMenuActionImpl(
 	const gc = context.ghostController;
 
 	if (action === "talk") {
-		const scopeId =
-			payload && typeof payload === "object" && "scope" in payload
-				? ((payload as NamedPayload).scope ?? 0)
-				: 0;
-		return context.onGhostClick?.(undefined, undefined, undefined, scopeId);
+		const p =
+			payload && typeof payload === "object"
+				? (payload as NamedPayload)
+				: undefined;
+		const scopeId = p?.scope ?? 0;
+		return context.onGhostClick?.(
+			p?.clientX,
+			p?.clientY,
+			p?.rect,
+			scopeId,
+			p?.clickType,
+		);
 	}
 
 	// バルーン専用ネイティブコンテキストメニューアクション

@@ -7,6 +7,118 @@ import {
 	listen,
 } from "../tauri-helper.js";
 
+type SetupAppContext = import("../../../main.js").NanaiAndroidMascotApp & {
+	onGhostClick: (
+		x?: number,
+		y?: number,
+		rect?: unknown,
+		scopeId?: number,
+		clickType?: "single" | "double",
+	) => unknown;
+	onGhostMouseEnter?: (
+		x?: number,
+		y?: number,
+		rect?: unknown,
+		scopeId?: number,
+		isWindow?: boolean,
+	) => unknown;
+	onGhostMouseLeave?: (
+		x?: number,
+		y?: number,
+		rect?: unknown,
+		scopeId?: number,
+		isWindow?: boolean,
+	) => unknown;
+	onGhostMouseEx?: (
+		type: string,
+		x?: number,
+		y?: number,
+		rect?: unknown,
+		button?: string | number,
+		device?: string,
+		scopeId?: number,
+	) => unknown;
+	onGhostMouseClickEx?: (
+		x?: number,
+		y?: number,
+		rect?: unknown,
+		button?: string | number,
+		device?: string,
+		scopeId?: number,
+		isDouble?: boolean,
+	) => unknown;
+	onGhostMultipleClick?: (
+		x?: number,
+		y?: number,
+		rect?: unknown,
+		count?: number,
+		button?: number | string,
+		device?: string,
+		scopeId?: number,
+		isEx?: boolean,
+	) => unknown;
+	onGhostGesture?: (
+		startX: number,
+		startY: number,
+		startPart: string,
+		endX: number,
+		endY: number,
+		endPart: string,
+		direction: string,
+		scopeId?: number,
+	) => unknown;
+	getCollisionInfo?: (
+		x?: number,
+		y?: number,
+		rect?: unknown,
+		scopeId?: number,
+	) => { name?: string; canvasX?: number; canvasY?: number; scopeId?: number };
+};
+
+interface GhostMouseEventPayload {
+	type?: string;
+	scopeId?: number;
+	clientX?: number;
+	clientY?: number;
+	rect?: unknown;
+	count?: number;
+	button?: number | string;
+	device?: string;
+	isEx?: boolean;
+	isDouble?: boolean;
+	delta?: number;
+	isWindow?: boolean;
+	startX?: number;
+	startY?: number;
+	endX?: number;
+	endY?: number;
+	direction?: string;
+}
+
+function dispatchGestureWithCollision(
+	app: SetupAppContext,
+	startX: number | undefined,
+	startY: number | undefined,
+	endX: number | undefined,
+	endY: number | undefined,
+	direction: string,
+	rect: unknown,
+	scopeId: number,
+) {
+	const startCol = app.getCollisionInfo?.(startX, startY, rect, scopeId);
+	const endCol = app.getCollisionInfo?.(endX, endY, rect, scopeId);
+	app.onGhostGesture?.(
+		startCol?.canvasX ?? startX ?? 0,
+		startCol?.canvasY ?? startY ?? 0,
+		startCol?.name || "",
+		endCol?.canvasX ?? endX ?? 0,
+		endCol?.canvasY ?? endY ?? 0,
+		endCol?.name || "",
+		direction,
+		scopeId,
+	);
+}
+
 export const setupMethods = {
 	async setupEventListeners() {
 		if (
@@ -32,25 +144,19 @@ export const setupMethods = {
 	},
 
 	setupGhostInteractions() {
+		const app = this as unknown as SetupAppContext;
 		const bind = (el: HTMLElement | null, scopeId: number) => {
-			if (
-				!el ||
-				!(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
-					.interactionManager
-			)
-				return;
-			(
-				this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-			).interactionManager.setupDragging(
+			if (!el || !app.interactionManager) return;
+			app.interactionManager.setupDragging(
 				el,
+				(
+					x: number,
+					y: number,
+					rect: unknown,
+					clickType?: "single" | "double",
+				) => app.onGhostClick(x, y, rect, scopeId, clickType),
 				(x: number, y: number, rect: unknown) =>
-					(
-						this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-					).onGhostClick(x, y, rect, scopeId),
-				(x: number, y: number, rect: unknown) =>
-					(
-						this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-					).onGhostStroke(x, y, rect, scopeId),
+					app.onGhostStroke(x, y, rect, scopeId),
 				{
 					onGhostMouseDown: (
 						x: number,
@@ -58,56 +164,106 @@ export const setupMethods = {
 						rect: unknown,
 						button: number,
 						device: string,
-					) =>
-						(
-							this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-						).onGhostMouseDown(x, y, rect, button, device, scopeId),
+					) => app.onGhostMouseDown(x, y, rect, button, device, scopeId),
 					onGhostMouseUp: (
 						x: number,
 						y: number,
 						rect: unknown,
 						button: number,
 						device: string,
+					) => app.onGhostMouseUp(x, y, rect, button, device, scopeId),
+					onGhostMouseEx: (
+						type: string,
+						x: number,
+						y: number,
+						rect: unknown,
+						button: string | number,
+						device: string,
+					) => app.onGhostMouseEx?.(type, x, y, rect, button, device, scopeId),
+					onGhostMouseClickEx: (
+						x: number,
+						y: number,
+						rect: unknown,
+						button: string | number,
+						device: string,
+						isDouble: boolean,
 					) =>
-						(
-							this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-						).onGhostMouseUp(x, y, rect, button, device, scopeId),
+						app.onGhostMouseClickEx?.(
+							x,
+							y,
+							rect,
+							button,
+							device,
+							scopeId,
+							isDouble,
+						),
+					onGhostMultipleClick: (
+						x: number,
+						y: number,
+						rect: unknown,
+						count: number,
+						button: number | string,
+						device: string,
+						isEx: boolean,
+					) =>
+						app.onGhostMultipleClick?.(
+							x,
+							y,
+							rect,
+							count,
+							button,
+							device,
+							scopeId,
+							isEx,
+						),
 					onGhostWheel: (x: number, y: number, rect: unknown, delta: number) =>
-						(
-							this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-						).onGhostWheel(x, y, rect, delta, scopeId),
+						app.onGhostWheel(x, y, rect, delta, scopeId),
 					onGhostDragStart: (x: number, y: number, rect: unknown) =>
-						(
-							this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-						).onGhostDragStart(x, y, rect, scopeId),
+						app.onGhostDragStart(x, y, rect, scopeId),
 					onGhostDragEnd: (x: number, y: number, rect: unknown) =>
-						(
-							this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-						).onGhostDragEnd(x, y, rect, scopeId),
+						app.onGhostDragEnd(x, y, rect, scopeId),
 					onGhostHover: (x: number, y: number, rect: unknown) =>
-						(
-							this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-						).onGhostHover(x, y, rect, scopeId),
+						app.onGhostHover(x, y, rect, scopeId),
+					onGhostMouseEnter: (
+						x: number,
+						y: number,
+						rect: unknown,
+						isWindow?: boolean,
+					) => app.onGhostMouseEnter?.(x, y, rect, scopeId, isWindow),
+					onGhostMouseLeave: (
+						x: number,
+						y: number,
+						rect: unknown,
+						isWindow?: boolean,
+					) => app.onGhostMouseLeave?.(x, y, rect, scopeId, isWindow),
+					onGhostGesture: (
+						startX: number,
+						startY: number,
+						endX: number,
+						endY: number,
+						direction: string,
+						rect: unknown,
+					) =>
+						dispatchGestureWithCollision(
+							app,
+							startX,
+							startY,
+							endX,
+							endY,
+							direction,
+							rect,
+							scopeId,
+						),
 				},
 			);
 			el.addEventListener("contextmenu", (e: MouseEvent) => {
 				e.preventDefault();
 				e.stopPropagation();
-				(
-					this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-				).toggleMenu(e.screenX, e.screenY, scopeId);
+				app.toggleMenu(e.screenX, e.screenY, scopeId);
 			});
 		};
-		bind(
-			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
-				.elements?.ghostDisplay,
-			0,
-		);
-		bind(
-			(this as unknown as import("../../../main.js").NanaiAndroidMascotApp)
-				.elements?.keroDisplay,
-			1,
-		);
+		bind(app.elements?.ghostDisplay, 0);
+		bind(app.elements?.keroDisplay, 1);
 
 		const bindBalloon = (
 			el: HTMLElement | null | undefined,
@@ -328,6 +484,7 @@ export const setupMethods = {
 	},
 
 	async setupExternalMenuListeners() {
+		const app = this as unknown as SetupAppContext;
 		const forward = (event: unknown) => {
 			const data = (
 				event as { payload?: { action?: string; payload?: { scope?: number } } }
@@ -335,15 +492,11 @@ export const setupMethods = {
 			if (!data) return;
 			if (data.action === "request-sync") {
 				const reqScope = data.payload?.scope ?? 0;
-				(
-					this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-				).syncMenuGhosts(reqScope);
+				app.syncMenuGhosts(reqScope);
 				return;
 			}
 			if (data.action) {
-				(
-					this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-				).handleMenuAction(data.action, data.payload);
+				app.handleMenuAction(data.action, data.payload);
 			}
 		};
 		await listen("menu-action", forward);
@@ -353,12 +506,143 @@ export const setupMethods = {
 			const scopeId = (event as { payload?: { scopeId?: number } })?.payload
 				?.scopeId;
 			if (typeof scopeId === "number") {
-				const cachedSrc = (
-					this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-				).ghostController?.currentSurfaces?.get(scopeId);
+				const cachedSrc = app.ghostController?.currentSurfaces?.get(scopeId);
 				if (cachedSrc) {
 					emit(`update-subchar-image-${scopeId}`, { src: cachedSrc });
 				}
+			}
+		});
+
+		await listen("ghost-mouse-event", (event: unknown) => {
+			const p = (
+				event as { payload?: GhostMouseEventPayload } | null | undefined
+			)?.payload;
+			if (!p?.type) return;
+			const scopeId = p.scopeId ?? 0;
+
+			switch (p.type) {
+				case "click":
+					app.onGhostClick?.(p.clientX, p.clientY, p.rect, scopeId, "single");
+					break;
+				case "dblclick":
+					app.onGhostClick?.(p.clientX, p.clientY, p.rect, scopeId, "double");
+					break;
+				case "multipleclick":
+					app.onGhostMultipleClick?.(
+						p.clientX,
+						p.clientY,
+						p.rect,
+						p.count ?? 3,
+						p.button ?? 0,
+						p.device ?? "mouse",
+						scopeId,
+						Boolean(p.isEx),
+					);
+					break;
+				case "stroke":
+					app.onGhostStroke?.(p.clientX, p.clientY, p.rect, scopeId);
+					break;
+				case "mousedown":
+					app.onGhostMouseDown?.(
+						p.clientX,
+						p.clientY,
+						p.rect,
+						(p.button ?? 0) as number,
+						p.device ?? "mouse",
+						scopeId,
+					);
+					break;
+				case "mouseup":
+					app.onGhostMouseUp?.(
+						p.clientX,
+						p.clientY,
+						p.rect,
+						(p.button ?? 0) as number,
+						p.device ?? "mouse",
+						scopeId,
+					);
+					break;
+				case "mousedown-ex":
+					app.onGhostMouseEx?.(
+						"down",
+						p.clientX,
+						p.clientY,
+						p.rect,
+						p.button ?? "middle",
+						p.device ?? "mouse",
+						scopeId,
+					);
+					break;
+				case "mouseup-ex":
+					app.onGhostMouseEx?.(
+						"up",
+						p.clientX,
+						p.clientY,
+						p.rect,
+						p.button ?? "middle",
+						p.device ?? "mouse",
+						scopeId,
+					);
+					break;
+				case "click-ex":
+					app.onGhostMouseClickEx?.(
+						p.clientX,
+						p.clientY,
+						p.rect,
+						p.button ?? "middle",
+						p.device ?? "mouse",
+						scopeId,
+						Boolean(p.isDouble),
+					);
+					break;
+				case "wheel":
+					app.onGhostWheel?.(
+						p.clientX,
+						p.clientY,
+						p.rect,
+						p.delta ?? 0,
+						scopeId,
+					);
+					break;
+				case "dragstart":
+					app.onGhostDragStart?.(p.clientX, p.clientY, p.rect, scopeId);
+					break;
+				case "dragend":
+					app.onGhostDragEnd?.(p.clientX, p.clientY, p.rect, scopeId);
+					break;
+				case "hover":
+					app.onGhostHover?.(p.clientX, p.clientY, p.rect, scopeId);
+					break;
+				case "mouseenter":
+					app.onGhostMouseEnter?.(
+						p.clientX,
+						p.clientY,
+						p.rect,
+						scopeId,
+						Boolean(p.isWindow ?? true),
+					);
+					break;
+				case "mouseleave":
+					app.onGhostMouseLeave?.(
+						p.clientX,
+						p.clientY,
+						p.rect,
+						scopeId,
+						Boolean(p.isWindow ?? true),
+					);
+					break;
+				case "gesture":
+					dispatchGestureWithCollision(
+						app,
+						p.startX,
+						p.startY,
+						p.endX,
+						p.endY,
+						p.direction || "",
+						p.rect,
+						scopeId,
+					);
+					break;
 			}
 		});
 
@@ -367,17 +651,11 @@ export const setupMethods = {
 			const action = event.data.action;
 			if (action === "request-sync") {
 				const reqScope = event.data.payload?.scope ?? 0;
-				(
-					this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-				).syncMenuGhosts(reqScope);
+				app.syncMenuGhosts(reqScope);
 				return;
 			}
-			(
-				this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-			).hideMenu();
-			(
-				this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-			).handleMenuAction(action, event.data.payload);
+			app.hideMenu();
+			app.handleMenuAction(action, event.data.payload);
 		});
 	},
 };

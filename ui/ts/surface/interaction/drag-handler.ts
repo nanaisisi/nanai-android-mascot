@@ -17,7 +17,11 @@ import {
 	clampPosition,
 	createNativeDragSession,
 } from "./drag/drag-motion.js";
-import { handleGhostPointerUp } from "./drag/drag-pointer-up.js";
+import {
+	createClickTracker,
+	handleGhostPointerUp,
+	normalizePointerDevice,
+} from "./drag/drag-pointer-up.js";
 import { createLongPressController } from "./drag/long-press.js";
 import { createStrokeTracker } from "./drag/stroke.js";
 import { isPixelTransparent } from "./transparency.js";
@@ -41,17 +45,63 @@ export {
 	STROKE_THRESHOLD,
 };
 
-interface DragOptions {
-	onGhostMouseDown?: (...args: unknown[]) => unknown;
-	onGhostMouseUp?: (...args: unknown[]) => unknown;
-	onGhostDragStart?: (...args: unknown[]) => unknown;
-	onGhostDragEnd?: (...args: unknown[]) => unknown;
+export interface DragOptions {
+	onGhostMouseDown?: (
+		x: number,
+		y: number,
+		rect: unknown,
+		button: number,
+		device: string,
+	) => unknown;
+	onGhostMouseUp?: (
+		x: number,
+		y: number,
+		rect: unknown,
+		button: number,
+		device: string,
+	) => unknown;
+	onGhostDragStart?: (x: number, y: number, rect: unknown) => unknown;
+	onGhostDragEnd?: (x: number, y: number, rect: unknown) => unknown;
+	onGhostMouseEx?: (
+		type: "down" | "up",
+		x: number,
+		y: number,
+		rect: unknown,
+		button: string | number,
+		device: string,
+	) => void;
+	onGhostMouseClickEx?: (
+		x: number,
+		y: number,
+		rect: unknown,
+		button: string | number,
+		device: string,
+		isDouble: boolean,
+	) => void;
+	onGhostMultipleClick?: (
+		x: number,
+		y: number,
+		rect: unknown,
+		count: number,
+		button: number | string,
+		device: string,
+		isEx: boolean,
+	) => void;
+	onGhostGesture?: (
+		startX: number,
+		startY: number,
+		endX: number,
+		endY: number,
+		direction: string,
+		rect: unknown,
+	) => void;
+	enableDocking?: boolean;
 	[key: string]: unknown;
 }
 
 interface DragContext {
 	toggleMenu?: () => void;
-	isPixelTransparent?: (img: Element, x: number, y: number) => boolean;
+	isPixelTransparent?: (img: HTMLElement, x: number, y: number) => boolean;
 	updateFollowPosition?: (x: number, y: number) => void;
 	[key: string]: unknown;
 }
@@ -60,6 +110,12 @@ type PointerEventEx = Event & {
 	button?: number;
 	clientX?: number;
 	clientY?: number;
+	pointerType?: string;
+	changedTouches?: Array<{
+		clientX?: number;
+		clientY?: number;
+		[key: string]: unknown;
+	}>;
 	touches?: Array<{
 		clientX?: number;
 		clientY?: number;
@@ -68,6 +124,41 @@ type PointerEventEx = Event & {
 	type?: string;
 	[key: string]: unknown;
 };
+
+type ExtendedButtonName = "middle" | "xbutton1" | "xbutton2";
+
+const GESTURE_DIRECTIONS = [
+	"right",
+	"right_down",
+	"down",
+	"left_down",
+	"left",
+	"left_up",
+	"up",
+	"right_up",
+] as const;
+
+function getExtendedButtonName(
+	button: number | undefined,
+): ExtendedButtonName | null {
+	switch (button) {
+		case 1:
+			return "middle";
+		case 3:
+			return "xbutton1";
+		case 4:
+			return "xbutton2";
+		default:
+			return null;
+	}
+}
+
+function detectGestureDirection(dx: number, dy: number): string {
+	const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+	const normalized = (((angle + 22.5) % 360) + 360) % 360;
+	const sector = Math.floor(normalized / 45) % GESTURE_DIRECTIONS.length;
+	return GESTURE_DIRECTIONS[sector] ?? "right";
+}
 
 /**
  * ゴースト本体のドラッグ移動、スナップ退避、および部位撫で（Stroke）判定のセットアップ
@@ -86,8 +177,16 @@ export function setupGhostDragging(
 		};
 	}
 
-	const { onGhostMouseDown, onGhostMouseUp, onGhostDragStart, onGhostDragEnd } =
-		options;
+	const {
+		onGhostMouseDown,
+		onGhostMouseUp,
+		onGhostDragStart,
+		onGhostDragEnd,
+		onGhostMouseEx,
+		onGhostMouseClickEx,
+		onGhostMultipleClick,
+		onGhostGesture,
+	} = options;
 
 	const dragInternalState = {
 		isInteracting: false,
@@ -102,6 +201,23 @@ export function setupGhostDragging(
 	let initialTop = 0;
 	let rafPending = false;
 
+	const leftClickTracker = createClickTracker(350, 10);
+	const exClickTracker = createClickTracker(350, 10);
+
+	let activeExPress: {
+		buttonName: ExtendedButtonName;
+		startX: number;
+		startY: number;
+		device: string;
+		hasMoved: boolean;
+	} | null = null;
+
+	const rightDragState = {
+		active: false,
+		startX: 0,
+		startY: 0,
+	};
+
 	const nativeDrag = createNativeDragSession();
 
 	const longPress = createLongPressController({
@@ -114,9 +230,13 @@ export function setupGhostDragging(
 	const strokeTracker = createStrokeTracker({
 		threshold: STROKE_THRESHOLD,
 		onStroke: (clientX: unknown, clientY: unknown) => {
-			if (onGhostStroke) {
+			if (typeof onGhostStroke === "function") {
 				const rect = target.getBoundingClientRect();
-				(onGhostStroke as unknown)(clientX, clientY, rect);
+				(onGhostStroke as (x: unknown, y: unknown, rect: DOMRect) => unknown)(
+					clientX,
+					clientY,
+					rect,
+				);
 			}
 		},
 	}) as {
@@ -126,20 +246,53 @@ export function setupGhostDragging(
 		[key: string]: unknown;
 	};
 
-	const checkTransparency =
-		context.isPixelTransparent ||
-		(isPixelTransparent as unknown as (
-			img: Element,
-			x: number,
-			y: number,
-		) => boolean);
+	const checkTransparency = context.isPixelTransparent || isPixelTransparent;
 
 	const onPointerDown = (evt: Event) => {
 		const e = evt as PointerEventEx;
+		const clientX = Number(e.clientX ?? e.touches?.[0]?.clientX ?? 0);
+		const clientY = Number(e.clientY ?? e.touches?.[0]?.clientY ?? 0);
+		const img = target.querySelector("img");
+
+		const exButtonName = getExtendedButtonName(e.button);
+		if (exButtonName) {
+			if (img && checkTransparency(img, clientX, clientY)) {
+				return;
+			}
+			if (e.cancelable) {
+				e.preventDefault();
+			}
+			const device = normalizePointerDevice(e);
+			activeExPress = {
+				buttonName: exButtonName,
+				startX: clientX,
+				startY: clientY,
+				device,
+				hasMoved: false,
+			};
+			const rect = target.getBoundingClientRect();
+			onGhostMouseEx?.("down", clientX, clientY, rect, exButtonName, device);
+			return;
+		}
+
+		if (e.button === 2) {
+			if (img && checkTransparency(img, clientX, clientY)) {
+				return;
+			}
+			rightDragState.active = true;
+			rightDragState.startX = clientX;
+			rightDragState.startY = clientY;
+			return;
+		}
+
 		if (e.button !== undefined && e.button !== 0) return;
 
 		if (e.cancelable) {
 			e.preventDefault();
+		}
+
+		if (img && checkTransparency(img, clientX, clientY)) {
+			return;
 		}
 
 		dragInternalState.isInteracting = true;
@@ -148,14 +301,6 @@ export function setupGhostDragging(
 		nativeDrag.reset();
 		strokeTracker.reset();
 		longPress.reset();
-
-		const clientX = Number(e.clientX ?? e.touches?.[0]?.clientX ?? 0);
-		const clientY = Number(e.clientY ?? e.touches?.[0]?.clientY ?? 0);
-
-		const img = target.querySelector("img");
-		if (img && checkTransparency(img, clientX, clientY)) {
-			return;
-		}
 
 		if (nativeDrag.canStartNativeDrag(e.type || "")) {
 			nativeDrag.startNativeDrag(() => dragInternalState.isInteracting);
@@ -172,7 +317,7 @@ export function setupGhostDragging(
 
 		if (onGhostMouseDown) {
 			const button = e.button !== undefined ? e.button : 0;
-			const device = e.touches ? "touch" : "mouse";
+			const device = normalizePointerDevice(e);
 			onGhostMouseDown(clientX, clientY, rect, button, device);
 		}
 
@@ -191,6 +336,21 @@ export function setupGhostDragging(
 
 	const onPointerMove = (evt: Event) => {
 		const e = evt as PointerEventEx;
+		if (activeExPress && !activeExPress.hasMoved) {
+			const exX = Number(
+				e.clientX ?? e.touches?.[0]?.clientX ?? activeExPress.startX,
+			);
+			const exY = Number(
+				e.clientY ?? e.touches?.[0]?.clientY ?? activeExPress.startY,
+			);
+			if (
+				Math.hypot(exX - activeExPress.startX, exY - activeExPress.startY) >
+				DRAG_MIN_MOVE
+			) {
+				activeExPress.hasMoved = true;
+			}
+		}
+
 		if (!dragInternalState.isInteracting) return;
 
 		const clientX = Number(e.clientX ?? e.touches?.[0]?.clientX ?? 0);
@@ -258,10 +418,82 @@ export function setupGhostDragging(
 		}
 	};
 
-	const onPointerUp = (e: Event) => {
+	const onPointerUp = (evt: Event) => {
+		const e = evt as PointerEventEx;
+		const exButtonName = getExtendedButtonName(e.button);
+		if (
+			exButtonName &&
+			activeExPress &&
+			activeExPress.buttonName === exButtonName
+		) {
+			const press = activeExPress;
+			activeExPress = null;
+			const clientX = Number(e.clientX ?? press.startX);
+			const clientY = Number(e.clientY ?? press.startY);
+			const rect = target.getBoundingClientRect();
+			const device =
+				e.changedTouches || e.touches || e.pointerType
+					? normalizePointerDevice(e)
+					: press.device;
+			onGhostMouseEx?.("up", clientX, clientY, rect, press.buttonName, device);
+
+			if (
+				!press.hasMoved &&
+				Math.hypot(clientX - press.startX, clientY - press.startY) <=
+					DRAG_MIN_MOVE
+			) {
+				const count = exClickTracker.registerClick(
+					clientX,
+					clientY,
+					press.buttonName,
+				);
+				if (count >= 3) {
+					onGhostMultipleClick?.(
+						clientX,
+						clientY,
+						rect,
+						count,
+						press.buttonName,
+						device,
+						true,
+					);
+				} else {
+					onGhostMouseClickEx?.(
+						clientX,
+						clientY,
+						rect,
+						press.buttonName,
+						device,
+						count === 2,
+					);
+				}
+			}
+			return;
+		}
+
+		if (e.button === 2 && rightDragState.active) {
+			const startX = rightDragState.startX;
+			const startY = rightDragState.startY;
+			rightDragState.active = false;
+			const endX = Number(e.clientX ?? startX);
+			const endY = Number(e.clientY ?? startY);
+			const dx = endX - startX;
+			const dy = endY - startY;
+			if (Math.hypot(dx, dy) > 20) {
+				const direction = detectGestureDirection(dx, dy);
+				const rect = target.getBoundingClientRect();
+				onGhostGesture?.(startX, startY, endX, endY, direction, rect);
+			}
+			return;
+		}
+
+		if (e.button !== undefined && e.button !== 0) {
+			return;
+		}
+
 		rafPending = false;
 		handleGhostPointerUp(
-			e,
+			evt,
 			dragInternalState,
 			target,
 			longPress,
@@ -271,6 +503,7 @@ export function setupGhostDragging(
 			onGhostClick,
 			onGhostDragEnd,
 			onGhostMouseUp,
+			leftClickTracker,
 		);
 	};
 
@@ -288,6 +521,10 @@ export function setupGhostDragging(
 
 	const cleanup = () => {
 		longPress.cleanup();
+		leftClickTracker.reset();
+		exClickTracker.reset();
+		activeExPress = null;
+		rightDragState.active = false;
 		target.removeEventListener("mousedown", onPointerDown as EventListener);
 		globalThis.removeEventListener("mousemove", onPointerMove as EventListener);
 		globalThis.removeEventListener("mouseup", onPointerUp as EventListener);

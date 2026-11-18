@@ -177,17 +177,25 @@ export async function loadBalloonSkinImages(
 	balloonId: number | null = null,
 ) {
 	const candidates: string[] = [];
+	const isFlipped =
+		(scopeId === 0 && side === "right") || (scopeId >= 1 && side === "left");
 
 	if (balloonId !== null && typeof balloonId === "number" && balloonId >= 0) {
-		if (scopeId === 0) {
-			candidates.push(`balloons${balloonId}.png`, `balloons${balloonId}.bmp`);
-		} else if (scopeId === 1) {
-			candidates.push(`balloonk${balloonId}.png`, `balloonk${balloonId}.bmp`);
-		} else {
-			candidates.push(
-				`balloonp${scopeId}_${balloonId}.png`,
-				`balloonp${scopeId}_${balloonId}.bmp`,
-			);
+		const candidateIds =
+			balloonId % 2 === 0 && isFlipped
+				? [balloonId + 1, balloonId]
+				: [balloonId];
+		for (const id of candidateIds) {
+			if (scopeId === 0) {
+				candidates.push(`balloons${id}.png`, `balloons${id}.bmp`);
+			} else if (scopeId === 1) {
+				candidates.push(`balloonk${id}.png`, `balloonk${id}.bmp`);
+			} else {
+				candidates.push(
+					`balloonp${scopeId}_${id}.png`,
+					`balloonp${scopeId}_${id}.bmp`,
+				);
+			}
 		}
 	}
 
@@ -230,12 +238,17 @@ export async function loadBalloonSkinImages(
 	}
 
 	let pnaImage: string | null = null;
-	if (usedFile) {
+	const isSvgImage =
+		Boolean(usedFile && /\.svg$/i.test(usedFile)) ||
+		Boolean(bgImageRaw?.startsWith("data:image/svg+xml"));
+	if (usedFile && !isSvgImage) {
 		const pnaFile = usedFile.replace(/\.(png|bmp|jpg|jpeg)$/i, ".pna");
-		pnaImage = (await invoke("load_balloon_image", {
-			name: theme,
-			file: pnaFile,
-		}).catch(() => null)) as string | null;
+		if (pnaFile !== usedFile) {
+			pnaImage = (await invoke("load_balloon_image", {
+				name: theme,
+				file: pnaFile,
+			}).catch(() => null)) as string | null;
+		}
 	}
 
 	const bgImage = bgImageRaw
@@ -287,6 +300,7 @@ export async function applyBalloonDescript({
 	theme,
 	scopeId,
 	balloonId = null,
+	side = "auto",
 	currentUserScale,
 	onDpiScaleChange,
 	onDontMoveChange,
@@ -294,6 +308,7 @@ export async function applyBalloonDescript({
 	theme: string;
 	scopeId: number;
 	balloonId?: number | null;
+	side?: "left" | "right" | "top" | "auto";
 	currentUserScale?: number;
 	onDpiScaleChange?: (scale: number) => void;
 	onDontMoveChange?: (dontMove: boolean) => void;
@@ -315,6 +330,7 @@ export async function applyBalloonDescript({
 					theme: "nsm",
 					scopeId,
 					balloonId,
+					side,
 					currentUserScale,
 					onDpiScaleChange,
 					onDontMoveChange,
@@ -329,6 +345,9 @@ export async function applyBalloonDescript({
 		for (const prop of STALE_THEME_CSS_PROPS) {
 			clearCssProperty(root, prop);
 			clearCssProperty(balloonBox, prop);
+		}
+		if (balloonBox?.style) {
+			balloonBox.style.backgroundImage = "";
 		}
 		const initialTextEl = document.getElementById("balloon-text");
 		if (initialTextEl?.style) {
@@ -377,14 +396,9 @@ export async function applyBalloonDescript({
 			}
 		}
 
-		let bgImage = await loadBalloonSkinImages(
-			theme,
-			scopeId,
-			"auto",
-			balloonId,
-		);
+		let bgImage = await loadBalloonSkinImages(theme, scopeId, side, balloonId);
 		if (!bgImage && theme !== "default" && theme !== "nsm") {
-			bgImage = await loadBalloonSkinImages("nsm", scopeId);
+			bgImage = await loadBalloonSkinImages("nsm", scopeId, side, balloonId);
 		}
 
 		let baseWidth = DEFAULT_BALLOON_WIDTH;
@@ -535,6 +549,8 @@ export async function applyBalloonDescript({
 			return await applyBalloonDescript({
 				theme: "nsm",
 				scopeId,
+				balloonId,
+				side,
 				currentUserScale,
 				onDpiScaleChange,
 				onDontMoveChange,

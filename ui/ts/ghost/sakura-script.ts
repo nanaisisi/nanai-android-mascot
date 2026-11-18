@@ -37,6 +37,7 @@ export class SakuraScriptPlayer {
 	public currentScope = 0;
 	private timerId: ReturnType<typeof setTimeout> | null = null;
 	private isLoopRunning = false;
+	private scopeBalloonIds = new Map<number, number>();
 	public app: any = null;
 
 	private isBalloonContentBlank(
@@ -73,6 +74,7 @@ export class SakuraScriptPlayer {
 		this.currentScript = script;
 		this.lastScript = script;
 		this.currentScope = 0;
+		this.scopeBalloonIds.clear();
 		this.clearAllBalloons();
 		this.playerInstance = createSakuraPlayerWasm(script);
 	}
@@ -173,47 +175,7 @@ export class SakuraScriptPlayer {
 			}
 			case "BalloonChange": {
 				const balloonId = stepRes.data?.balloon_id ?? 0;
-				if (balloonId === -1) {
-					this.clearBalloon(app, scope);
-				} else {
-					const targetApp = app || this.getApp();
-					const btm =
-						targetApp?.balloonThemeManager ||
-						(targetApp as unknown as { balloonTheme?: unknown })?.balloonTheme;
-					const themeName = targetApp?.currentBalloonTheme || "default";
-
-					if (
-						btm &&
-						typeof (btm as { loadSkinImages?: unknown }).loadSkinImages ===
-							"function"
-					) {
-						void (
-							btm as {
-								loadSkinImages: (
-									theme: string,
-									scope: number,
-									side: string,
-									balloonId: number,
-								) => Promise<unknown>;
-							}
-						).loadSkinImages(themeName, scope, "auto", balloonId);
-					}
-					if (
-						btm &&
-						typeof (btm as { applyDescript?: unknown }).applyDescript ===
-							"function"
-					) {
-						void (
-							btm as {
-								applyDescript: (params: unknown) => Promise<unknown>;
-							}
-						).applyDescript({
-							theme: themeName,
-							scopeId: scope,
-							balloonId,
-						});
-					}
-				}
+				this.applyBalloonSurfaceChange(app, scope, balloonId);
 				break;
 			}
 			case "ScopeChange": {
@@ -375,6 +337,85 @@ export class SakuraScriptPlayer {
 		void emit(`update-balloon-content-${targetScope}`, {
 			html: htmlContent,
 			theme,
+			balloonId: this.scopeBalloonIds.get(targetScope) ?? null,
+		});
+	}
+
+	private applyBalloonSurfaceChange(
+		app: any,
+		scope: number,
+		balloonId: number,
+	): void {
+		if (balloonId === -1) {
+			this.clearBalloon(app, scope);
+			return;
+		}
+		this.scopeBalloonIds.set(scope, balloonId);
+		const targetApp = app || this.getApp();
+		const btm =
+			targetApp?.balloonThemeManager ||
+			(targetApp as unknown as { balloonTheme?: unknown })?.balloonTheme;
+		const themeName = targetApp?.currentBalloonTheme || "default";
+		const { dispEl } = this.getBalloonElements(targetApp, scope);
+
+		if (
+			btm &&
+			typeof (btm as { loadSkinImages?: unknown }).loadSkinImages === "function"
+		) {
+			void Promise.resolve(
+				(
+					btm as {
+						loadSkinImages: (
+							theme: string,
+							scope: number,
+							side: string,
+							balloonId: number,
+						) => Promise<string | null>;
+					}
+				).loadSkinImages(themeName, scope, "auto", balloonId),
+			)
+				.then((bgImage) => {
+					if (bgImage && isSinglePageUi()) {
+						const cssUrl = `url("${bgImage}")`;
+						if (dispEl?.style) {
+							dispEl.style.setProperty?.("--balloon-bg-image", cssUrl);
+							const inner =
+								typeof dispEl.querySelector === "function"
+									? (dispEl.querySelector(".balloon") as HTMLElement | null)
+									: null;
+							inner?.style?.setProperty?.("--balloon-bg-image", cssUrl);
+						}
+						if (typeof document !== "undefined" && document.documentElement) {
+							document.documentElement.style?.setProperty?.(
+								"--balloon-bg-image",
+								cssUrl,
+							);
+						}
+					}
+				})
+				.catch(() => {});
+		}
+		if (
+			btm &&
+			typeof (btm as { applyDescript?: unknown }).applyDescript === "function"
+		) {
+			void Promise.resolve(
+				(
+					btm as {
+						applyDescript: (params: unknown) => Promise<unknown>;
+					}
+				).applyDescript({
+					theme: themeName,
+					scopeId: scope,
+					balloonId,
+				}),
+			).catch(() => {});
+		}
+
+		void emit("balloon-state-changed", {
+			scopeId: scope,
+			balloonId,
+			theme: themeName,
 		});
 	}
 
@@ -450,6 +491,7 @@ export class SakuraScriptPlayer {
 		void emit(`update-balloon-content-${targetScope}`, {
 			html: textEl ? textEl.innerHTML : "",
 			theme,
+			balloonId: this.scopeBalloonIds.get(targetScope) ?? null,
 		});
 	}
 
@@ -459,7 +501,7 @@ export class SakuraScriptPlayer {
 		title: string,
 		id: string,
 	): void {
-		const { textEl } = this.getBalloonElements(app, scope);
+		const { textEl, dispEl } = this.getBalloonElements(app, scope);
 
 		if (
 			textEl &&
@@ -486,6 +528,14 @@ export class SakuraScriptPlayer {
 		if (dispEl?.style && isSinglePageUi()) {
 			dispEl.style.display = "block";
 		}
+
+		const theme = app?.currentBalloonTheme || "default";
+		const targetScope = scope;
+		void emit(`update-balloon-content-${targetScope}`, {
+			html: textEl ? textEl.innerHTML : "",
+			theme,
+			balloonId: this.scopeBalloonIds.get(targetScope) ?? null,
+		});
 	}
 
 	public step(): unknown | null {
@@ -521,9 +571,11 @@ export class SakuraScriptPlayer {
 					);
 				}
 			} else if (stepRes.action === "BalloonChange") {
-				if ((stepRes.data?.balloon_id ?? 0) === -1) {
-					this.clearBalloon(app, scope);
-				}
+				this.applyBalloonSurfaceChange(
+					app,
+					scope,
+					stepRes.data?.balloon_id ?? 0,
+				);
 			} else if (stepRes.action === "Choice") {
 				this.addChoiceToBalloon(
 					app,

@@ -697,3 +697,160 @@ test("balloon-window updates scroll on content, invokes resize_balloon_window on
 		internals.transformCallback = originalTransformCallback;
 	}
 });
+
+test("balloon-window reloads balloon images when balloonId or side changes under the same theme", async () => {
+	setupBalloonMockEnvironment();
+	const internals = (
+		globalThis as unknown as {
+			__TAURI_INTERNALS__: {
+				invoke: (cmd: string, args?: unknown) => Promise<unknown>;
+				transformCallback: (cb: unknown) => unknown;
+			};
+		}
+	).__TAURI_INTERNALS__;
+	const originalInvoke = internals.invoke;
+	const originalTransformCallback = internals.transformCallback;
+	const callbacks = new Map<unknown, (ev: unknown) => void>();
+	const capturedListeners: Record<string, (ev: unknown) => void> = {};
+	const imageRequests: Array<{ name: string; file: string }> = [];
+	const manifestRequests: Array<{
+		name: string;
+		scopeId?: number;
+		balloonId?: number | null;
+	}> = [];
+	const validFiles = new Set([
+		"balloons0.png",
+		"balloons1.png",
+		"balloons2.png",
+		"balloons3.png",
+		"arrow0.png",
+		"arrow1.png",
+	]);
+
+	internals.transformCallback = (cb: unknown) => {
+		const id = originalTransformCallback(cb);
+		if (typeof cb === "function") {
+			callbacks.set(id, cb as (ev: unknown) => void);
+		}
+		return id;
+	};
+	internals.invoke = async (cmd: string, args?: unknown) => {
+		if (cmd === "plugin:event|listen") {
+			const payload = args as { event?: string; handler?: unknown };
+			if (payload?.event && callbacks.has(payload.handler)) {
+				const fn = callbacks.get(payload.handler);
+				if (fn) capturedListeners[payload.event] = fn;
+			}
+			return payload?.handler ?? 1;
+		}
+		if (cmd === "load_balloon_image") {
+			const req = (args ?? {}) as { name?: string; file?: string };
+			const name = String(req.name ?? "");
+			const file = String(req.file ?? "");
+			imageRequests.push({ name, file });
+			if (name === "nsm" && validFiles.has(file)) {
+				return "data:image/svg+xml;base64,svg";
+			}
+			return validFiles.has(file) ? `data:image/png;base64,${file}` : null;
+		}
+		if (cmd === "balloon_manifest") {
+			const req = (args ?? {}) as {
+				name?: string;
+				scopeId?: number;
+				balloonId?: number | null;
+			};
+			manifestRequests.push({
+				name: String(req.name ?? ""),
+				scopeId: req.scopeId,
+				balloonId: req.balloonId,
+			});
+			return {
+				dpi: "96",
+				"validrect.left": "10",
+				"validrect.top": "10",
+				"validrect.right": "10",
+				"validrect.bottom": "10",
+			};
+		}
+		return await originalInvoke(cmd, args);
+	};
+
+	try {
+		const { initBalloonWindow } = await import(
+			"../ui/ts/ghost/balloon-window.js"
+		);
+		initBalloonWindow();
+		await new Promise((r) => setTimeout(r, 40));
+
+		const balloonBox = document.getElementById("balloon-box") as unknown as {
+			style: Record<string, string>;
+		};
+		const findBgFile = () =>
+			imageRequests.find((r) => /^balloons.*\.png$/i.test(r.file))?.file;
+		assert.strictEqual(findBgFile(), "balloons0.png");
+		assert.strictEqual(
+			balloonBox.style.backgroundImage,
+			'url("data:image/png;base64,mock")',
+		);
+
+		// Switching balloonId under the same theme reloads balloons2.png
+		imageRequests.length = 0;
+		manifestRequests.length = 0;
+		balloonBox.style.backgroundImage = "";
+		await capturedListeners["update-balloon-content-0"]?.({
+			payload: { html: "<p>Menu</p>", theme: "ivory", balloonId: 2 },
+		});
+		await new Promise((r) => setTimeout(r, 40));
+
+		assert.strictEqual(manifestRequests[0]?.balloonId, 2);
+		assert.strictEqual(findBgFile(), "balloons2.png");
+		assert.strictEqual(
+			balloonBox.style.backgroundImage,
+			'url("data:image/png;base64,mock")',
+		);
+
+		// Flipping side to right while balloonId=2 selects odd surface balloons3.png
+		imageRequests.length = 0;
+		balloonBox.style.backgroundImage = "";
+		await capturedListeners["balloon-state-changed"]?.({
+			payload: { scopeId: 0, side: "right", theme: "ivory" },
+		});
+		await new Promise((r) => setTimeout(r, 40));
+
+		assert.strictEqual(findBgFile(), "balloons3.png");
+		assert.strictEqual(
+			balloonBox.style.backgroundImage,
+			'url("data:image/png;base64,mock")',
+		);
+
+		// Clearing balloonId to null with side=right selects balloons1.png
+		imageRequests.length = 0;
+		balloonBox.style.backgroundImage = "";
+		await capturedListeners["balloon-state-changed"]?.({
+			payload: { scopeId: 0, balloonId: null, side: "right", theme: "ivory" },
+		});
+		await new Promise((r) => setTimeout(r, 40));
+
+		assert.strictEqual(findBgFile(), "balloons1.png");
+		assert.strictEqual(
+			balloonBox.style.backgroundImage,
+			'url("data:image/png;base64,mock")',
+		);
+
+		// SVG theme does not request .pna mask
+		imageRequests.length = 0;
+		await capturedListeners["balloon-theme-changed"]?.({
+			payload: { theme: "nsm", balloonId: null, side: "left" },
+		});
+		await new Promise((r) => setTimeout(r, 40));
+
+		assert.strictEqual(findBgFile(), "balloons0.png");
+		assert.strictEqual(
+			imageRequests.some((r) => r.file.endsWith(".pna")),
+			false,
+		);
+	} finally {
+		internals.invoke = originalInvoke;
+		internals.transformCallback = originalTransformCallback;
+	}
+});

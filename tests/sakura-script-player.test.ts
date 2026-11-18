@@ -144,6 +144,135 @@ describe("SakuraScriptPlayer Balloon Display Integration", () => {
 			}
 		}
 	});
+
+	it("emits balloon-state-changed and propagates balloonId on BalloonChange", async () => {
+		const emitted: Array<{ event: string; payload: unknown }> = [];
+		const skinCalls: Array<{
+			theme: string;
+			scope: number;
+			side: string;
+			balloonId: number;
+		}> = [];
+		const descriptCalls: unknown[] = [];
+		const prevWindow = (globalThis as { window?: unknown }).window;
+		const prevInternals = (globalThis as { __TAURI_INTERNALS__?: unknown })
+			.__TAURI_INTERNALS__;
+
+		(globalThis as { window?: unknown }).window = globalThis;
+		(globalThis as { __TAURI_INTERNALS__?: unknown }).__TAURI_INTERNALS__ = {
+			invoke: async (cmd: string, args: Record<string, unknown>) => {
+				if (cmd === "plugin:event|emit") {
+					emitted.push({
+						event: String(args.event),
+						payload: args.payload,
+					});
+				}
+			},
+			transformCallback: (cb: unknown) => cb,
+		};
+
+		try {
+			const balloonText = {
+				textContent: "",
+				innerHTML: "",
+				appendChild(node: { textContent?: string | null }) {
+					this.textContent += node.textContent || "";
+				},
+			};
+			const balloonDisplay = { style: { display: "none" } };
+			const mockApp = {
+				elements: {
+					balloonText,
+					balloonDisplay,
+				},
+				currentBalloonTheme: "freight",
+				balloonThemeManager: {
+					loadSkinImages: async (
+						theme: string,
+						scope: number,
+						side: string,
+						balloonId: number,
+					) => {
+						skinCalls.push({ theme, scope, side, balloonId });
+						return "data:image/png;base64,balloon2";
+					},
+					applyDescript: async (params: unknown) => {
+						descriptCalls.push(params);
+						return null;
+					},
+				},
+			};
+
+			const player = new SakuraScriptPlayer("", mockApp) as unknown as {
+				loadScript(script: string): void;
+				stop(): void;
+				applyBalloonSurfaceChange(
+					app: unknown,
+					scope: number,
+					balloonId: number,
+				): void;
+				appendTextToBalloon(app: unknown, scope: number, text: string): void;
+			};
+
+			player.applyBalloonSurfaceChange(mockApp, 0, 2);
+			player.appendTextToBalloon(mockApp, 0, "Menu");
+			await Promise.resolve();
+
+			assert.deepEqual(skinCalls, [
+				{ theme: "freight", scope: 0, side: "auto", balloonId: 2 },
+			]);
+			assert.deepEqual(descriptCalls, [
+				{ theme: "freight", scopeId: 0, balloonId: 2 },
+			]);
+			assert.deepEqual(
+				emitted.filter((e) => e.event === "balloon-state-changed"),
+				[
+					{
+						event: "balloon-state-changed",
+						payload: { scopeId: 0, balloonId: 2, theme: "freight" },
+					},
+				],
+			);
+			assert.deepEqual(
+				emitted.filter((e) => e.event === "update-balloon-content-0"),
+				[
+					{
+						event: "update-balloon-content-0",
+						payload: { html: "Menu", theme: "freight", balloonId: 2 },
+					},
+				],
+			);
+
+			// Starting a new script resets scopeBalloonIds back to null
+			emitted.length = 0;
+			player.loadScript("\\0Fresh");
+			player.stop();
+			player.appendTextToBalloon(mockApp, 0, "Fresh");
+			await Promise.resolve();
+
+			const updatesAfterReset = emitted.filter(
+				(e) => e.event === "update-balloon-content-0" && e.payload,
+			);
+			const lastUpdate = updatesAfterReset[updatesAfterReset.length - 1];
+			assert.deepEqual(lastUpdate, {
+				event: "update-balloon-content-0",
+				payload: { html: "Fresh", theme: "freight", balloonId: null },
+			});
+		} finally {
+			if (prevInternals === undefined) {
+				delete (globalThis as { __TAURI_INTERNALS__?: unknown })
+					.__TAURI_INTERNALS__;
+			} else {
+				(globalThis as { __TAURI_INTERNALS__?: unknown }).__TAURI_INTERNALS__ =
+					prevInternals;
+			}
+			if (prevWindow === undefined) {
+				delete (globalThis as { window?: unknown }).window;
+			} else {
+				(globalThis as { window?: unknown }).window = prevWindow;
+			}
+		}
+	});
 });
 
 function keroDisplayOrSlotStyle(el: any) {

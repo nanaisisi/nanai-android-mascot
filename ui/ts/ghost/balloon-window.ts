@@ -17,13 +17,42 @@ import {
 	resizeBalloonWindowForScale,
 } from "./balloon-window/theme.js";
 
+type BalloonSide = "left" | "right" | "top" | "auto";
+
 const urlParams = new URLSearchParams(globalThis.location?.search || "");
 const scopeId = parseInt(urlParams.get("scope") || "0", 10);
 let appliedTheme: string | null = null;
-let applyingTheme: string | null = null;
+let appliedBalloonId: number | null = null;
+let currentBalloonId: number | null = null;
+let appliedSide: BalloonSide = "auto";
+let currentSide: BalloonSide = "auto";
+let applyingKey: string | null = null;
 let currentDpiScale = 1;
 let currentUserScale = 1;
 let _isBalloonDontMove = false;
+
+function isValidBalloonSide(side: unknown): side is BalloonSide {
+	return (
+		side === "left" || side === "right" || side === "top" || side === "auto"
+	);
+}
+
+function resolveActiveTheme(theme?: unknown): string {
+	if (typeof theme === "string" && theme) return theme;
+	if (appliedTheme) return appliedTheme;
+	if (typeof document !== "undefined") {
+		const attrTheme =
+			document.documentElement.getAttribute("data-balloon-theme");
+		if (attrTheme) return attrTheme;
+	}
+	const paramTheme = urlParams.get("theme");
+	if (paramTheme) return paramTheme;
+	try {
+		const saved = localStorage.getItem("nanai_balloon_theme");
+		if (saved) return saved;
+	} catch (_e) {}
+	return "default";
+}
 
 const ARROW_CLICK_SCROLL_STEP = 36;
 const WHEEL_SCROLL_STEP = 28;
@@ -270,15 +299,28 @@ export {
 	updateBalloonWindowScale,
 };
 
-export async function applyBalloonDescript(theme: string) {
+export async function applyBalloonDescript(
+	theme: string,
+	balloonId: number | null = currentBalloonId,
+	side: BalloonSide = currentSide,
+) {
 	if (!isTauriAvailable()) return;
-	if (appliedTheme === theme) return;
-	if (applyingTheme === theme) return;
-	applyingTheme = theme;
+	const stateKey = `${theme}::${balloonId ?? "default"}::${side}`;
+	if (
+		appliedTheme === theme &&
+		appliedBalloonId === balloonId &&
+		appliedSide === side
+	) {
+		return;
+	}
+	if (applyingKey === stateKey) return;
+	applyingKey = stateKey;
 	try {
 		const result = (await applyThemeDescript({
 			theme,
 			scopeId,
+			balloonId,
+			side,
 			currentUserScale,
 			onDpiScaleChange: (newDpiScale: number) => {
 				currentDpiScale = newDpiScale;
@@ -291,6 +333,8 @@ export async function applyBalloonDescript(theme: string) {
 			currentDpiScale = result.dpiScale ?? currentDpiScale;
 			_isBalloonDontMove = result.isBalloonDontMove ?? _isBalloonDontMove;
 			appliedTheme = theme;
+			appliedBalloonId = balloonId;
+			appliedSide = side;
 			if (typeof document !== "undefined") {
 				updateBalloonScrollArrows(
 					document.getElementById("balloon-box"),
@@ -300,11 +344,18 @@ export async function applyBalloonDescript(theme: string) {
 		}
 	} catch (_e) {
 	} finally {
-		if (applyingTheme === theme) applyingTheme = null;
+		if (applyingKey === stateKey) applyingKey = null;
 	}
 }
 
 export function initBalloonWindow() {
+	appliedTheme = null;
+	appliedBalloonId = null;
+	appliedSide = "auto";
+	currentBalloonId = null;
+	currentSide = "auto";
+	applyingKey = null;
+
 	const balloonBox = document.getElementById("balloon-box");
 	const balloonText = document.getElementById("balloon-text");
 
@@ -313,7 +364,7 @@ export function initBalloonWindow() {
 		localStorage.getItem("nanai_balloon_theme") ||
 		"default";
 	document.documentElement.setAttribute("data-balloon-theme", savedTheme);
-	void applyBalloonDescript(savedTheme);
+	void applyBalloonDescript(savedTheme, currentBalloonId, currentSide);
 
 	setupBalloonScroll(balloonBox, balloonText);
 	setupWindowGestures(balloonBox, {
@@ -329,11 +380,33 @@ export function initBalloonWindow() {
 	if (!isTauriAvailable()) return;
 
 	void listen(`update-balloon-content-${scopeId}`, (event: unknown) => {
-		const ev = event as { payload?: { html?: string; theme?: string } };
-		const { html, theme } = ev.payload || {};
-		if (theme) {
+		const ev = event as {
+			payload?: {
+				html?: string;
+				theme?: string;
+				balloonId?: number | null;
+				side?: BalloonSide;
+			};
+		};
+		const { html, theme, balloonId, side } = ev.payload || {};
+		const hasTheme = typeof theme === "string" && theme.length > 0;
+		const hasBalloonId = typeof balloonId === "number" || balloonId === null;
+		const hasSide = isValidBalloonSide(side);
+		if (hasBalloonId) {
+			currentBalloonId = balloonId;
+		}
+		if (hasSide) {
+			currentSide = side;
+		}
+		if (hasTheme) {
 			document.documentElement.setAttribute("data-balloon-theme", theme);
-			void applyBalloonDescript(theme);
+		}
+		if (hasTheme || hasBalloonId || hasSide) {
+			void applyBalloonDescript(
+				resolveActiveTheme(theme),
+				currentBalloonId,
+				currentSide,
+			);
 		}
 		const targetText = document.getElementById("balloon-text");
 		if (targetText && html !== undefined) {
@@ -374,17 +447,64 @@ export function initBalloonWindow() {
 		}
 	});
 
+	void listen("balloon-state-changed", (event: unknown) => {
+		const ev = event as {
+			payload?: {
+				scopeId?: number;
+				theme?: string;
+				balloonId?: number | null;
+				side?: BalloonSide;
+			};
+		};
+		const payload = ev.payload;
+		if (!payload) return;
+		if (payload.scopeId !== undefined && payload.scopeId !== scopeId) return;
+		if (typeof payload.balloonId === "number" || payload.balloonId === null) {
+			currentBalloonId = payload.balloonId;
+		}
+		if (isValidBalloonSide(payload.side)) {
+			currentSide = payload.side;
+		}
+		if (typeof payload.theme === "string" && payload.theme) {
+			document.documentElement.setAttribute(
+				"data-balloon-theme",
+				payload.theme,
+			);
+		}
+		void applyBalloonDescript(
+			resolveActiveTheme(payload.theme),
+			currentBalloonId,
+			currentSide,
+		);
+	});
+
 	void listen("balloon-theme-changed", (event: unknown) => {
-		const ev = event as { payload?: { theme?: string } | string };
+		const ev = event as {
+			payload?:
+				| { theme?: string; balloonId?: number | null; side?: BalloonSide }
+				| string;
+		};
 		const payload = ev.payload;
 		const theme =
 			typeof payload === "object" && payload !== null
 				? (payload as { theme?: string }).theme
 				: payload;
+		if (typeof payload === "object" && payload !== null) {
+			const obj = payload as {
+				balloonId?: number | null;
+				side?: BalloonSide;
+			};
+			if (typeof obj.balloonId === "number" || obj.balloonId === null) {
+				currentBalloonId = obj.balloonId;
+			}
+			if (isValidBalloonSide(obj.side)) {
+				currentSide = obj.side;
+			}
+		}
 		if (typeof theme === "string" && theme) {
 			document.documentElement.setAttribute("data-balloon-theme", theme);
 			localStorage.setItem("nanai_balloon_theme", theme);
-			void applyBalloonDescript(theme);
+			void applyBalloonDescript(theme, currentBalloonId, currentSide);
 		}
 	});
 

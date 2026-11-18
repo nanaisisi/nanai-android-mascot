@@ -58,9 +58,22 @@ export const settingsMethods = {
 	applyBalloonTheme() {
 		const app =
 			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
+		let savedBalloonTheme: string | null = null;
+		try {
+			const raw =
+				typeof localStorage !== "undefined"
+					? localStorage.getItem("nanai_balloon_theme")
+					: null;
+			if (raw && !raw.trim().startsWith("{")) {
+				savedBalloonTheme = raw.trim();
+			}
+		} catch (_e) {}
 		app.setBalloonTheme?.(
 			(app.settings?.balloonTheme as string) ||
-				app.currentBalloonTheme ||
+				savedBalloonTheme ||
+				(app.currentBalloonTheme && app.currentBalloonTheme !== "default"
+					? app.currentBalloonTheme
+					: null) ||
 				"default",
 		);
 	},
@@ -110,14 +123,17 @@ export const settingsMethods = {
 			slotEl.style.display = "block";
 		}
 		if (isNativeMultiWindow()) {
+			const activeTheme = app.currentBalloonTheme || "default";
 			invoke("show_balloon_window", {
+				params: { scopeId, theme: activeTheme },
 				scope_id: scopeId,
-				theme: app.currentBalloonTheme,
+				scopeId,
+				theme: activeTheme,
 			})
 				.then(() => {
 					emit(`update-balloon-content-${scopeId}`, {
 						html: balloonText?.innerHTML || text,
-						theme: app.currentBalloonTheme || "default",
+						theme: activeTheme,
 					});
 				})
 				.catch(() => {});

@@ -7,7 +7,7 @@ import {
 	applyBalloonDescript,
 	loadBalloonSkinImages,
 } from "../../ghost/balloon-window/theme.js";
-import { invoke, isTauriAvailable, listen } from "../tauri-helper.js";
+import { emit, invoke, isTauriAvailable, listen } from "../tauri-helper.js";
 import {
 	applyBalloonScale,
 	setBalloonThemeImpl,
@@ -114,6 +114,8 @@ export class BalloonThemeManager {
 	toggleBalloonSide(scopeId: number = 0) {
 		this._currentSide = this._currentSide === "left" ? "right" : "left";
 		const nextSide = this._currentSide;
+		const activeTheme =
+			this.currentTheme || this.app?.currentBalloonTheme || "default";
 
 		if (typeof document !== "undefined") {
 			const balloonDisplays = document.querySelectorAll(".balloon-display");
@@ -132,7 +134,28 @@ export class BalloonThemeManager {
 				x: offsetX,
 				y: -120,
 			}).catch(() => {});
+			void emit("balloon-state-changed", {
+				scopeId,
+				side: nextSide,
+				theme: activeTheme,
+			});
 		}
+
+		void Promise.resolve(this.loadSkinImages(activeTheme, scopeId, nextSide))
+			.then((dataUrl) => {
+				if (!dataUrl || typeof document === "undefined") return;
+				const cssUrl = `url("${dataUrl}")`;
+				document.documentElement?.style?.setProperty?.(
+					"--balloon-bg-image",
+					cssUrl,
+				);
+				const balloonDisplays = document.querySelectorAll(".balloon-display");
+				balloonDisplays.forEach((el) => {
+					const bEl = el as HTMLElement;
+					bEl.style?.setProperty?.("--balloon-bg-image", cssUrl);
+				});
+			})
+			.catch(() => {});
 	}
 
 	/**

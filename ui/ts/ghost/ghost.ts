@@ -302,6 +302,21 @@ export class GhostController {
 		this.currentShell = shellName;
 		if (this.currentGhost) {
 			try {
+				await (
+					this.app?.surfaceManager as
+						| {
+								loadSurfacesTxt?: (
+									ghostPath: string,
+									shellName?: string,
+								) => Promise<unknown>;
+						  }
+						| undefined
+				)?.loadSurfacesTxt?.(
+					this.currentGhost.path || AppConfig.paths.defaultGhostDir,
+					shellName,
+				);
+			} catch (_e) {}
+			try {
 				await this.loadSurfaceAsset(
 					"load_surface_image",
 					this.currentGhost.path || AppConfig.paths.defaultGhostDir,

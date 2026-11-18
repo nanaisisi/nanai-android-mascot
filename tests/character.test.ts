@@ -224,7 +224,37 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 					}),
 				},
 			),
-		).toEqual({ left: 12, top: 24, width: 120, height: 240 });
+		).toEqual({
+			left: 12,
+			top: 24,
+			width: 120,
+			height: 240,
+			naturalWidth: 0,
+			naturalHeight: 0,
+		});
+
+		expect(
+			getImageRect(
+				{
+					getBoundingClientRect: () => ({
+						left: 12,
+						top: 24,
+						width: 120,
+						height: 240,
+					}),
+					naturalWidth: 300,
+					naturalHeight: 500,
+				},
+				null,
+			),
+		).toEqual({
+			left: 12,
+			top: 24,
+			width: 120,
+			height: 240,
+			naturalWidth: 300,
+			naturalHeight: 500,
+		});
 
 		expect(
 			getImageRect(
@@ -245,13 +275,22 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 					}),
 				},
 			),
-		).toEqual({ left: 5, top: 10, width: 180, height: 320 });
+		).toEqual({
+			left: 5,
+			top: 10,
+			width: 180,
+			height: 320,
+			naturalWidth: 0,
+			naturalHeight: 0,
+		});
 
 		expect(getImageRect(null, null)).toEqual({
 			left: 0,
 			top: 0,
 			width: 200,
 			height: 360,
+			naturalWidth: 0,
+			naturalHeight: 0,
 		});
 
 		expect(normalizeDevice({ touches: [{ clientX: 1, clientY: 2 }] })).toBe(
@@ -277,7 +316,14 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 	});
 
 	test("left button emits mousedown/mouseup, delays startDraggingWindow until drag > 5px, and supports multi-click and touch", () => {
-		const expectedRect = { left: 0, top: 0, width: 100, height: 100 };
+		const expectedRect = {
+			left: 0,
+			top: 0,
+			width: 100,
+			height: 100,
+			naturalWidth: 10,
+			naturalHeight: 10,
+		};
 
 		// Transparent pixel blocks left click completely
 		transparentAlpha = 0;
@@ -409,7 +455,14 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 	});
 
 	test("extended buttons (middle, xbutton1, xbutton2) emit mousedown-ex, mouseup-ex, click-ex, and multipleclick", () => {
-		const expectedRect = { left: 0, top: 0, width: 100, height: 100 };
+		const expectedRect = {
+			left: 0,
+			top: 0,
+			width: 100,
+			height: 100,
+			naturalWidth: 10,
+			naturalHeight: 10,
+		};
 		const preventDefault = vi.fn();
 
 		// Transparent pixel ignores extended button
@@ -538,7 +591,14 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 	});
 
 	test("right button gesture (> 20px) emits gesture and suppresses immediate contextmenu; contextmenu deduplicates shared events", () => {
-		const expectedRect = { left: 0, top: 0, width: 100, height: 100 };
+		const expectedRect = {
+			left: 0,
+			top: 0,
+			width: 100,
+			height: 100,
+			naturalWidth: 10,
+			naturalHeight: 10,
+		};
 
 		// Transparent pixel skips right drag
 		transparentAlpha = 0;
@@ -637,7 +697,14 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 	});
 
 	test("long press emits mouseup without talk, and multi-click resets on timeout or > 10px move", () => {
-		const expectedRect = { left: 0, top: 0, width: 100, height: 100 };
+		const expectedRect = {
+			left: 0,
+			top: 0,
+			width: 100,
+			height: 100,
+			naturalWidth: 10,
+			naturalHeight: 10,
+		};
 
 		rootEl._listeners?.mousedown?.({
 			button: 0,
@@ -674,7 +741,14 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 	});
 
 	test("hover, stroke, mouseenter/mouseleave, and wheel events", () => {
-		const expectedRect = { left: 0, top: 0, width: 100, height: 100 };
+		const expectedRect = {
+			left: 0,
+			top: 0,
+			width: 100,
+			height: 100,
+			naturalWidth: 10,
+			naturalHeight: 10,
+		};
 
 		// mouseenter
 		rootEl._listeners?.mouseenter?.({ clientX: 10, clientY: 15 });
@@ -698,7 +772,23 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 
 		globalListeners.mousemove?.({ clientX: 10, clientY: 20 });
 		globalListeners.mousemove?.({ clientX: 35, clientY: 20 }); // +25px
-		expect(getGhostEvents()).toHaveLength(0);
+		expect(getGhostEvents().filter((e) => e.type !== "mousemove")).toHaveLength(
+			0,
+		);
+		expect(getGhostEvents()).toContainEqual({
+			type: "mousemove",
+			scopeId: 1,
+			clientX: 10,
+			clientY: 20,
+			rect: expectedRect,
+		});
+		expect(getGhostEvents()).toContainEqual({
+			type: "mousemove",
+			scopeId: 1,
+			clientX: 35,
+			clientY: 20,
+			rect: expectedRect,
+		});
 		globalListeners.mousemove?.({ clientX: 55, clientY: 20 }); // +20px => 45px >= 40
 		expect(getGhostEvents()).toContainEqual({
 			type: "stroke",
@@ -714,7 +804,9 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 		expect(getGhostEvents()).toHaveLength(0);
 		globalListeners.mousemove?.({ clientX: 60, clientY: 20 }); // resets 300ms timer
 		vi.advanceTimersByTime(200);
-		expect(getGhostEvents()).toHaveLength(0);
+		expect(getGhostEvents().filter((e) => e.type !== "mousemove")).toHaveLength(
+			0,
+		);
 		vi.advanceTimersByTime(100);
 		expect(getGhostEvents()).toContainEqual({
 			type: "hover",
@@ -729,7 +821,7 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 		globalListeners.mousemove?.({ clientX: 65, clientY: 20 });
 		rootEl._listeners?.mouseleave?.({ clientX: 65, clientY: 20 });
 		vi.advanceTimersByTime(400);
-		expect(getGhostEvents()).toEqual([
+		expect(getGhostEvents().filter((e) => e.type !== "mousemove")).toEqual([
 			{
 				type: "mouseleave",
 				scopeId: 1,
@@ -740,7 +832,7 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 			},
 		]);
 
-		// wheel checks transparency, invokes set_character_scale, and emits wheel event
+		// wheel checks transparency and emits wheel event without changing character scale
 		emittedEvents.length = 0;
 		invokedCommands.length = 0;
 		transparentAlpha = 0;
@@ -758,10 +850,7 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 			preventDefault: wheelPreventDefault,
 		});
 		expect(wheelPreventDefault).toHaveBeenCalledTimes(1);
-		expect(invokedCommands).toContainEqual({
-			cmd: "set_character_scale",
-			args: { scalePercent: 90 },
-		});
+		expect(invokedCommands).toHaveLength(0);
 		expect(getGhostEvents()).toContainEqual({
 			type: "wheel",
 			scopeId: 1,
@@ -778,10 +867,7 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 			clientY: 50,
 			deltaY: -119.6,
 		});
-		expect(invokedCommands).toContainEqual({
-			cmd: "set_character_scale",
-			args: { scalePercent: 110 },
-		});
+		expect(invokedCommands).toHaveLength(0);
 		expect(getGhostEvents()).toContainEqual({
 			type: "wheel",
 			scopeId: 1,
@@ -790,5 +876,78 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 			rect: expectedRect,
 			delta: -120,
 		});
+	});
+
+	test("throttles opaque mousemove events by >= 50ms or >= 4px and resets on transparent pixel", () => {
+		const expectedRect = {
+			left: 0,
+			top: 0,
+			width: 100,
+			height: 100,
+			naturalWidth: 10,
+			naturalHeight: 10,
+		};
+
+		// First opaque move emits immediately
+		globalListeners.mousemove?.({ clientX: 10, clientY: 10 });
+		expect(getGhostEvents().filter((e) => e.type === "mousemove")).toEqual([
+			{
+				type: "mousemove",
+				scopeId: 1,
+				clientX: 10,
+				clientY: 10,
+				rect: expectedRect,
+			},
+		]);
+
+		// Sub-4px move within 50ms is throttled
+		emittedEvents.length = 0;
+		vi.advanceTimersByTime(20);
+		globalListeners.mousemove?.({ clientX: 12, clientY: 11 });
+		expect(getGhostEvents().filter((e) => e.type === "mousemove")).toEqual([]);
+
+		// Move >= 4px from last emitted position emits immediately even within 50ms
+		vi.advanceTimersByTime(10);
+		globalListeners.mousemove?.({ clientX: 15, clientY: 10 });
+		expect(getGhostEvents().filter((e) => e.type === "mousemove")).toEqual([
+			{
+				type: "mousemove",
+				scopeId: 1,
+				clientX: 15,
+				clientY: 10,
+				rect: expectedRect,
+			},
+		]);
+
+		// Small move after >= 50ms also emits
+		emittedEvents.length = 0;
+		vi.advanceTimersByTime(50);
+		globalListeners.mousemove?.({ clientX: 16, clientY: 10 });
+		expect(getGhostEvents().filter((e) => e.type === "mousemove")).toEqual([
+			{
+				type: "mousemove",
+				scopeId: 1,
+				clientX: 16,
+				clientY: 10,
+				rect: expectedRect,
+			},
+		]);
+
+		// Transparent pixel suppresses emission and resets throttle so next opaque move emits
+		emittedEvents.length = 0;
+		transparentAlpha = 0;
+		globalListeners.mousemove?.({ clientX: 17, clientY: 10 });
+		expect(getGhostEvents()).toHaveLength(0);
+		transparentAlpha = 255;
+		globalListeners.mousemove?.({ clientX: 17, clientY: 10 });
+		expect(getGhostEvents().filter((e) => e.type === "mousemove")).toEqual([
+			{
+				type: "mousemove",
+				scopeId: 1,
+				clientX: 17,
+				clientY: 10,
+				rect: expectedRect,
+			},
+		]);
 	});
 });

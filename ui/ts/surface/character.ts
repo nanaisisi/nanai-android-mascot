@@ -19,6 +19,8 @@ export interface PlainRect {
 	top: number;
 	width: number;
 	height: number;
+	naturalWidth?: number;
+	naturalHeight?: number;
 }
 
 interface TouchPointLike {
@@ -46,6 +48,8 @@ const DRAG_THRESHOLD = 5;
 const GESTURE_MIN_DISTANCE = 20;
 const HOVER_DELAY = 300;
 const STROKE_THRESHOLD = 40;
+const MOUSEMOVE_THROTTLE_MS = 50;
+const MOUSEMOVE_MIN_DISTANCE = 4;
 
 const EX_BUTTON_MAP: Record<number, string> = {
 	1: "middle",
@@ -66,7 +70,11 @@ const GESTURE_DIRECTIONS = [
 
 export function getImageRect(
 	img:
-		| { getBoundingClientRect?: () => Partial<PlainRect> | null }
+		| {
+				getBoundingClientRect?: () => Partial<PlainRect> | null;
+				naturalWidth?: number;
+				naturalHeight?: number;
+		  }
 		| null
 		| undefined,
 	root:
@@ -74,6 +82,8 @@ export function getImageRect(
 		| null
 		| undefined,
 ): PlainRect {
+	const naturalWidth = img?.naturalWidth || 0;
+	const naturalHeight = img?.naturalHeight || 0;
 	const imgRect = img?.getBoundingClientRect?.();
 	if (
 		imgRect &&
@@ -87,6 +97,8 @@ export function getImageRect(
 			top: imgRect.top ?? 0,
 			width: imgRect.width,
 			height: imgRect.height,
+			naturalWidth,
+			naturalHeight,
 		};
 	}
 	const rootRect = root?.getBoundingClientRect?.();
@@ -102,9 +114,18 @@ export function getImageRect(
 			top: rootRect.top ?? 0,
 			width: rootRect.width,
 			height: rootRect.height,
+			naturalWidth,
+			naturalHeight,
 		};
 	}
-	return { left: 0, top: 0, width: 200, height: 360 };
+	return {
+		left: 0,
+		top: 0,
+		width: 200,
+		height: 360,
+		naturalWidth: 0,
+		naturalHeight: 0,
+	};
 }
 
 export function normalizeDevice(
@@ -337,6 +358,9 @@ function initCharacterWindow() {
 	let strokeLastX: number | null = null;
 	let strokeLastY: number | null = null;
 	let strokeDistance = 0;
+	let lastMouseMoveEmitTime = 0;
+	let lastMouseMoveEmitX: number | null = null;
+	let lastMouseMoveEmitY: number | null = null;
 
 	let activeExPress: {
 		button: number;
@@ -401,6 +425,12 @@ function initCharacterWindow() {
 		strokeLastX = null;
 		strokeLastY = null;
 		strokeDistance = 0;
+	};
+
+	const resetMouseMoveState = () => {
+		lastMouseMoveEmitTime = 0;
+		lastMouseMoveEmitX = null;
+		lastMouseMoveEmitY = null;
 	};
 
 	const startCoordInterval = () => {
@@ -565,9 +595,33 @@ function initCharacterWindow() {
 			if (img && isTransparentPixel(img, clientX, clientY)) {
 				clearHoverTimer();
 				resetStrokeState();
+				resetMouseMoveState();
 				return;
 			}
 			const rect = getImageRect(img, root);
+			const now = Date.now();
+			const moveDist =
+				lastMouseMoveEmitX !== null && lastMouseMoveEmitY !== null
+					? Math.hypot(
+							clientX - lastMouseMoveEmitX,
+							clientY - lastMouseMoveEmitY,
+						)
+					: Number.POSITIVE_INFINITY;
+			if (
+				lastMouseMoveEmitX === null ||
+				now - lastMouseMoveEmitTime >= MOUSEMOVE_THROTTLE_MS ||
+				moveDist >= MOUSEMOVE_MIN_DISTANCE
+			) {
+				lastMouseMoveEmitTime = now;
+				lastMouseMoveEmitX = clientX;
+				lastMouseMoveEmitY = clientY;
+				emitGhostMouseEvent({
+					type: "mousemove",
+					clientX,
+					clientY,
+					rect,
+				});
+			}
 			if (strokeLastX !== null && strokeLastY !== null) {
 				const dist = Math.hypot(clientX - strokeLastX, clientY - strokeLastY);
 				if (dist > 0) {
@@ -839,6 +893,7 @@ function initCharacterWindow() {
 
 	const onMouseEnter = (e?: InteractionEvent) => {
 		resetStrokeState();
+		resetMouseMoveState();
 		const clientX = e?.clientX ?? 0;
 		const clientY = e?.clientY ?? 0;
 		emitGhostMouseEvent({
@@ -853,6 +908,7 @@ function initCharacterWindow() {
 	const onMouseLeave = (e?: InteractionEvent) => {
 		clearHoverTimer();
 		resetStrokeState();
+		resetMouseMoveState();
 		const clientX = e?.clientX ?? 0;
 		const clientY = e?.clientY ?? 0;
 		emitGhostMouseEvent({
@@ -864,7 +920,7 @@ function initCharacterWindow() {
 		});
 	};
 
-	// マウスホイール (拡大縮小 / スケール調整)
+	// マウスホイール (OnMouseWheel)
 	const onWheel = (e: WheelEvent) => {
 		if (isDuplicateBubbledEvent(lastWheelRecord, e)) return;
 		lastWheelRecord = { event: e, currentTarget: e.currentTarget };
@@ -877,12 +933,6 @@ function initCharacterWindow() {
 		if (e.cancelable !== false) e.preventDefault?.();
 		const rawDelta = Number(e.deltaY ?? 0);
 		const safeDelta = Number.isFinite(rawDelta) ? rawDelta : 0;
-		const deltaSign = Math.sign(safeDelta);
-		// ホイール下スクロールで縮小 (90%), 上スクロールで拡大 (110%)
-		const newScale = deltaSign > 0 ? 90 : 110;
-		if (isTauriAvailable()) {
-			void invoke("set_character_scale", { scalePercent: newScale });
-		}
 		emitGhostMouseEvent({
 			type: "wheel",
 			clientX,

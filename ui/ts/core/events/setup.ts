@@ -6,6 +6,11 @@ import {
 	isTauriAvailable,
 	listen,
 } from "../tauri-helper.js";
+import {
+	clearPartTracking,
+	resetPartTracking,
+	trackPartTransition,
+} from "./mouse/hover.js";
 
 type SetupAppContext = import("../../../main.js").NanaiAndroidMascotApp & {
 	onGhostClick: (
@@ -155,8 +160,10 @@ export const setupMethods = {
 					rect: unknown,
 					clickType?: "single" | "double",
 				) => app.onGhostClick(x, y, rect, scopeId, clickType),
-				(x: number, y: number, rect: unknown) =>
-					app.onGhostStroke(x, y, rect, scopeId),
+				(x: number, y: number, rect: unknown) => {
+					void trackPartTransition(app, x, y, rect, scopeId);
+					return app.onGhostStroke(x, y, rect, scopeId);
+				},
 				{
 					onGhostMouseDown: (
 						x: number,
@@ -222,8 +229,10 @@ export const setupMethods = {
 						app.onGhostDragStart(x, y, rect, scopeId),
 					onGhostDragEnd: (x: number, y: number, rect: unknown) =>
 						app.onGhostDragEnd(x, y, rect, scopeId),
-					onGhostHover: (x: number, y: number, rect: unknown) =>
-						app.onGhostHover(x, y, rect, scopeId),
+					onGhostHover: (x: number, y: number, rect: unknown) => {
+						void trackPartTransition(app, x, y, rect, scopeId);
+						return app.onGhostHover(x, y, rect, scopeId);
+					},
 					onGhostMouseEnter: (
 						x: number,
 						y: number,
@@ -235,7 +244,14 @@ export const setupMethods = {
 						y: number,
 						rect: unknown,
 						isWindow?: boolean,
-					) => app.onGhostMouseLeave?.(x, y, rect, scopeId, isWindow),
+					) => {
+						if (isWindow) {
+							void resetPartTracking(app, scopeId, x, y, rect);
+						} else {
+							clearPartTracking(app, scopeId);
+						}
+						return app.onGhostMouseLeave?.(x, y, rect, scopeId, isWindow);
+					},
 					onGhostGesture: (
 						startX: number,
 						startY: number,
@@ -539,7 +555,11 @@ export const setupMethods = {
 						Boolean(p.isEx),
 					);
 					break;
+				case "mousemove":
+					void trackPartTransition(app, p.clientX, p.clientY, p.rect, scopeId);
+					break;
 				case "stroke":
+					void trackPartTransition(app, p.clientX, p.clientY, p.rect, scopeId);
 					app.onGhostStroke?.(p.clientX, p.clientY, p.rect, scopeId);
 					break;
 				case "mousedown":
@@ -611,6 +631,7 @@ export const setupMethods = {
 					app.onGhostDragEnd?.(p.clientX, p.clientY, p.rect, scopeId);
 					break;
 				case "hover":
+					void trackPartTransition(app, p.clientX, p.clientY, p.rect, scopeId);
 					app.onGhostHover?.(p.clientX, p.clientY, p.rect, scopeId);
 					break;
 				case "mouseenter":
@@ -623,6 +644,7 @@ export const setupMethods = {
 					);
 					break;
 				case "mouseleave":
+					void resetPartTracking(app, scopeId, p.clientX, p.clientY, p.rect);
 					app.onGhostMouseLeave?.(
 						p.clientX,
 						p.clientY,

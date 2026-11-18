@@ -37,7 +37,26 @@ export class SakuraScriptPlayer {
 	public currentScope = 0;
 	private timerId: ReturnType<typeof setTimeout> | null = null;
 	private isLoopRunning = false;
+	private scopeBalloonIds = new Map<number, number>();
 	public app: any = null;
+
+	private isBalloonContentBlank(
+		htmlOrText: string,
+		el?: HTMLElement | null,
+	): boolean {
+		const stripped = String(htmlOrText ?? "")
+			.replace(/<[^>]*>/g, "")
+			.replace(/\u00a0/g, " ")
+			.trim();
+		if (stripped.length > 0) return false;
+		if (el && typeof el.querySelector === "function") {
+			const interactive = el.querySelector(
+				"button, a, img, input, textarea, select",
+			);
+			if (interactive) return false;
+		}
+		return true;
+	}
 
 	public get isPlaying(): boolean {
 		return this.playerInstance !== null || this.isLoopRunning;
@@ -55,6 +74,7 @@ export class SakuraScriptPlayer {
 		this.currentScript = script;
 		this.lastScript = script;
 		this.currentScope = 0;
+		this.scopeBalloonIds.clear();
 		this.clearAllBalloons();
 		this.playerInstance = createSakuraPlayerWasm(script);
 	}
@@ -151,6 +171,11 @@ export class SakuraScriptPlayer {
 				if (app?.ghostController?.updateSurface) {
 					void app.ghostController.updateSurface(surfaceId, scope);
 				}
+				break;
+			}
+			case "BalloonChange": {
+				const balloonId = stepRes.data?.balloon_id ?? 0;
+				this.applyBalloonSurfaceChange(app, scope, balloonId);
 				break;
 			}
 			case "ScopeChange": {
@@ -262,12 +287,36 @@ export class SakuraScriptPlayer {
 			}
 		}
 
+		const htmlContent = textEl
+			? textEl.innerHTML || textEl.textContent || ""
+			: text;
+		const isBlank = this.isBalloonContentBlank(
+			textEl ? htmlContent : text,
+			textEl,
+		);
+		const theme = app?.currentBalloonTheme || "default";
+		const targetScope = scope;
+
+		if (isBlank) {
+			if (dispEl?.style) {
+				dispEl.style.display = "none";
+			}
+			void invoke("hide_balloon_window", {
+				params: { scope_id: targetScope },
+				scope_id: targetScope,
+				scopeId: targetScope,
+			}).catch(() => {});
+			void emit(`update-balloon-content-${targetScope}`, {
+				html: "",
+				theme,
+			});
+			return;
+		}
+
 		if (dispEl?.style && isSinglePageUi()) {
 			dispEl.style.display = "block";
 		}
 
-		const theme = app?.currentBalloonTheme || "default";
-		const targetScope = scope;
 		frontendLog(
 			`💬 [SakuraScript] スコープ別独立バルーン表示要求: scope=${targetScope}, textLength=${text.length}`,
 		);
@@ -276,16 +325,97 @@ export class SakuraScriptPlayer {
 				scopeId: targetScope,
 				theme,
 			},
+			scope_id: targetScope,
+			scopeId: targetScope,
+			theme,
 		}).catch((err) => {
 			frontendLog(
 				`❌ show_balloon_window failed for scope ${targetScope}: ${err}`,
 				"error",
 			);
 		});
-		const htmlContent = textEl ? textEl.innerHTML : text;
 		void emit(`update-balloon-content-${targetScope}`, {
 			html: htmlContent,
 			theme,
+			balloonId: this.scopeBalloonIds.get(targetScope) ?? null,
+		});
+	}
+
+	private applyBalloonSurfaceChange(
+		app: any,
+		scope: number,
+		balloonId: number,
+	): void {
+		if (balloonId === -1) {
+			this.clearBalloon(app, scope);
+			return;
+		}
+		this.scopeBalloonIds.set(scope, balloonId);
+		const targetApp = app || this.getApp();
+		const btm =
+			targetApp?.balloonThemeManager ||
+			(targetApp as unknown as { balloonTheme?: unknown })?.balloonTheme;
+		const themeName = targetApp?.currentBalloonTheme || "default";
+		const { dispEl } = this.getBalloonElements(targetApp, scope);
+
+		if (
+			btm &&
+			typeof (btm as { loadSkinImages?: unknown }).loadSkinImages === "function"
+		) {
+			void Promise.resolve(
+				(
+					btm as {
+						loadSkinImages: (
+							theme: string,
+							scope: number,
+							side: string,
+							balloonId: number,
+						) => Promise<string | null>;
+					}
+				).loadSkinImages(themeName, scope, "auto", balloonId),
+			)
+				.then((bgImage) => {
+					if (bgImage && isSinglePageUi()) {
+						const cssUrl = `url("${bgImage}")`;
+						if (dispEl?.style) {
+							dispEl.style.setProperty?.("--balloon-bg-image", cssUrl);
+							const inner =
+								typeof dispEl.querySelector === "function"
+									? (dispEl.querySelector(".balloon") as HTMLElement | null)
+									: null;
+							inner?.style?.setProperty?.("--balloon-bg-image", cssUrl);
+						}
+						if (typeof document !== "undefined" && document.documentElement) {
+							document.documentElement.style?.setProperty?.(
+								"--balloon-bg-image",
+								cssUrl,
+							);
+						}
+					}
+				})
+				.catch(() => {});
+		}
+		if (
+			btm &&
+			typeof (btm as { applyDescript?: unknown }).applyDescript === "function"
+		) {
+			void Promise.resolve(
+				(
+					btm as {
+						applyDescript: (params: unknown) => Promise<unknown>;
+					}
+				).applyDescript({
+					theme: themeName,
+					scopeId: scope,
+					balloonId,
+				}),
+			).catch(() => {});
+		}
+
+		void emit("balloon-state-changed", {
+			scopeId: scope,
+			balloonId,
+			theme: themeName,
 		});
 	}
 
@@ -303,10 +433,15 @@ export class SakuraScriptPlayer {
 			textEl.innerHTML = "";
 			textEl.textContent = "";
 		}
-		if (dispEl?.style && isSinglePageUi()) {
+		if (dispEl?.style) {
 			dispEl.style.display = "none";
 		}
 		const targetScope = scope;
+		void invoke("hide_balloon_window", {
+			params: { scope_id: targetScope },
+			scope_id: targetScope,
+			scopeId: targetScope,
+		}).catch(() => {});
 		void emit(`update-balloon-content-${targetScope}`, {
 			html: "",
 			theme: app?.currentBalloonTheme || "default",
@@ -356,6 +491,7 @@ export class SakuraScriptPlayer {
 		void emit(`update-balloon-content-${targetScope}`, {
 			html: textEl ? textEl.innerHTML : "",
 			theme,
+			balloonId: this.scopeBalloonIds.get(targetScope) ?? null,
 		});
 	}
 
@@ -365,7 +501,7 @@ export class SakuraScriptPlayer {
 		title: string,
 		id: string,
 	): void {
-		const { textEl } = this.getBalloonElements(app, scope);
+		const { textEl, dispEl } = this.getBalloonElements(app, scope);
 
 		if (
 			textEl &&
@@ -392,6 +528,14 @@ export class SakuraScriptPlayer {
 		if (dispEl?.style && isSinglePageUi()) {
 			dispEl.style.display = "block";
 		}
+
+		const theme = app?.currentBalloonTheme || "default";
+		const targetScope = scope;
+		void emit(`update-balloon-content-${targetScope}`, {
+			html: textEl ? textEl.innerHTML : "",
+			theme,
+			balloonId: this.scopeBalloonIds.get(targetScope) ?? null,
+		});
 	}
 
 	public step(): unknown | null {
@@ -426,6 +570,12 @@ export class SakuraScriptPlayer {
 						scope,
 					);
 				}
+			} else if (stepRes.action === "BalloonChange") {
+				this.applyBalloonSurfaceChange(
+					app,
+					scope,
+					stepRes.data?.balloon_id ?? 0,
+				);
 			} else if (stepRes.action === "Choice") {
 				this.addChoiceToBalloon(
 					app,

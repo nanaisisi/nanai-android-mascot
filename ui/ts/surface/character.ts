@@ -229,8 +229,68 @@ function initCharacterWindow() {
 	let pollTimer: unknown = null;
 
 	let currentImageToken = 0;
+	let currentScale = 1.0;
+	let lastNaturalWidth = 0;
+	let lastNaturalHeight = 0;
+
+	const syncCharacterWindowSize = (naturalW: number, naturalH: number) => {
+		if (naturalW <= 0 || naturalH <= 0) return;
+		lastNaturalWidth = naturalW;
+		lastNaturalHeight = naturalH;
+		const targetW = Math.max(32, Math.ceil(naturalW * currentScale));
+		const targetH = Math.max(32, Math.ceil(naturalH * currentScale));
+		if (img) {
+			img.width = targetW;
+			img.height = targetH;
+		}
+		if (isTauriAvailable()) {
+			void invoke("show_subchar_window", {
+				params: {
+					scope_id: scopeId,
+					width: targetW,
+					height: targetH,
+				},
+				scope_id: scopeId,
+				scopeId,
+				width: targetW,
+				height: targetH,
+			}).catch(() => {});
+		}
+	};
 
 	if (isTauriAvailable()) {
+		void listen("character-scale-changed", (event: unknown) => {
+			const payload = (
+				event as {
+					payload?: {
+						scale?: unknown;
+						scalePercent?: unknown;
+						scale_percent?: unknown;
+					};
+				}
+			)?.payload;
+			if (!payload) return;
+			let nextScale: number | null = null;
+			if (typeof payload.scale === "number" && Number.isFinite(payload.scale)) {
+				nextScale = payload.scale > 10 ? payload.scale / 100 : payload.scale;
+			} else if (
+				typeof payload.scalePercent === "number" &&
+				Number.isFinite(payload.scalePercent)
+			) {
+				nextScale = payload.scalePercent / 100;
+			} else if (
+				typeof payload.scale_percent === "number" &&
+				Number.isFinite(payload.scale_percent)
+			) {
+				nextScale = payload.scale_percent / 100;
+			}
+			if (nextScale === null || nextScale <= 0) return;
+			currentScale = Math.min(3.0, Math.max(0.25, nextScale));
+			if (lastNaturalWidth > 0 && lastNaturalHeight > 0) {
+				syncCharacterWindowSize(lastNaturalWidth, lastNaturalHeight);
+			}
+		});
+
 		void listen(`update-subchar-image-${scopeId}`, (event: unknown) => {
 			const src = (event as { payload?: { src?: string } })?.payload?.src;
 			if (src && img) {
@@ -263,11 +323,7 @@ function initCharacterWindow() {
 					img.style.display = "block";
 
 					if (width > 0 && height > 0) {
-						void invoke("show_subchar_window", {
-							scopeId,
-							width,
-							height,
-						}).catch(() => {});
+						syncCharacterWindowSize(width, height);
 					}
 				};
 
@@ -298,25 +354,19 @@ function initCharacterWindow() {
 						img.style.visibility = "visible";
 						img.style.display = "block";
 						if (img.naturalWidth > 0 && img.naturalHeight > 0) {
-							void invoke("show_subchar_window", {
-								scopeId,
-								width: img.naturalWidth,
-								height: img.naturalHeight,
-							}).catch(() => {});
+							syncCharacterWindowSize(img.naturalWidth, img.naturalHeight);
 						}
 					};
 					img.src = src;
 					img.style.visibility = "visible";
 					img.style.display = "block";
-					if (img.complete && img.naturalWidth > 0) {
-						void invoke("show_subchar_window", {
-							scopeId,
-							width: img.naturalWidth,
-							height: img.naturalHeight,
-						}).catch(() => {});
+					if (img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
+						syncCharacterWindowSize(img.naturalWidth, img.naturalHeight);
 					}
 				}
 			} else if (img) {
+				lastNaturalWidth = 0;
+				lastNaturalHeight = 0;
 				img.style.display = "none";
 			}
 		});

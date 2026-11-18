@@ -22,7 +22,7 @@ body {
 	display: flex;
 	align-items: flex-start;
 	justify-content: flex-start;
-	overflow: visible;
+	overflow: hidden;
 }
 
 .balloon {
@@ -118,11 +118,17 @@ body {
 }
 
 .balloon-choice-btn {
+	appearance: none;
+	-webkit-appearance: none;
 	display: inline;
 	vertical-align: baseline;
+	width: auto;
+	max-width: 100%;
+	min-width: 0;
+	height: auto;
+	min-height: 0;
 	margin: 0;
 	padding: 0 2px;
-	min-height: auto;
 	white-space: normal;
 	touch-action: manipulation;
 	-webkit-tap-highlight-color: transparent;
@@ -143,11 +149,12 @@ body {
 		var(--balloon-cursor-font-style, inherit)
 	);
 	line-height: inherit;
+	text-align: left;
 	writing-mode: inherit;
 	-webkit-writing-mode: inherit;
 	color: var(
 		--balloon-cursor-notselect-color,
-		var(--balloon-cursor-color, #0078d7)
+		var(--balloon-cursor-color, var(--balloon-text-color, #111111))
 	);
 	text-decoration: var(
 		--balloon-cursor-notselect-text-decoration,
@@ -158,6 +165,8 @@ body {
 	border-radius: 2px;
 	box-shadow: none;
 	cursor: pointer;
+	user-select: none;
+	-webkit-user-select: none;
 	transition:
 		background-color 0.12s ease,
 		color 0.12s ease;
@@ -186,8 +195,11 @@ body {
 		--balloon-cursor-font-style,
 		var(--balloon-cursor-notselect-font-style, inherit)
 	);
-	background: var(--balloon-cursor-brush-color, rgba(0, 120, 215, 0.12));
-	color: var(--balloon-cursor-color, var(--balloon-highlight-bg, #0056b3));
+	background: var(
+		--balloon-cursor-brush-color,
+		var(--balloon-highlight-bg, rgba(0, 120, 215, 0.15))
+	);
+	color: var(--balloon-highlight-text, var(--balloon-cursor-color, #0056b3));
 	text-decoration: var(
 		--balloon-cursor-text-decoration,
 		var(--balloon-cursor-notselect-text-decoration, underline)
@@ -366,6 +378,8 @@ body {
 .communicate-box {
 	position: absolute;
 	width: 200px;
+	max-width: calc(100% - 24px);
+	box-sizing: border-box;
 	height: 24px;
 	left: 12px;
 	/* バルーン表示領域を突き破って見切れないように bottom の絶対指定を解除/再調整 */
@@ -393,9 +407,12 @@ body {
 
 .coord-popup {
 	position: absolute;
-	top: -24px;
+	top: 4px;
 	left: 50%;
 	transform: translateX(-50%);
+	max-width: calc(100% - 8px);
+	overflow: hidden;
+	text-overflow: ellipsis;
 	background: rgba(0, 0, 0, 0.8);
 	color: #ffffff;
 	padding: 2px 6px;

@@ -182,3 +182,61 @@ test("settingsMethods edge branches (missing elements, localStorage error/null, 
 
 	assert.ok(true);
 });
+
+test("showBalloon hides and clears balloon when message is empty or whitespace-only", async () => {
+	const invoked: Array<{ cmd: string; args: unknown }> = [];
+	const emitted: Array<{ event: string; payload: unknown }> = [];
+	globalThis.__TAURI_INTERNALS__ = {
+		metadata: { currentWindow: { label: "main" } },
+		invoke: async (cmd, args) => {
+			invoked.push({ cmd, args });
+		},
+		transformCallback: (cb) => cb,
+		plugins: {
+			event: {
+				emit: async (event, payload) => {
+					emitted.push({ event, payload });
+				},
+			},
+		},
+	};
+
+	const mockApp = {
+		...settingsMethods,
+		settings: {},
+		currentBalloonTheme: "default",
+		elements: {
+			balloonText: { textContent: "old", innerHTML: "old" },
+			balloonDisplay: { style: { display: "block" } },
+		},
+	};
+
+	mockApp.showBalloon("   \n\t ", 0);
+	await new Promise((r) => setTimeout(r, 10));
+
+	assert.equal(mockApp.elements.balloonText.textContent, "");
+	assert.equal(mockApp.elements.balloonText.innerHTML, "");
+	assert.deepEqual(
+		invoked.filter((e) => e.cmd === "hide_balloon_window"),
+		[
+			{
+				cmd: "hide_balloon_window",
+				args: { params: { scope_id: 0 }, scope_id: 0, scopeId: 0 },
+			},
+		],
+	);
+	assert.deepEqual(
+		invoked
+			.filter((e) => e.cmd === "plugin:event|emit")
+			.map((e) => e.args)
+			.concat(emitted.map((e) => ({ event: e.event, payload: e.payload }))),
+		[
+			{
+				event: "update-balloon-content-0",
+				payload: { html: "", theme: "default" },
+			},
+		],
+	);
+
+	delete globalThis.__TAURI_INTERNALS__;
+});

@@ -3,7 +3,11 @@
  * @file balloon-theme.js
  * @brief バルーンスキンテーマ切替およびスキャン・リセット処理 (BalloonThemeManager)
  */
-import { invoke, isTauriAvailable, listen } from "../tauri-helper.js";
+import {
+	applyBalloonDescript,
+	loadBalloonSkinImages,
+} from "../../ghost/balloon-window/theme.js";
+import { emit, invoke, isTauriAvailable, listen } from "../tauri-helper.js";
 import {
 	applyBalloonScale,
 	setBalloonThemeImpl,
@@ -110,6 +114,8 @@ export class BalloonThemeManager {
 	toggleBalloonSide(scopeId: number = 0) {
 		this._currentSide = this._currentSide === "left" ? "right" : "left";
 		const nextSide = this._currentSide;
+		const activeTheme =
+			this.currentTheme || this.app?.currentBalloonTheme || "default";
 
 		if (typeof document !== "undefined") {
 			const balloonDisplays = document.querySelectorAll(".balloon-display");
@@ -128,7 +134,28 @@ export class BalloonThemeManager {
 				x: offsetX,
 				y: -120,
 			}).catch(() => {});
+			void emit("balloon-state-changed", {
+				scopeId,
+				side: nextSide,
+				theme: activeTheme,
+			});
 		}
+
+		void Promise.resolve(this.loadSkinImages(activeTheme, scopeId, nextSide))
+			.then((dataUrl) => {
+				if (!dataUrl || typeof document === "undefined") return;
+				const cssUrl = `url("${dataUrl}")`;
+				document.documentElement?.style?.setProperty?.(
+					"--balloon-bg-image",
+					cssUrl,
+				);
+				const balloonDisplays = document.querySelectorAll(".balloon-display");
+				balloonDisplays.forEach((el) => {
+					const bEl = el as HTMLElement;
+					bEl.style?.setProperty?.("--balloon-bg-image", cssUrl);
+				});
+			})
+			.catch(() => {});
 	}
 
 	/**
@@ -153,6 +180,19 @@ export class BalloonThemeManager {
 	 */
 	async setTheme(themeName) {
 		return setBalloonThemeImpl(this, themeName);
+	}
+
+	async loadSkinImages(
+		theme = "default",
+		scopeId = 0,
+		side = "auto",
+		balloonId = null,
+	) {
+		return loadBalloonSkinImages(theme, scopeId, side, balloonId);
+	}
+
+	async applyDescript(params) {
+		return applyBalloonDescript(params);
 	}
 
 	/**

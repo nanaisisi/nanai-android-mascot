@@ -47,7 +47,13 @@ export function applyCommunicateBoxProperties(props: Record<string, string>) {
 			".communicate-box",
 		) as HTMLElement | null;
 		if (cbEl) {
-			if (cbWidth) cbEl.style.width = `${cbWidth}px`;
+			if (cbWidth) {
+				cbEl.style.width = `${cbWidth}px`;
+				cbEl.style.maxWidth = cbX
+					? `calc(100% - ${cbX}px - 8px)`
+					: "calc(100% - 16px)";
+				cbEl.style.boxSizing = "border-box";
+			}
 			if (cbHeight) cbEl.style.height = `${cbHeight}px`;
 			if (cbX) cbEl.style.left = `${cbX}px`;
 			if (cbY) cbEl.style.top = `${cbY}px`;

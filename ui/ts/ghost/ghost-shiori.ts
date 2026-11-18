@@ -99,16 +99,6 @@ export const ghostShioriMethods = {
 					frontendLog(
 						`👻 [Init step 5.5] attempting to play SakuraScript, length: ${scriptText.length}`,
 					);
-					try {
-						await invoke("show_balloon_window", {
-							params: { scopeId: 0 },
-						});
-					} catch (e) {
-						frontendLog(
-							`❌ [Init step 5] show_balloon_window error: ${e}`,
-							"error",
-						);
-					}
 					const appInst =
 						this.app ||
 						(globalThis as any).mascotApp ||

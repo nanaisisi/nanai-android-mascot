@@ -185,6 +185,20 @@ export async function setBalloonThemeImpl(
 			if (props && typeof props === "object") {
 				manager.app?.applyBalloonDescript?.(props);
 
+				const applyBgCss = (dataUrl: string) => {
+					manager.computeValidRect(props, dataUrl, 0);
+					const cssUrl = `url("${dataUrl}")`;
+					if (typeof document !== "undefined") {
+						const root = document.documentElement;
+						root?.style?.setProperty?.("--balloon-bg-image", cssUrl);
+					}
+					const balloonDisplay = manager.app?.elements?.balloonDisplay as
+						| HTMLElement
+						| null
+						| undefined;
+					balloonDisplay?.style?.setProperty?.("--balloon-bg-image", cssUrl);
+				};
+
 				const bgImage = props["balloon.image"] || props.balloon_image;
 				if (bgImage) {
 					void invoke<string | null>("load_balloon_image", {
@@ -193,19 +207,28 @@ export async function setBalloonThemeImpl(
 					})
 						.then((dataUrl) => {
 							if (dataUrl) {
-								manager.computeValidRect(props, dataUrl, 0);
-								if (typeof document !== "undefined") {
-									const root = document.documentElement;
-									if (root) {
-										root.style.setProperty(
-											"--balloon-bg-image",
-											`url("${dataUrl}")`,
-										);
-									}
-								}
+								applyBgCss(dataUrl);
 							}
 						})
 						.catch(() => {});
+				} else {
+					const loadSkin = (
+						manager as {
+							loadSkinImages?: (
+								theme: string,
+								scopeId: number,
+							) => Promise<string | null>;
+						}
+					).loadSkinImages;
+					if (typeof loadSkin === "function") {
+						void Promise.resolve(loadSkin.call(manager, themeName, 0))
+							.then((dataUrl) => {
+								if (dataUrl) {
+									applyBgCss(dataUrl);
+								}
+							})
+							.catch(() => {});
+					}
 				}
 			}
 		} catch (_e) {
@@ -216,6 +239,24 @@ export async function setBalloonThemeImpl(
 	// UKADOC 準拠: OnBalloonChange イベント送信
 	const gc = manager.app?.ghostController;
 	if (gc?.sendShioriEvent) {
-		void gc.sendShioriEvent("OnBalloonChange", [themeName]).catch(() => {});
+		void Promise.resolve(gc.sendShioriEvent("OnBalloonChange", [themeName]))
+			.then((res: unknown) => {
+				const script =
+					typeof res === "string"
+						? res
+						: (res as { value?: string; headers?: { value?: string } } | null)
+								?.value ||
+							(res as { value?: string; headers?: { value?: string } } | null)
+								?.headers?.value ||
+							"";
+				if (script && typeof script === "string") {
+					(
+						manager.app as {
+							playSakuraScript?: (s: string) => unknown;
+						}
+					)?.playSakuraScript?.(script);
+				}
+			})
+			.catch(() => {});
 	}
 }

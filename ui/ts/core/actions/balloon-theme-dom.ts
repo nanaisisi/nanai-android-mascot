@@ -54,8 +54,15 @@ export function parseValidRect(
 
 	let r = 16;
 	if (!Number.isNaN(vr)) {
-		if (vr <= 0) {
+		if (vr < 0) {
 			r = Math.abs(vr);
+		} else if (vr === 0) {
+			const ww = parseInt(getProp("wordwrappoint.x") || "", 10);
+			if (!Number.isNaN(ww) && ww < 0) {
+				r = Math.abs(ww);
+			} else {
+				r = Math.max(12, l);
+			}
 		} else if (vr <= 60) {
 			r = vr;
 		} else {
@@ -65,8 +72,10 @@ export function parseValidRect(
 
 	let b = 16;
 	if (!Number.isNaN(vb)) {
-		if (vb <= 0) {
+		if (vb < 0) {
 			b = Math.abs(vb);
+		} else if (vb === 0) {
+			b = Math.max(12, t);
 		} else if (vb <= 60) {
 			b = vb;
 		} else {

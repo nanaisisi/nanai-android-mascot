@@ -4,15 +4,22 @@ export function applySpecialFontProperties(
 	root: HTMLElement,
 	props: Record<string, string>,
 ) {
+	// UKADOC 規格: cursor.font.color は選択肢ハイライトの背景色 (Highlight BG)
 	const cursorBg =
-		rgbFromComponents(props, "cursor.font.color") || props["cursor.font.color"];
+		rgbFromComponents(props, "cursor.font.color") ||
+		rgbFromComponents(props, "cursor.brush.color") ||
+		props["cursor.font.color"] ||
+		props["cursor.brush.color"];
 	if (cursorBg) {
 		root.style.setProperty("--balloon-highlight-bg", cursorBg);
 	}
+
+	// UKADOC 規格: cursor.color.font は選択肢の文字色
 	const cursorText =
 		rgbFromComponents(props, "cursor.color.font") || props["cursor.color.font"];
 	if (cursorText) {
 		root.style.setProperty("--balloon-highlight-text", cursorText);
+		root.style.setProperty("--balloon-cursor-color", cursorText);
 	}
 
 	const numFontName = props["number.font.name"];

@@ -50,24 +50,25 @@ export function applyGroupProperties(
 	prefix: string,
 	cssPrefix: string,
 ) {
-	// [anchor.font.color / cursor.font.color / *.font.color.r,g,b]:
+	// 明示的な文字色プロパティのみを抽出 (cursor.notselect.font.color / cursor.color.font / cursor.font.color)
 	const fontColorKey = `${prefix}.font.color`;
+	const fontColorKey2 = `${prefix}.color.font`;
 	const col =
+		rgbFromComponents(props, fontColorKey2) ||
 		rgbFromComponents(props, fontColorKey) ||
-		(props[`${fontColorKey}.r`] ||
-		props[`${fontColorKey}.g`] ||
-		props[`${fontColorKey}.b`]
-			? rgbFromComponents(props, fontColorKey)
-			: null) ||
+		props[fontColorKey2] ||
 		props[fontColorKey];
-	if (col) root.style.setProperty(`${cssPrefix}-color`, col);
-
-	// [anchor.color / cursor.color / *.color]: (短縮キー fallback)
-	const shortColorKey = `${prefix}.color`;
-	const shortCol =
-		rgbFromComponents(props, shortColorKey) || props[shortColorKey];
-	if (shortCol && !col) {
-		root.style.setProperty(`${cssPrefix}-color`, shortCol);
+	if (col) {
+		const cleanCol = col.replaceAll(" ", "");
+		const isWhite =
+			cleanCol === "rgb(255,255,255)" ||
+			cleanCol.toLowerCase() === "#ffffff" ||
+			cleanCol.toLowerCase() === "white";
+		const isExplicitFontColor =
+			Boolean(props[fontColorKey]) || Boolean(props[fontColorKey2]);
+		if (!isWhite || isExplicitFontColor) {
+			root.style.setProperty(`${cssPrefix}-color`, col);
+		}
 	}
 
 	// [anchor.font.name / cursor.font.name / *.font.name]:

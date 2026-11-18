@@ -174,28 +174,53 @@ export async function loadBalloonSkinImages(
 	theme: string,
 	scopeId: number,
 	side: "left" | "right" | "top" | "auto" = "auto",
+	balloonId: number | null = null,
 ) {
-	let candidates: string[] = [];
+	const candidates: string[] = [];
+	const isFlipped =
+		(scopeId === 0 && side === "right") || (scopeId >= 1 && side === "left");
+
+	if (balloonId !== null && typeof balloonId === "number" && balloonId >= 0) {
+		const candidateIds =
+			balloonId % 2 === 0 && isFlipped
+				? [balloonId + 1, balloonId]
+				: [balloonId];
+		for (const id of candidateIds) {
+			if (scopeId === 0) {
+				candidates.push(`balloons${id}.png`, `balloons${id}.bmp`);
+			} else if (scopeId === 1) {
+				candidates.push(`balloonk${id}.png`, `balloonk${id}.bmp`);
+			} else {
+				candidates.push(
+					`balloonp${scopeId}_${id}.png`,
+					`balloonp${scopeId}_${id}.bmp`,
+				);
+			}
+		}
+	}
+
 	if (scopeId === 0) {
-		candidates =
+		const sideCands =
 			side === "top"
 				? ["balloons2.png", "balloons0.png", "balloons.png"]
 				: side === "right"
 					? ["balloons1.png", "balloons0.png", "balloons.png"]
 					: ["balloons0.png", "balloons1.png", "balloons.png"];
+		candidates.push(...sideCands);
 	} else if (scopeId === 1) {
-		candidates =
+		const sideCands =
 			side === "top"
 				? ["balloonk2.png", "balloonk0.png", "balloonk.png"]
 				: side === "left"
 					? ["balloonk1.png", "balloonk3.png", "balloonk0.png", "balloonk.png"]
 					: ["balloonk0.png", "balloonk1.png", "balloonk3.png", "balloonk.png"];
+		candidates.push(...sideCands);
 	} else {
-		candidates = [
+		candidates.push(
 			`balloonp${scopeId}.png`,
 			`balloonp${scopeId}_0.png`,
 			"balloons0.png",
-		];
+		);
 	}
 
 	let bgImageRaw: string | null = null;
@@ -213,12 +238,17 @@ export async function loadBalloonSkinImages(
 	}
 
 	let pnaImage: string | null = null;
-	if (usedFile) {
+	const isSvgImage =
+		Boolean(usedFile && /\.svg$/i.test(usedFile)) ||
+		Boolean(bgImageRaw?.startsWith("data:image/svg+xml"));
+	if (usedFile && !isSvgImage) {
 		const pnaFile = usedFile.replace(/\.(png|bmp|jpg|jpeg)$/i, ".pna");
-		pnaImage = (await invoke("load_balloon_image", {
-			name: theme,
-			file: pnaFile,
-		}).catch(() => null)) as string | null;
+		if (pnaFile !== usedFile) {
+			pnaImage = (await invoke("load_balloon_image", {
+				name: theme,
+				file: pnaFile,
+			}).catch(() => null)) as string | null;
+		}
 	}
 
 	const bgImage = bgImageRaw
@@ -269,12 +299,16 @@ export async function loadBalloonSkinImages(
 export async function applyBalloonDescript({
 	theme,
 	scopeId,
+	balloonId = null,
+	side = "auto",
 	currentUserScale,
 	onDpiScaleChange,
 	onDontMoveChange,
 }: {
 	theme: string;
 	scopeId: number;
+	balloonId?: number | null;
+	side?: "left" | "right" | "top" | "auto";
 	currentUserScale?: number;
 	onDpiScaleChange?: (scale: number) => void;
 	onDontMoveChange?: (dontMove: boolean) => void;
@@ -288,12 +322,15 @@ export async function applyBalloonDescript({
 		const rawProps = await invoke("balloon_manifest", {
 			name: theme,
 			scopeId,
+			balloonId,
 		}).catch(() => null);
 		if (!rawProps || typeof rawProps !== "object") {
 			if (theme !== "default" && theme !== "nsm") {
 				return await applyBalloonDescript({
 					theme: "nsm",
 					scopeId,
+					balloonId,
+					side,
 					currentUserScale,
 					onDpiScaleChange,
 					onDontMoveChange,
@@ -308,6 +345,9 @@ export async function applyBalloonDescript({
 		for (const prop of STALE_THEME_CSS_PROPS) {
 			clearCssProperty(root, prop);
 			clearCssProperty(balloonBox, prop);
+		}
+		if (balloonBox?.style) {
+			balloonBox.style.backgroundImage = "";
 		}
 		const initialTextEl = document.getElementById("balloon-text");
 		if (initialTextEl?.style) {
@@ -343,60 +383,89 @@ export async function applyBalloonDescript({
 			);
 		onDontMoveChange?.(isBalloonDontMove);
 
-		// 折り返し幅 (wordwrappoint.x)
-		const textEl = document.getElementById("balloon-text");
-		const ww = parseInt(props["wordwrappoint.x"], 10);
-		if (textEl) {
-			if (!Number.isNaN(ww) && ww > 50) {
-				textEl.style.maxWidth = `${ww}px`;
-			} else if (!Number.isNaN(ww) && ww < 0) {
-				textEl.style.maxWidth = `calc(100% - ${Math.abs(ww)}px)`;
-			} else {
-				textEl.style.maxWidth = "";
-			}
-		}
-
-		let bgImage = await loadBalloonSkinImages(theme, scopeId);
+		let bgImage = await loadBalloonSkinImages(theme, scopeId, side, balloonId);
 		if (!bgImage && theme !== "default" && theme !== "nsm") {
-			bgImage = await loadBalloonSkinImages("nsm", scopeId);
+			bgImage = await loadBalloonSkinImages("nsm", scopeId, side, balloonId);
 		}
 
 		let baseWidth = DEFAULT_BALLOON_WIDTH;
 		let baseHeight = DEFAULT_BALLOON_HEIGHT;
+		let dims = { width: 0, height: 0 };
 
 		if (bgImage) {
-			const dims = await getImageDimensions(bgImage);
-
-			const {
-				top: sliceTop,
-				right: sliceRight,
-				bottom: sliceBottom,
-				left: sliceLeft,
-			} = parseValidRect(props, dims.width, dims.height);
-
-			const paddingValue = `${sliceTop}px ${sliceRight}px ${sliceBottom}px ${sliceLeft}px`;
-			root.style.setProperty("--balloon-bg-image", `url("${bgImage}")`);
-			root.style.setProperty("--balloon-padding", paddingValue);
-			if (balloonBox?.style) {
-				balloonBox.style.setProperty("--balloon-padding", paddingValue);
-				balloonBox.style.padding = paddingValue;
-			}
-
+			dims = await getImageDimensions(bgImage);
 			if (dims.width > 0) {
 				baseWidth = dims.width;
 			}
 			if (dims.height > 0) {
 				baseHeight = dims.height;
 			}
+
+			root.style.setProperty("--balloon-bg-image", `url("${bgImage}")`);
+			if (balloonBox?.style) {
+				balloonBox.style.setProperty("--balloon-bg-image", `url("${bgImage}")`);
+				balloonBox.style.backgroundImage = `url("${bgImage}")`;
+			}
 		}
 
+		const {
+			top: sliceTop,
+			right: sliceRight,
+			bottom: sliceBottom,
+			left: sliceLeft,
+		} = parseValidRect(
+			props,
+			dims.width > 0 ? dims.width : baseWidth,
+			dims.height > 0 ? dims.height : baseHeight,
+		);
+
+		const scopePrefix = scopeId === 1 ? "kero" : "sakura";
+		const ww = parseInt(
+			props["wordwrappoint.x"] ||
+				props[`${scopePrefix}.wordwrappoint.x`] ||
+				props["sakura.wordwrappoint.x"] ||
+				props["kero.wordwrappoint.x"] ||
+				"",
+			10,
+		);
+		let effectiveRight = sliceRight;
+		if (!Number.isNaN(ww) && ww < 0) {
+			effectiveRight = Math.max(sliceRight, Math.abs(ww));
+		} else if (!Number.isNaN(ww) && ww > 50 && baseWidth > ww) {
+			effectiveRight = Math.max(sliceRight, baseWidth - ww);
+		}
+
+		const paddingValue = `${sliceTop}px ${effectiveRight}px ${sliceBottom}px ${sliceLeft}px`;
+		root.style.setProperty("--balloon-padding", paddingValue);
+		root.style.setProperty("--balloon-max-width", "100%");
 		root.style.setProperty("--balloon-width", `${baseWidth}px`);
 		root.style.setProperty("--balloon-height", `${baseHeight}px`);
 		root.style.setProperty("--balloon-min-height", `${baseHeight}px`);
+		root.style.setProperty("--balloon-max-height", `${baseHeight}px`);
 		if (balloonBox?.style) {
+			balloonBox.style.setProperty("--balloon-padding", paddingValue);
+			balloonBox.style.padding = paddingValue;
+			balloonBox.style.setProperty("--balloon-max-width", "100%");
 			balloonBox.style.setProperty("--balloon-width", `${baseWidth}px`);
 			balloonBox.style.setProperty("--balloon-height", `${baseHeight}px`);
 			balloonBox.style.setProperty("--balloon-min-height", `${baseHeight}px`);
+			balloonBox.style.setProperty("--balloon-max-height", `${baseHeight}px`);
+		}
+
+		const textEl = document.getElementById("balloon-text");
+		const wwY = parseInt(
+			props["wordwrappoint.y"] ||
+				props[`${scopePrefix}.wordwrappoint.y`] ||
+				props["sakura.wordwrappoint.y"] ||
+				props["kero.wordwrappoint.y"] ||
+				"",
+			10,
+		);
+		if (textEl?.style) {
+			textEl.style.width = "100%";
+			textEl.style.maxWidth = "100%";
+			textEl.style.maxHeight =
+				!Number.isNaN(wwY) && wwY > 20 ? `min(100%, ${wwY}px)` : "";
 		}
 
 		setBalloonBaseDimensions(balloonBox, scopeId, baseWidth, baseHeight);
@@ -507,6 +576,8 @@ export async function applyBalloonDescript({
 			return await applyBalloonDescript({
 				theme: "nsm",
 				scopeId,
+				balloonId,
+				side,
 				currentUserScale,
 				onDpiScaleChange,
 				onDontMoveChange,

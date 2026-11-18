@@ -8,11 +8,11 @@ import {
 
 export const settingsMethods = {
 	loadSettings() {
+		const app =
+			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
 		try {
 			const saved = localStorage.getItem("nanai-android-mascot-settings");
 			if (saved) {
-				const app =
-					this as unknown as import("../../main.js").NanaiAndroidMascotApp;
 				const parsed = JSON.parse(saved) as Record<string, unknown>;
 				app.settings = {
 					...app.settings,
@@ -21,6 +21,26 @@ export const settingsMethods = {
 			}
 		} catch (_error) {
 			// 設定未保存またはパース失敗時はデフォルト維持
+		}
+
+		// デバッグビルド時・開発環境判定: 明示的未設定時はデフォルトで開発者機能を標準ON
+		const isDevEnvironment =
+			isTauriAvailable() ||
+			(typeof location !== "undefined" &&
+				(location.hostname === "localhost" ||
+					location.hostname === "127.0.0.1"));
+
+		if (
+			isDevEnvironment &&
+			(app.settings as Record<string, unknown>)?.developerModeEnabled ===
+				undefined
+		) {
+			app.settings = {
+				...app.settings,
+				developerModeEnabled: true,
+				devModeEnabled: true,
+				showCollisionArea: true,
+			};
 		}
 	},
 

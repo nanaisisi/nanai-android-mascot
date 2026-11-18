@@ -133,9 +133,15 @@ export class ModalSettingsHandlers {
 				showStatusWindow.checked = (s.showStatusWindow as boolean) ?? false;
 			if (virusCheckEnabled)
 				virusCheckEnabled.checked = (s.virusCheckEnabled as boolean) ?? true;
-			if (developerModeEnabled)
+			if (developerModeEnabled) {
+				const isDevEnv =
+					isTauriAvailable() ||
+					(typeof location !== "undefined" &&
+						(location.hostname === "localhost" ||
+							location.hostname === "127.0.0.1"));
 				developerModeEnabled.checked =
-					(s.developerModeEnabled as boolean) ?? false;
+					(s.developerModeEnabled as boolean) ?? Boolean(isDevEnv);
+			}
 			if (s.darkModeOpt) setRadio("dark-mode-opt", String(s.darkModeOpt));
 			if (s.locationOpt) setRadio("location-opt", String(s.locationOpt));
 			if (s.tabletModeOpt) setRadio("tablet-mode-opt", String(s.tabletModeOpt));

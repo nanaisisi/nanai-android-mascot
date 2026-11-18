@@ -246,6 +246,21 @@ export function handleMenuActionImpl(
 	}
 
 	// 本物仕様開発パレットアクション
+	if (action === "toggle-collision-area" || action === "show-collision-area") {
+		if (context.app) {
+			const s = (context.app.settings as Record<string, unknown>) || {};
+			s.showCollisionArea = !s.showCollisionArea;
+			if (
+				typeof (context.app as { renderCollisionOverlay?: unknown })
+					.renderCollisionOverlay === "function"
+			) {
+				(
+					context.app as { renderCollisionOverlay: () => void }
+				).renderCollisionOverlay();
+			}
+		}
+		return;
+	}
 	if (action === "open-script-input" || action === "script-input") {
 		context.modalManager?.show?.("plugins-modal-content");
 		return;

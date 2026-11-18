@@ -272,6 +272,103 @@ export function findHitCollisionName(
 export const surfaceCollisionMethods = {
 	findHitCollisionName,
 
+	renderCollisionOverlayCanvas(
+		this: SurfaceCollisionContext,
+		canvas: HTMLCanvasElement,
+		surfaceId: number | string | null = null,
+		scopeId = 0,
+	): void {
+		if (!canvas || typeof canvas.getContext !== "function") return;
+		const ctx = canvas.getContext("2d");
+		if (!ctx) return;
+
+		const width = canvas.width || 200;
+		const height = canvas.height || 400;
+		ctx.clearRect(0, 0, width, height);
+
+		const sid =
+			surfaceId !== null && surfaceId !== undefined
+				? String(surfaceId)
+				: String(
+						this.currentSurfaceIdFor?.(scopeId) ?? (scopeId === 1 ? 10 : 0),
+					);
+
+		const colList = this.collisions?.[sid] || this.collisions?.default || [];
+		if (colList.length === 0) return;
+
+		const colors = [
+			"rgba(255, 0, 0, 0.5)",
+			"rgba(0, 120, 215, 0.5)",
+			"rgba(46, 125, 50, 0.5)",
+			"rgba(230, 81, 0, 0.5)",
+		];
+
+		colList.forEach((col, idx) => {
+			const color = colors[idx % colors.length];
+			ctx.strokeStyle = color;
+			ctx.fillStyle = color.replace("0.5", "0.2");
+			ctx.lineWidth = 2;
+
+			const name = String(col.name || `col${idx}`);
+
+			if (col.shape && typeof col.shape === "object") {
+				const shapeObj = col.shape as Record<string, unknown>;
+				if (shapeObj.Rect) {
+					const r = shapeObj.Rect as {
+						x1: number;
+						y1: number;
+						x2: number;
+						y2: number;
+					};
+					const w = r.x2 - r.x1;
+					const h = r.y2 - r.y1;
+					ctx.fillRect(r.x1, r.y1, w, h);
+					ctx.strokeRect(r.x1, r.y1, w, h);
+					ctx.fillStyle = "#ff0000";
+					ctx.font = "bold 11px sans-serif";
+					ctx.fillText(name, r.x1 + 4, r.y1 + 14);
+					return;
+				}
+				if (shapeObj.Circle) {
+					const c = shapeObj.Circle as { cx: number; cy: number; r: number };
+					ctx.beginPath();
+					ctx.arc(c.cx, c.cy, c.r, 0, Math.PI * 2);
+					ctx.fill();
+					ctx.stroke();
+					ctx.fillStyle = "#ff0000";
+					ctx.font = "bold 11px sans-serif";
+					ctx.fillText(name, c.cx - 10, c.cy);
+					return;
+				}
+			}
+
+			const shapeKind = String(col.shape || "rect").toLowerCase();
+			if (shapeKind === "rect" || col.x1 !== undefined) {
+				const x1 = col.x1 ?? 0;
+				const y1 = col.y1 ?? 0;
+				const w = (col.x2 ?? x1 + 40) - x1;
+				const h = (col.y2 ?? y1 + 40) - y1;
+				ctx.fillRect(x1, y1, w, h);
+				ctx.strokeRect(x1, y1, w, h);
+				ctx.fillStyle = "#ff0000";
+				ctx.font = "bold 11px sans-serif";
+				ctx.fillText(name, x1 + 4, y1 + 14);
+			} else if (shapeKind === "circle" || shapeKind === "ellipse") {
+				const cx = col.cx ?? 50;
+				const cy = col.cy ?? 50;
+				const rx = col.rx ?? col.r ?? 30;
+				const ry = col.ry ?? col.r ?? 30;
+				ctx.beginPath();
+				ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+				ctx.fill();
+				ctx.stroke();
+				ctx.fillStyle = "#ff0000";
+				ctx.font = "bold 11px sans-serif";
+				ctx.fillText(name, cx - 10, cy);
+			}
+		});
+	},
+
 	resolveSurfaceNumber(
 		this: SurfaceCollisionContext,
 		surfaceId: number | string | null | undefined,

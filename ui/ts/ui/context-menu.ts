@@ -42,13 +42,19 @@ function _triggerSubmenuWindow(menuType: string, buttonEl: Element) {
 		const sY = globalThis.screenY ?? 0;
 		const posX = sX + 260 + 2;
 		const posY = sY + rect.top;
+		const winHeight =
+			menuType === "utility" ||
+			menuType === "utility-root" ||
+			menuType === "tools"
+				? 460
+				: 320;
 		invoke("show_submenu_window", {
 			params: {
 				menuType: menuType,
 				x: posX,
 				y: posY,
-				width: 220,
-				height: 300,
+				width: 240,
+				height: winHeight,
 			},
 		}).catch((e) => {
 			console.error("Failed to show submenu window:", e);
@@ -71,19 +77,27 @@ function _triggerSubmenuWindow(menuType: string, buttonEl: Element) {
 	}
 }
 
+function getMenuTypeFromButton(btn: Element): string {
+	let type = btn.id
+		.replace("-menu-btn", "")
+		.replace("-switch-btn", "")
+		.replace("-btn", "");
+	if (type === "config") {
+		type = "settings";
+	}
+	if (type === "utility-root" || type === "tools") {
+		type = "utility";
+	}
+	return type;
+}
+
 document.addEventListener("click", (e) => {
 	const menuItem = (e.target as Element).closest(".menu-item");
 	if (!menuItem) return;
 
 	// サブメニュー展開用の親ボタン
 	if (menuItem.classList.contains("has-submenu")) {
-		let menuType = menuItem.id
-			.replace("-menu-btn", "")
-			.replace("-switch-btn", "")
-			.replace("-btn", "");
-		if (menuType === "config") {
-			menuType = "settings";
-		}
+		const menuType = getMenuTypeFromButton(menuItem);
 		if (isNativeMultiWindow()) {
 			_triggerSubmenuWindow(menuType, menuItem);
 			return;
@@ -133,10 +147,7 @@ document.addEventListener("mouseover", (e: unknown) => {
 	if (wrapper) {
 		checkSubmenuFlip(wrapper);
 	}
-	const menuType = btn.id
-		.replace("-menu-btn", "")
-		.replace("-switch-btn", "")
-		.replace("-btn", "");
+	const menuType = getMenuTypeFromButton(btn);
 	if (isNativeMultiWindow()) {
 		_triggerSubmenuWindow(menuType, btn);
 	} else if (wrapper) {
@@ -155,10 +166,7 @@ document.querySelectorAll(".menu-item-wrapper").forEach((wrapper) => {
 		if (isNativeMultiWindow()) {
 			const btn = wrapper.querySelector(".menu-item.has-submenu");
 			if (btn) {
-				const menuType = btn.id
-					.replace("-menu-btn", "")
-					.replace("-switch-btn", "")
-					.replace("-btn", "");
+				const menuType = getMenuTypeFromButton(btn);
 				_triggerSubmenuWindow(menuType, btn);
 			}
 		} else {

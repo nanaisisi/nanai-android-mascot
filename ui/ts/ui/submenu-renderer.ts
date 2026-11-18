@@ -279,16 +279,16 @@ export function renderSubmenuContent({
 			},
 		];
 
-		let isDevMode = false;
+		let isDevMode = isTauriAvailable();
 		try {
 			const saved = localStorage.getItem("nanai-android-mascot-settings");
 			if (saved) {
 				const s = JSON.parse(saved);
-				isDevMode = Boolean(
-					s.developerModeEnabled ||
-						s.devModeEnabled ||
-						s.debugLevel === "debug",
-				);
+				if (s.developerModeEnabled !== undefined) {
+					isDevMode = Boolean(s.developerModeEnabled);
+				} else if (s.devModeEnabled !== undefined) {
+					isDevMode = Boolean(s.devModeEnabled);
+				}
 			}
 		} catch (_) {}
 

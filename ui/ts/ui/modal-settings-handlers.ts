@@ -47,7 +47,9 @@ export class ModalSettingsHandlers {
 		});
 
 		// デバッグモード判定: 基本非表示、debug時はデフォルトオン (inline-block)
-		const devTabBtn = document.getElementById("nam-tab-btn-dev");
+		const devTabBtn =
+			document.getElementById("ssp-tab-btn-dev") ||
+			document.getElementById("nam-tab-btn-dev");
 		const s = (this.app?.settings as Record<string, unknown>) || {};
 		const isDevMode =
 			Boolean(s.developerModeEnabled) ||
@@ -141,6 +143,14 @@ export class ModalSettingsHandlers {
 							location.hostname === "127.0.0.1"));
 				developerModeEnabled.checked =
 					(s.developerModeEnabled as boolean) ?? Boolean(isDevEnv);
+
+				developerModeEnabled.addEventListener("change", () => {
+					if (devTabBtn?.style) {
+						devTabBtn.style.display = developerModeEnabled.checked
+							? "inline-block"
+							: "none";
+					}
+				});
 			}
 			if (s.darkModeOpt) setRadio("dark-mode-opt", String(s.darkModeOpt));
 			if (s.locationOpt) setRadio("location-opt", String(s.locationOpt));

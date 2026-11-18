@@ -1,3 +1,4 @@
+import { showDevPalette } from "../../ui/dev-palette.js";
 import { AppConfig } from "../config.js";
 import { invoke, isTauriAvailable } from "../tauri-helper.js";
 import { handleSystemMenuAction } from "./menu-action-system.js";
@@ -239,7 +240,8 @@ export function handleMenuActionImpl(
 		return;
 	}
 	if (action === "dev-palette" || action === "show-dev-palette") {
-		context.modalManager?.show?.("settings-modal-content");
+		const ghostName = context.ghostController?.currentGhost?.name || "Emily";
+		showDevPalette({ ghostName, app: context.app || context });
 		return;
 	}
 

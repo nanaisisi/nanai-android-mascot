@@ -861,7 +861,7 @@ mod tests {
         );
 
         let snake: ShowBalloonWindowParams =
-            serde_json::from_str(r#"{"scope_id": 1, "theme": "nsm"}"#).unwrap();
+            serde_json::from_str(r#"{"scope_id": 1, "theme": "nam"}"#).unwrap();
         assert_eq!(
             resolve_show_balloon_args(
                 Some(snake),
@@ -875,7 +875,7 @@ mod tests {
             ),
             (
                 1,
-                Some("nsm".to_string()),
+                Some("nam".to_string()),
                 Some(10.0),
                 Some(20.0),
                 None,

@@ -149,16 +149,16 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 
 	it("cycles balloon themes correctly with default and custom lists", () => {
 		const mockApp = {
-			currentBalloonTheme: "nsm",
+			currentBalloonTheme: "nam",
 			showBalloon() {},
 			hideBalloon() {},
 		};
 		const mgr = new BalloonThemeManager(mockApp);
 
 		const next1 = mgr.cycleTheme();
-		assert.equal(next1, "nsm_vertical");
-		assert.equal(mgr.currentTheme, "nsm_vertical");
-		assert.equal(mockApp.currentBalloonTheme, "nsm_vertical");
+		assert.equal(next1, "nam_vertical");
+		assert.equal(mgr.currentTheme, "nam_vertical");
+		assert.equal(mockApp.currentBalloonTheme, "nam_vertical");
 
 		// Custom list
 		mgr.availableBalloons = [
@@ -230,7 +230,7 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 	it("delegates balloonThemeActions to BalloonThemeManager preserving backward compatibility", async () => {
 		const app = {
 			...balloonThemeActions,
-			currentBalloonTheme: "nsm",
+			currentBalloonTheme: "nam",
 			balloonUserScale: 1,
 			balloonDpiScale: 1,
 			availableBalloons: [],
@@ -239,7 +239,7 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 		};
 
 		app.cycleBalloonTheme();
-		assert.equal(app.currentBalloonTheme, "nsm_vertical");
+		assert.equal(app.currentBalloonTheme, "nam_vertical");
 		assert.ok(app.balloonThemeManager instanceof BalloonThemeManager);
 
 		app.applyBalloonScaleAction("balloon-scale-125");

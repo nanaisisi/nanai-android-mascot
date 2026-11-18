@@ -1,6 +1,6 @@
-# NSM 仕様書: バルーン DPI スケーリングおよびクロスプラットフォーム表示仕様
+# NAM 仕様書: バルーン DPI スケーリングおよびクロスプラットフォーム表示仕様
 
-- **策定目的**: Nanai Android Mascot (NSM) における、`descript.txt` の `dpi,推奨DPI` プロパティの独自解釈およびクロスプラットフォーム（Windows / Android）WebView レンダリングにおけるスケーリング仕様の定義。
+- **策定目的**: Nanai Android Mascot (NAM) における、`descript.txt` の `dpi,推奨DPI` プロパティの独自解釈およびクロスプラットフォーム（Windows / Android）WebView レンダリングにおけるスケーリング仕様の定義。
 - **対象コンポーネント**: Rust バックエンド（VFS / Manifest パーサ）、Tauri v2 レンダラ層、フロントエンド UI（`app-actions.js`, `balloon-window.js`）
 
 ---
@@ -9,14 +9,14 @@
 
 伺か（Ukagaka）の標準規格（UKADOC / SSP）では、バルーンが想定する画面の推奨 DPI を指定するプロパティとして `dpi,推奨DPI`（既定値 `96`）が定義されています。SSP では、OS のモニター DPI とバルーンの推奨 DPI を比較し、高 DPI 環境での自動スケーリングを行います。
 
-しかし、**Nanai Android Mascot (NSM)** は、Tauri v2 をベースとしたクロスプラットフォームアプリケーション（Windows デスクトップ版および Android モバイル・タブレット版）であり、描画エンジンに WebView（WebView2 / Android System WebView）を採用しています。
+しかし、**Nanai Android Mascot (NAM)** は、Tauri v2 をベースとしたクロスプラットフォームアプリケーション（Windows デスクトップ版および Android モバイル・タブレット版）であり、描画エンジンに WebView（WebView2 / Android System WebView）を採用しています。
 WebView 環境では OS の画面倍率（`window.devicePixelRatio`）に応じて CSS 論理ピクセルが自動スケーリングされるため、従来の Win32 直接制御モデルをそのまま持ち込むと、高密度モバイル画面などで意図しない二重スケーリングやレイアウト破綻が発生します。
 
-そのため、NSM では **WebView の論理ピクセルモデルと `descript.txt` の `dpi` 指定を調停するハイブリッドスケーリング仕様（NSM 独自解釈仕様）**を規定し、採用しています。
+そのため、NAM では **WebView の論理ピクセルモデルと `descript.txt` の `dpi` 指定を調停するハイブリッドスケーリング仕様（NAM 独自解釈仕様）**を規定し、採用しています。
 
 ---
 
-## 2. NSM 仕様: ハイブリッドスケーリング計算モデル
+## 2. NAM 仕様: ハイブリッドスケーリング計算モデル
 
 ### 2.1 補正倍率の算出式 (`balloonDpiScale`)
 
@@ -40,7 +40,7 @@ $$\text{balloonDpiScale} = \frac{96}{\text{Number}(\text{props}[\text{"dpi"}]) |
 
 ### 2.2 ユーザー手動スケーリング（`userScale`）との合成
 
-NSM 独自の拡張機能として、ユーザーはメニュー等からバルーン表示倍率（50% 〜 200%）を手動で変更できます。
+NAM 独自の拡張機能として、ユーザーはメニュー等からバルーン表示倍率（50% 〜 200%）を手動で変更できます。
 最終的な描画スケール（`finalScale`）は、**DPI 推奨補正（`dpiScale`）とユーザー手動スケール（`userScale`）の積**として決定されます。
 
 $$\text{finalScale} = \text{userScale} \times \text{dpiScale}$$

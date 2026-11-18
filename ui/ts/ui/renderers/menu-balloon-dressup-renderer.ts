@@ -19,7 +19,7 @@ export const menuBalloonDressupRenderer = {
 			(typeof localStorage !== "undefined"
 				? localStorage.getItem("nanai_balloon_theme")
 				: null) ||
-			"nsm";
+			"nam";
 
 		container.innerHTML = `
 			<button type="button" class="menu-item" id="balloon-cycle-btn">
@@ -63,8 +63,8 @@ export const menuBalloonDressupRenderer = {
 			});
 		} else {
 			const fallbackThemes = [
-				{ id: "nsm", label: "NAMデフォルト+" },
-				{ id: "nsm_vertical", label: "NAMデフォルト+(頭上)" },
+				{ id: "nam", label: "NAMデフォルト+" },
+				{ id: "nam_vertical", label: "NAMデフォルト+(頭上)" },
 			];
 			fallbackThemes.forEach((t) => {
 				const currentNorm = String(activeTheme || "")

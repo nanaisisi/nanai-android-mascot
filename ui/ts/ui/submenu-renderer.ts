@@ -109,7 +109,7 @@ export function renderSubmenuContent({
 				(typeof localStorage !== "undefined"
 					? localStorage.getItem("nanai_balloon_theme")
 					: null) ||
-				"nsm";
+				"nam";
 
 			const currentNorm = String(activeTheme || "")
 				.trim()
@@ -118,9 +118,9 @@ export function renderSubmenuContent({
 			(balloonsList.length > 0
 				? balloonsList
 				: [
-						{ dir_name: "nsm", name: "NAMデフォルト+" },
+						{ dir_name: "nam", name: "NAMデフォルト+" },
 						{
-							dir_name: "nsm_vertical",
+							dir_name: "nam_vertical",
 							name: "NAMデフォルト+(頭上)",
 						},
 					]

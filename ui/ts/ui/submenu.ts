@@ -77,9 +77,9 @@ function renderContent() {
 			currentBalloonTheme =
 				localStorage.getItem("nanai_balloon_theme") ||
 				document.documentElement.getAttribute("data-balloon-theme") ||
-				"nsm";
+				"nam";
 		} catch (_e) {
-			currentBalloonTheme = "nsm";
+			currentBalloonTheme = "nam";
 		}
 	}
 	renderSubmenuContent({

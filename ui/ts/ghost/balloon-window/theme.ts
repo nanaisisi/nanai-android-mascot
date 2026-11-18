@@ -325,9 +325,9 @@ export async function applyBalloonDescript({
 			balloonId,
 		}).catch(() => null);
 		if (!rawProps || typeof rawProps !== "object") {
-			if (theme !== "default" && theme !== "nsm") {
+			if (theme !== "default" && theme !== "nam") {
 				return await applyBalloonDescript({
-					theme: "nsm",
+					theme: "nam",
 					scopeId,
 					balloonId,
 					side,
@@ -384,8 +384,8 @@ export async function applyBalloonDescript({
 		onDontMoveChange?.(isBalloonDontMove);
 
 		let bgImage = await loadBalloonSkinImages(theme, scopeId, side, balloonId);
-		if (!bgImage && theme !== "default" && theme !== "nsm") {
-			bgImage = await loadBalloonSkinImages("nsm", scopeId, side, balloonId);
+		if (!bgImage && theme !== "default" && theme !== "nam") {
+			bgImage = await loadBalloonSkinImages("nam", scopeId, side, balloonId);
 		}
 
 		let baseWidth = DEFAULT_BALLOON_WIDTH;
@@ -572,9 +572,9 @@ export async function applyBalloonDescript({
 			isBalloonDontMove,
 		};
 	} catch (_e) {
-		if (theme !== "default" && theme !== "nsm") {
+		if (theme !== "default" && theme !== "nam") {
 			return await applyBalloonDescript({
-				theme: "nsm",
+				theme: "nam",
 				scopeId,
 				balloonId,
 				side,

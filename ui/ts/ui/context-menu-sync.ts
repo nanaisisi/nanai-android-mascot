@@ -60,7 +60,7 @@ export function setupContextMenuSync(
 				event.payload ||
 				document.documentElement.getAttribute("data-balloon-theme") ||
 				localStorage.getItem("nanai_balloon_theme") ||
-				"nsm";
+				"nam";
 			if (globalThis._lastBalloons) {
 				renderer.renderBalloonSubmenu(globalThis._lastBalloons, theme);
 			}
@@ -70,7 +70,7 @@ export function setupContextMenuSync(
 			const theme =
 				document.documentElement.getAttribute("data-balloon-theme") ||
 				localStorage.getItem("nanai_balloon_theme") ||
-				"nsm";
+				"nam";
 			renderer.renderBalloonSubmenu(event.payload, theme);
 		});
 	}
@@ -122,7 +122,7 @@ export function setupContextMenuSync(
 				event.data.theme ||
 				document.documentElement.getAttribute("data-balloon-theme") ||
 				localStorage.getItem("nanai_balloon_theme") ||
-				"nsm";
+				"nam";
 			if (globalThis._lastBalloons) {
 				renderer.renderBalloonSubmenu(globalThis._lastBalloons, theme);
 			}
@@ -131,7 +131,7 @@ export function setupContextMenuSync(
 			const theme =
 				document.documentElement.getAttribute("data-balloon-theme") ||
 				localStorage.getItem("nanai_balloon_theme") ||
-				"nsm";
+				"nam";
 			renderer.renderBalloonSubmenu(event.data.balloons, theme);
 		}
 	});

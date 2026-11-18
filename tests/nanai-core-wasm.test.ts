@@ -112,7 +112,7 @@ describe("nanai-core WASM module parity and fallback", () => {
 
 		if (typeof engine.toggleBind === "function") engine.toggleBind(101);
 		if (typeof engine.setBalloonTheme === "function")
-			engine.setBalloonTheme("nsm_vertical");
+			engine.setBalloonTheme("nam_vertical");
 
 		if (typeof engine.clearScriptQueue === "function") {
 			engine.clearScriptQueue();

@@ -159,7 +159,7 @@ export async function setBalloonThemeImpl(
 	if (isTauriAvailable()) {
 		emit("sync-theme", themeName);
 		emit("balloon-theme-changed", { theme: themeName });
-		if (themeName === "nsm_vertical") {
+		if (themeName === "nam_vertical") {
 			void invoke("set_balloon_offset", {
 				scopeId: 0,
 				x: -40,
@@ -170,7 +170,7 @@ export async function setBalloonThemeImpl(
 				x: -40,
 				y: -210,
 			}).catch(() => {});
-		} else if (themeName === "nsm") {
+		} else if (themeName === "nam") {
 			void invoke("reset_balloon_positions").catch(() => {});
 		}
 	}

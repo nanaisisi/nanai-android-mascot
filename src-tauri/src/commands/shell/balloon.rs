@@ -465,7 +465,7 @@ fn resolve_candidate_balloon_dir(dir_name: &str, app_handle: &tauri::AppHandle) 
 pub fn resolve_balloon_dir(name: &str, app_handle: &tauri::AppHandle) -> Result<PathBuf, String> {
     println!("🔍 [Balloon] resolve_balloon_dir 呼び出し: name='{}'", name);
     let effective_name = if name.is_empty() || name.eq_ignore_ascii_case("default") {
-        "nsm"
+        "nam"
     } else {
         name
     };
@@ -501,7 +501,7 @@ pub fn resolve_balloon_dir(name: &str, app_handle: &tauri::AppHandle) -> Result<
     let search_bases = vec![
         format!("assets/balloon/{}", effective_name),
         format!("balloon/{}", effective_name),
-        "assets/balloon/nsm".to_string(),
+        "assets/balloon/nam".to_string(),
         "assets/balloon/default".to_string(),
     ];
 

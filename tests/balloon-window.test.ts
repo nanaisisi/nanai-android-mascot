@@ -607,7 +607,7 @@ test("balloon-window updates scroll on content, invokes resize_balloon_window on
 		resizeCalls.length = 0;
 		blockImages = true;
 		await applyBalloonDescript({
-			theme: "nsm",
+			theme: "nam",
 			scopeId: 0,
 			currentUserScale: 1.0,
 		});
@@ -748,7 +748,7 @@ test("balloon-window reloads balloon images when balloonId or side changes under
 			const name = String(req.name ?? "");
 			const file = String(req.file ?? "");
 			imageRequests.push({ name, file });
-			if (name === "nsm" && validFiles.has(file)) {
+			if (name === "nam" && validFiles.has(file)) {
 				return "data:image/svg+xml;base64,svg";
 			}
 			return validFiles.has(file) ? `data:image/png;base64,${file}` : null;
@@ -840,7 +840,7 @@ test("balloon-window reloads balloon images when balloonId or side changes under
 		// SVG theme does not request .pna mask
 		imageRequests.length = 0;
 		await capturedListeners["balloon-theme-changed"]?.({
-			payload: { theme: "nsm", balloonId: null, side: "left" },
+			payload: { theme: "nam", balloonId: null, side: "left" },
 		});
 		await new Promise((r) => setTimeout(r, 40));
 

@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <title>NSM Icon</title>
+  <title>NAM Icon</title>
   <defs>
     <!-- Background Gradient: Vibrant Sakura to Soft Sakura -->
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -35,6 +35,6 @@
            a 48 48 0 0 1 48 -48 Z"
         fill="#FFFFFF" filter="url(#shadow)" />
 
-  <!-- Text: NSM (Android Green) -->
-  <text x="256" y="302" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="110" fill="#3DDC84" text-anchor="middle" letter-spacing="2">NSM</text>
+  <!-- Text: NAM (Android Green) -->
+  <text x="256" y="302" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="110" fill="#3DDC84" text-anchor="middle" letter-spacing="2">NAM</text>
 </svg>

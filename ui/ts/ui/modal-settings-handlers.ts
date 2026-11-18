@@ -20,36 +20,86 @@ export class ModalSettingsHandlers {
 	}
 
 	setupSettingsListeners() {
-		const form = {
-			autoLoad: document.getElementById(
-				"auto-load-ghost",
-			) as HTMLInputElement | null,
-			darkMode: document.getElementById("dark-mode") as HTMLInputElement | null,
-			shellScale: document.getElementById("shell-scale") as
-				| HTMLSelectElement
-				| HTMLInputElement
-				| null,
-			balloonScale: document.getElementById("balloon-scale") as
-				| HTMLSelectElement
-				| HTMLInputElement
-				| null,
-			saveBtn: document.getElementById("save-settings-btn"),
-			resetBtn: document.getElementById("reset-settings-btn"),
-		};
+		// タブ切り替えリスナー
+		const tabBtns = document.querySelectorAll(".ssp-tab-btn");
+		tabBtns.forEach((btn) => {
+			btn.addEventListener("click", (e) => {
+				tabBtns.forEach((b) => {
+					(b as HTMLElement).style.background = "#eee";
+					b.classList.remove("active");
+				});
+				const targetBtn = e.currentTarget as HTMLElement;
+				targetBtn.style.background = "#fff";
+				targetBtn.classList.add("active");
+			});
+		});
 
-		if (form.autoLoad && this.app) {
-			form.autoLoad.checked = Boolean(this.app.settings?.autoLoadGhost);
-		}
-		if (form.darkMode && this.app) {
-			form.darkMode.checked = Boolean(this.app.settings?.darkMode);
-		}
-		if (form.shellScale && this.app) {
-			form.shellScale.value =
-				(this.app.settings?.shellScale as string) || "100";
-		}
-		if (form.balloonScale && this.app) {
-			form.balloonScale.value =
-				(this.app.settings?.balloonScale as string) || "100";
+		// フォームエレメント取得ヘルパー
+		const getCheck = (id: string) =>
+			document.getElementById(id) as HTMLInputElement | null;
+		const getRadio = (name: string) =>
+			typeof document.querySelector === "function"
+				? (document.querySelector(
+						`input[name="${name}"]:checked`,
+					) as HTMLInputElement | null)
+				: null;
+		const setRadio = (name: string, val: string) => {
+			if (typeof document.querySelector === "function") {
+				const radio = document.querySelector(
+					`input[name="${name}"][value="${val}"]`,
+				) as HTMLInputElement | null;
+				if (radio) radio.checked = true;
+			}
+		};
+		const getText = (id: string) =>
+			document.getElementById(id) as HTMLInputElement | null;
+
+		const autoUpdateCheck = getCheck("auto-update-check");
+		const fileAssociation = getCheck("file-association");
+		const alwaysShowUninstall = getCheck("always-show-uninstall");
+		const alwaysShowTrayIcon = getCheck("always-show-tray-icon");
+		const showReadmeOnInstall = getCheck("show-readme-on-install");
+		const registerHotkeys = getCheck("register-hotkeys");
+		const showStatusWindow = getCheck("show-transparent-status-window");
+		const virusCheckEnabled = getCheck("virus-check-enabled");
+		const developerModeEnabled = getCheck("developer-mode-enabled");
+		const userName = getText("user-name");
+		const userNickname = getText("user-nickname");
+		const userBirthday = getText("user-birthday");
+
+		// 初期設定値のフォームへのセット
+		if (this.app?.settings) {
+			const s = this.app.settings as Record<string, unknown>;
+			if (autoUpdateCheck)
+				autoUpdateCheck.checked = (s.autoUpdateCheck as boolean) ?? true;
+			if (fileAssociation)
+				fileAssociation.checked = (s.fileAssociation as boolean) ?? true;
+			if (alwaysShowUninstall)
+				alwaysShowUninstall.checked =
+					(s.alwaysShowUninstall as boolean) ?? false;
+			if (alwaysShowTrayIcon)
+				alwaysShowTrayIcon.checked = (s.alwaysShowTrayIcon as boolean) ?? true;
+			if (showReadmeOnInstall)
+				showReadmeOnInstall.checked =
+					(s.showReadmeOnInstall as boolean) ?? true;
+			if (registerHotkeys)
+				registerHotkeys.checked = (s.registerHotkeys as boolean) ?? false;
+			if (showStatusWindow)
+				showStatusWindow.checked = (s.showStatusWindow as boolean) ?? false;
+			if (virusCheckEnabled)
+				virusCheckEnabled.checked = (s.virusCheckEnabled as boolean) ?? true;
+			if (developerModeEnabled)
+				developerModeEnabled.checked =
+					(s.developerModeEnabled as boolean) ?? false;
+			if (s.darkModeOpt) setRadio("dark-mode-opt", String(s.darkModeOpt));
+			if (s.locationOpt) setRadio("location-opt", String(s.locationOpt));
+			if (s.tabletModeOpt) setRadio("tablet-mode-opt", String(s.tabletModeOpt));
+			if (userName && s.userName) userName.value = String(s.userName);
+			if (userNickname && s.userNickname)
+				userNickname.value = String(s.userNickname);
+			if (userBirthday && s.userBirthday)
+				userBirthday.value = String(s.userBirthday);
+			if (s.userGender) setRadio("user-gender", String(s.userGender));
 		}
 
 		const overlayBtn = document.getElementById("open-overlay-settings-btn");
@@ -71,14 +121,39 @@ export class ModalSettingsHandlers {
 			}
 		});
 
-		form.saveBtn?.addEventListener("click", () => {
+		// 保存処理 (OK / 保存ボタン)
+		const saveBtn = document.getElementById("save-settings-btn");
+		const closeBtn = document.getElementById("close-settings-btn");
+
+		const saveAction = () => {
 			if (this.app) {
+				const darkModeOpt = getRadio("dark-mode-opt")?.value || "auto";
+				const isDark =
+					darkModeOpt === "dark" ||
+					(darkModeOpt === "auto" &&
+						typeof window !== "undefined" &&
+						typeof window.matchMedia === "function" &&
+						Boolean(window.matchMedia("(prefers-color-scheme: dark)").matches));
+
 				this.app.settings = {
 					...this.app.settings,
-					autoLoadGhost: form.autoLoad?.checked ?? true,
-					darkMode: form.darkMode?.checked ?? false,
-					shellScale: form.shellScale?.value ?? "100",
-					balloonScale: form.balloonScale?.value ?? "100",
+					autoUpdateCheck: autoUpdateCheck?.checked ?? true,
+					fileAssociation: fileAssociation?.checked ?? true,
+					alwaysShowUninstall: alwaysShowUninstall?.checked ?? false,
+					alwaysShowTrayIcon: alwaysShowTrayIcon?.checked ?? true,
+					showReadmeOnInstall: showReadmeOnInstall?.checked ?? true,
+					registerHotkeys: registerHotkeys?.checked ?? false,
+					showStatusWindow: showStatusWindow?.checked ?? false,
+					virusCheckEnabled: virusCheckEnabled?.checked ?? true,
+					developerModeEnabled: developerModeEnabled?.checked ?? false,
+					darkModeOpt,
+					darkMode: isDark,
+					locationOpt: getRadio("location-opt")?.value || "auto",
+					tabletModeOpt: getRadio("tablet-mode-opt")?.value || "auto",
+					userName: userName?.value || "ユーザ",
+					userNickname: userNickname?.value || "マスター",
+					userBirthday: userBirthday?.value || "",
+					userGender: getRadio("user-gender")?.value || "none",
 				};
 
 				localStorage.setItem(
@@ -86,13 +161,15 @@ export class ModalSettingsHandlers {
 					JSON.stringify(this.app.settings),
 				);
 				this.app.applySettings?.();
-				this.app.showBalloon?.("設定を保存しました。");
-				setTimeout(() => this.app?.hideBalloon?.(), 2000);
 			}
 			this.manager.hide();
-		});
+		};
 
-		form.resetBtn?.addEventListener("click", () => {
+		saveBtn?.addEventListener("click", saveAction);
+		closeBtn?.addEventListener("click", () => this.manager.hide());
+
+		const resetBtn = document.getElementById("reset-settings-btn");
+		resetBtn?.addEventListener("click", () => {
 			if (confirm("設定を初期値に戻しますか？")) {
 				localStorage.removeItem("nanai-android-mascot-settings");
 				if (this.app) {
@@ -107,10 +184,6 @@ export class ModalSettingsHandlers {
 					};
 					this.app.applySettings?.();
 				}
-				if (form.autoLoad) form.autoLoad.checked = true;
-				if (form.darkMode) form.darkMode.checked = false;
-				if (form.shellScale) form.shellScale.value = "100";
-				if (form.balloonScale) form.balloonScale.value = "100";
 				this.app?.showBalloon?.("設定を初期化しました。");
 				setTimeout(() => this.app?.hideBalloon?.(), 2000);
 			}

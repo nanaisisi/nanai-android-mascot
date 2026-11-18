@@ -27,7 +27,29 @@ export const settingsMethods = {
 	applySettings() {
 		const app =
 			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
-		document.body.classList.toggle("dark-mode", !!app.settings?.darkMode);
+
+		// ダークモード設定の適用 (OS自動/ダーク/ライト)
+		const dmOpt =
+			(app.settings?.darkModeOpt as string) ||
+			(app.settings?.darkMode ? "dark" : "auto");
+		let isDark = false;
+		if (dmOpt === "dark") {
+			isDark = true;
+		} else if (dmOpt === "light") {
+			isDark = false;
+		} else if (
+			typeof window !== "undefined" &&
+			typeof window.matchMedia === "function"
+		) {
+			isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+		}
+		if (typeof document !== "undefined" && document.body) {
+			document.body.classList.toggle("dark-mode", isDark);
+			document.documentElement?.setAttribute(
+				"data-theme",
+				isDark ? "dark" : "light",
+			);
+		}
 
 		// シェル倍率 (50%〜200%)
 		const shellScaleVal =

@@ -243,6 +243,31 @@ export function handleMenuActionImpl(
 		return;
 	}
 
+	// 本物仕様開発パレットアクション
+	if (action === "open-script-input" || action === "script-input") {
+		context.modalManager?.show?.("plugins-modal-content");
+		return;
+	}
+	if (action === "open-surface-test" || action === "surface-test") {
+		context.modalManager?.show?.("settings-modal-content");
+		return;
+	}
+	if (action === "show-error-log" || action === "error-log") {
+		if (isTauriAvailable()) {
+			void invoke("show_ssp_log_window").catch(() => {});
+		} else {
+			context.modalManager?.show?.("plugins-modal-content");
+		}
+		return;
+	}
+	if (action === "seriko-inspector") {
+		context.modalManager?.show?.("plugins-modal-content");
+		return;
+	}
+	if (action === "open-exec") {
+		return handleMenuActionImpl(context, "open-folder", payload);
+	}
+
 	if (action === "headlines" || action === "headline") {
 		gc?.sendShioriEvent?.("OnHeadline");
 		return;

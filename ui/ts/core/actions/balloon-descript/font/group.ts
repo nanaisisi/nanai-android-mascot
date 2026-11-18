@@ -52,23 +52,16 @@ export function applyGroupProperties(
 ) {
 	// [anchor.font.color / cursor.font.color / *.font.color.r,g,b]:
 	const fontColorKey = `${prefix}.font.color`;
+	const shortColorKey = `${prefix}.color`;
+	const fontColorKey2 = `${prefix}.color.font`;
 	const col =
 		rgbFromComponents(props, fontColorKey) ||
-		(props[`${fontColorKey}.r`] ||
-		props[`${fontColorKey}.g`] ||
-		props[`${fontColorKey}.b`]
-			? rgbFromComponents(props, fontColorKey)
-			: null) ||
-		props[fontColorKey];
+		rgbFromComponents(props, shortColorKey) ||
+		rgbFromComponents(props, fontColorKey2) ||
+		props[fontColorKey] ||
+		props[shortColorKey] ||
+		props[fontColorKey2];
 	if (col) root.style.setProperty(`${cssPrefix}-color`, col);
-
-	// [anchor.color / cursor.color / *.color]: (短縮キー fallback)
-	const shortColorKey = `${prefix}.color`;
-	const shortCol =
-		rgbFromComponents(props, shortColorKey) || props[shortColorKey];
-	if (shortCol && !col) {
-		root.style.setProperty(`${cssPrefix}-color`, shortCol);
-	}
 
 	// [anchor.font.name / cursor.font.name / *.font.name]:
 	const fontNameVal =

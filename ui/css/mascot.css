@@ -334,7 +334,7 @@
 	line-height: inherit;
 	color: var(
 		--balloon-cursor-notselect-color,
-		var(--balloon-cursor-color, #0078d7)
+		var(--balloon-cursor-color, var(--balloon-text-color, inherit))
 	);
 	text-decoration: var(
 		--balloon-cursor-notselect-text-decoration,

@@ -29,9 +29,9 @@ describe("Balloon Skin & Typography Cycle 10 Enhancements (Slot-10)", () => {
 			assert.equal(scope1.scopeId, 1);
 			assert.equal(scope2.scopeId, 2);
 
-			assert.equal(scope0.cacheKey, "14_10_14_10_stretch_balloons0.png");
-			assert.equal(scope1.cacheKey, "scope1_14_10_14_10_stretch_balloonk0.png");
-			assert.equal(scope2.cacheKey, "scope2_14_10_14_10_stretch_balloonp2.png");
+			assert.equal(scope0.cacheKey, "14_10_14_10_balloons0.png");
+			assert.equal(scope1.cacheKey, "scope1_14_10_14_10_balloonk0.png");
+			assert.equal(scope2.cacheKey, "scope2_14_10_14_10_balloonp2.png");
 
 			assert.equal(cache.size, 3);
 		});
@@ -74,13 +74,11 @@ describe("Balloon Skin & Typography Cycle 10 Enhancements (Slot-10)", () => {
 			mgr.clearValidRectCache(1);
 			assert.equal(mgr.validRectCacheSize, 2);
 			assert.equal(
-				mgr.hasValidRectCache("scope1_12_12_12_12_repeat_balloonk0.png"),
+				mgr.hasValidRectCache("scope1_12_12_12_12_balloonk0.png"),
 				false,
 			);
-			assert.ok(mgr.getValidRectCache("8_8_8_8_repeat_balloons0.png"));
-			assert.ok(
-				mgr.getValidRectCache("scope2_16_16_16_16_repeat_balloonp2.png"),
-			);
+			assert.ok(mgr.getValidRectCache("8_8_8_8_balloons0.png"));
+			assert.ok(mgr.getValidRectCache("scope2_16_16_16_16_balloonp2.png"));
 
 			mgr.clearValidRectCache();
 			assert.equal(mgr.validRectCacheSize, 0);

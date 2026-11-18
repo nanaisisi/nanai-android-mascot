@@ -21,8 +21,8 @@ export class ModalSettingsHandlers {
 
 	setupSettingsListeners() {
 		// タブ切り替えリスナー
-		const tabBtns = document.querySelectorAll(".ssp-tab-btn");
-		const tabContents = document.querySelectorAll(".ssp-tab-content");
+		const tabBtns = document.querySelectorAll(".nam-tab-btn");
+		const tabContents = document.querySelectorAll(".nam-tab-content");
 		tabBtns.forEach((btn) => {
 			btn.addEventListener("click", (e) => {
 				tabBtns.forEach((b) => {
@@ -36,18 +36,18 @@ export class ModalSettingsHandlers {
 				targetBtn.style.background = "#fff";
 				targetBtn.classList.add("active");
 				const tabId = targetBtn.getAttribute("data-tab");
-				const activeContent = document.getElementById(`ssp-tab-${tabId}`);
+				const activeContent = document.getElementById(`nam-tab-${tabId}`);
 				if (activeContent) {
 					activeContent.style.display = "block";
 				} else {
-					const defaultContent = document.getElementById("ssp-tab-general");
+					const defaultContent = document.getElementById("nam-tab-general");
 					if (defaultContent) defaultContent.style.display = "block";
 				}
 			});
 		});
 
 		// デバッグモード判定: 基本非表示、debug時はデフォルトオン (inline-block)
-		const devTabBtn = document.getElementById("ssp-tab-btn-dev");
+		const devTabBtn = document.getElementById("nam-tab-btn-dev");
 		const s = (this.app?.settings as Record<string, unknown>) || {};
 		const isDevMode =
 			Boolean(s.developerModeEnabled) ||

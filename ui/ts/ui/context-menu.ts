@@ -77,10 +77,13 @@ document.addEventListener("click", (e) => {
 
 	// サブメニュー展開用の親ボタン
 	if (menuItem.classList.contains("has-submenu")) {
-		const menuType = menuItem.id
+		let menuType = menuItem.id
 			.replace("-menu-btn", "")
 			.replace("-switch-btn", "")
 			.replace("-btn", "");
+		if (menuType === "config") {
+			menuType = "settings";
+		}
 		if (isNativeMultiWindow()) {
 			_triggerSubmenuWindow(menuType, menuItem);
 			return;

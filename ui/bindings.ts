@@ -21,6 +21,8 @@ export const commands = {
 	setOverlayTransparency: (alpha: number | null, options?: InvokeOptions) => __TAURI_INVOKE<number | null>("set_overlay_transparency", { alpha }, options),
 	/**  Androidクリックスルー（背面タッチ透過）切り替えコマンド */
 	setClickThrough: (enabled: boolean, options?: InvokeOptions) => __TAURI_INVOKE<boolean>("set_click_through", { enabled }, options),
+	/**  Android統合オーバーレイウインドウのサイズ変更コマンド (全キャラ単一ウインドウ表示用) */
+	resizeOverlayWindow: (width: number, height: number, options?: InvokeOptions) => __TAURI_INVOKE<[number, number]>("resize_overlay_window", { width, height }, options),
 	/**  Android低メモリ通知 (onTrimMemory) 処理コマンド */
 	trimMemoryCommand: (level: number, options?: InvokeOptions) => __TAURI_INVOKE<number>("trim_memory_command", { level }, options),
 };

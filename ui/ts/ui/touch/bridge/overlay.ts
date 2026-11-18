@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file overlay.js
  * @description Slot-12 Android プラットフォーム判別 & オーバーレイ・フォアグラウンドサービス制御
  * Contract: OverlayManager, isAndroidPlatform, isNativeAndroidPlatform
@@ -10,6 +10,10 @@ import {
 	isTauriAvailable,
 } from "../../../core/tauri-helper.js";
 import { ANDROID_EVENTS } from "./constants.js";
+import {
+	computeUnifiedLayout,
+	type UnifiedLayoutInput,
+} from "./unified-layout.js";
 
 /**
  * Android環境かどうかを判定 (Windows環境下では絶対false)
@@ -50,6 +54,7 @@ export class OverlayManager {
 	_isOverlayEnabled: boolean;
 	_overlayTransparency: number;
 	_isClickThrough: boolean;
+	_isUnified = false;
 	/**
 	 * @param {object} [options={}]
 	 * @param {Function} [options.invokeHandler] カスタムinvoke関数
@@ -95,6 +100,46 @@ export class OverlayManager {
 	 */
 	get isClickThrough() {
 		return this._isClickThrough;
+	}
+
+	/**
+	 * 全キャラ単一ウインドウ表示が有効か
+	 * @returns {boolean}
+	 */
+	get isUnified() {
+		return this._isUnified;
+	}
+
+	/**
+	 * 単一ウインドウ統合表示の切り替え
+	 * @param {boolean} enabled
+	 * @returns {boolean}
+	 */
+	setUnified(enabled: boolean) {
+		this._isUnified = Boolean(enabled);
+		this._dispatch(ANDROID_EVENTS.OVERLAY_UNIFIED_CHANGED, {
+			enabled: this._isUnified,
+		});
+		return this._isUnified;
+	}
+
+	/**
+	 * 統合レイアウトを計算し、単一ウインドウのサイズを適用する。無効時は null。
+	 */
+	async applyUnifiedLayout(characters: UnifiedLayoutInput[], gap?: number) {
+		if (!this._isUnified) return null;
+		const layout = computeUnifiedLayout(characters, gap);
+		if (layout.width > 0 && isTauriAvailable()) {
+			try {
+				await this._invoke("resize_overlay_window", {
+					width: layout.width,
+					height: layout.height,
+				});
+			} catch (err) {
+				console.warn("applyUnifiedLayout invoke error:", err);
+			}
+		}
+		return layout;
 	}
 
 	/**
@@ -239,5 +284,6 @@ export class OverlayManager {
 		this._isOverlayEnabled = false;
 		this._overlayTransparency = 1.0;
 		this._isClickThrough = false;
+		this._isUnified = false;
 	}
 }

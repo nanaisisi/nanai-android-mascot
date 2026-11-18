@@ -89,6 +89,22 @@ export class ModalSettingsHandlers {
 		const registerHotkeys = getCheck("register-hotkeys");
 		const showStatusWindow = getCheck("show-transparent-status-window");
 		const virusCheckEnabled = getCheck("virus-check-enabled");
+		// 統合オーバーレイ設定チェックボックス (テンプレートに無ければ動的挿入)
+		if (
+			!document.getElementById("android-overlay-unified") &&
+			typeof document.createElement === "function"
+		) {
+			const devLabel = document
+				.getElementById("developer-mode-enabled")
+				?.closest("label");
+			if (devLabel?.parentElement) {
+				const label = document.createElement("label");
+				label.innerHTML =
+					'<input type="checkbox" id="android-overlay-unified" /> Androidオーバーレイで全キャラを単一ウインドウに統合表示する';
+				devLabel.parentElement.insertBefore(label, devLabel);
+			}
+		}
+		const androidOverlayUnified = getCheck("android-overlay-unified");
 		const developerModeEnabled = getCheck("developer-mode-enabled");
 		const userName = getText("user-name");
 		const userNickname = getText("user-nickname");
@@ -133,6 +149,9 @@ export class ModalSettingsHandlers {
 				registerHotkeys.checked = (s.registerHotkeys as boolean) ?? false;
 			if (showStatusWindow)
 				showStatusWindow.checked = (s.showStatusWindow as boolean) ?? false;
+			if (androidOverlayUnified)
+				androidOverlayUnified.checked =
+					(s.androidOverlayUnified as boolean) ?? false;
 			if (virusCheckEnabled)
 				virusCheckEnabled.checked = (s.virusCheckEnabled as boolean) ?? true;
 			if (developerModeEnabled) {
@@ -251,6 +270,7 @@ export class ModalSettingsHandlers {
 					registerHotkeys: registerHotkeys?.checked ?? false,
 					showStatusWindow: showStatusWindow?.checked ?? false,
 					virusCheckEnabled: virusCheckEnabled?.checked ?? true,
+					androidOverlayUnified: androidOverlayUnified?.checked ?? false,
 					developerModeEnabled: developerModeEnabled?.checked ?? false,
 					// 開発/その他タブ本物互換項目
 					changeFmoName: changeFmoName?.checked ?? false,
@@ -287,6 +307,13 @@ export class ModalSettingsHandlers {
 					JSON.stringify(this.app.settings),
 				);
 				this.app.applySettings?.();
+				if (typeof window !== "undefined" && window.dispatchEvent) {
+					window.dispatchEvent(
+						new CustomEvent("nam:android:overlay-unified-request", {
+							detail: { enabled: androidOverlayUnified?.checked ?? false },
+						}),
+					);
+				}
 			}
 			this.manager.hide();
 		};

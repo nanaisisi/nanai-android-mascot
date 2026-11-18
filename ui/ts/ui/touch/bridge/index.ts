@@ -21,3 +21,8 @@ export {
 	detectPlatformMode,
 	type PlatformMode,
 } from "./platform.js";
+export {
+	computeUnifiedLayout,
+	type UnifiedLayoutInput,
+	type UnifiedLayoutResult,
+} from "./unified-layout.js";

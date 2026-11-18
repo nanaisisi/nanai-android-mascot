@@ -1,3 +1,4 @@
+import type { UnifiedLayoutInput } from "./bridge/unified-layout.js";
 /**
  * @file android-bridge.js
  * @description Slot-12 Android プラットフォームブリッジ & ライフサイクル・オーバーレイ制御
@@ -79,6 +80,28 @@ export class AndroidBridge {
 				this._dispatch(eventName, data);
 			},
 		});
+
+		if (
+			typeof window !== "undefined" &&
+			typeof window.addEventListener === "function"
+		) {
+			const onUnifiedRequest = (e: Event) => {
+				const enabled = Boolean(
+					(e as CustomEvent<{ enabled?: boolean }>).detail?.enabled,
+				);
+				this._overlayManager.setUnified(enabled);
+			};
+			window.addEventListener(
+				ANDROID_EVENTS.OVERLAY_UNIFIED_REQUEST,
+				onUnifiedRequest,
+			);
+			this._cleanupFns.push(() =>
+				window.removeEventListener(
+					ANDROID_EVENTS.OVERLAY_UNIFIED_REQUEST,
+					onUnifiedRequest,
+				),
+			);
+		}
 
 		if (options.syncUiClasses !== false) {
 			this.applyPlatformUi(options.targetElement);
@@ -254,6 +277,14 @@ export class AndroidBridge {
 
 	async toggleForegroundService() {
 		return this._overlayManager.toggleForegroundService();
+	}
+
+	setOverlayUnified(enabled: boolean) {
+		return this._overlayManager.setUnified(enabled);
+	}
+
+	async applyUnifiedLayout(characters: UnifiedLayoutInput[], gap?: number) {
+		return this._overlayManager.applyUnifiedLayout(characters, gap);
 	}
 
 	async trimMemory(level = 40) {

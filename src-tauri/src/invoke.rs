@@ -50,6 +50,7 @@ pub fn get_invoke_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         commands::window::setup_foreground_service,
         commands::window::set_overlay_transparency,
         commands::window::set_click_through,
+        commands::window::resize_overlay_window,
         commands::window::trim_memory_command,
         commands::window::test_command,
         commands::window::minimize_app,

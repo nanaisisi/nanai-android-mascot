@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file android-bridge-state.ts
  * @description Helper functions for AndroidBridge lifecycle and state management
  */
@@ -33,6 +33,7 @@ export function getAndroidBridgeState(
 		lifecycleState,
 		overlayTransparency: overlayManager.overlayTransparency,
 		isClickThrough: overlayManager.isClickThrough,
+		isOverlayUnified: overlayManager.isUnified,
 		isThrottled: checkIsThrottled(lifecycleState),
 		dockState: dockManager.dockState,
 		isDocked: dockManager.isDocked,

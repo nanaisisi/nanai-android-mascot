@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file constants.js
  * @description Slot-12 Android プラットフォームブリッジ用イベントおよびライフサイクル定数定義
  * Contract: ANDROID_EVENTS, ANDROID_LIFECYCLE_STATES
@@ -15,6 +15,8 @@ export const ANDROID_EVENTS = {
 	STATE_CHANGED: "nam:android:state-changed",
 	OVERLAY_TRANSPARENCY_CHANGED: "nam:android:overlay-transparency-changed",
 	CLICK_THROUGH_CHANGED: "nam:android:click-through-changed",
+	OVERLAY_UNIFIED_REQUEST: "nam:android:overlay-unified-request",
+	OVERLAY_UNIFIED_CHANGED: "nam:android:overlay-unified-changed",
 	TRIM_MEMORY: "nam:android:trim-memory",
 	BACK_BUTTON: "nam:android:back-button",
 	DOCK_CHANGED: "nam:android:dock-changed",

@@ -74,6 +74,7 @@ _(※現在各ドメインごとに整理中)_
 - **[surfaces-and-collision-spec.md](doc/nam-spec/surfaces-and-collision-spec.md)** - surfaces.txt アニメーション合成 & 当たり判定仕様書
 - **[encoding-and-vfs-spec.md](doc/nam-spec/encoding-and-vfs-spec.md)** - 文字コード変換 (Shift_JIS ↔ UTF-8) & 仮想ファイルシステム (VFS) 仕様書
 - **[android-overlay-and-service-spec.md](doc/nam-spec/android-overlay-and-service-spec.md)** - Android システムオーバーレイ & 常駐生存仕様書
+- **[android-unified-overlay.md](doc/nam-spec/android-unified-overlay.md)** - Android 全キャラ単一ウインドウ統合表示（opt-in）
 - **[plugin-and-shiori-fallback-spec.md](doc/nam-spec/plugin-and-shiori-fallback-spec.md)** - プラグイン & SHIORI 読込み・代替読込み (Fallback) 仕様書
 - **[wasm-and-plugin-extensibility.md](doc/nam-spec/wasm-and-plugin-extensibility.md)** - WASM化指針 & JavaScript拡張システム仕様書
 - **[shiori-integration.md](doc/nam-spec/shiori-integration.md)** - SHIORI 組み込み統合技術仕様

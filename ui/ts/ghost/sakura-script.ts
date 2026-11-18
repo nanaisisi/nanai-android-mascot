@@ -175,6 +175,13 @@ export class SakuraScriptPlayer {
 				const balloonId = stepRes.data?.balloon_id ?? 0;
 				if (balloonId === -1) {
 					this.clearBalloon(app, scope);
+				} else if (app?.balloonThemeManager?.loadSkinImages) {
+					void app.balloonThemeManager.loadSkinImages(
+						app.currentBalloonTheme || "default",
+						scope,
+						"auto",
+						balloonId,
+					);
 				}
 				break;
 			}

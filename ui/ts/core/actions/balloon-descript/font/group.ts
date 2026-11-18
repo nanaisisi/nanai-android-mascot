@@ -50,18 +50,26 @@ export function applyGroupProperties(
 	prefix: string,
 	cssPrefix: string,
 ) {
-	// [anchor.font.color / cursor.font.color / *.font.color.r,g,b]:
+	// 明示的な文字色プロパティのみを抽出 (cursor.notselect.font.color / cursor.color.font / cursor.font.color)
 	const fontColorKey = `${prefix}.font.color`;
-	const shortColorKey = `${prefix}.color`;
 	const fontColorKey2 = `${prefix}.color.font`;
 	const col =
-		rgbFromComponents(props, fontColorKey) ||
-		rgbFromComponents(props, shortColorKey) ||
 		rgbFromComponents(props, fontColorKey2) ||
-		props[fontColorKey] ||
-		props[shortColorKey] ||
-		props[fontColorKey2];
-	if (col) root.style.setProperty(`${cssPrefix}-color`, col);
+		rgbFromComponents(props, fontColorKey) ||
+		props[fontColorKey2] ||
+		props[fontColorKey];
+	if (col) {
+		const cleanCol = col.replaceAll(" ", "");
+		const isWhite =
+			cleanCol === "rgb(255,255,255)" ||
+			cleanCol.toLowerCase() === "#ffffff" ||
+			cleanCol.toLowerCase() === "white";
+		const isExplicitFontColor =
+			Boolean(props[fontColorKey]) || Boolean(props[fontColorKey2]);
+		if (!isWhite || isExplicitFontColor) {
+			root.style.setProperty(`${cssPrefix}-color`, col);
+		}
+	}
 
 	// [anchor.font.name / cursor.font.name / *.font.name]:
 	const fontNameVal =

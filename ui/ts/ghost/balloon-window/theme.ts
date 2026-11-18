@@ -174,28 +174,45 @@ export async function loadBalloonSkinImages(
 	theme: string,
 	scopeId: number,
 	side: "left" | "right" | "top" | "auto" = "auto",
+	balloonId: number | null = null,
 ) {
-	let candidates: string[] = [];
+	const candidates: string[] = [];
+
+	if (balloonId !== null && typeof balloonId === "number" && balloonId >= 0) {
+		if (scopeId === 0) {
+			candidates.push(`balloons${balloonId}.png`, `balloons${balloonId}.bmp`);
+		} else if (scopeId === 1) {
+			candidates.push(`balloonk${balloonId}.png`, `balloonk${balloonId}.bmp`);
+		} else {
+			candidates.push(
+				`balloonp${scopeId}_${balloonId}.png`,
+				`balloonp${scopeId}_${balloonId}.bmp`,
+			);
+		}
+	}
+
 	if (scopeId === 0) {
-		candidates =
+		const sideCands =
 			side === "top"
 				? ["balloons2.png", "balloons0.png", "balloons.png"]
 				: side === "right"
 					? ["balloons1.png", "balloons0.png", "balloons.png"]
 					: ["balloons0.png", "balloons1.png", "balloons.png"];
+		candidates.push(...sideCands);
 	} else if (scopeId === 1) {
-		candidates =
+		const sideCands =
 			side === "top"
 				? ["balloonk2.png", "balloonk0.png", "balloonk.png"]
 				: side === "left"
 					? ["balloonk1.png", "balloonk3.png", "balloonk0.png", "balloonk.png"]
 					: ["balloonk0.png", "balloonk1.png", "balloonk3.png", "balloonk.png"];
+		candidates.push(...sideCands);
 	} else {
-		candidates = [
+		candidates.push(
 			`balloonp${scopeId}.png`,
 			`balloonp${scopeId}_0.png`,
 			"balloons0.png",
-		];
+		);
 	}
 
 	let bgImageRaw: string | null = null;

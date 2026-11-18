@@ -315,7 +315,7 @@ pub fn load_balloon_image(
         .and_then(|e| e.to_str())
         .map(|s| s.to_lowercase())
     {
-        Some(ref e) if e == "png" => "image/png",
+        Some(ref e) if e == "png" || e == "pna" => "image/png",
         Some(ref e) if e == "bmp" => "image/bmp",
         Some(ref e) if e == "jpg" || e == "jpeg" => "image/jpeg",
         Some(ref e) if e == "svg" => "image/svg+xml",

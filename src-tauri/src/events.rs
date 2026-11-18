@@ -41,6 +41,15 @@ pub fn handle_menu_event(app_handle: &tauri::AppHandle, event: tauri::menu::Menu
     } else if id == "close" || id == "exit" {
         crate::commands::window::lifecycle::shutdown_application(app_handle);
         app_handle.exit(0);
+    } else if id.starts_with("balloon-") {
+        let scope = crate::commands::window::menu_native::last_balloon_menu_scope();
+        let _ = app_handle.emit(
+            "native-menu-action",
+            serde_json::json!({
+                "action": id,
+                "payload": { "scope": scope }
+            }),
+        );
     } else {
         let _ = app_handle.emit(
             "native-menu-action",

@@ -1,31 +1,54 @@
+use std::sync::atomic::{AtomicI32, Ordering};
 use tauri::Manager;
 #[cfg(desktop)]
 use tauri::menu::MenuBuilder;
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+static LAST_BALLOON_MENU_SCOPE: AtomicI32 = AtomicI32::new(0);
+
+pub fn last_balloon_menu_scope() -> i32 {
+    LAST_BALLOON_MENU_SCOPE.load(Ordering::Relaxed)
+}
+
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
+#[serde(default)]
 pub struct ShowBalloonContextMenuParams {
+    #[serde(alias = "scopeId")]
     pub scope_id: Option<i32>,
     pub x: Option<f64>,
     pub y: Option<f64>,
 }
 
 /// バルーン専用 OS ネイティブコンテキストメニュー表示コマンド
-#[tauri::command]
+#[tauri::command(rename_all = "snake_case")]
+#[allow(non_snake_case)]
 pub async fn show_balloon_context_menu(
     _app_handle: tauri::AppHandle,
-    params: ShowBalloonContextMenuParams,
+    params: Option<ShowBalloonContextMenuParams>,
+    scope_id: Option<i32>,
+    scopeId: Option<i32>,
+    x: Option<f64>,
+    y: Option<f64>,
 ) -> Result<(), String> {
     #[cfg(desktop)]
     {
         let app_handle = _app_handle;
-        let scope_id = params.scope_id.unwrap_or(0);
+        let resolved_params = params.unwrap_or_default();
+        let target_scope = resolved_params
+            .scope_id
+            .or(scope_id)
+            .or(scopeId)
+            .unwrap_or(0);
+        let target_x = resolved_params.x.or(x);
+        let target_y = resolved_params.y.or(y);
+        LAST_BALLOON_MENU_SCOPE.store(target_scope, Ordering::Relaxed);
+
         println!(
             "👉 show_balloon_context_menu called: x={:?}, y={:?}, scope=Some({})",
-            params.x, params.y, scope_id
+            target_x, target_y, target_scope
         );
 
-        let label = format!("balloon_window_{}", scope_id);
-        let subchar_label = format!("subchar_window_{}", scope_id);
+        let label = format!("balloon_window_{}", target_scope);
+        let subchar_label = format!("subchar_window_{}", target_scope);
 
         let window = app_handle
             .get_webview_window(&label)
@@ -49,16 +72,7 @@ pub async fn show_balloon_context_menu(
             .build()
             .map_err(|e| e.to_string())?;
 
-        let res = if let (Some(px), Some(py)) = (params.x, params.y) {
-            let pos = tauri::Position::Logical(tauri::LogicalPosition::new(px, py));
-            window.popup_menu_at(&menu, pos)
-        } else {
-            window.popup_menu(&menu)
-        };
-
-        if res.is_err() {
-            let _ = window.popup_menu(&menu);
-        }
+        let _ = window.popup_menu(&menu);
     }
     Ok(())
 }

@@ -154,7 +154,7 @@ pub async fn show_balloon_window(
             .resizable(true)
             .position(target_x, target_y)
             .initialization_script(
-                "(function(){var b=function(e){var t=e.target;var i=t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable);if(!i){if(e.preventDefault)e.preventDefault();if(e.stopPropagation)e.stopPropagation();return false;}};window.addEventListener('contextmenu',b,true);document.addEventListener('contextmenu',b,true);window.oncontextmenu=b;document.oncontextmenu=b;})();",
+                "(function(){var b=function(e){var t=e.target;var i=t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable);if(!i&&e.preventDefault){e.preventDefault();}};window.addEventListener('contextmenu',b,true);document.addEventListener('contextmenu',b,true);})();",
             )
             .build()
             .map_err(|e| {

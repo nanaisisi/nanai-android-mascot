@@ -62,6 +62,16 @@ export function initBalloonWindow() {
 	document.documentElement.setAttribute("data-balloon-theme", savedTheme);
 	void applyBalloonDescript(savedTheme);
 
+	setupWindowGestures(balloonBox, {
+		scopeId,
+		getIsBalloonDontMove: () => _isBalloonDontMove,
+		getUserScale: () => currentUserScale,
+		getDpiScale: () => currentDpiScale,
+		onUserScaleChange: (newScale: number) => {
+			currentUserScale = newScale;
+		},
+	});
+
 	if (!isTauriAvailable()) return;
 
 	void listen(`update-balloon-content-${scopeId}`, (event: unknown) => {

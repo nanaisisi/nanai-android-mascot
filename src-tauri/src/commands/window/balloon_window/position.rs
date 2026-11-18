@@ -1,37 +1,50 @@
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
+#[serde(default)]
 pub struct SetBalloonOffsetParams {
-    scope_id: i32,
-    x: i32,
-    y: i32,
+    #[serde(alias = "scopeId")]
+    scope_id: Option<i32>,
+    x: Option<i32>,
+    y: Option<i32>,
 }
 
 impl SetBalloonOffsetParams {
-    // Add getter methods
-    pub fn scope_id(&self) -> i32 {
+    pub fn scope_id(&self) -> Option<i32> {
         self.scope_id
     }
 
-    pub fn x(&self) -> i32 {
+    pub fn x(&self) -> Option<i32> {
         self.x
     }
 
-    pub fn y(&self) -> i32 {
+    pub fn y(&self) -> Option<i32> {
         self.y
     }
 }
 
-#[tauri::command]
+#[tauri::command(rename_all = "snake_case")]
+#[allow(non_snake_case)]
 pub async fn set_balloon_offset(
     app_handle: tauri::AppHandle,
     state: tauri::State<'_, crate::common::state::AppState>,
-    params: SetBalloonOffsetParams,
+    params: Option<SetBalloonOffsetParams>,
+    scope_id: Option<i32>,
+    scopeId: Option<i32>,
+    x: Option<i32>,
+    y: Option<i32>,
 ) -> Result<(), String> {
-    let scope_id = params.scope_id();
+    let resolved_params = params.unwrap_or_default();
+    let target_scope = resolved_params
+        .scope_id()
+        .or(scope_id)
+        .or(scopeId)
+        .unwrap_or(0);
+    let target_x = resolved_params.x().or(x).unwrap_or(0);
+    let target_y = resolved_params.y().or(y).unwrap_or(0);
     state
         .balloon_offsets
         .lock()
-        .insert(scope_id, (params.x(), params.y()));
-    sync_balloon_position_impl(&app_handle, &state, scope_id).await
+        .insert(target_scope, (target_x, target_y));
+    sync_balloon_position_impl(&app_handle, &state, target_scope).await
 }
 
 pub async fn sync_balloon_position_impl(

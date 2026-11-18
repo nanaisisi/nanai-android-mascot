@@ -262,4 +262,9 @@ export const balloonThemeActions = {
 		const mgr = getOrInitBalloonThemeManager(this);
 		return mgr.scanBalloons();
 	},
+
+	toggleBalloonSide(scopeId: number = 0) {
+		const mgr = getOrInitBalloonThemeManager(this);
+		return mgr.toggleBalloonSide(scopeId);
+	},
 };

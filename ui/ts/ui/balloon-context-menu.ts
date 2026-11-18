@@ -3,7 +3,7 @@
  * @brief バルーン専用コンテキストメニュー（ポップアップ UI）表示・制御モジュール
  */
 
-import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import { emit, invoke, isTauriAvailable } from "../core/tauri-helper.js";
 
 export interface BalloonContextMenuOptions {
 	x: number;
@@ -29,55 +29,20 @@ export async function showBalloonContextMenu({
 
 	if (isTauriAvailable()) {
 		try {
-			const tauriMenu = await import("@tauri-apps/api/menu");
-			if (tauriMenu?.Menu?.new) {
-				const menu = await tauriMenu.Menu.new({
-					items: [
-						await tauriMenu.MenuItem.new({
-							id: "balloon-none",
-							text: "何もしない",
-						}),
-						await tauriMenu.PredefinedMenuItem.new({ item: "Separator" }),
-						await tauriMenu.MenuItem.new({
-							id: "balloon-leftclick",
-							text: "左クリックと同じ",
-						}),
-						await tauriMenu.MenuItem.new({
-							id: "balloon-break",
-							text: "スクリプトブレーク",
-						}),
-						await tauriMenu.PredefinedMenuItem.new({ item: "Separator" }),
-						await tauriMenu.MenuItem.new({
-							id: "balloon-flip",
-							text: "バルーン左右切替",
-						}),
-						await tauriMenu.MenuItem.new({
-							id: "balloon-reset-pos",
-							text: "バルーン位置調整",
-						}),
-						await tauriMenu.MenuItem.new({
-							id: "balloon-move-ghost",
-							text: "ゴースト本体移動",
-						}),
-					],
-				});
-				await menu.popup();
-				nativeMenuSuccess = true;
-			}
-		} catch (_) {
-			// Fallback to Rust invoke
-		}
-
-		if (!nativeMenuSuccess) {
-			try {
-				await invoke("show_balloon_context_menu", {
+			const menuX = screenX ?? x;
+			const menuY = screenY ?? y;
+			await invoke("show_balloon_context_menu", {
+				params: {
 					scope_id: scopeId,
-					x: screenX ?? x,
-					y: screenY ?? y,
-				});
-				nativeMenuSuccess = true;
-			} catch (_) {}
-		}
+					x: menuX,
+					y: menuY,
+				},
+				scope_id: scopeId,
+				x: menuX,
+				y: menuY,
+			});
+			nativeMenuSuccess = true;
+		} catch (_) {}
 	}
 
 	if (nativeMenuSuccess || typeof document === "undefined") return;
@@ -175,6 +140,7 @@ export async function showBalloonContextMenu({
 					(typeof window !== "undefined"
 						? (window as unknown as { app?: unknown }).app
 						: null);
+			const action = item.action || "balloon-none";
 			if (
 				mascotApp &&
 				typeof (mascotApp as { handleMenuAction?: unknown })
@@ -184,7 +150,12 @@ export async function showBalloonContextMenu({
 					mascotApp as {
 						handleMenuAction: (act: string, payload?: unknown) => void;
 					}
-				).handleMenuAction(item.action, { scope: scopeId });
+				).handleMenuAction(action, { scope: scopeId });
+			} else if (isTauriAvailable()) {
+				void emit("native-menu-action", {
+					action,
+					payload: { scope: scopeId },
+				}).catch(() => {});
 			}
 		});
 

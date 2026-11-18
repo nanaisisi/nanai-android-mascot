@@ -9,6 +9,7 @@ import {
 	invoke,
 	isTauriAvailable,
 } from "../core/tauri-helper.js";
+import { showBalloonContextMenu } from "../ui/balloon-context-menu.js";
 import {
 	updateCurrentGhostDisplay,
 	updateGhostCharacter,
@@ -116,11 +117,14 @@ export const ghostSurfaceMethods = {
 						(e: MouseEvent) => {
 							e.preventDefault();
 							e.stopPropagation();
-							if (isTauriAvailable()) {
-								void invoke("show_balloon_context_menu", {
-									scope_id: sId,
-								}).catch(() => {});
-							}
+							void showBalloonContextMenu({
+								x: e.clientX || 100,
+								y: e.clientY || 100,
+								screenX: e.screenX,
+								screenY: e.screenY,
+								scopeId: sId,
+								app: this.app,
+							});
 						},
 						true,
 					);

@@ -75,3 +75,94 @@ test("setupWindowGestures handles click, drag, double-tap zoom, and pinch gestur
 	// Null safety
 	setupWindowGestures(null as unknown, {});
 });
+
+test("setupWindowGestures invokes show_balloon_context_menu on contextmenu and deduplicates same event", async () => {
+	const env = setupBalloonMockEnvironment();
+	const invoked: Array<{ cmd: string; args: unknown }> = [];
+	const internals = (
+		globalThis as unknown as {
+			__TAURI_INTERNALS__: {
+				invoke: (cmd: string, args: unknown) => Promise<unknown>;
+			};
+		}
+	).__TAURI_INTERNALS__;
+	const origInvoke = internals.invoke;
+	internals.invoke = async (cmd: string, args: unknown) => {
+		invoked.push({ cmd, args });
+		return origInvoke(cmd, args);
+	};
+
+	try {
+		const mockGestureBox: {
+			style: { transform: string; transformOrigin: string };
+			listeners: Record<string, (e?: unknown) => unknown>;
+			addEventListener: (ev: string, cb: (e?: unknown) => unknown) => void;
+		} = {
+			style: { transform: "", transformOrigin: "" },
+			listeners: {},
+			addEventListener(ev: string, cb: (e?: unknown) => unknown) {
+				this.listeners[ev] = cb;
+			},
+		};
+
+		setupWindowGestures(mockGestureBox as unknown as HTMLElement, {
+			scopeId: 1,
+			getIsBalloonDontMove: () => false,
+			getUserScale: () => 1.0,
+			getDpiScale: () => 1.0,
+			onUserScaleChange: () => {},
+		});
+
+		let prevented = false;
+		let stopped = false;
+		const eventObj = {
+			clientX: 40,
+			clientY: 60,
+			screenX: 340,
+			screenY: 260,
+			target: { tagName: "DIV" },
+			preventDefault() {
+				prevented = true;
+			},
+			stopPropagation() {
+				stopped = true;
+			},
+		};
+
+		// Trigger both document and box listeners with the same event -> invokes only once
+		(env.docListeners.contextmenu as unknown as (e: unknown) => void)?.(
+			eventObj,
+		);
+		mockGestureBox.listeners.contextmenu(eventObj);
+
+		await Promise.resolve();
+
+		assert.strictEqual(prevented, true);
+		assert.strictEqual(stopped, true);
+		const menuCalls = invoked.filter(
+			(entry) => entry.cmd === "show_balloon_context_menu",
+		);
+		assert.strictEqual(menuCalls.length, 1);
+		assert.deepStrictEqual(menuCalls[0].args, {
+			params: { scope_id: 1, x: 340, y: 260 },
+			scope_id: 1,
+			x: 340,
+			y: 260,
+		});
+
+		// Input elements should not trigger balloon context menu
+		mockGestureBox.listeners.contextmenu({
+			target: { tagName: "INPUT" },
+			preventDefault() {},
+			stopPropagation() {},
+		});
+		await Promise.resolve();
+		assert.strictEqual(
+			invoked.filter((entry) => entry.cmd === "show_balloon_context_menu")
+				.length,
+			1,
+		);
+	} finally {
+		internals.invoke = origInvoke;
+	}
+});

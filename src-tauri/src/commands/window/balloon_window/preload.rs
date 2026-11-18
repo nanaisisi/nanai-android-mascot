@@ -32,6 +32,9 @@ pub async fn preload_auxiliary_windows(_app_handle: tauri::AppHandle) -> Result<
                 .skip_taskbar(true)
                 .resizable(true)
                 .visible(false)
+                .initialization_script(
+                    "(function(){var b=function(e){var t=e.target;var i=t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.isContentEditable);if(!i&&e.preventDefault){e.preventDefault();}};window.addEventListener('contextmenu',b,true);document.addEventListener('contextmenu',b,true);})();",
+                )
                 .build();
             }
         }

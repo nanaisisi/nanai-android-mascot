@@ -6,9 +6,13 @@ import {
 	emit,
 	getCurrentWindowPosition,
 	invoke,
+	isTauriAvailable,
 	startDraggingWindow,
 } from "../../core/tauri-helper.js";
+import { showBalloonContextMenu } from "../../ui/balloon-context-menu.js";
 import { updateBalloonWindowScale } from "./scale.js";
+
+const boundGestureBoxes = new WeakSet<object>();
 
 export interface WindowGestureOptions {
 	scopeId: number;
@@ -33,7 +37,8 @@ export function setupWindowGestures(
 		onUserScaleChange,
 	}: WindowGestureOptions,
 ) {
-	if (!balloonBox) return;
+	if (!balloonBox || boundGestureBoxes.has(balloonBox)) return;
+	boundGestureBoxes.add(balloonBox);
 
 	let coordPopupEl: HTMLElement | null = null;
 	async function updateCoordPopup() {
@@ -62,14 +67,33 @@ export function setupWindowGestures(
 	});
 
 	// バルーン右クリックで WebView2 デフォルトメニューを阻止しバルーンコンテキストメニューを表示
-	const onContextMenu = (e: MouseEvent) => {
-		e.preventDefault();
-		e.stopPropagation();
-		if (isTauriAvailable()) {
-			void invoke("show_balloon_context_menu", { scope_id: scopeId }).catch(
-				() => {},
-			);
+	let lastContextMenuEvent: Event | null = null;
+	const onContextMenu = (e?: MouseEvent) => {
+		const target = e?.target as HTMLElement | null | undefined;
+		const isInput =
+			target &&
+			(target.tagName === "INPUT" ||
+				target.tagName === "TEXTAREA" ||
+				target.isContentEditable);
+		if (isInput) return;
+
+		e?.preventDefault?.();
+		e?.stopPropagation?.();
+
+		if (e && lastContextMenuEvent === e) {
+			return false;
 		}
+		if (e) {
+			lastContextMenuEvent = e;
+		}
+
+		void showBalloonContextMenu({
+			x: e?.clientX ?? 100,
+			y: e?.clientY ?? 100,
+			screenX: e?.screenX,
+			screenY: e?.screenY,
+			scopeId,
+		});
 		return false;
 	};
 	balloonBox.addEventListener(
@@ -80,12 +104,7 @@ export function setupWindowGestures(
 	if (typeof document !== "undefined") {
 		document.addEventListener(
 			"contextmenu",
-			(e: MouseEvent) => {
-				if (balloonBox.contains(e.target as Node)) {
-					e.preventDefault();
-					e.stopPropagation();
-				}
-			},
+			onContextMenu as EventListener,
 			true,
 		);
 	}
@@ -121,7 +140,9 @@ export function setupWindowGestures(
 	balloonBox.addEventListener("mouseup", () => {
 		if (!getIsBalloonDontMove()) {
 			hideCoordPopup();
-			void invoke("save_balloon_offset_from_position", { scopeId });
+			if (isTauriAvailable()) {
+				void invoke("save_balloon_offset_from_position", { scopeId });
+			}
 		}
 	});
 
@@ -211,7 +232,9 @@ export function setupWindowGestures(
 				touchStartDistance = 0;
 				if (isTouchDragging) {
 					isTouchDragging = false;
-					void invoke("save_balloon_offset_from_position", { scopeId });
+					if (isTauriAvailable()) {
+						void invoke("save_balloon_offset_from_position", { scopeId });
+					}
 				}
 			}
 		},

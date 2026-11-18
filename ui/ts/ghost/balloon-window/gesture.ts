@@ -106,9 +106,10 @@ export function setupWindowGestures(
 	boundGestureBoxes.add(balloonBox);
 
 	let coordPopupEl: HTMLElement | null = null;
-	let coordInterval: ReturnType<typeof setInterval> | null = null;
+	let coordRafId: number | null = null;
 	let cachedCharWindow: Window | null = null;
 	let dragStartBalloonPos: { x: number; y: number } | null = null;
+	let lastRenderedOffset: { x: number; y: number } | null = null;
 	let isDragging = false;
 	let isTouchDragging = false;
 	let activeDragCleanup: (() => void) | null = null;
@@ -165,6 +166,14 @@ export function setupWindowGestures(
 				offsetX = pos.x - dragStartBalloonPos.x;
 				offsetY = pos.y - dragStartBalloonPos.y;
 			}
+			if (
+				lastRenderedOffset &&
+				lastRenderedOffset.x === offsetX &&
+				lastRenderedOffset.y === offsetY
+			) {
+				return;
+			}
+			lastRenderedOffset = { x: offsetX, y: offsetY };
 			renderBalloonCoordPopup(coordPopupEl, offsetX, offsetY);
 		} catch (_e) {}
 	}
@@ -175,29 +184,39 @@ export function setupWindowGestures(
 		}
 	}
 
-	function stopCoordInterval() {
-		if (coordInterval !== null) {
-			clearInterval(coordInterval);
-			coordInterval = null;
+	function stopCoordLoop() {
+		if (coordRafId !== null) {
+			if (typeof cancelAnimationFrame === "function") {
+				cancelAnimationFrame(coordRafId);
+			}
+			coordRafId = null;
 		}
 	}
 
-	function startCoordInterval() {
-		stopCoordInterval();
-		coordInterval = setInterval(() => {
-			if (isDragging || isTouchDragging) {
-				void updateCoordPopup();
-			} else {
-				stopCoordInterval();
-			}
-		}, 50);
+	function scheduleCoordUpdate() {
+		if (!isDragging && !isTouchDragging) return;
+		if (coordRafId !== null) return;
+		if (typeof requestAnimationFrame !== "function") {
+			void updateCoordPopup();
+			return;
+		}
+		coordRafId = requestAnimationFrame(() => {
+			coordRafId = null;
+			if (!isDragging && !isTouchDragging) return;
+			void updateCoordPopup().finally(() => {
+				if (isDragging || isTouchDragging) {
+					scheduleCoordUpdate();
+				}
+			});
+		});
 	}
 
 	function finishMouseDrag() {
 		const wasDragging = isDragging;
 		isDragging = false;
 		dragStartBalloonPos = null;
-		stopCoordInterval();
+		lastRenderedOffset = null;
+		stopCoordLoop();
 		activeDragCleanup?.();
 		activeDragCleanup = null;
 		hideCoordPopup();
@@ -259,11 +278,12 @@ export function setupWindowGestures(
 		if (e.button === 0 && !getIsBalloonDontMove()) {
 			isDragging = true;
 			dragStartBalloonPos = null;
+			lastRenderedOffset = null;
 			void startDraggingWindow();
 			void updateCoordPopup();
-			startCoordInterval();
+			scheduleCoordUpdate();
 			const onMove = () => {
-				if (isDragging) void updateCoordPopup();
+				if (isDragging) scheduleCoordUpdate();
 			};
 			const winTarget =
 				typeof window !== "undefined" &&
@@ -276,13 +296,18 @@ export function setupWindowGestures(
 			const onUp = () => {
 				finishMouseDrag();
 			};
+			const onBlur = () => {
+				finishMouseDrag();
+			};
 			activeDragCleanup?.();
 			activeDragCleanup = () => {
 				winTarget?.removeEventListener?.("mousemove", onMove);
 				winTarget?.removeEventListener?.("mouseup", onUp);
+				winTarget?.removeEventListener?.("blur", onBlur);
 			};
 			winTarget?.addEventListener?.("mousemove", onMove);
 			winTarget?.addEventListener?.("mouseup", onUp);
+			winTarget?.addEventListener?.("blur", onBlur);
 		}
 	});
 
@@ -332,9 +357,10 @@ export function setupWindowGestures(
 				if (!getIsBalloonDontMove()) {
 					isTouchDragging = true;
 					dragStartBalloonPos = null;
+					lastRenderedOffset = null;
 					void startDraggingWindow();
 					void updateCoordPopup();
-					startCoordInterval();
+					scheduleCoordUpdate();
 				}
 			} else if (e.touches.length === 2) {
 				// ピンチ操作の初期距離記録
@@ -389,12 +415,28 @@ export function setupWindowGestures(
 				if (isTouchDragging) {
 					isTouchDragging = false;
 					dragStartBalloonPos = null;
-					stopCoordInterval();
+					lastRenderedOffset = null;
+					stopCoordLoop();
 					hideCoordPopup();
 					if (isTauriAvailable()) {
 						void invoke("save_balloon_offset_from_position", { scopeId });
 					}
 				}
+			}
+		},
+		{ passive: true },
+	);
+
+	balloonBox.addEventListener(
+		"touchcancel",
+		() => {
+			touchStartDistance = 0;
+			if (isTouchDragging) {
+				isTouchDragging = false;
+				dragStartBalloonPos = null;
+				lastRenderedOffset = null;
+				stopCoordLoop();
+				hideCoordPopup();
 			}
 		},
 		{ passive: true },

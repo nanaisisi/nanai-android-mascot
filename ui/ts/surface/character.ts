@@ -464,7 +464,11 @@ function initCharacterWindow() {
 	let origin: { x: number; y: number } | null = null;
 	let longPressTimer: unknown = null;
 	let longPressTriggered = false;
-	let coordInterval: unknown = null;
+	let dragRafId: number | null = null;
+	let lastCoordPopupKey: string | null = null;
+	let balloonSyncInFlight = false;
+	let balloonSyncPending = false;
+	let lastBalloonSyncPosKey: string | null = null;
 	const LONG_PRESS_DELAY = 600;
 	let isCtrlPressed = false;
 	let dragSessionId = 0;
@@ -794,19 +798,82 @@ function initCharacterWindow() {
 		void invoke("sync_character_balloon", { scopeId }).catch(() => {});
 	};
 
-	const startCoordInterval = (sessionId: number) => {
-		if (coordInterval) clearInterval(coordInterval as number);
-		coordInterval = setInterval(() => {
+	const requestBalloonSync = (posKey: string) => {
+		if (!isTauriAvailable()) return;
+		if (posKey === lastBalloonSyncPosKey) return;
+		if (balloonSyncInFlight) {
+			balloonSyncPending = true;
+			return;
+		}
+		balloonSyncInFlight = true;
+		lastBalloonSyncPosKey = posKey;
+		void invoke("sync_character_balloon", { scopeId })
+			.catch(() => {})
+			.finally(() => {
+				balloonSyncInFlight = false;
+				if (balloonSyncPending && isInteracting) {
+					balloonSyncPending = false;
+					if (lastBalloonSyncPosKey !== null) {
+						void invoke("sync_character_balloon", { scopeId }).catch(() => {});
+					}
+				}
+			});
+	};
+
+	const runDragFollowFrame = async (sessionId: number) => {
+		if (!isInteracting || sessionId !== dragSessionId) return;
+		const [context, pos] = await Promise.all([
+			snapContextPromise ?? loadSnapContext(),
+			getCurrentWindowPosition(),
+		]);
+		if (
+			!isInteracting ||
+			sessionId !== dragSessionId ||
+			!pos ||
+			!Number.isFinite(pos.x) ||
+			!Number.isFinite(pos.y)
+		) {
+			return;
+		}
+		const snap = computeSnapForPosition(pos.x, pos.y, context);
+		showCoordPopup(snap.x, snap.y, snap.snapXType, snap.snapYType);
+		requestBalloonSync(`${Math.round(pos.x)},${Math.round(pos.y)}`);
+	};
+
+	const scheduleFrame = (cb: FrameRequestCallback): number =>
+		typeof globalThis.requestAnimationFrame === "function"
+			? globalThis.requestAnimationFrame(cb)
+			: (setTimeout(() => cb(Date.now()), 16) as unknown as number);
+
+	const cancelFrame = (id: number) => {
+		if (typeof globalThis.cancelAnimationFrame === "function") {
+			globalThis.cancelAnimationFrame(id);
+		} else {
+			clearTimeout(id);
+		}
+	};
+
+	const stopDragFollowLoop = () => {
+		if (dragRafId !== null) {
+			cancelFrame(dragRafId);
+			dragRafId = null;
+		}
+		balloonSyncPending = false;
+		lastBalloonSyncPosKey = null;
+	};
+
+	const startDragFollowLoop = (sessionId: number) => {
+		stopDragFollowLoop();
+		const tick = () => {
 			if (!isInteracting || sessionId !== dragSessionId) {
-				clearInterval(coordInterval as number);
-				coordInterval = null;
+				dragRafId = null;
 				return;
 			}
-			void updateDragPopupFromCurrentPosition(sessionId);
-			if (isTauriAvailable()) {
-				void invoke("sync_character_balloon", { scopeId });
-			}
-		}, 50);
+			void runDragFollowFrame(sessionId);
+			dragRafId = scheduleFrame(tick);
+		};
+		void runDragFollowFrame(sessionId);
+		dragRafId = scheduleFrame(tick);
 	};
 
 	const onPointerDown = (e: InteractionEvent) => {
@@ -941,6 +1008,14 @@ function initCharacterWindow() {
 			coordPopupEl = document.getElementById("coord-popup");
 		}
 		if (coordPopupEl) {
+			const nextKey = `${Math.round(x)},${Math.round(y)},${snapXType},${snapYType},${isCtrlPressed ? 1 : 0}`;
+			if (
+				nextKey === lastCoordPopupKey &&
+				coordPopupEl.style.display === "block"
+			) {
+				return;
+			}
+			lastCoordPopupKey = nextKey;
 			coordPopupEl.textContent = formatSnapTooltipText(
 				x,
 				y,
@@ -951,6 +1026,7 @@ function initCharacterWindow() {
 		}
 	}
 	function hideCoordPopup() {
+		lastCoordPopupKey = null;
 		if (coordPopupEl) {
 			coordPopupEl.style.display = "none";
 		}
@@ -1063,9 +1139,9 @@ function initCharacterWindow() {
 			const rect = getImageRect(img, root);
 			if (isTauriAvailable()) {
 				// Tauri デスクトップでは OS ネイティブの startDraggingWindow() で滑らかに移動しつつ、
-				// 50ms ポーリングでスナップ予測と #coord-popup 更新を行い、ドロップ時に確定座標を適用する
+				// rAF でスナップ予測と #coord-popup 更新・バルーン追従を行い、ドロップ時に確定座標を適用する
 				void startDraggingWindow();
-				startCoordInterval(dragSessionId);
+				startDragFollowLoop(dragSessionId);
 			}
 			emitGhostMouseEvent({
 				type: "dragstart",
@@ -1094,8 +1170,11 @@ function initCharacterWindow() {
 				showCoordPopup(snap.x, snap.y, snap.snapXType, snap.snapYType);
 			}
 			if (isTauriAvailable()) {
-				void invoke("sync_character_balloon", { scopeId });
-				void updateDragPopupFromCurrentPosition(dragSessionId);
+				if (dragRafId === null) {
+					startDragFollowLoop(dragSessionId);
+				} else {
+					void runDragFollowFrame(dragSessionId);
+				}
 			}
 		}
 	};
@@ -1222,10 +1301,7 @@ function initCharacterWindow() {
 
 		isInteracting = false;
 		hideCoordPopup();
-		if (coordInterval) {
-			clearInterval(coordInterval as number);
-			coordInterval = null;
-		}
+		stopDragFollowLoop();
 
 		if (longPressTimer) {
 			clearTimeout(longPressTimer as number);

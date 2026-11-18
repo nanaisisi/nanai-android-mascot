@@ -1279,9 +1279,10 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 		expect(coordPopupEl.textContent).toBe(
 			"500,732 (Snap X:Initial, Snap Y:Monitor)\nPress Ctrl to disable",
 		);
+		// Dragging at unchanged position deduplicates redundant sync_character_balloon
 		expect(
 			invokedCommands.some((c) => c.cmd === "sync_character_balloon"),
-		).toBe(true);
+		).toBe(false);
 
 		// Pressing Ctrl via keydown mid-drag disables snap immediately
 		globalListeners.keydown?.({ key: "Control", ctrlKey: true });
@@ -1376,5 +1377,121 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 			cmd: "reset_balloon_positions",
 			args: {},
 		});
+	});
+
+	test("drag follow uses requestAnimationFrame, deduplicates #coord-popup writes, and coalesces sync_character_balloon", async () => {
+		const rafQueue: Array<{ id: number; cb: FrameRequestCallback }> = [];
+		let nextRafId = 1;
+		const origRaf = globalThis.requestAnimationFrame;
+		const origCancelRaf = globalThis.cancelAnimationFrame;
+		const cancelSpy = vi.fn((id: number) => {
+			const idx = rafQueue.findIndex((item) => item.id === id);
+			if (idx >= 0) rafQueue.splice(idx, 1);
+		});
+		globalThis.requestAnimationFrame = ((cb: FrameRequestCallback) => {
+			const id = nextRafId++;
+			rafQueue.push({ id, cb });
+			return id;
+		}) as typeof globalThis.requestAnimationFrame;
+		globalThis.cancelAnimationFrame =
+			cancelSpy as unknown as typeof globalThis.cancelAnimationFrame;
+
+		const coordPopupEl = document.getElementById("coord-popup") as HTMLElement;
+		let textWrites = 0;
+		let currentText = coordPopupEl.textContent ?? "";
+		const origDesc = Object.getOwnPropertyDescriptor(
+			coordPopupEl,
+			"textContent",
+		);
+		Object.defineProperty(coordPopupEl, "textContent", {
+			configurable: true,
+			get: () => currentText,
+			set: (v: string) => {
+				textWrites += 1;
+				currentText = v;
+			},
+		});
+
+		let resolveBalloonSync: (() => void) | null = null;
+		const internals = (
+			globalThis as unknown as {
+				__TAURI_INTERNALS__: {
+					invoke: (cmd: string, args?: unknown) => Promise<unknown>;
+				};
+			}
+		).__TAURI_INTERNALS__;
+		const origInvoke = internals.invoke;
+		internals.invoke = (cmd: string, args?: unknown) => {
+			if (cmd === "sync_character_balloon") {
+				invokedCommands.push({ cmd, args });
+				return new Promise<void>((resolve) => {
+					resolveBalloonSync = resolve;
+				});
+			}
+			return origInvoke(cmd, args);
+		};
+
+		try {
+			invokedCommands.length = 0;
+			rootEl._listeners?.mousedown?.({ button: 0, clientX: 10, clientY: 10 });
+			globalListeners.mousemove?.({
+				button: 0,
+				buttons: 1,
+				clientX: 30,
+				clientY: 30,
+			});
+
+			const flush = async () => {
+				await vi.advanceTimersByTimeAsync(0);
+				for (let i = 0; i < 6; i++) {
+					await Promise.resolve();
+				}
+			};
+			expect(rafQueue).toHaveLength(1);
+
+			// Frame 0 (immediate on drag start) at (100, 200): writes popup once and starts 1 sync_character_balloon
+			await flush();
+			expect(textWrites).toBe(1);
+			expect(
+				invokedCommands.filter((c) => c.cmd === "sync_character_balloon"),
+			).toHaveLength(1);
+
+			// Frame 1 at same (100, 200): popup write & balloon sync are deduplicated
+			const f1 = rafQueue.shift();
+			f1?.cb(16);
+			await flush();
+			expect(textWrites).toBe(1);
+			expect(
+				invokedCommands.filter((c) => c.cmd === "sync_character_balloon"),
+			).toHaveLength(1);
+
+			// Frame 2 while Frame 0 sync is still in flight:
+			// no second concurrent sync_character_balloon is launched yet
+			const f2 = rafQueue.shift();
+			f2?.cb(32);
+			await flush();
+			expect(
+				invokedCommands.filter((c) => c.cmd === "sync_character_balloon"),
+			).toHaveLength(1);
+
+			// Resolving in-flight sync keeps coalesced count at 1 when position is unchanged
+			resolveBalloonSync?.();
+			await flush();
+			expect(
+				invokedCommands.filter((c) => c.cmd === "sync_character_balloon"),
+			).toHaveLength(1);
+
+			// Drag end cancels rAF loop
+			globalListeners.mouseup?.({ button: 0, clientX: 30, clientY: 30 });
+			expect(cancelSpy).toHaveBeenCalled();
+			expect(coordPopupEl.style.display).toBe("none");
+		} finally {
+			globalThis.requestAnimationFrame = origRaf;
+			globalThis.cancelAnimationFrame = origCancelRaf;
+			if (origDesc) {
+				Object.defineProperty(coordPopupEl, "textContent", origDesc);
+			}
+			internals.invoke = origInvoke;
+		}
 	});
 });

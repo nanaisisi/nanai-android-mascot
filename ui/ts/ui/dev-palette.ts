@@ -52,6 +52,7 @@ export function showDevPalette(options: DevPaletteOptions = {}) {
 	`;
 
 	const header = document.createElement("div");
+	header.className = "dev-palette-header";
 	header.style.cssText = `
 		background: #0078d7;
 		color: #ffffff;
@@ -60,9 +61,76 @@ export function showDevPalette(options: DevPaletteOptions = {}) {
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
+		cursor: move;
+		user-select: none;
+		-webkit-user-select: none;
+		touch-action: none;
 	`;
-	header.innerHTML = `<span>開発 - ${ghostName}</span><span id="close-dev-palette-btn" style="cursor: pointer; font-weight: normal;">✖</span>`;
+	header.innerHTML = `<span>開発 - ${ghostName}</span><span id="close-dev-palette-btn" style="cursor: pointer; font-weight: normal; padding: 2px 6px;">✖</span>`;
 	paletteEl.appendChild(header);
+
+	let isDragging = false;
+	let startX = 0;
+	let startY = 0;
+	let initialLeft = 0;
+	let initialTop = 0;
+
+	const onPointerDown = (e: MouseEvent | TouchEvent) => {
+		const target = e.target as HTMLElement;
+		if (target?.id === "close-dev-palette-btn") return;
+
+		isDragging = true;
+		const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+		const clientY = "touches" in e ? e.touches[0].clientY : e.clientY;
+		startX = clientX;
+		startY = clientY;
+
+		const rect = paletteEl.getBoundingClientRect();
+		initialLeft = rect.left;
+		initialTop = rect.top;
+
+		paletteEl.style.transform = "none";
+		paletteEl.style.left = `${initialLeft}px`;
+		paletteEl.style.top = `${initialTop}px`;
+
+		const onPointerMove = (moveEv: MouseEvent | TouchEvent) => {
+			if (!isDragging) return;
+			const curX =
+				"touches" in moveEv ? moveEv.touches[0].clientX : moveEv.clientX;
+			const curY =
+				"touches" in moveEv ? moveEv.touches[0].clientY : moveEv.clientY;
+			const deltaX = curX - startX;
+			const deltaY = curY - startY;
+
+			const newLeft = Math.max(
+				0,
+				Math.min(window.innerWidth - rect.width, initialLeft + deltaX),
+			);
+			const newTop = Math.max(
+				0,
+				Math.min(window.innerHeight - rect.height, initialTop + deltaY),
+			);
+
+			paletteEl.style.left = `${newLeft}px`;
+			paletteEl.style.top = `${newTop}px`;
+		};
+
+		const onPointerUp = () => {
+			isDragging = false;
+			window.removeEventListener("mousemove", onPointerMove);
+			window.removeEventListener("mouseup", onPointerUp);
+			window.removeEventListener("touchmove", onPointerMove);
+			window.removeEventListener("touchend", onPointerUp);
+		};
+
+		window.addEventListener("mousemove", onPointerMove);
+		window.addEventListener("mouseup", onPointerUp);
+		window.addEventListener("touchmove", onPointerMove, { passive: false });
+		window.addEventListener("touchend", onPointerUp);
+	};
+
+	header.addEventListener("mousedown", onPointerDown);
+	header.addEventListener("touchstart", onPointerDown, { passive: false });
 
 	const body = document.createElement("div");
 	body.style.cssText = "padding: 8px;";
@@ -170,16 +238,29 @@ export function showDevPalette(options: DevPaletteOptions = {}) {
 		btn.style.cssText = `
 			display: block;
 			width: 100%;
-			margin-bottom: 4px;
-			padding: 4px 8px;
-			background: #f5f5f5;
-			border: 1px solid #ccc;
-			border-radius: 3px;
+			margin-bottom: 5px;
+			padding: 6px 10px;
+			background-color: #f2f4f7 !important;
+			color: #111111 !important;
+			border: 1px solid #b0bec5 !important;
+			border-radius: 4px;
 			text-align: left;
-			font-size: 11px;
+			font-size: 12px !important;
+			font-weight: 500 !important;
+			line-height: 1.4 !important;
 			cursor: pointer;
+			box-sizing: border-box;
+			transition: background-color 0.15s ease, color 0.15s ease;
 		`;
-		btn.innerHTML = `<span>${item.label}</span>${item.shortcut ? `<span style="opacity: 0.6; float: right;">${item.shortcut}</span>` : ""}`;
+		btn.innerHTML = `<span>${item.label}</span>${item.shortcut ? `<span style="opacity: 0.7; float: right; font-size: 11px;">${item.shortcut}</span>` : ""}`;
+		btn.addEventListener("mouseenter", () => {
+			btn.style.setProperty("background-color", "#0078d7", "important");
+			btn.style.setProperty("color", "#ffffff", "important");
+		});
+		btn.addEventListener("mouseleave", () => {
+			btn.style.setProperty("background-color", "#f2f4f7", "important");
+			btn.style.setProperty("color", "#111111", "important");
+		});
 		btn.addEventListener("click", () => {
 			const mascotApp =
 				options.app ||

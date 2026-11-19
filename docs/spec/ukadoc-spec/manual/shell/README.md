@@ -1,0 +1,18 @@
+# ukadoc-spec/manual/shell 項目別突合
+
+実装コードの文字列検索による一次調査です。
+
+| 項目 | 検索語 | 対応状況 |
+| :--- | :----- | :------: |
+| [`alias.txt`](alias-txt.md) | alias.txt | ❌ 未実装 |
+| [`shell/master/descript.txt`](descript-txt.md) | read_descript | ✅ 実装済 |
+| [`(element).pna`](element-pna.md) | pnaFileName | ⚠️ 一部対応 |
+| [`(element).png`](element-png.md) | composeSurfaceElements, compute_surface_composition_plan | ⚠️ 一部対応 |
+| [`shell/master/makoto.dll`](makoto-dll.md) | shell/master/makoto.dll | ❌ 未実装 |
+| [`shell/master/readme.txt`](readme-txt.md) | shell/master/readme.txt | ❌ 未実装 |
+| [`surface*.pna`](surface-pna.md) | load_surface_pna | ✅ 実装済 |
+| [`surface*.png`](surface-png.md) | load_surface_image | ⚠️ 一部対応 |
+| [`surfaces**.txt`](surfaces-ext-txt.md) | surfaces2.txt | ⚠️ 一部対応 |
+| [`surfaces.txt`](surfaces-txt.md) | parse_surfaces_txt | ✅ 実装済 |
+| [`surfacetable.txt`](surfacetable-txt.md) | surfacetable.txt | ⚠️ 一部対応 |
+| [`shell/master/thumbnail.png`](thumbnail-png.md) | shell/master/thumbnail.png | ❌ 未実装 |

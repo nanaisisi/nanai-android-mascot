@@ -8,13 +8,13 @@
 
 | 仕様項目 | 対応状況 | 実装・備考 |
 | :--- | :---: | :--- |
-| ゴーストのネットワーク更新ファイル配置（ルート直下の更新定義・削除定義・除外設定等） | ⚠️ 一部対応 | `src-tauri/src/commands/update/network/commands/check.rs:24-76` と `execute.rs:13-163` がゴーストディレクトリ基準で `updates2.dau` / `updates.txt` を取得・差分適用し、更新後にローカル `delete.txt` を処理。ただしサーバからの `delete.txt` ダウンロードおよび `delete[数字].txt` 処理は未実装 |
-| 追加シェルのネットワーク更新ファイル配置（SSP のみ） | ❌ 未実装 | `check_ghost_update`・`execute_ghost_update`・`ui/ts/core/app-update.ts:25-170` はゴースト単位のみ対象であり、追加シェルフォルダ基準のネットワーク更新は未実装 |
-| バルーン（およびプラグイン・ヘッドライン等）のネットワーク更新ファイル配置（SSP のみ） | ❌ 未実装 | バルーン・プラグイン・ヘッドライン個別の `updates2.dau` / `updates.txt` 取得と更新適用は未実装 |
-| `updates2.dau`（MD5 ハッシュ検証・生成） | ⚠️ 一部対応 | `check.rs:49-118`・`execute.rs:97-132`・`crates/ui/src/update/parser/update_definition.rs:6` で取得・パース・MD5 照合・再ダウンロード検疫を実装。生成コマンド `generate_updates2_dau`（`src-tauri/src/commands/update/generation.rs:8-82`）も実装済み（`ui/ts/ui/templates/settings-templates.ts:131` は設定フラグ保持のみで生成呼び出しは未接続） |
-| `updates.txt`（`updates2.dau` 代替・`file,` 形式） | ⚠️ 一部対応 | `check.rs:60-69` で `updates2.dau` 取得失敗時に `updates.txt` へフォールバックし、`crates/ui/src/update/parser/update_definition.rs:15-21` で `file,` 形式を解析。ただし `generate_updates2_dau` による `updates.txt` 出力は未実装 |
-| `delete.txt` / `delete[数字].txt`（不要ファイル削除設定） | ⚠️ 一部対応 | `crates/nanai-core/src/update_protocol/helpers.rs:70-80`（`parse_delete_txt`）と `src-tauri/src/commands/install/archive/postprocess.rs:55-75`（`process_delete_txt`）で `delete.txt` の解析・ローカル削除を実装。ただしサーバ上の `delete.txt` 自動取得や SSP 独自の `delete1.txt` 等 `delete[数字].txt` 連番認識は未実装 |
-| `developer_options.txt`（SSP のみ・`updates2.dau` 生成時の除外指定） | ⚠️ 一部対応 | `crates/ui/src/update/parser/developer_options.rs:4-26`・`crates/nanai-core/src/update_protocol/helpers.rs:83-108`・`ui/ts/core/actions/update-protocol.ts:88-105` で `noupdate=` / `noupdate:` パターン解析に対応し、`src-tauri/src/commands/update/generation.rs:18-29,50-59` で `noupdate=` を除外適用（その他ディレクティブやアーカイブ除外は `src-tauri/src/commands/install/archive/packaging.rs:10-31` の固定リストで補完） |
+| [ゴーストのネットワーク更新ファイル配置（ルート直下の更新定義・削除定義・除外設定等）](update/ghost-update-layout.md) | ⚠️ 一部対応 | `src-tauri/src/commands/update/network/commands/check.rs:24-76` と `execute.rs:13-163` がゴーストディレクトリ基準で `updates2.dau` / `updates.txt` を取得・差分適用し、更新後にローカル `delete.txt` を処理。ただしサーバからの `delete.txt` ダウンロードおよび `delete[数字].txt` 処理は未実装 |
+| [追加シェルのネットワーク更新ファイル配置（SSP のみ）](update/shell-update-layout.md) | ❌ 未実装 | `check_ghost_update`・`execute_ghost_update`・`ui/ts/core/app-update.ts:25-170` はゴースト単位のみ対象であり、追加シェルフォルダ基準のネットワーク更新は未実装 |
+| [バルーン（およびプラグイン・ヘッドライン等）のネットワーク更新ファイル配置（SSP のみ）](update/balloon-update-layout.md) | ❌ 未実装 | バルーン・プラグイン・ヘッドライン個別の `updates2.dau` / `updates.txt` 取得と更新適用は未実装 |
+| [`updates2.dau`（MD5 ハッシュ検証・生成）](update/updates2-dau.md) | ⚠️ 一部対応 | `check.rs:49-118`・`execute.rs:97-132`・`crates/ui/src/update/parser/update_definition.rs:6` で取得・パース・MD5 照合・再ダウンロード検疫を実装。生成コマンド `generate_updates2_dau`（`src-tauri/src/commands/update/generation.rs:8-82`）も実装済み（`ui/ts/ui/templates/settings-templates.ts:131` は設定フラグ保持のみで生成呼び出しは未接続） |
+| [`updates.txt`（`updates2.dau` 代替・`file,` 形式）](update/updates-txt.md) | ⚠️ 一部対応 | `check.rs:60-69` で `updates2.dau` 取得失敗時に `updates.txt` へフォールバックし、`crates/ui/src/update/parser/update_definition.rs:15-21` で `file,` 形式を解析。ただし `generate_updates2_dau` による `updates.txt` 出力は未実装 |
+| [`delete.txt` / `delete1.txt`](update/delete-txt.md)（`delete[数字].txt`・不要ファイル削除設定） | ⚠️ 一部対応 | `crates/nanai-core/src/update_protocol/helpers.rs:70-80`（`parse_delete_txt`）と `src-tauri/src/commands/install/archive/postprocess.rs:55-75`（`process_delete_txt`）で `delete.txt` の解析・ローカル削除を実装。ただしサーバ上の `delete.txt` 自動取得や SSP 独自の `delete1.txt` 等 `delete[数字].txt` 連番認識は未実装 |
+| [`developer_options.txt`（SSP のみ・`updates2.dau` 生成時の除外指定）](update/developer-options-txt.md) | ⚠️ 一部対応 | `crates/ui/src/update/parser/developer_options.rs:4-26`・`crates/nanai-core/src/update_protocol/helpers.rs:83-108`・`ui/ts/core/actions/update-protocol.ts:88-105` で `noupdate=` / `noupdate:` パターン解析に対応し、`src-tauri/src/commands/update/generation.rs:18-29,50-59` で `noupdate=` を除外適用（その他ディレクティブやアーカイブ除外は `src-tauri/src/commands/install/archive/packaging.rs:10-31` の固定リストで補完） |
 
 ## 実装箇所
 

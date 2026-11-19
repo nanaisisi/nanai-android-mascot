@@ -1,9 +1,17 @@
 # ukadoc-spec/manual 項目別突合
 
-実装コードの文字列検索による一次調査です。
+各サブカテゴリおよび仕様項目の突合一覧です。
 
-| 項目 | 検索語 | 対応状況 |
+| 項目 / サブカテゴリ | 検索語 / 項目数 | 対応状況 |
 | :--- | :----- | :------: |
+| [balloon](balloon/README.md) | 22件 | ✅ 6 / ⚠️ 10 / ❌ 6 |
+| [directory](directory/README.md) | 11件 | ✅ 5 / ⚠️ 3 / ❌ 3 |
+| [ghost](ghost/README.md) | 10件 | ✅ 1 / ⚠️ 5 / ❌ 4 |
+| [install](install/README.md) | 9件 | ✅ 3 / ⚠️ 6 / ❌ 0 |
+| [owner-draw-menu](owner-draw-menu/README.md) | 4件 | ✅ 0 / ⚠️ 4 / ❌ 0 |
+| [shell](shell/README.md) | 12件 | ✅ 3 / ⚠️ 5 / ❌ 4 |
+| [translator](translator/README.md) | 3件 | ✅ 0 / ⚠️ 2 / ❌ 1 |
+| [update](update/README.md) | 7件 | ✅ 3 / ⚠️ 2 / ❌ 2 |
 | [バルーン (manual/balloon.md)](balloon.md) | load_balloon_image | ⚠️ 一部対応 |
 | [全体の構成 (manual/directory.md)](directory.md) | scan_ghost_directory | ⚠️ 一部対応 |
 | [ゴースト (manual/ghost.md)](ghost.md) | parse_ghost_manifest | ⚠️ 一部対応 |

@@ -242,6 +242,156 @@ function openCharacterMenu(
 	});
 }
 
+const COLLISION_OVERLAY_COLORS = [
+	"rgba(255, 0, 0, 0.5)",
+	"rgba(0, 120, 215, 0.5)",
+	"rgba(46, 125, 50, 0.5)",
+	"rgba(230, 81, 0, 0.5)",
+];
+
+function resolveCollisionShape(col: Record<string, unknown>): {
+	kind: string;
+	coords: Record<string, unknown>;
+} {
+	const rawShape = col.shape;
+	if (rawShape && typeof rawShape === "object") {
+		const s = rawShape as Record<string, unknown>;
+		if (s.Rect && typeof s.Rect === "object") {
+			return { kind: "rect", coords: s.Rect as Record<string, unknown> };
+		}
+		if (s.Circle && typeof s.Circle === "object") {
+			return { kind: "circle", coords: s.Circle as Record<string, unknown> };
+		}
+		if (s.Ellipse && typeof s.Ellipse === "object") {
+			return { kind: "ellipse", coords: s.Ellipse as Record<string, unknown> };
+		}
+		if (s.Polygon && typeof s.Polygon === "object") {
+			return { kind: "polygon", coords: s.Polygon as Record<string, unknown> };
+		}
+		const explicitType = s.type ?? s.shape;
+		if (typeof explicitType === "string") {
+			return { kind: explicitType.toLowerCase(), coords: s };
+		}
+		return { kind: "rect", coords: s };
+	}
+	return {
+		kind: String(rawShape ?? "rect").toLowerCase(),
+		coords: col,
+	};
+}
+
+function drawCollisionLabel(
+	ctx: CanvasRenderingContext2D,
+	name: string,
+	x: number,
+	y: number,
+) {
+	if (!name || typeof ctx.fillText !== "function") return;
+	ctx.font = "bold 11px sans-serif";
+	const padX = 3;
+	const textWidth =
+		typeof ctx.measureText === "function"
+			? ctx.measureText(name).width
+			: name.length * 7;
+	const boxY = Math.max(0, y - 12);
+	if (typeof ctx.fillRect === "function") {
+		ctx.fillStyle = "rgba(0, 0, 0, 0.72)";
+		ctx.fillRect(x, boxY, textWidth + padX * 2, 15);
+	}
+	ctx.fillStyle = "#ffffff";
+	ctx.fillText(name, x + padX, boxY + 11);
+}
+
+function drawCollisionAreasOnSubcharCanvas(
+	canvas: HTMLCanvasElement,
+	collisions: Array<Record<string, unknown>>,
+	scale: number,
+) {
+	if (typeof canvas.getContext !== "function") return;
+	const ctx = canvas.getContext("2d");
+	if (!ctx) return;
+
+	if (typeof ctx.clearRect === "function") {
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+	}
+
+	collisions.forEach((col, idx) => {
+		const color =
+			COLLISION_OVERLAY_COLORS[idx % COLLISION_OVERLAY_COLORS.length];
+		ctx.strokeStyle = color;
+		ctx.fillStyle = color.replace("0.5", "0.2");
+		ctx.lineWidth = 2;
+
+		const name = String(col.name ?? `col${idx}`);
+		const { kind, coords } = resolveCollisionShape(col);
+
+		if (
+			kind === "rect" ||
+			(kind !== "circle" &&
+				kind !== "ellipse" &&
+				kind !== "polygon" &&
+				coords.x1 !== undefined)
+		) {
+			const rawX1 = Number(coords.x1 ?? 0);
+			const rawY1 = Number(coords.y1 ?? 0);
+			const rawX2 = Number(coords.x2 ?? rawX1 + 40);
+			const rawY2 = Number(coords.y2 ?? rawY1 + 40);
+			const x = Math.min(rawX1, rawX2) * scale;
+			const y = Math.min(rawY1, rawY2) * scale;
+			const w = Math.abs(rawX2 - rawX1) * scale;
+			const h = Math.abs(rawY2 - rawY1) * scale;
+			ctx.fillRect?.(x, y, w, h);
+			ctx.strokeRect?.(x, y, w, h);
+			drawCollisionLabel(ctx, name, x + 2, y + 14);
+			return;
+		}
+
+		if (kind === "circle" || kind === "ellipse") {
+			const cx = Number(coords.cx ?? 50) * scale;
+			const cy = Number(coords.cy ?? 50) * scale;
+			const rx = Math.max(0, Number(coords.rx ?? coords.r ?? 30) * scale);
+			const ry = Math.max(0, Number(coords.ry ?? coords.r ?? 30) * scale);
+			ctx.beginPath?.();
+			if (typeof ctx.ellipse === "function") {
+				ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+			} else {
+				ctx.arc?.(cx, cy, rx, 0, Math.PI * 2);
+			}
+			ctx.fill?.();
+			ctx.stroke?.();
+			drawCollisionLabel(ctx, name, Math.max(0, cx - 10), cy);
+			return;
+		}
+
+		if (kind === "polygon" && Array.isArray(coords.vertices)) {
+			const vertices = coords.vertices
+				.map((pt) => {
+					if (Array.isArray(pt)) {
+						return [Number(pt[0] ?? 0) * scale, Number(pt[1] ?? 0) * scale];
+					}
+					if (pt && typeof pt === "object") {
+						const pObj = pt as { x?: number; y?: number };
+						return [Number(pObj.x ?? 0) * scale, Number(pObj.y ?? 0) * scale];
+					}
+					return null;
+				})
+				.filter((pt): pt is [number, number] => pt !== null);
+
+			if (vertices.length >= 2) {
+				ctx.beginPath?.();
+				ctx.moveTo?.(vertices[0][0], vertices[0][1]);
+				for (let i = 1; i < vertices.length; i += 1) {
+					ctx.lineTo?.(vertices[i][0], vertices[i][1]);
+				}
+				ctx.closePath?.();
+				ctx.fill?.();
+				ctx.stroke?.();
+				drawCollisionLabel(ctx, name, vertices[0][0] + 2, vertices[0][1] + 14);
+			}
+		}
+	});
+}
+
 function initCharacterWindow() {
 	const img = document.getElementById("subchar-img") as HTMLImageElement | null;
 	const root = document.getElementById("subchar-root");
@@ -255,6 +405,74 @@ function initCharacterWindow() {
 	let lastSyncedWidth = 0;
 	let lastSyncedHeight = 0;
 	let initialPos: { x: number; y: number } | null = null;
+	let showCollisions = false;
+	let currentCollisions: Array<Record<string, unknown>> = [];
+	let collisionCanvas: HTMLCanvasElement | null =
+		typeof document.getElementById === "function"
+			? (document.getElementById(
+					"subchar-collision-canvas",
+				) as HTMLCanvasElement | null)
+			: null;
+
+	const renderSubcharCollisionCanvas = () => {
+		if (!showCollisions || currentCollisions.length === 0) {
+			if (collisionCanvas?.style) {
+				collisionCanvas.style.display = "none";
+			}
+			if (collisionCanvas && typeof collisionCanvas.getContext === "function") {
+				const ctx = collisionCanvas.getContext("2d");
+				ctx?.clearRect?.(0, 0, collisionCanvas.width, collisionCanvas.height);
+			}
+			return;
+		}
+
+		const baseW = lastNaturalWidth || img?.naturalWidth || img?.width || 0;
+		const baseH = lastNaturalHeight || img?.naturalHeight || img?.height || 0;
+		if (baseW <= 0 || baseH <= 0) return;
+
+		if (!collisionCanvas && typeof document.getElementById === "function") {
+			collisionCanvas = document.getElementById(
+				"subchar-collision-canvas",
+			) as HTMLCanvasElement | null;
+		}
+		if (!collisionCanvas && typeof document.createElement === "function") {
+			const created = document.createElement("canvas");
+			created.id = "subchar-collision-canvas";
+			created.className = "collision-overlay-canvas";
+			if (!created.style) {
+				(created as unknown as { style: Record<string, string> }).style = {};
+			}
+			created.style.position = "absolute";
+			created.style.top = "0";
+			created.style.left = "0";
+			created.style.pointerEvents = "none";
+			created.style.zIndex = "10";
+			const container = root || img?.parentElement;
+			if (container && typeof container.appendChild === "function") {
+				container.appendChild(created);
+			}
+			collisionCanvas = created;
+		}
+		if (!collisionCanvas) return;
+
+		const scaledW = Math.max(1, Math.ceil(baseW * currentScale));
+		const scaledH = Math.max(1, Math.ceil(baseH * currentScale));
+		collisionCanvas.width = scaledW;
+		collisionCanvas.height = scaledH;
+		if (!collisionCanvas.style) {
+			(collisionCanvas as unknown as { style: Record<string, string> }).style =
+				{};
+		}
+		collisionCanvas.style.width = `${scaledW}px`;
+		collisionCanvas.style.height = `${scaledH}px`;
+		collisionCanvas.style.display = "block";
+
+		drawCollisionAreasOnSubcharCanvas(
+			collisionCanvas,
+			currentCollisions,
+			currentScale,
+		);
+	};
 
 	const refreshInitialPositionFromWindow = async () => {
 		if (!isTauriAvailable()) return;
@@ -274,6 +492,7 @@ function initCharacterWindow() {
 			img.width = targetW;
 			img.height = targetH;
 		}
+		renderSubcharCollisionCanvas();
 		if (
 			isTauriAvailable() &&
 			(targetW !== lastSyncedWidth || targetH !== lastSyncedHeight)
@@ -358,11 +577,44 @@ function initCharacterWindow() {
 			currentScale = Math.min(3.0, Math.max(0.25, nextScale));
 			if (lastNaturalWidth > 0 && lastNaturalHeight > 0) {
 				syncCharacterWindowSize(lastNaturalWidth, lastNaturalHeight);
+			} else {
+				renderSubcharCollisionCanvas();
 			}
 		});
 
+		void listen(`update-subchar-collisions-${scopeId}`, (event: unknown) => {
+			const payload = (
+				event as {
+					payload?: {
+						visible?: boolean;
+						collisions?: Array<Record<string, unknown>>;
+					} | null;
+				}
+			)?.payload;
+			showCollisions = Boolean(payload?.visible);
+			currentCollisions = Array.isArray(payload?.collisions)
+				? payload.collisions
+				: [];
+			renderSubcharCollisionCanvas();
+		});
+
 		void listen(`update-subchar-image-${scopeId}`, (event: unknown) => {
-			const src = (event as { payload?: { src?: string } })?.payload?.src;
+			const payload = (
+				event as {
+					payload?: {
+						src?: string;
+						showCollisions?: boolean;
+						collisions?: Array<Record<string, unknown>>;
+					} | null;
+				}
+			)?.payload;
+			if (typeof payload?.showCollisions === "boolean") {
+				showCollisions = payload.showCollisions;
+			}
+			if (Array.isArray(payload?.collisions)) {
+				currentCollisions = payload.collisions;
+			}
+			const src = payload?.src;
 			if (src && img) {
 				if (pollTimer) {
 					clearInterval(pollTimer as number);
@@ -438,6 +690,9 @@ function initCharacterWindow() {
 				lastNaturalWidth = 0;
 				lastNaturalHeight = 0;
 				img.style.display = "none";
+				if (collisionCanvas?.style) {
+					collisionCanvas.style.display = "none";
+				}
 			}
 		});
 	}

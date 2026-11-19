@@ -1,3 +1,7 @@
+import {
+	type CollisionOverlayController,
+	renderAllCollisionOverlays,
+} from "../../surface/ghost-surface-dom.js";
 import { showDevPalette } from "../../ui/dev-palette.js";
 import { AppConfig } from "../config.js";
 import { invoke, isTauriAvailable } from "../tauri-helper.js";
@@ -31,7 +35,7 @@ export interface MenuActionContext {
 		options?: { checkOnly?: boolean },
 	) => unknown;
 	showGhostInformation?: () => unknown;
-	handleMenuAction?: (action: string) => unknown;
+	handleMenuAction?: (action: string, payload?: unknown) => unknown;
 	showBalloon?: (message: string) => unknown;
 	hideBalloon?: (scopeId?: number, reason?: string) => unknown;
 	elements?: {
@@ -273,26 +277,49 @@ export function handleMenuActionImpl(
 
 	// 本物仕様開発パレットアクション
 	if (action === "toggle-collision-area" || action === "show-collision-area") {
-		if (context.app) {
-			const s = (context.app.settings as Record<string, unknown>) || {};
-			s.showCollisionArea = !s.showCollisionArea;
+		const targetApp = (context.app || context) as Record<string, unknown>;
+		if (targetApp) {
+			if (!targetApp.settings || typeof targetApp.settings !== "object") {
+				targetApp.settings = {};
+			}
+			const s = targetApp.settings as Record<string, unknown>;
+			const payloadObj =
+				payload && typeof payload === "object"
+					? (payload as { enabled?: unknown })
+					: null;
+			const nextState =
+				typeof payloadObj?.enabled === "boolean"
+					? payloadObj.enabled
+					: !(s.showCollisionArea ?? targetApp.showCollisionArea);
+			s.showCollisionArea = nextState;
+			targetApp.showCollisionArea = nextState;
+
+			const colInput =
+				typeof document !== "undefined" &&
+				typeof document.getElementById === "function"
+					? (document.getElementById(
+							"dev-check-collision",
+						) as HTMLInputElement | null)
+					: null;
+			if (colInput) {
+				colInput.checked = nextState;
+			}
+
+			const gc = targetApp.ghostController as
+				| CollisionOverlayController
+				| undefined;
+			renderAllCollisionOverlays(
+				gc ?? {
+					app: targetApp as unknown as CollisionOverlayController["app"],
+				},
+			);
 			if (
-				typeof (context.app as { renderCollisionOverlay?: unknown })
+				typeof (targetApp as { renderCollisionOverlay?: unknown })
 					.renderCollisionOverlay === "function"
 			) {
 				(
-					context.app as { renderCollisionOverlay: () => void }
+					targetApp as { renderCollisionOverlay: () => void }
 				).renderCollisionOverlay();
-			}
-			if (context.ghostController?.updateSurface) {
-				void context.ghostController.updateSurface(
-					(
-						context.ghostController as unknown as {
-							currentSurfaces?: Map<number, number>;
-						}
-					).currentSurfaces?.get(0) ?? 0,
-					0,
-				);
 			}
 		}
 		return;

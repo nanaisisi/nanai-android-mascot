@@ -18,19 +18,23 @@ export interface SurfaceManagerInterface {
 	[key: string]: unknown;
 }
 
-export interface GhostSurfaceControllerInterface {
+export interface CollisionOverlayController {
 	app?: {
 		surfaceManager?: SurfaceManagerInterface;
 		[key: string]: unknown;
 	};
+	currentSurfaces?: Map<number, string>;
+	[key: string]: unknown;
+}
+
+export interface GhostSurfaceControllerInterface
+	extends CollisionOverlayController {
 	loadSurfaceAsset: (
 		cmd: string,
 		ghostPath: string,
 		shell: string,
 		resolveId: string | number,
 	) => Promise<string>;
-	currentSurfaces?: Map<number, string>;
-	[key: string]: unknown;
 }
 
 export async function applySurfaceImageToDom(
@@ -190,17 +194,43 @@ export async function applySurfaceImageToDom(
 	return transparentSrc;
 }
 
-export function renderCollisionOverlayForScope(
-	controller: GhostSurfaceControllerInterface,
+function resolveSurfaceIdForScope(
+	sm: Record<string, unknown> | undefined,
 	scopeId: number,
-	surfaceId: number | string,
-	ghostDisplayEl: HTMLElement | null,
-) {
-	if (typeof document === "undefined") return;
+	surfaceId?: number | string | null,
+): number | string {
+	if (surfaceId !== undefined && surfaceId !== null && surfaceId !== "") {
+		return surfaceId;
+	}
+	if (typeof sm?.currentSurfaceIdFor === "function") {
+		const resolved = (
+			sm.currentSurfaceIdFor as (s: number) => number | string | undefined
+		)(scopeId);
+		if (resolved !== undefined && resolved !== null && resolved !== "") {
+			return resolved;
+		}
+	}
+	const charSurfaceIds = sm?.charSurfaceIds as
+		| Record<number, number | string>
+		| undefined;
+	if (charSurfaceIds?.[scopeId] !== undefined) {
+		return charSurfaceIds[scopeId];
+	}
+	return scopeId === 1
+		? ((sm?.keroSurfaceId as number | string | undefined) ?? 10)
+		: ((sm?.currentSurfaceId as number | string | undefined) ?? 0);
+}
 
+export function renderCollisionOverlayForScope(
+	controller: CollisionOverlayController,
+	scopeId: number,
+	surfaceId?: number | string | null,
+	ghostDisplayEl: HTMLElement | null = null,
+) {
 	const app = controller.app as Record<string, unknown> | undefined;
 	const settings = (app?.settings as Record<string, unknown>) || {};
 	const colInput =
+		typeof document !== "undefined" &&
 		typeof document.getElementById === "function"
 			? (document.getElementById(
 					"dev-check-collision",
@@ -209,6 +239,30 @@ export function renderCollisionOverlayForScope(
 	const showCollisions = Boolean(
 		settings.showCollisionArea || app?.showCollisionArea || colInput?.checked,
 	);
+
+	const sm = app?.surfaceManager as Record<string, unknown> | undefined;
+	const resolvedSurfaceId = resolveSurfaceIdForScope(sm, scopeId, surfaceId);
+	const sid = String(resolvedSurfaceId);
+	const collisionsMap = sm?.collisions as Record<string, unknown[]> | undefined;
+	const colList = Array.isArray(collisionsMap?.[sid])
+		? collisionsMap[sid]
+		: Array.isArray(collisionsMap?.default)
+			? collisionsMap.default
+			: [];
+
+	if (isTauriAvailable()) {
+		try {
+			void Promise.resolve(
+				emit(`update-subchar-collisions-${scopeId}`, {
+					visible: showCollisions,
+					surfaceId: resolvedSurfaceId,
+					collisions: showCollisions ? colList : [],
+				}),
+			).catch(() => {});
+		} catch (_e) {}
+	}
+
+	if (typeof document === "undefined") return;
 
 	const container =
 		ghostDisplayEl ||
@@ -247,7 +301,6 @@ export function renderCollisionOverlayForScope(
 			? container.querySelector("img")
 			: null
 	) as HTMLImageElement | null;
-	const sm = app?.surfaceManager as Record<string, unknown> | undefined;
 	const baseW = Number(sm?.baseWidth) || 200;
 	const baseH = Number(sm?.baseHeight) || 400;
 	const w = Math.max(
@@ -270,6 +323,44 @@ export function renderCollisionOverlayForScope(
 				sid: number | string,
 				s: number,
 			) => void
-		)(canvas, surfaceId, scopeId);
+		)(canvas, resolvedSurfaceId, scopeId);
+	}
+}
+
+export function renderAllCollisionOverlays(
+	controller: CollisionOverlayController,
+) {
+	const app = controller.app as Record<string, unknown> | undefined;
+	const sm = app?.surfaceManager as Record<string, unknown> | undefined;
+	const scopes = new Set<number>([0, 1]);
+
+	if (controller.currentSurfaces instanceof Map) {
+		for (const scope of controller.currentSurfaces.keys()) {
+			if (typeof scope === "number" && Number.isFinite(scope)) {
+				scopes.add(scope);
+			}
+		}
+	}
+
+	const charSurfaceIds = sm?.charSurfaceIds as
+		| Record<string, unknown>
+		| undefined;
+	if (charSurfaceIds && typeof charSurfaceIds === "object") {
+		for (const key of Object.keys(charSurfaceIds)) {
+			const parsed = Number(key);
+			if (Number.isInteger(parsed) && parsed >= 0) {
+				scopes.add(parsed);
+			}
+		}
+	}
+
+	for (const scopeId of scopes) {
+		const resolvedSurfaceId = resolveSurfaceIdForScope(sm, scopeId);
+		renderCollisionOverlayForScope(
+			controller,
+			scopeId,
+			resolvedSurfaceId,
+			null,
+		);
 	}
 }

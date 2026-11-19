@@ -4,6 +4,10 @@
  */
 
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import {
+	type CollisionOverlayController,
+	renderAllCollisionOverlays,
+} from "../surface/ghost-surface-dom.js";
 
 export interface DevPaletteOptions {
 	ghostName?: string;
@@ -198,19 +202,19 @@ export function showDevPalette(options: DevPaletteOptions = {}) {
 		},
 	];
 
+	interface DevPaletteApp {
+		settings?: Record<string, unknown>;
+		showCollisionArea?: boolean;
+		ghostController?: CollisionOverlayController;
+		handleMenuAction?: (act: string, payload?: unknown) => void;
+		renderCollisionOverlay?: () => void;
+	}
+
 	const mascotApp =
-		(options.app as {
-			settings?: Record<string, unknown>;
-			showCollisionArea?: boolean;
-			handleMenuAction?: (act: string) => void;
-		}) ||
+		(options.app as DevPaletteApp | undefined) ||
 		(
 			globalThis as unknown as {
-				mascotApp?: {
-					settings?: Record<string, unknown>;
-					showCollisionArea?: boolean;
-					handleMenuAction?: (act: string) => void;
-				};
+				mascotApp?: DevPaletteApp;
 			}
 		).mascotApp;
 
@@ -230,13 +234,23 @@ export function showDevPalette(options: DevPaletteOptions = {}) {
 		const input = row.querySelector("input");
 		if (isColCheck && input) {
 			input.addEventListener("change", () => {
+				const enabled = Boolean(input.checked);
 				if (mascotApp) {
 					if (!mascotApp.settings) mascotApp.settings = {};
-					mascotApp.settings.showCollisionArea = input.checked;
-					mascotApp.showCollisionArea = input.checked;
+					mascotApp.settings.showCollisionArea = enabled;
+					mascotApp.showCollisionArea = enabled;
 					if (typeof mascotApp.handleMenuAction === "function") {
-						mascotApp.handleMenuAction("toggle-collision-area");
+						mascotApp.handleMenuAction("toggle-collision-area", { enabled });
+					} else {
+						renderAllCollisionOverlays(
+							mascotApp.ghostController ?? {
+								app: mascotApp as unknown as CollisionOverlayController["app"],
+							},
+						);
+						mascotApp.renderCollisionOverlay?.();
 					}
+				} else {
+					renderAllCollisionOverlays({ app: undefined });
 				}
 			});
 		}

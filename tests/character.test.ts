@@ -1515,4 +1515,137 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 			internals.invoke = origInvoke;
 		}
 	});
+
+	test("renders and hides #subchar-collision-canvas on update-subchar-collisions-1 and rescales with character", async () => {
+		const doc = g.document as {
+			getElementById: (id: string) => unknown;
+			createElement: (tag: string) => unknown;
+		};
+		const rootAny = rootEl as unknown as {
+			appendChild?: (el: unknown) => void;
+		};
+		const origGetEl = doc.getElementById;
+		const origCreateEl = doc.createElement;
+		const origAppendChild = rootAny.appendChild;
+		const origNatW = imgEl.naturalWidth;
+		const origNatH = imgEl.naturalHeight;
+
+		const appended = new Map<string, Record<string, unknown>>();
+		const drawOps = {
+			strokeRects: [] as number[][],
+			fillTexts: [] as Array<{ text: string; x: number; y: number }>,
+			clearRects: 0,
+		};
+
+		rootAny.appendChild = (el: unknown) => {
+			const node = el as { id?: string };
+			if (node?.id) {
+				appended.set(node.id, node as unknown as Record<string, unknown>);
+			}
+		};
+		doc.getElementById = (id: string) => {
+			if (appended.has(id)) return appended.get(id);
+			return origGetEl(id);
+		};
+		doc.createElement = (tag: string) => {
+			if (tag === "canvas") {
+				return {
+					id: "",
+					className: "",
+					width: 0,
+					height: 0,
+					style: {} as Record<string, string>,
+					getContext() {
+						return {
+							strokeStyle: "",
+							fillStyle: "",
+							lineWidth: 1,
+							font: "",
+							clearRect() {
+								drawOps.clearRects += 1;
+							},
+							fillRect() {},
+							strokeRect(x: number, y: number, w: number, h: number) {
+								drawOps.strokeRects.push([x, y, w, h]);
+							},
+							measureText(t: string) {
+								return { width: t.length * 6 };
+							},
+							fillText(text: string, x: number, y: number) {
+								drawOps.fillTexts.push({ text, x, y });
+							},
+							drawImage() {},
+							getImageData: () => ({ data: [255, 255, 255, transparentAlpha] }),
+						};
+					},
+				};
+			}
+			return origCreateEl(tag);
+		};
+
+		try {
+			await listenCallbacks["character-scale-changed"]?.({
+				payload: { scale: 1 },
+			});
+			imgEl.naturalWidth = 100;
+			imgEl.naturalHeight = 200;
+			await listenCallbacks["update-subchar-image-1"]?.({
+				payload: { src: "collision-test.png" },
+			});
+			imgEl.onload?.();
+
+			await listenCallbacks["update-subchar-collisions-1"]?.({
+				payload: {
+					visible: true,
+					collisions: [
+						{
+							name: "Head",
+							shape: { type: "Rect", x1: 10, y1: 10, x2: 50, y2: 50 },
+						},
+					],
+				},
+			});
+
+			const canvas = appended.get("subchar-collision-canvas") as
+				| {
+						id: string;
+						className: string;
+						width: number;
+						height: number;
+						style: Record<string, string>;
+				  }
+				| undefined;
+			assert.ok(canvas);
+			assert.equal(canvas.className, "collision-overlay-canvas");
+			assert.equal(canvas.style.display, "block");
+			assert.equal(canvas.width, 100);
+			assert.equal(canvas.height, 200);
+			assert.deepEqual(drawOps.strokeRects, [[10, 10, 40, 40]]);
+			assert.equal(drawOps.fillTexts[0]?.text, "Head");
+
+			// Rescaling character to 2x updates collision canvas dimensions & coordinates
+			drawOps.strokeRects.length = 0;
+			await listenCallbacks["character-scale-changed"]?.({
+				payload: { scale: 2 },
+			});
+			assert.equal(canvas.width, 200);
+			assert.equal(canvas.height, 400);
+			assert.deepEqual(drawOps.strokeRects, [[20, 20, 80, 80]]);
+
+			// Hiding collisions hides the canvas cleanly
+			await listenCallbacks["update-subchar-collisions-1"]?.({
+				payload: { visible: false, collisions: [] },
+			});
+			assert.equal(canvas.style.display, "none");
+		} finally {
+			doc.getElementById = origGetEl;
+			doc.createElement = origCreateEl;
+			rootAny.appendChild = origAppendChild;
+			imgEl.naturalWidth = origNatW;
+			imgEl.naturalHeight = origNatH;
+			await listenCallbacks["character-scale-changed"]?.({
+				payload: { scale: 1 },
+			});
+		}
+	});
 });

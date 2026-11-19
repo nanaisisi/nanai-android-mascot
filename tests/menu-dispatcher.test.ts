@@ -182,3 +182,230 @@ test("showDevPalette shows and hides modal host window in Tauri and handles dev-
 		}
 	}
 });
+
+test("dev-palette collision checkbox toggles showCollisionArea without double-flipping and emits subchar collisions", async () => {
+	const origDocument = globalThis.document;
+	const origTauri = globalThis.__TAURI_INTERNALS__;
+	const elements = new Map<string, MockEl>();
+	const emitted: Array<{ event: string; payload: unknown }> = [];
+
+	interface MockEl {
+		id: string;
+		className: string;
+		checked: boolean;
+		style: { cssText: string; display?: string };
+		children: MockEl[];
+		_innerHTML: string;
+		_listeners: Record<string, Array<() => void>>;
+		innerHTML: string;
+		appendChild(child: MockEl): void;
+		querySelector(sel: string): MockEl | null;
+		addEventListener(type: string, cb: () => void): void;
+		dispatch(type: string): void;
+		remove(): void;
+	}
+
+	const createMockEl = (tag: string): MockEl => {
+		const el: MockEl = {
+			id: tag,
+			className: "",
+			checked: false,
+			style: { cssText: "" },
+			children: [],
+			_innerHTML: "",
+			_listeners: {},
+			get innerHTML() {
+				return this._innerHTML;
+			},
+			set innerHTML(val: string) {
+				this._innerHTML = val;
+				const idMatch = val.match(/id="([^"]+)"/);
+				if (idMatch && val.includes("<input")) {
+					const inputEl = createMockEl("input");
+					inputEl.id = idMatch[1];
+					inputEl.checked = val.includes("checked");
+					elements.set(inputEl.id, inputEl);
+					this.children.push(inputEl);
+				}
+			},
+			appendChild(child: MockEl) {
+				this.children.push(child);
+				if (child.id) elements.set(child.id, child);
+			},
+			querySelector(sel: string): MockEl | null {
+				if (sel === "input") {
+					return (
+						this.children.find((c) => c.id.startsWith("dev-check-")) ?? null
+					);
+				}
+				if (sel.startsWith("#")) {
+					return elements.get(sel.slice(1)) ?? null;
+				}
+				return null;
+			},
+			addEventListener(type: string, cb: () => void) {
+				this._listeners[type] ??= [];
+				this._listeners[type].push(cb);
+			},
+			dispatch(type: string) {
+				for (const cb of this._listeners[type] ?? []) {
+					cb();
+				}
+			},
+			remove() {
+				if (this.id) elements.delete(this.id);
+			},
+		};
+		return el;
+	};
+
+	const modalOverlay = createMockEl("modal-overlay");
+	modalOverlay.style.display = "none";
+
+	globalThis.document = {
+		body: {
+			classList: classList as unknown as DOMTokenList,
+			appendChild(el: MockEl) {
+				if (el.id) elements.set(el.id, el);
+			},
+		},
+		getElementById(id: string) {
+			if (id === "modal-overlay") return modalOverlay;
+			return elements.get(id) ?? null;
+		},
+		querySelector() {
+			return null;
+		},
+		createElement(tag: string) {
+			return createMockEl(tag);
+		},
+	} as unknown as Document;
+
+	globalThis.__TAURI_INTERNALS__ = {
+		invoke: async (cmd: string, args?: unknown) => {
+			if (cmd === "plugin:event|emit") {
+				const a = args as { event: string; payload: unknown };
+				emitted.push({ event: a.event, payload: a.payload });
+			}
+		},
+		transformCallback: (cb: unknown) => cb,
+	};
+
+	try {
+		const { showDevPalette } = await import("../ui/ts/ui/dev-palette.js");
+		const { handleMenuActionImpl } = await import(
+			"../ui/ts/core/actions/menu-action-dispatcher.js"
+		);
+
+		const col0 = {
+			name: "Head",
+			shape: "rect",
+			x1: 10,
+			y1: 10,
+			x2: 50,
+			y2: 50,
+		};
+		const col1 = { name: "Face", shape: "rect", x1: 5, y1: 5, x2: 20, y2: 20 };
+
+		const app: {
+			settings: { showCollisionArea: boolean };
+			showCollisionArea: boolean;
+			surfaceManager: {
+				currentSurfaceId: number;
+				keroSurfaceId: number;
+				collisions: Record<string, unknown[]>;
+			};
+			handleMenuAction: (action: string, payload?: unknown) => void;
+		} = {
+			settings: { showCollisionArea: false },
+			showCollisionArea: false,
+			surfaceManager: {
+				currentSurfaceId: 0,
+				keroSurfaceId: 10,
+				collisions: {
+					"0": [col0],
+					"10": [col1],
+				},
+			},
+			handleMenuAction(action: string, payload?: unknown) {
+				handleMenuActionImpl(
+					this as unknown as Parameters<typeof handleMenuActionImpl>[0],
+					action,
+					payload,
+				);
+			},
+		};
+
+		showDevPalette({ ghostName: "TestGhost", app });
+		const colCheckbox = elements.get("dev-check-collision");
+		assert.ok(colCheckbox);
+		assert.equal(colCheckbox.checked, false);
+
+		// 1. Checking the checkbox enables collision display (must not flip back to false)
+		colCheckbox.checked = true;
+		colCheckbox.dispatch("change");
+		assert.equal(app.settings.showCollisionArea, true);
+		assert.equal(app.showCollisionArea, true);
+		assert.deepEqual(
+			emitted.filter((e) => e.event === "update-subchar-collisions-0").at(-1),
+			{
+				event: "update-subchar-collisions-0",
+				payload: { visible: true, surfaceId: 0, collisions: [col0] },
+			},
+		);
+		assert.deepEqual(
+			emitted.filter((e) => e.event === "update-subchar-collisions-1").at(-1),
+			{
+				event: "update-subchar-collisions-1",
+				payload: { visible: true, surfaceId: 10, collisions: [col1] },
+			},
+		);
+
+		// 2. Unchecking the checkbox disables collision display and clears subchar overlays
+		emitted.length = 0;
+		colCheckbox.checked = false;
+		colCheckbox.dispatch("change");
+		assert.equal(app.settings.showCollisionArea, false);
+		assert.equal(app.showCollisionArea, false);
+		assert.deepEqual(
+			emitted.filter((e) => e.event === "update-subchar-collisions-0").at(-1),
+			{
+				event: "update-subchar-collisions-0",
+				payload: { visible: false, surfaceId: 0, collisions: [] },
+			},
+		);
+		assert.deepEqual(
+			emitted.filter((e) => e.event === "update-subchar-collisions-1").at(-1),
+			{
+				event: "update-subchar-collisions-1",
+				payload: { visible: false, surfaceId: 10, collisions: [] },
+			},
+		);
+
+		// 3. Direct handleMenuActionImpl works with both `{ app }` context and direct `app` context
+		handleMenuActionImpl(
+			app as unknown as Parameters<typeof handleMenuActionImpl>[0],
+			"toggle-collision-area",
+		);
+		assert.equal(app.settings.showCollisionArea, true);
+		assert.equal(colCheckbox.checked, true);
+
+		handleMenuActionImpl(
+			{
+				app,
+				elements: {},
+			},
+			"show-collision-area",
+			{ enabled: false },
+		);
+		assert.equal(app.settings.showCollisionArea, false);
+		assert.equal(colCheckbox.checked, false);
+	} finally {
+		globalThis.document = origDocument;
+		if (origTauri === undefined) {
+			delete globalThis.__TAURI_INTERNALS__;
+		} else {
+			globalThis.__TAURI_INTERNALS__ = origTauri;
+		}
+	}
+});

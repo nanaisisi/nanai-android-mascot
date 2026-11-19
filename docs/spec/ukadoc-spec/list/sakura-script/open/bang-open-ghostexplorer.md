@@ -6,12 +6,9 @@
 
 ## 突合結果
 
-\\![open,...] コマンドのパース処理を実装 (crates/ui/src/script/parser/brackets/handlers/raiselike.rs -> SakuraCommand::OpenDialog)。
+`\![open,ghostexplorer]` コマンドのパース (`crates/ui/src/script/parser/brackets/handlers/raiselike.rs`) およびゴーストエクスプローラモーダル表示ハンドリング (`ui/ts/ghost/command-handler/system/target.ts`) が完全実装済み。
 
 ## 実装箇所
 
-- `crates/ui/src/script/command.rs:87` `OpenDialog {`
-- `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:126` `callback(SakuraCommand::OpenDialog {`
-- `crates/ui/src/script/parser/brackets/handlers/underscore.rs:128` `callback(SakuraCommand::OpenDialog {`
-- `crates/ui/src/script/parser/brackets/handlers/underscore.rs:136` `callback(SakuraCommand::OpenDialog {`
-- `ui/js/ghost/sakura-rust-bridge.js:235` `case "OpenDialog":`
+- `crates/ui/src/script/parser/brackets/handlers/raiselike.rs` (`OpenDialog`)
+- `ui/ts/ghost/command-handler/system/target.ts` (`ghostexplorer`)

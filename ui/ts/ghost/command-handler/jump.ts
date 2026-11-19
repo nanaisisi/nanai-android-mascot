@@ -1,7 +1,4 @@
-/**
- * @file jump.ts
- * @brief \j[ID] / \j[URL] ジャンプコマンドハンドラ
- */
+import { invoke, isTauriAvailable } from "../../core/tauri-helper.js";
 
 export async function handleJumpCommand(
 	handler: import("../sakura-command-handler.js").SakuraCommandHandler,
@@ -11,13 +8,23 @@ export async function handleJumpCommand(
 	const destination = (target ?? "").trim();
 	if (!destination) return;
 
-	if (/^https?:\/\//i.test(destination)) {
+	if (
+		/^(https?|mailto|file):\/\//i.test(destination) ||
+		destination.startsWith("mailto:")
+	) {
 		try {
-			if (typeof globalThis !== "undefined" && globalThis.open) {
+			if (destination.startsWith("file://") && isTauriAvailable()) {
+				const filePath = destination.replace(/^file:\/\/\/?/i, "");
+				await invoke("open_path", { path: filePath });
+			} else if (typeof globalThis !== "undefined" && globalThis.open) {
 				globalThis.open(destination, "_blank", "noopener,noreferrer");
 			}
 		} catch (err) {
-			console.warn("Failed to open URL in browser:", destination, err);
+			console.warn(
+				"Failed to open URL/file in jump command:",
+				destination,
+				err,
+			);
 		}
 		return;
 	}

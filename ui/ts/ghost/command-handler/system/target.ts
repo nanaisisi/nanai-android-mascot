@@ -63,8 +63,17 @@ export async function handleOpenSystemTarget(
 		case "explorer":
 		case "shellexplorer":
 		case "balloonexplorer":
-		case "ghostexplorer": {
+		case "ghostexplorer":
+		case "pluginexplorer":
+		case "headlineexplorer":
+		case "headlinesensorexplorer":
+		case "dressupexplorer":
+		case "calendarpluginexplorer":
+		case "calendarskinexplorer": {
 			console.log(`📂 Open explorer requested: target=${target}`);
+			if (handler.app.modalManager) {
+				handler.app.modalManager.show("explorer-modal-content");
+			}
 			handler.app.toggleMenu?.();
 			break;
 		}
@@ -135,18 +144,37 @@ export async function handleOpenSystemTarget(
 			break;
 		}
 
+		case "help": {
+			console.log(`❓ Open help requested: param=${pathOrParam}`);
+			const helpUrl = pathOrParam
+				? `https://ukatech.shillest.net/ukadoc-ssp/${encodeURIComponent(pathOrParam)}`
+				: "https://ukatech.shillest.net/ukadoc-ssp/";
+			if (typeof globalThis !== "undefined" && globalThis.open) {
+				globalThis.open(helpUrl, "_blank", "noopener,noreferrer");
+			}
+			break;
+		}
+
 		case "readme":
-		case "history": {
-			console.log(`📄 Open document requested: ${target}`);
-			const currentGhost = handler.app.ghostController?.currentGhost;
-			const docPath = currentGhost?.path
-				? `${currentGhost.path}/${target}.txt`
-				: `${target}.txt`;
-			if (isTauriAvailable()) {
-				try {
-					await invoke("open_path", { path: docPath });
-				} catch (err) {
-					console.warn(`Failed to open ${target}:`, err);
+		case "history":
+		case "backlogviewer": {
+			console.log(`📄 Open document/backlog requested: ${target}`);
+			if (target === "backlogviewer") {
+				// \![open,backlogviewer]: バックログ (発言履歴) モーダルウィンドウ表示
+				if (handler.app.modalManager) {
+					handler.app.modalManager.show("backlog-modal-content");
+				}
+			} else {
+				const currentGhost = handler.app.ghostController?.currentGhost;
+				const docPath = currentGhost?.path
+					? `${currentGhost.path}/${target}.txt`
+					: `${target}.txt`;
+				if (isTauriAvailable()) {
+					try {
+						await invoke("open_path", { path: docPath });
+					} catch (err) {
+						console.warn(`Failed to open ${target}:`, err);
+					}
 				}
 			}
 			break;

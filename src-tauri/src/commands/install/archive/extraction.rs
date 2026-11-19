@@ -17,7 +17,10 @@ pub fn extract_zip_entries<R: std::io::Read + std::io::Seek>(
         let mut entry = match password {
             Some(pwd) => zip.by_index_decrypt(i, pwd.as_bytes()).map_err(|e| {
                 let msg = e.to_string().to_lowercase();
-                if msg.contains("password") || msg.contains("encrypted") || msg.contains("decryption") {
+                if msg.contains("password")
+                    || msg.contains("encrypted")
+                    || msg.contains("decryption")
+                {
                     format!("password error (incorrect password or encrypted): {}", e)
                 } else {
                     format!("Failed to read archive entry #{}: {}", i, e)
@@ -25,7 +28,10 @@ pub fn extract_zip_entries<R: std::io::Read + std::io::Seek>(
             })?,
             None => zip.by_index(i).map_err(|e| {
                 let msg = e.to_string().to_lowercase();
-                if msg.contains("password") || msg.contains("encrypted") || msg.contains("decryption") {
+                if msg.contains("password")
+                    || msg.contains("encrypted")
+                    || msg.contains("decryption")
+                {
                     format!("password error (archive is password-protected): {}", e)
                 } else {
                     format!("Failed to read archive entry #{}: {}", i, e)
@@ -82,15 +88,17 @@ pub fn extract_zip_entries<R: std::io::Read + std::io::Seek>(
             let entry_mtime = entry.last_modified().and_then(zip_datetime_to_system_time);
             let mut outfile = std::fs::File::create(&out_path)
                 .map_err(|e| format!("Failed to extract '{}': {}", out_path.display(), e))?;
-            std::io::copy(&mut entry, &mut outfile)
-                .map_err(|e| {
-                    let msg = e.to_string().to_lowercase();
-                    if msg.contains("password") || msg.contains("encrypted") || msg.contains("decryption") {
-                        format!("password error during extraction: {}", e)
-                    } else {
-                        format!("Failed writing file '{}': {}", out_path.display(), e)
-                    }
-                })?;
+            std::io::copy(&mut entry, &mut outfile).map_err(|e| {
+                let msg = e.to_string().to_lowercase();
+                if msg.contains("password")
+                    || msg.contains("encrypted")
+                    || msg.contains("decryption")
+                {
+                    format!("password error during extraction: {}", e)
+                } else {
+                    format!("Failed writing file '{}': {}", out_path.display(), e)
+                }
+            })?;
             if let Some(mtime) = entry_mtime {
                 let _ = outfile.set_modified(mtime);
             }

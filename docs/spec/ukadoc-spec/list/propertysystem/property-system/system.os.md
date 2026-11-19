@@ -6,7 +6,7 @@
 
 ## 突合結果
 
-UKADOC `system.os` 仕様に従い全 15 キー（`type`, `arch`, `name`, `version`, `build`, `parenttype`, `parentname`, `locale`, `locale.language`, `locale.country`, `timezone.offset`, `dst`, `uptime`, `unixtime`, `idletime`）をシステムの標準関数・`sys_locale`・`chrono`・`GetTickCount64` / `/proc/uptime` から完全に動的算出・評価するよう実装。
+UKADOC `system.os` 仕様に従い全 15 キー（`type`, `arch`, `name`, `version`, `build`, `parenttype`, `parentname`, `locale`, `locale.language`, `locale.country`, `timezone.offset`, `dst`, `uptime`, `unixtime`, `idletime`）をシステムの標準関数・`sys_locale`・`jiff`・`GetTickCount64` / `/proc/uptime` から完全に動的算出・評価するよう実装。
 
 ## 実装箇所
 

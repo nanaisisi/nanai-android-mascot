@@ -67,9 +67,7 @@ impl<'a> Expand_sakura_script_envParams<'a> {
 }
 
 pub fn expand_sakura_script_env(params: Expand_sakura_script_envParams<'_>) -> String {
-    let now = chrono::Local::now();
-    use chrono::Datelike;
-    use chrono::Timelike;
+    let now = jiff::ZonedDateTime::now();
 
     let text = params.text();
     let username = params.username();

@@ -140,3 +140,11 @@ fn test_parse_sakura_script_slash_prefix() {
     assert_eq!(tokens[5], SakuraToken::Scope(1));
     assert_eq!(tokens[6], SakuraToken::Surface(0));
 }
+
+#[test]
+fn test_parse_sakura_script_marker() {
+    let script = "\\![*]選択肢";
+    let tokens = parse_sakura_script(script);
+    assert_eq!(tokens[0], SakuraToken::Marker);
+    assert_eq!(tokens[1], SakuraToken::Text("選択肢".to_string()));
+}

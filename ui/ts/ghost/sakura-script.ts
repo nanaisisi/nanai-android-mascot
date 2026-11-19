@@ -278,6 +278,10 @@ export class SakuraScriptPlayer {
 				this.addAnchorToBalloon(app, scope, title, id);
 				break;
 			}
+			case "Marker": {
+				this.appendMarkerToBalloon(app, scope);
+				break;
+			}
 			case "Wait": {
 				nextDelayMs = stepRes.data?.duration_ms ?? 100;
 				break;
@@ -285,7 +289,9 @@ export class SakuraScriptPlayer {
 			case "Command": {
 				const cmd = stepRes.data?.command;
 				const args = stepRes.data?.args || [];
-				if (cmd && app?.sakuraCommandHandler?.runCommand) {
+				if (cmd === "marker" || cmd === "*") {
+					this.appendMarkerToBalloon(app, scope);
+				} else if (cmd && app?.sakuraCommandHandler?.runCommand) {
 					void app.sakuraCommandHandler.runCommand([cmd, ...args]);
 				}
 				break;
@@ -605,6 +611,35 @@ export class SakuraScriptPlayer {
 				}
 			});
 			textEl.appendChild(a);
+		}
+
+		if (dispEl?.style && isSinglePageUi()) {
+			dispEl.style.display = "block";
+		}
+
+		const theme = app?.currentBalloonTheme || "default";
+		const targetScope = scope;
+		void emit(`update-balloon-content-${targetScope}`, {
+			html: textEl ? textEl.innerHTML : "",
+			theme,
+			balloonId: this.scopeBalloonIds.get(targetScope) ?? null,
+		});
+	}
+
+	private appendMarkerToBalloon(
+		app: CommandHandlerApp | null,
+		scope: number,
+	): void {
+		const { textEl, dispEl } = this.getBalloonElements(app, scope);
+
+		if (
+			textEl &&
+			typeof document !== "undefined" &&
+			typeof document.createElement === "function"
+		) {
+			const markerSpan = document.createElement("span");
+			markerSpan.className = "balloon-marker";
+			textEl.appendChild(markerSpan);
 		}
 
 		if (dispEl?.style && isSinglePageUi()) {

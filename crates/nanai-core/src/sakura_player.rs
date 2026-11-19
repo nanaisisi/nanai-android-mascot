@@ -45,6 +45,8 @@ pub enum StepOutput {
         command: String,
         args: Vec<String>,
     },
+    /// 選択肢マーカー (\![*])
+    Marker { scope: u32 },
     /// スクリプト再生終了 (\e)
     Halt,
     /// 終了/無効ステップ
@@ -168,6 +170,9 @@ impl SakuraPlayerEngine {
                 scope: self.current_scope,
                 command,
                 args,
+            },
+            SakuraToken::Marker => StepOutput::Marker {
+                scope: self.current_scope,
             },
             SakuraToken::Font { .. }
             | SakuraToken::Sync(_)

@@ -246,12 +246,89 @@ export function applyAssetProperties(
 	setBalloonImage("arrow.filename", "--balloon-arrow-image");
 	// [clickwaitmarker.filename,ファイル名]:
 	setBalloonImage("clickwaitmarker.filename", "--balloon-clickwait-image");
-	// [marker.filename,ファイル名]:
-	setBalloonImage("marker.filename", "--balloon-marker-image");
+
+	// [marker.filename,ファイル名] または UKADOC 標準マーカー (`markers.png`, `markerk.png`, `markerp*def.png`, `marker.png`)
+	const defaultMarkerFile = p["marker.filename"]
+		? p["marker.filename"]
+		: scopeId === 1
+			? "markerk.png"
+			: scopeId >= 2
+				? `markerp${scopeId}def.png`
+				: "markers.png";
+
+	const resolveAndSetMarker = (
+		file: string,
+		fallbackFile: string,
+		cssVar: string,
+	) => {
+		if (typeof invoke === "function") {
+			void invoke("load_balloon_image", { name: themeName, file })
+				.then((dataUrl) => {
+					if (dataUrl) {
+						preloadBalloonAsset(dataUrl as string);
+						root.style.setProperty(cssVar, `url("${dataUrl}")`);
+					} else if (fallbackFile && fallbackFile !== file) {
+						resolveAndSetMarker(fallbackFile, "marker.png", cssVar);
+					}
+				})
+				.catch(() => {
+					if (fallbackFile && fallbackFile !== file) {
+						resolveAndSetMarker(fallbackFile, "marker.png", cssVar);
+					}
+				});
+		} else {
+			setFallbackAsset(themeName, file, cssVar);
+		}
+	};
+
+	resolveAndSetMarker(
+		defaultMarkerFile,
+		"markers.png",
+		"--balloon-marker-image",
+	);
+
 	// [onlinemarker.filename,ファイル名]:
 	setBalloonImage("onlinemarker.filename", "--balloon-online-image");
-	// [sstpmarker.filename,ファイル名]:
-	setBalloonImage("sstpmarker.filename", "--balloon-sstpmarker-image");
+
+	// [sstpmarker.filename,ファイル名] または UKADOC 標準 SSTP マーカー (`sstp_new.png`, `sstp_newk.png`, `sstp.png`, `sstpmarker.png`)
+	const defaultSstpMarkerFile = p["sstpmarker.filename"]
+		? p["sstpmarker.filename"]
+		: scopeId === 1
+			? "sstp_newk.png"
+			: scopeId >= 2
+				? `sstp_newp${scopeId}def.png`
+				: "sstp_new.png";
+
+	const resolveAndSetSstpMarker = (
+		file: string,
+		fallbackFile: string,
+		cssVar: string,
+	) => {
+		if (typeof invoke === "function") {
+			void invoke("load_balloon_image", { name: themeName, file })
+				.then((dataUrl) => {
+					if (dataUrl) {
+						preloadBalloonAsset(dataUrl as string);
+						root.style.setProperty(cssVar, `url("${dataUrl}")`);
+					} else if (fallbackFile && fallbackFile !== file) {
+						resolveAndSetSstpMarker(fallbackFile, "sstp.png", cssVar);
+					}
+				})
+				.catch(() => {
+					if (fallbackFile && fallbackFile !== file) {
+						resolveAndSetSstpMarker(fallbackFile, "sstp.png", cssVar);
+					}
+				});
+		} else {
+			setFallbackAsset(themeName, file, cssVar);
+		}
+	};
+
+	resolveAndSetSstpMarker(
+		defaultSstpMarkerFile,
+		"sstp.png",
+		"--balloon-sstpmarker-image",
+	);
 
 	const setMouseCursor = (propName: string, varName: string) => {
 		const filename = p[propName];

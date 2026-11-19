@@ -189,7 +189,7 @@ export async function handleGetPropertyCommand(
 	}
 
 	// 2. 単一プロパティ名取得時のフォールバック
-	const key = keyOrArgs;
+	const key = Array.isArray(keyOrArgs) ? (keyOrArgs[0] ?? "") : keyOrArgs;
 	if (!key) return "";
 	if (h?.app?.ghostController?.evaluateProperty) {
 		try {

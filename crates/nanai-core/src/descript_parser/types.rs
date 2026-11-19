@@ -80,8 +80,7 @@ impl DescriptManifest {
 
     /// [readme.charset,文字コード]: 明示指定されたリードミー文字コード (未指定時は None を返し、呼び出し側・OSシステム標準設定に委ねる)
     pub fn readme_charset(&self) -> Option<&str> {
-        self.get("readme.charset")
-            .or_else(|| self.get("charset"))
+        self.get("readme.charset").or_else(|| self.get("charset"))
     }
 
     /// インストール受け入れゴースト名一覧 (`install.accept`)
@@ -263,8 +262,14 @@ impl DescriptManifest {
         let x_key2 = format!("char{}.defaultleft", index);
         let y_key1 = format!("char{}.defaulty", index);
         let y_key2 = format!("char{}.defaulttop", index);
-        let x = self.get(&x_key1).or_else(|| self.get(&x_key2)).and_then(|v| v.parse::<i32>().ok())?;
-        let y = self.get(&y_key1).or_else(|| self.get(&y_key2)).and_then(|v| v.parse::<i32>().ok())?;
+        let x = self
+            .get(&x_key1)
+            .or_else(|| self.get(&x_key2))
+            .and_then(|v| v.parse::<i32>().ok())?;
+        let y = self
+            .get(&y_key1)
+            .or_else(|| self.get(&y_key2))
+            .and_then(|v| v.parse::<i32>().ok())?;
         Some((x, y))
     }
 

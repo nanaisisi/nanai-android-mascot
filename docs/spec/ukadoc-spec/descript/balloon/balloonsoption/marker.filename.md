@@ -6,10 +6,10 @@
 
 ## 突合結果
 
-`ui/ts/core/actions/balloon-descript/assets.ts` の `setBalloonImage("marker.filename", "--balloon-marker-image")` にて動的解決・CSSバインドを完全実装済み。
+`ui/ts/core/actions/balloon-descript/assets.ts` の `resolveAndSetMarker` およびスコープ別標準マーカー（`markers.png`, `markerk.png`, `markerp*def.png`, `marker.png`）のフォールバック・動的解決、`ui/ts/ghost/balloon-window/theme.ts` でのプリロードを完全実装済み。
 
 ## 実装箇所
 
-- `ui/css/balloon-window.css:248` `/* バルーンマーカー (marker.filename) */`
-- `ui/ts/core/actions/balloon-descript/assets.ts:165` `// [marker.filename,ファイル名]:`
-- `ui/ts/core/actions/balloon-descript/assets.ts:166` `setBalloonImage("marker.filename", "--balloon-marker-image");`
+- `ui/css/balloon-window.css` `/* バルーンマーカー (marker.filename) */`
+- `ui/ts/core/actions/balloon-descript/assets.ts` `resolveAndSetMarker`
+- `ui/ts/ghost/balloon-window/theme.ts` マーカー画像プリロード処理

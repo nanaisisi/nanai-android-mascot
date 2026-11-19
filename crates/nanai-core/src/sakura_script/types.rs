@@ -220,6 +220,8 @@ pub enum SakuraToken {
     RawToggle { active: bool, delimiter: String },
     /// 拡張コマンド (\![...])
     Command { command: String, args: Vec<String> },
+    /// 選択肢マーカー / 箇条書き記号 (\![*])
+    Marker,
     /// スクリプト終了 (\e)
     Halt,
 }

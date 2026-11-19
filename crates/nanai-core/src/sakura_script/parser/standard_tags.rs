@@ -192,9 +192,13 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
             '!' => {
                 chars.next();
                 if let Some(arg) = parse_bracket_arg(chars) {
-                    let args = split_bracket_args(&arg);
-                    let command = args.first().cloned().unwrap_or_default();
-                    tokens.push(SakuraToken::Command { command, args });
+                    if arg.trim() == "*" {
+                        tokens.push(SakuraToken::Marker);
+                    } else {
+                        let args = split_bracket_args(&arg);
+                        let command = args.first().cloned().unwrap_or_default();
+                        tokens.push(SakuraToken::Command { command, args });
+                    }
                 }
             }
             '_' => {

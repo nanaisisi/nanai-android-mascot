@@ -85,7 +85,7 @@ export function onGhostClick(
 	clientY?: number,
 	rect?: unknown,
 	scopeId: number = 0,
-	clickType?: "single" | "double",
+	clickType: "single" | "double" = "single",
 ) {
 	const app = this as MouseApp;
 	if (isTimeCriticalPlaying(app)) return;

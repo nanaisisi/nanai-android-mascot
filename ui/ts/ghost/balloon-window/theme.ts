@@ -280,6 +280,15 @@ export async function loadBalloonSkinImages(
 			name: theme,
 			file: "online0.png",
 		}).catch(() => null),
+		invoke("load_balloon_image", { name: theme, file: "markers.png" }).catch(
+			() => null,
+		),
+		invoke("load_balloon_image", { name: theme, file: "markerk.png" }).catch(
+			() => null,
+		),
+		invoke("load_balloon_image", { name: theme, file: "marker.png" }).catch(
+			() => null,
+		),
 	]);
 
 	return bgImage;

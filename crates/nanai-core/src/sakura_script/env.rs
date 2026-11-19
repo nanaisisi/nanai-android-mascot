@@ -280,7 +280,7 @@ pub fn expand_sakura_environment_variables(script: &str, ctx: &SakuraEnvContext)
         result = result.replacen("%m?", word, 1);
     }
 
-    result = result.replace("%*", "");
+    result = result.replace("%*", "\\![*]");
     result = result.replace("%system.os", ctx.system_os());
     result = result.replace("%system.version", ctx.system_version());
 

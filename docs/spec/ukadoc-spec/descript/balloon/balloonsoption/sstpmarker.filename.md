@@ -6,11 +6,10 @@
 
 ## 突合結果
 
-`ui/js/core/actions/balloon-descript/assets.js` の `applyAssetProperties()` 内 `setBalloonImage("sstpmarker.filename", "--balloon-sstpmarker-image")` にて動的解決・バインド対応済。
+`ui/ts/core/actions/balloon-descript/assets.ts` の `setBalloonImage("sstpmarker.filename", "--balloon-sstpmarker-image")` にて動的解決・バインド対応済。
 
 ## 実装箇所
 
-- `ui/css/balloon-window.css:260` `/* SSTPマーカー (sstpmarker.filename) */`
-- `ui/ts/core/actions/balloon-descript/assets.ts:169` `// [sstpmarker.filename,ファイル名]:`
-- `ui/ts/core/actions/balloon-descript/assets.ts:170` `setBalloonImage("sstpmarker.filename", "--balloon-sstpmarker-image");`
-- `tests/core-coverage-boost/balloon-descript-coverage.test.ts:122` `"sstpmarker.filename": "sstp.png",`
+- `ui/css/balloon-window.css` `/* SSTPマーカー (sstpmarker.filename) */`
+- `ui/ts/core/actions/balloon-descript/assets.ts` `setBalloonImage("sstpmarker.filename", "--balloon-sstpmarker-image");`
+- `tests/core-coverage-boost/balloon-descript-coverage.test.ts` `"sstpmarker.filename": "sstp.png"`

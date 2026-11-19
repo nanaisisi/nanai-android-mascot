@@ -200,6 +200,7 @@ export function setupGhostDragging(
 	let initialLeft = 0;
 	let initialTop = 0;
 	let rafPending = false;
+	let lastTouchTimestamp = 0;
 
 	const leftClickTracker = createClickTracker(350, 10);
 	const exClickTracker = createClickTracker(350, 10);
@@ -250,6 +251,20 @@ export function setupGhostDragging(
 
 	const onPointerDown = (evt: Event) => {
 		const e = evt as PointerEventEx;
+		const isTouchEvt = Boolean(
+			e.type?.startsWith("touch") ||
+				e.touches ||
+				(e.pointerType && e.pointerType !== "mouse"),
+		);
+		if (isTouchEvt) {
+			lastTouchTimestamp = Date.now();
+		} else if (
+			(e.type === "mousedown" || e.type === "pointerdown") &&
+			Date.now() - lastTouchTimestamp < 600
+		) {
+			return;
+		}
+
 		const clientX = Number(e.clientX ?? e.touches?.[0]?.clientX ?? 0);
 		const clientY = Number(e.clientY ?? e.touches?.[0]?.clientY ?? 0);
 		const img = target.querySelector("img");
@@ -336,6 +351,20 @@ export function setupGhostDragging(
 
 	const onPointerMove = (evt: Event) => {
 		const e = evt as PointerEventEx;
+		const isTouchEvt = Boolean(
+			e.type?.startsWith("touch") ||
+				e.touches ||
+				(e.pointerType && e.pointerType !== "mouse"),
+		);
+		if (isTouchEvt) {
+			lastTouchTimestamp = Date.now();
+		} else if (
+			(e.type === "mousemove" || e.type === "pointermove") &&
+			Date.now() - lastTouchTimestamp < 600
+		) {
+			return;
+		}
+
 		if (activeExPress && !activeExPress.hasMoved) {
 			const exX = Number(
 				e.clientX ?? e.touches?.[0]?.clientX ?? activeExPress.startX,
@@ -420,6 +449,21 @@ export function setupGhostDragging(
 
 	const onPointerUp = (evt: Event) => {
 		const e = evt as PointerEventEx;
+		const isTouchEvt = Boolean(
+			e.type?.startsWith("touch") ||
+				e.changedTouches ||
+				e.touches ||
+				(e.pointerType && e.pointerType !== "mouse"),
+		);
+		if (isTouchEvt) {
+			lastTouchTimestamp = Date.now();
+		} else if (
+			(e.type === "mouseup" || e.type === "pointerup") &&
+			Date.now() - lastTouchTimestamp < 600
+		) {
+			return;
+		}
+
 		const exButtonName = getExtendedButtonName(e.button);
 		if (
 			exButtonName &&

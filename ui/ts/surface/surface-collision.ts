@@ -266,11 +266,20 @@ export const surfaceCollisionMethods = {
 		const height = canvas.height || 400;
 		ctx.clearRect(0, 0, width, height);
 
-		// ウインドウ系の当たり判定（サーフィス／ウィンドウ外枠）
+		// 【1つ目の線】ウインドウ(サーフェス全体)の境界線 (Window Boundary Line)
 		if (width > 2 && height > 2) {
-			ctx.strokeStyle = "#0078d7";
+			ctx.strokeStyle = "rgba(0, 120, 215, 0.9)";
 			ctx.lineWidth = 2;
+			if (typeof ctx.setLineDash === "function") {
+				ctx.setLineDash([4, 4]);
+			}
 			ctx.strokeRect(1, 1, width - 2, height - 2);
+			if (typeof ctx.setLineDash === "function") {
+				ctx.setLineDash([]);
+			}
+			ctx.fillStyle = "#0078d7";
+			ctx.font = "bold 10px sans-serif";
+			ctx.fillText(`Window (${width}x${height})`, 4, 12);
 		}
 
 		const sid =

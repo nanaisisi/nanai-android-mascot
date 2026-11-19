@@ -276,14 +276,36 @@ export function renderCollisionOverlayForScope(
 	const colList =
 		animColList.length > 0 ? [...baseColList, ...animColList] : baseColList;
 
+	const iconRectsMap = sm?.iconRects as Record<string, number[]> | undefined;
+	const pointsMap = sm?.points as
+		| Record<string, Record<string, unknown>>
+		| undefined;
+	const iconRect = Array.isArray(iconRectsMap?.[sid]) ? iconRectsMap[sid] : null;
+	const points =
+		pointsMap?.[sid] && typeof pointsMap[sid] === "object"
+			? pointsMap[sid]
+			: null;
+	const collisionMode =
+		sm?.collisionMode === "rect" ? ("rect" as const) : ("full" as const);
+
 	if (isTauriAvailable()) {
 		try {
+			const eventPayload: Record<string, unknown> = {
+				visible: showCollisions,
+				surfaceId: resolvedSurfaceId,
+				collisions: showCollisions ? colList : [],
+			};
+			if (showCollisions && iconRect) {
+				eventPayload.iconRect = iconRect;
+			}
+			if (showCollisions && points) {
+				eventPayload.points = points;
+			}
+			if (collisionMode !== "full") {
+				eventPayload.mode = collisionMode;
+			}
 			void Promise.resolve(
-				emit(`update-subchar-collisions-${scopeId}`, {
-					visible: showCollisions,
-					surfaceId: resolvedSurfaceId,
-					collisions: showCollisions ? colList : [],
-				}),
+				emit(`update-subchar-collisions-${scopeId}`, eventPayload),
 			).catch(() => {});
 		} catch (_e) {}
 	}

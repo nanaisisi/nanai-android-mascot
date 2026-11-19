@@ -7,6 +7,6 @@
 | [arrow.filename,ファイル名](arrow.filename.md)                      | arrow.filename           |  ✅ 実装済  |
 | [balloons\*s.txt/balloonk\*s.txt](balloons-s-txt-balloonk-s-txt.md) | balloons                 |  ✅ 実装済  |
 | [clickwaitmarker.filename,ファイル名](clickwaitmarker.filename.md)  | clickwaitmarker.filename |  ✅ 実装済  |
-| [marker.filename,ファイル名](marker.filename.md)                    | marker.filename          | ⚠️ 一部対応 |
-| [onlinemarker.filename,ファイル名](onlinemarker.filename.md)        | onlinemarker.filename    | ⚠️ 一部対応 |
+| [marker.filename,ファイル名](marker.filename.md)                    | marker.filename          |  ✅ 実装済  |
+| [onlinemarker.filename,ファイル名](onlinemarker.filename.md)        | onlinemarker.filename    |  ✅ 実装済  |
 | [sstpmarker.filename,ファイル名](sstpmarker.filename.md)            | sstpmarker.filename      |  ✅ 実装済  |

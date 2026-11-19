@@ -18,6 +18,10 @@ import {
 	startDraggingWindow,
 } from "../core/tauri-helper.js";
 import {
+	type CollisionDisplayMode,
+	renderCollisionOverlay,
+} from "./collision-overlay-renderer.js";
+import {
 	calculateWindowSnap,
 	formatSnapTooltipText,
 	type MonitorLike,
@@ -242,142 +246,6 @@ function openCharacterMenu(
 	});
 }
 
-const WINDOW_COLLISION_STROKE_COLOR = "#0078d7";
-const PART_COLLISION_STROKE_COLOR = "#ff0000";
-
-function resolveCollisionShape(col: Record<string, unknown>): {
-	kind: string;
-	coords: Record<string, unknown>;
-} {
-	const rawShape = col.shape;
-	if (rawShape && typeof rawShape === "object") {
-		const s = rawShape as Record<string, unknown>;
-		if (s.Rect && typeof s.Rect === "object") {
-			return { kind: "rect", coords: s.Rect as Record<string, unknown> };
-		}
-		if (s.Circle && typeof s.Circle === "object") {
-			return { kind: "circle", coords: s.Circle as Record<string, unknown> };
-		}
-		if (s.Ellipse && typeof s.Ellipse === "object") {
-			return { kind: "ellipse", coords: s.Ellipse as Record<string, unknown> };
-		}
-		if (s.Polygon && typeof s.Polygon === "object") {
-			return { kind: "polygon", coords: s.Polygon as Record<string, unknown> };
-		}
-		const explicitType = s.type ?? s.shape;
-		if (typeof explicitType === "string") {
-			return { kind: explicitType.toLowerCase(), coords: s };
-		}
-		return { kind: "rect", coords: s };
-	}
-	return {
-		kind: String(rawShape ?? "rect").toLowerCase(),
-		coords: col,
-	};
-}
-
-function drawCollisionLabel(
-	ctx: CanvasRenderingContext2D,
-	name: string,
-	x: number,
-	y: number,
-) {
-	if (!name || typeof ctx.fillText !== "function") return;
-	ctx.font = "bold 11px sans-serif";
-	ctx.fillStyle = PART_COLLISION_STROKE_COLOR;
-	ctx.fillText(name, x, Math.max(11, y));
-}
-
-function drawCollisionAreasOnSubcharCanvas(
-	canvas: HTMLCanvasElement,
-	collisions: Array<Record<string, unknown>>,
-	scale: number,
-) {
-	if (typeof canvas.getContext !== "function") return;
-	const ctx = canvas.getContext("2d");
-	if (!ctx) return;
-
-	if (typeof ctx.clearRect === "function") {
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
-	}
-
-	if (canvas.width > 2 && canvas.height > 2) {
-		ctx.strokeStyle = WINDOW_COLLISION_STROKE_COLOR;
-		ctx.lineWidth = 2;
-		ctx.strokeRect?.(1, 1, canvas.width - 2, canvas.height - 2);
-	}
-
-	collisions.forEach((col, idx) => {
-		ctx.strokeStyle = PART_COLLISION_STROKE_COLOR;
-		ctx.lineWidth = 2;
-
-		const name = String(col.name ?? `col${idx}`);
-		const { kind, coords } = resolveCollisionShape(col);
-
-		if (
-			kind === "rect" ||
-			(kind !== "circle" &&
-				kind !== "ellipse" &&
-				kind !== "polygon" &&
-				coords.x1 !== undefined)
-		) {
-			const rawX1 = Number(coords.x1 ?? 0);
-			const rawY1 = Number(coords.y1 ?? 0);
-			const rawX2 = Number(coords.x2 ?? rawX1 + 40);
-			const rawY2 = Number(coords.y2 ?? rawY1 + 40);
-			const x = Math.min(rawX1, rawX2) * scale;
-			const y = Math.min(rawY1, rawY2) * scale;
-			const w = Math.abs(rawX2 - rawX1) * scale;
-			const h = Math.abs(rawY2 - rawY1) * scale;
-			ctx.strokeRect?.(x, y, w, h);
-			drawCollisionLabel(ctx, name, x + 4, y + 14);
-			return;
-		}
-
-		if (kind === "circle" || kind === "ellipse") {
-			const cx = Number(coords.cx ?? 50) * scale;
-			const cy = Number(coords.cy ?? 50) * scale;
-			const rx = Math.max(0, Number(coords.rx ?? coords.r ?? 30) * scale);
-			const ry = Math.max(0, Number(coords.ry ?? coords.r ?? 30) * scale);
-			ctx.beginPath?.();
-			if (typeof ctx.ellipse === "function") {
-				ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
-			} else {
-				ctx.arc?.(cx, cy, rx, 0, Math.PI * 2);
-			}
-			ctx.stroke?.();
-			drawCollisionLabel(ctx, name, Math.max(0, cx - 10), cy);
-			return;
-		}
-
-		if (kind === "polygon" && Array.isArray(coords.vertices)) {
-			const vertices = coords.vertices
-				.map((pt) => {
-					if (Array.isArray(pt)) {
-						return [Number(pt[0] ?? 0) * scale, Number(pt[1] ?? 0) * scale];
-					}
-					if (pt && typeof pt === "object") {
-						const pObj = pt as { x?: number; y?: number };
-						return [Number(pObj.x ?? 0) * scale, Number(pObj.y ?? 0) * scale];
-					}
-					return null;
-				})
-				.filter((pt): pt is [number, number] => pt !== null);
-
-			if (vertices.length >= 2) {
-				ctx.beginPath?.();
-				ctx.moveTo?.(vertices[0][0], vertices[0][1]);
-				for (let i = 1; i < vertices.length; i += 1) {
-					ctx.lineTo?.(vertices[i][0], vertices[i][1]);
-				}
-				ctx.closePath?.();
-				ctx.stroke?.();
-				drawCollisionLabel(ctx, name, vertices[0][0] + 4, vertices[0][1] + 14);
-			}
-		}
-	});
-}
-
 function initCharacterWindow() {
 	const img = document.getElementById("subchar-img") as HTMLImageElement | null;
 	const root = document.getElementById("subchar-root");
@@ -392,7 +260,10 @@ function initCharacterWindow() {
 	let lastSyncedHeight = 0;
 	let initialPos: { x: number; y: number } | null = null;
 	let showCollisions = false;
+	let currentCollisionMode: CollisionDisplayMode = "full";
 	let currentCollisions: Array<Record<string, unknown>> = [];
+	let currentIconRect: number[] | null = null;
+	let currentPoints: Record<string, unknown> | null = null;
 	let collisionCanvas: HTMLCanvasElement | null =
 		typeof document.getElementById === "function"
 			? (document.getElementById(
@@ -453,11 +324,13 @@ function initCharacterWindow() {
 		collisionCanvas.style.height = `${scaledH}px`;
 		collisionCanvas.style.display = "block";
 
-		drawCollisionAreasOnSubcharCanvas(
-			collisionCanvas,
-			currentCollisions,
-			currentScale,
-		);
+		renderCollisionOverlay(collisionCanvas, {
+			collisions: currentCollisions,
+			scale: currentScale,
+			mode: currentCollisionMode,
+			iconRect: currentIconRect,
+			points: currentPoints,
+		});
 	};
 
 	const refreshInitialPositionFromWindow = async () => {
@@ -573,14 +446,25 @@ function initCharacterWindow() {
 				event as {
 					payload?: {
 						visible?: boolean;
+						mode?: CollisionDisplayMode;
 						collisions?: Array<Record<string, unknown>>;
+						iconRect?: number[] | null;
+						points?: Record<string, unknown> | null;
 					} | null;
 				}
 			)?.payload;
 			showCollisions = Boolean(payload?.visible);
+			currentCollisionMode = payload?.mode === "rect" ? "rect" : "full";
 			currentCollisions = Array.isArray(payload?.collisions)
 				? payload.collisions
 				: [];
+			currentIconRect = Array.isArray(payload?.iconRect)
+				? payload.iconRect
+				: null;
+			currentPoints =
+				payload?.points && typeof payload.points === "object"
+					? payload.points
+					: null;
 			renderSubcharCollisionCanvas();
 		});
 
@@ -590,15 +474,32 @@ function initCharacterWindow() {
 					payload?: {
 						src?: string;
 						showCollisions?: boolean;
+						mode?: CollisionDisplayMode;
 						collisions?: Array<Record<string, unknown>>;
+						iconRect?: number[] | null;
+						points?: Record<string, unknown> | null;
 					} | null;
 				}
 			)?.payload;
 			if (typeof payload?.showCollisions === "boolean") {
 				showCollisions = payload.showCollisions;
 			}
+			if (payload?.mode === "rect" || payload?.mode === "full") {
+				currentCollisionMode = payload.mode;
+			}
 			if (Array.isArray(payload?.collisions)) {
 				currentCollisions = payload.collisions;
+			}
+			if (payload?.iconRect !== undefined) {
+				currentIconRect = Array.isArray(payload.iconRect)
+					? payload.iconRect
+					: null;
+			}
+			if (payload?.points !== undefined) {
+				currentPoints =
+					payload.points && typeof payload.points === "object"
+						? payload.points
+						: null;
 			}
 			const src = payload?.src;
 			if (src && img) {

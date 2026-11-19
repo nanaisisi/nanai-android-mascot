@@ -9,6 +9,10 @@ import type {
 } from "../core/wasm/pkg/nanai_core.js";
 import { wasmBridge } from "../core/wasm-bridge.js";
 import {
+	type CollisionDisplayMode,
+	renderCollisionOverlay,
+} from "./collision-overlay-renderer.js";
+import {
 	collisionContains,
 	collisionRecord,
 	type RawCollisionArea,
@@ -58,6 +62,14 @@ export interface CursorDefinitionRecord {
 
 export interface SurfaceCollisionContext {
 	collisions?: Record<string | number, CollisionAreaRecord[]>;
+	animations?: Record<
+		string | number,
+		| Array<{ collisions?: CollisionAreaRecord[] }>
+		| Record<string, { collisions?: CollisionAreaRecord[] }>
+	>;
+	iconRects?: Record<string | number, number[]>;
+	points?: Record<string | number, Record<string, unknown>>;
+	collisionMode?: CollisionDisplayMode;
 	aliases?: Record<string, number[]> | null;
 	keroAliases?: Record<string, number[]> | null;
 	charAliases?: Record<number | string, Record<string, number[]>> | null;

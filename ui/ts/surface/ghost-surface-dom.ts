@@ -180,5 +180,96 @@ export async function applySurfaceImageToDom(
                                ${errorAttr}
                                style="width: 100%; height: 100%; object-fit: contain; pointer-events: auto;">`;
 	}
+
+	renderCollisionOverlayForScope(
+		controller,
+		scopeId,
+		surfaceId,
+		placeholder || img?.parentElement || null,
+	);
 	return transparentSrc;
+}
+
+export function renderCollisionOverlayForScope(
+	controller: GhostSurfaceControllerInterface,
+	scopeId: number,
+	surfaceId: number | string,
+	ghostDisplayEl: HTMLElement | null,
+) {
+	if (typeof document === "undefined") return;
+
+	const app = controller.app as Record<string, unknown> | undefined;
+	const settings = (app?.settings as Record<string, unknown>) || {};
+	const colInput =
+		typeof document.getElementById === "function"
+			? (document.getElementById(
+					"dev-check-collision",
+				) as HTMLInputElement | null)
+			: null;
+	const showCollisions = Boolean(
+		settings.showCollisionArea || app?.showCollisionArea || colInput?.checked,
+	);
+
+	const container =
+		ghostDisplayEl ||
+		(typeof document.getElementById === "function"
+			? document.getElementById(
+					scopeId === 1 ? "kero-display" : "ghost-display",
+				)
+			: null) ||
+		(typeof document.querySelector === "function"
+			? document.querySelector(`.ghost-display[data-scope="${scopeId}"]`)
+			: null);
+
+	if (!container) return;
+
+	let canvas = (
+		typeof container.querySelector === "function"
+			? container.querySelector(".collision-overlay-canvas")
+			: null
+	) as HTMLCanvasElement | null;
+
+	if (!showCollisions) {
+		if (canvas?.style) canvas.style.display = "none";
+		return;
+	}
+
+	if (!canvas && typeof document.createElement === "function") {
+		canvas = document.createElement("canvas");
+		canvas.className = "collision-overlay-canvas";
+		container.appendChild(canvas);
+	}
+
+	if (!canvas) return;
+
+	const img = (
+		typeof container.querySelector === "function"
+			? container.querySelector("img")
+			: null
+	) as HTMLImageElement | null;
+	const sm = app?.surfaceManager as Record<string, unknown> | undefined;
+	const baseW = Number(sm?.baseWidth) || 200;
+	const baseH = Number(sm?.baseHeight) || 400;
+	const w = Math.max(
+		baseW,
+		img?.naturalWidth || img?.width || container.clientWidth || 200,
+	);
+	const h = Math.max(
+		baseH,
+		img?.naturalHeight || img?.height || container.clientHeight || 400,
+	);
+
+	canvas.width = w;
+	canvas.height = h;
+	if (canvas.style) canvas.style.display = "block";
+
+	if (sm && typeof sm.renderCollisionOverlayCanvas === "function") {
+		(
+			sm.renderCollisionOverlayCanvas as (
+				c: HTMLCanvasElement,
+				sid: number | string,
+				s: number,
+			) => void
+		)(canvas, surfaceId, scopeId);
+	}
 }

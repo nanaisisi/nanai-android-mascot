@@ -284,6 +284,16 @@ export function handleMenuActionImpl(
 					context.app as { renderCollisionOverlay: () => void }
 				).renderCollisionOverlay();
 			}
+			if (context.ghostController?.updateSurface) {
+				void context.ghostController.updateSurface(
+					(
+						context.ghostController as unknown as {
+							currentSurfaces?: Map<number, number>;
+						}
+					).currentSurfaces?.get(0) ?? 0,
+					0,
+				);
+			}
 		}
 		return;
 	}

@@ -139,7 +139,7 @@ export function showDevPalette(options: DevPaletteOptions = {}) {
 		{
 			id: "dev-check-collision",
 			label: "当たり判定を表示",
-			defaultChecked: true,
+			defaultChecked: false,
 		},
 		{
 			id: "dev-check-balloon-test",
@@ -198,10 +198,49 @@ export function showDevPalette(options: DevPaletteOptions = {}) {
 		},
 	];
 
+	const mascotApp =
+		(options.app as {
+			settings?: Record<string, unknown>;
+			showCollisionArea?: boolean;
+			handleMenuAction?: (act: string) => void;
+		}) ||
+		(
+			globalThis as unknown as {
+				mascotApp?: {
+					settings?: Record<string, unknown>;
+					showCollisionArea?: boolean;
+					handleMenuAction?: (act: string) => void;
+				};
+			}
+		).mascotApp;
+
 	checkItems.forEach((item) => {
 		const row = document.createElement("label");
 		row.style.cssText = "display: block; margin-bottom: 4px; cursor: pointer;";
-		row.innerHTML = `<input type="checkbox" id="${item.id}" ${item.defaultChecked ? "checked" : ""} style="margin-right: 4px;" /> ${item.label}`;
+		const isColCheck = item.id === "dev-check-collision";
+		const isChecked = isColCheck
+			? Boolean(
+					mascotApp?.settings?.showCollisionArea ??
+						mascotApp?.showCollisionArea ??
+						false,
+				)
+			: item.defaultChecked;
+		row.innerHTML = `<input type="checkbox" id="${item.id}" ${isChecked ? "checked" : ""} style="margin-right: 4px;" /> ${item.label}`;
+
+		const input = row.querySelector("input");
+		if (isColCheck && input) {
+			input.addEventListener("change", () => {
+				if (mascotApp) {
+					if (!mascotApp.settings) mascotApp.settings = {};
+					mascotApp.settings.showCollisionArea = input.checked;
+					mascotApp.showCollisionArea = input.checked;
+					if (typeof mascotApp.handleMenuAction === "function") {
+						mascotApp.handleMenuAction("toggle-collision-area");
+					}
+				}
+			});
+		}
+
 		body.appendChild(row);
 	});
 

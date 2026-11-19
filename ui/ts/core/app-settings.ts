@@ -39,7 +39,7 @@ export const settingsMethods = {
 				...app.settings,
 				developerModeEnabled: true,
 				devModeEnabled: true,
-				showCollisionArea: true,
+				showCollisionArea: false,
 			};
 		}
 	},

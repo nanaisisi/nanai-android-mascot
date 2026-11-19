@@ -53,7 +53,22 @@ pub fn perform_refresh_cleanup(target_dir: &Path, undelete_mask: &[String]) {
 }
 
 pub fn process_delete_txt(target_dir: &Path) {
-    for filename in ["delete.txt", "delete1.txt"] {
+    let mut names = vec!["delete.txt".to_string()];
+    if let Ok(rd) = std::fs::read_dir(target_dir) {
+        let mut nums: Vec<String> = rd
+            .flatten()
+            .filter_map(|e| e.file_name().to_str().map(str::to_string))
+            .filter(|n| {
+                let l = n.to_lowercase();
+                l.strip_prefix("delete")
+                    .and_then(|r| r.strip_suffix(".txt"))
+                    .is_some_and(|d| !d.is_empty() && d.bytes().all(|b| b.is_ascii_digit()))
+            })
+            .collect();
+        nums.sort();
+        names.extend(nums);
+    }
+    for filename in names {
         let delete_txt_path = target_dir.join(filename);
         if delete_txt_path.exists()
             && let Ok(del_content) = std::fs::read_to_string(&delete_txt_path)

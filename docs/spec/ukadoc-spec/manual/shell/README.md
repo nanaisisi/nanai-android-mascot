@@ -9,10 +9,10 @@
 | [`(element).pna`](element-pna.md) | pnaFileName | ✅ 実装済 |
 | [`(element).png`](element-png.md) | composeSurfaceElements, compute_surface_composition_plan | ✅ 実装済 |
 | [`shell/master/makoto.dll`](makoto-dll.md) | shell/master/makoto.dll | ❌ 未実装 |
-| [`shell/master/readme.txt`](readme-txt.md) | shell/master/readme.txt | ❌ 未実装 |
+| [readme-txt](readme-txt.md) | read_shell_readme, get_shell_readme | ✅ 実装済 |
 | [`surface*.pna`](surface-pna.md) | load_surface_pna | ✅ 実装済 |
 | [`surface*.png`](surface-png.md) | load_surface_image | ⚠️ 一部対応 |
 | [`surfaces**.txt`](surfaces-ext-txt.md) | surfaces2.txt | ⚠️ 一部対応 |
 | [`surfaces.txt`](surfaces-txt.md) | parse_surfaces_txt | ✅ 実装済 |
 | [`surfacetable.txt`](surfacetable-txt.md) | surfacetable.txt | ⚠️ 一部対応 |
-| [`shell/master/thumbnail.png`](thumbnail-png.md) | shell/master/thumbnail.png | ❌ 未実装 |
+| [thumbnail-png](thumbnail-png.md) | find_shell_thumbnail, get_shell_thumbnail | ✅ 実装済 |

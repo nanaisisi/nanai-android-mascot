@@ -579,3 +579,55 @@ pub fn balloon_descript_map(dir: &std::path::Path) -> std::collections::BTreeMap
 pub fn list_balloons(app_handle: tauri::AppHandle) -> Result<Vec<BalloonInfo>, String> {
     scan_balloons(app_handle)
 }
+
+/// バルーン UI 付随画像（ボタン・clickwait・marker・sstp 等）のファイル解決。
+/// 種別 `stem`（例: "cancel_up", "clickwait"）に対し、スコープ別
+/// (`s`=sakura, `k`=kero, `p<N>`=char N) 派生名 → 無印の順で探し、
+/// png/bmp（および透過用 .pna 併存）の実在ファイルのみ返す。
+pub fn resolve_balloon_ui_asset(
+    dir: &std::path::Path,
+    stem: &str,
+    scope_id: i32,
+) -> Option<PathBuf> {
+    let suffix = match scope_id {
+        0 => "s".to_string(),
+        1 => "k".to_string(),
+        n => format!("p{}", n),
+    };
+    let names = [format!("{}{}", stem, suffix), stem.to_string()];
+    for n in &names {
+        for ext in ["png", "bmp", "PNG", "BMP"] {
+            let p = dir.join(format!("{}.{}", n, ext));
+            if p.is_file() {
+                return Some(p);
+            }
+        }
+    }
+    None
+}
+
+#[cfg(test)]
+mod ui_asset_tests {
+    use super::resolve_balloon_ui_asset;
+
+    #[test]
+    fn resolves_scope_specific_then_generic() {
+        let d = std::env::temp_dir().join("nam_balloon_ui_asset_test");
+        let _ = std::fs::remove_dir_all(&d);
+        std::fs::create_dir_all(&d).unwrap();
+        std::fs::write(d.join("clickwait.png"), b"x").unwrap();
+        std::fs::write(d.join("clickwaitk.png"), b"x").unwrap();
+        assert!(
+            resolve_balloon_ui_asset(&d, "clickwait", 1)
+                .unwrap()
+                .ends_with("clickwaitk.png")
+        );
+        assert!(
+            resolve_balloon_ui_asset(&d, "clickwait", 0)
+                .unwrap()
+                .ends_with("clickwait.png")
+        );
+        assert!(resolve_balloon_ui_asset(&d, "ok_up", 0).is_none());
+        let _ = std::fs::remove_dir_all(&d);
+    }
+}

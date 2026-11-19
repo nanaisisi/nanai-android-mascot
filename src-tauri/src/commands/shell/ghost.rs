@@ -21,6 +21,7 @@ pub async fn get_ghost_info(
 
     // 省略されているプロパティはデフォルト値かNoneを入れる
     Ok(GhostInfo {
+        assets: Default::default(),
         name: manifest.display_name().to_string(),
         version: manifest.version().map(ToString::to_string),
         path: dir.to_string_lossy().to_string(),

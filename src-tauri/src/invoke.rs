@@ -1,4 +1,4 @@
-//! Tauri Invoke コマンドハンドラー一括登録モジュール
+﻿//! Tauri Invoke コマンドハンドラー一括登録モジュール
 
 use crate::commands;
 use crate::fmo;
@@ -15,6 +15,8 @@ pub fn get_invoke_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         commands::file::get_recent_files,
         commands::file::open_ghost_directory,
         commands::shell::shell_manifest,
+        commands::shell::get_shell_readme,
+        commands::shell::get_shell_thumbnail,
         commands::shell::parse_sakura_script,
         commands::shell::parse_surfaces_text,
         commands::shell::animation_timeline,

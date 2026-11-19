@@ -28,6 +28,7 @@ pub async fn generate_updates2_dau(
         }
     }
 
+    let upd_filter = crate::ghost::scan::directory::package_files::IncludeFilter::load_update(&dir);
     let mut lines = Vec::new();
     let walker = WalkDir::new(&dir).follow_links(false).sort_by_file_name();
 
@@ -47,7 +48,7 @@ pub async fn generate_updates2_dau(
                 continue;
             }
 
-            let mut skip = false;
+            let mut skip = upd_filter.excludes(&rel_path);
             for pattern in &noupdate_files {
                 if rel_path == *pattern || rel_path.ends_with(pattern) {
                     skip = true;

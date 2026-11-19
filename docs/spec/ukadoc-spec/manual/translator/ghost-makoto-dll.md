@@ -16,3 +16,8 @@
 - `ui/ts/ghost/command-handler/system/shiori.ts:101` `export async function handleLoadMakoto(`
 - `ui/ts/ghost/command-handler/defaults/system-handlers.ts:264` `registerCommandHandler("loadmakoto", async (handler, args) => {`
 - `tests/sakura-command-handler/cycle10-commands.test.ts:9` `it("handles load,makoto, unload,makoto, and reload,makoto commands", async () => {`
+
+
+## 実装状況の更新
+
+ゴースト側 makoto.dll の配置検出は `find_ghost_makoto`（`src-tauri/src/ghost/scan/translator.rs`）で実装済み。DLL の動的ロード・`request` 呼び出しは Windows 専用 DLL（C-ABI）のため Android では不可であり、⚠️ 一部対応のまま据え置く。

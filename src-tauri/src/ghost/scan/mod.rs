@@ -1,9 +1,11 @@
 //! ゴーストディレクトリのスキャン（Tauri コマンド）
 
+pub mod assets;
 pub mod date;
 pub mod descript;
 pub mod directory;
 pub mod shell;
+pub mod translator;
 
 pub use date::compute_ghost_dates;
 pub use descript::read_descript_file;

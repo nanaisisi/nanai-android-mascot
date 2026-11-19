@@ -16,3 +16,8 @@ SHIORI へ `OnTranslate` イベントを送信し翻訳済みスクリプトを�
 - `ui/ts/core/app-settings.ts:255` `playSakuraScript(script: string) {`
 - `crates/ui/src/sstp/config/ghost_config.rs:18` `/// sstp.alwaystranslate: 1 で SSTP オプションにかかわらず常時 OnTranslate を実行。デフォルトは 0`
 - `crates/ui/src/shiori/engine/tests/multistage_loader/fallback_reload/full_coverage.rs:175` `fn test_multistage_shiori_loader_with_translator_module_state() {`
+
+
+## 実装状況の更新
+
+適用順序（SHIORI → ゴースト側 → シェル側）は `translate_order`（`src-tauri/src/ghost/scan/translator.rs`）で定義。MAKOTO 段の実行は DLL 不可のため、UI 自動パイプライン接続と併せて ⚠️ 一部対応のまま据え置く。

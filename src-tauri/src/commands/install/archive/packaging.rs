@@ -116,6 +116,8 @@ pub fn create_nar_from_directory(source_dir: &Path, output_nar_path: &Path) -> R
         .unix_permissions(0o755);
 
     let nonar_exclusions = load_nonar_exclusions(source_dir);
+    let nar_filter =
+        crate::ghost::scan::directory::package_files::IncludeFilter::load_nar(source_dir);
     let mut added_count = 0u64;
 
     for entry in WalkDir::new(source_dir).into_iter().filter_map(|e| e.ok()) {
@@ -130,7 +132,9 @@ pub fn create_nar_from_directory(source_dir: &Path, output_nar_path: &Path) -> R
         let name_str = rel_path.to_string_lossy().replace('\\', "/");
         let lower_name = name_str.to_lowercase();
 
-        if is_excluded_by_nonar(&name_str, &nonar_exclusions) {
+        if is_excluded_by_nonar(&name_str, &nonar_exclusions)
+            || (path.is_file() && nar_filter.excludes(&name_str))
+        {
             continue;
         }
 

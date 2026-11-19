@@ -11,3 +11,8 @@
 ## 実装箇所
 
 実装コード内に「ok_down.png, ok_up.png」は検出されませんでした。
+
+## 追記 (resolver)
+
+- ファイル解決は `resolve_balloon_ui_asset` (`src-tauri/src/commands/shell/balloon.rs`) で実装済み。スコープ別 (s/k/pN) → 無印の順に外部ファイルを探索し、単体テスト `ui_asset_tests` で検証。
+- ボタン UI の描画は SSP 専用の入力ボックス機能に依存するため本プラットフォームでは未実装 (対応状況は据え置き)。

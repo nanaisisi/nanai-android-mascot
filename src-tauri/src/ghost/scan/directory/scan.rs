@@ -76,6 +76,7 @@ pub async fn scan_ghost_directory(
             let shells = scan_shells_from_ghost(&path);
 
             Some(GhostInfo {
+                assets: crate::ghost::scan::assets::discover_ghost_assets(&path),
                 name: manifest.display_name().to_string(),
                 version: manifest.version().map(ToString::to_string),
                 path: path.to_string_lossy().to_string(),
@@ -141,6 +142,7 @@ pub async fn scan_ghost_directory(
                 (None, None)
             };
             ghosts.push(GhostInfo {
+                assets: Default::default(),
                 name: "mock_nanai".to_string(),
                 version: Some("1.0.0".to_string()),
                 path: mock_nanai_path.to_string_lossy().to_string(),

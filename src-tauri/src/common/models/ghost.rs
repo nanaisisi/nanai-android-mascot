@@ -5,6 +5,8 @@ use std::collections::BTreeMap;
 
 #[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct GhostInfo {
+    #[serde(default)]
+    pub(crate) assets: crate::ghost::scan::assets::GhostAssets,
     pub(crate) name: String,
     pub(crate) version: Option<String>,
     pub(crate) path: String,

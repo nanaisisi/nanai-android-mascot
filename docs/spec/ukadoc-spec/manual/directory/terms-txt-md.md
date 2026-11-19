@@ -1,13 +1,10 @@
-# terms.txt または terms.md
+﻿# terms.txt または terms.md
 
 - **規格**: [directory.md](../../../../ukadoc-spec/manual/directory.md) ([公式版](https://ukatech.shillest.net/ukadoc-spec/manual/directory/))
 - **検索語**: terms.txt, terms.md
-- **対応状況**: ❌ 未実装
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
-`docs/ukadoc-spec/manual/directory.md` の `(myghost)/terms.txt` または `terms.md`（NAR/ZIP インストール前に利用条件を表示しインストールを中断して確認するダイアログ仕様）は未実装。アーカイブ展開処理 `extract_ghost_archive_from_reader`（`src-tauri/src/commands/install/archive/mod.rs`）は `terms.txt` / `terms.md` の読込や事前同意ダイアログ表示を行わない。なお SHIORI 通知側には `OnGhostTermsAccept` / `OnGhostTermsDecline`（`ui/ts/ghost/shiori-notify/ghost-lifecycle/terms.ts`）および `type === "terms"` ダイアログ描画枠（`ui/ts/ui/renderers/modal-dialog-system.ts`）があるが、パッケージ内 `terms.txt` / `terms.md` とは接続されていない。
+`find_ghost_terms` / `read_ghost_terms`（`package_files.rs`）が `terms.txt` / `terms.md` を外部ファイルから読み込む。未対応: インストール前の同意ダイアログ接続と、拒否時のインストール中断（`modal-dialog-system.ts` の `terms` 枠との配線が未実装）。
 
-## 実装箇所
-
-実装コード内に「terms.txt, terms.md」は検出されませんでした。

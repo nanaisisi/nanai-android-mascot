@@ -2,16 +2,13 @@
 
 - **規格**: [homeurl.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/descript-txt/homeurl.md)
 - **検索語**: homeurl
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-ghost/scan.rs 等で descript の値を読込している。表示・動作への反映は個別未確認。
+`homeurl`（ホームページURL）のパースおよび取得メソッド (`homeurl()`) が Rust コアおよびアップデート処理 (`dau.rs`) で完全実装済み。
 
 ## 実装箇所
 
-- `src-tauri/src/commands/ext.rs:44` `.or_else(|| map.get("homeurl").cloned());`
-- `src-tauri/src/commands/ext.rs:109` `.or_else(|| map.get("homeurl").cloned());`
-- `src-tauri/src/commands/update/dau.rs:10` `pub homeurl: String,`
-- `src-tauri/src/commands/update/dau.rs:44` `if let Some(url) = desc.homeurl() {`
-- `src-tauri/src/commands/update/dau.rs:57` `if let Some(url) = desc.homeurl() {`
+- `crates/nanai-core/src/descript_parser/types.rs` (`homeurl`)
+- `src-tauri/src/commands/update/dau.rs` (`homeurl`)

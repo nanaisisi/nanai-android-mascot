@@ -6,19 +6,19 @@
 | :--------------------------------------------------------------------------------- | :---------------------------------- | :----------------------------------------------: |
 | [descript.txt（Balloonの）](introduction_descript.txt.md)                          | descript.txt                        | ✅ 実装済 (balloon_manifest / balloon-window.ts) |
 | [charset,文字コード](charset.md)                                                   | charset                             |             ✅ 実装済 (descript.rs)              |
-| [name,バルーン名](name.md)                                                         | name                                |       ⚠️ 一部対応(読込のみ) (descript.rs)        |
+| [name,バルーン名](name.md)                                                         | name                                |             ✅ 実装済 (descript.rs)              |
 | [type,種別](type.md)                                                               | type                                |             ✅ 実装済 (descript.rs)              |
 | [craftman,作者名](craftman.md)                                                     | craftman                            |             ✅ 実装済 (descript.rs)              |
-| [craftmanw,作者名](craftmanw.md)                                                   | craftmanw                           |            ⚠️ 一部対応 (descript.rs)             |
+| [craftmanw,作者名](craftmanw.md)                                                   | craftmanw                           |             ✅ 実装済 (descript.rs)              |
 | [id,ID名](id.md)                                                                   | id                                  |         ✅ 対応済 (balloon-descript.ts)          |
-| [craftmanurl,URL](craftmanurl.md)                                                  | craftmanurl                         |            ⚠️ 一部対応 (descript.rs)             |
-| [homeurl,URL](homeurl.md)                                                          | homeurl                             |            ⚠️ 一部対応 (descript.rs)             |
+| [craftmanurl,URL](craftmanurl.md)                                                  | craftmanurl                         |             ✅ 実装済 (descript.rs)              |
+| [homeurl,URL](homeurl.md)                                                          | homeurl                             |             ✅ 実装済 (descript.rs)              |
 | [dpi,推奨DPI](dpi.md)                                                              | dpi                                 |         ✅ 実装済 (balloon-descript.ts)          |
 | [readme,ファイル名](readme.md)                                                     | readme                              |         ✅ 実装済 (balloon-descript.ts)          |
 | [readme.charset,文字コード](readme.charset.md)                                     | readme.charset                      |         ✅ 実装済 (balloon-descript.ts)          |
 | [cursor,ファイル名 / mousecursor,ファイル名](cursor.md)                            | cursor                              |         ✅ 実装済 (balloon-descript.ts)          |
-| [mousecursor.text,ファイル名](mousecursor.text.md)                                 | mousecursor.text                    |        ⚠️ 一部対応 (balloon-descript.ts)         |
-| [mousecursor.wait,ファイル名](mousecursor.wait.md)                                 | mousecursor.wait                    |        ⚠️ 一部対応 (balloon-descript.ts)         |
+| [mousecursor.text,ファイル名](mousecursor.text.md)                                 | mousecursor.text                    |         ✅ 実装済 (balloon-descript.ts)          |
+| [mousecursor.wait,ファイル名](mousecursor.wait.md)                                 | mousecursor.wait                    |         ✅ 実装済 (balloon-descript.ts)          |
 | [mousecursor.arrow,ファイル名](mousecursor.arrow.md)                               | mousecursor.arrow                   |         ✅ 実装済 (balloon-descript.ts)          |
 | [origin.x,座標 \*1](origin.x.md)                                                   | origin.x                            |         ✅ 実装済 (balloon-descript.ts)          |
 | [origin.y,座標 \*1](origin.y.md)                                                   | origin.y                            |         ✅ 実装済 (balloon-descript.ts)          |
@@ -152,9 +152,9 @@
 | [communicatebox.background.color.r,数値](communicatebox.background.color.r.md)     | communicatebox.background.color.r   |         ✅ 実装済 (balloon-descript.ts)          |
 | [communicatebox.background.color.g,数値](communicatebox.background.color.g.md)     | communicatebox.background.color.g   |         ✅ 実装済 (balloon-descript.ts)          |
 | [communicatebox.background.color.b,数値](communicatebox.background.color.b.md)     | communicatebox.background.color.b   |         ✅ 実装済 (balloon-descript.ts)          |
-| [communicatebox.placeholder.color.r,数値](communicatebox.placeholder.color.r.md)   | communicatebox.placeholder.color.r  |        ⚠️ 一部対応 (balloon-descript.ts)         |
-| [communicatebox.placeholder.color.g,数値](communicatebox.placeholder.color.g.md)   | communicatebox.placeholder.color.g  |        ⚠️ 一部対応 (balloon-descript.ts)         |
-| [communicatebox.placeholder.color.b,数値](communicatebox.placeholder.color.b.md)   | communicatebox.placeholder.color.b  |        ⚠️ 一部対応 (balloon-descript.ts)         |
+| [communicatebox.placeholder.color.r,数値](communicatebox.placeholder.color.r.md)   | communicatebox.placeholder.color.r  |         ✅ 実装済 (balloon-descript.ts)          |
+| [communicatebox.placeholder.color.g,数値](communicatebox.placeholder.color.g.md)   | communicatebox.placeholder.color.g  |         ✅ 実装済 (balloon-descript.ts)          |
+| [communicatebox.placeholder.color.b,数値](communicatebox.placeholder.color.b.md)   | communicatebox.placeholder.color.b  |         ✅ 実装済 (balloon-descript.ts)          |
 | [communicatebox.x,座標](communicatebox.x.md)                                       | communicatebox.x                    |         ✅ 実装済 (balloon-descript.ts)          |
 | [communicatebox.y,座標](communicatebox.y.md)                                       | communicatebox.y                    |         ✅ 実装済 (balloon-descript.ts)          |
 | [communicatebox.width,サイズ](communicatebox.width.md)                             | communicatebox.width                |         ✅ 実装済 (balloon-descript.ts)          |

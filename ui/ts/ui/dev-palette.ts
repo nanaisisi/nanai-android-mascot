@@ -202,55 +202,120 @@ export function showDevPalette(options: DevPaletteOptions = {}) {
 		},
 	];
 
-	interface DevPaletteApp {
-		settings?: Record<string, unknown>;
-		showCollisionArea?: boolean;
-		ghostController?: CollisionOverlayController;
-		handleMenuAction?: (act: string, payload?: unknown) => void;
-		renderCollisionOverlay?: () => void;
+	function resolveApp(): Record<string, unknown> | null {
+		if (options.app) return options.app as Record<string, unknown>;
+		const g = globalThis as unknown as Record<string, unknown>;
+		if (g.mascotApp) return g.mascotApp as Record<string, unknown>;
+		if (g.app) return g.app as Record<string, unknown>;
+		if (typeof window !== "undefined") {
+			const w = window as unknown as Record<string, unknown>;
+			if (w.mascotApp) return w.mascotApp as Record<string, unknown>;
+			if (w.app) return w.app as Record<string, unknown>;
+			if (
+				w.parent &&
+				(w.parent as unknown as Record<string, unknown>).mascotApp
+			) {
+				return (w.parent as unknown as Record<string, unknown>)
+					.mascotApp as Record<string, unknown>;
+			}
+			if (w.parent && (w.parent as unknown as Record<string, unknown>).app) {
+				return (w.parent as unknown as Record<string, unknown>).app as Record<
+					string,
+					unknown
+				>;
+			}
+		}
+		return null;
 	}
 
-	const mascotApp =
-		(options.app as DevPaletteApp | undefined) ||
-		(
-			globalThis as unknown as {
-				mascotApp?: DevPaletteApp;
-			}
-		).mascotApp;
+	const mascotApp = resolveApp();
+
+	const itemSettingKeys: Record<string, string> = {
+		"dev-check-collision": "showCollisionArea",
+		"dev-check-balloon-test": "balloonTestMode",
+		"dev-check-seriko-wait": "serikoWaitAdjust",
+		"dev-check-update-only": "checkUpdateOnly",
+		"dev-check-shiori-sender": "changeShioriSender",
+		"dev-check-shiori-call-log": "enableShioriCallLog",
+		"dev-check-shiori-internal-log": "enableShioriInternalLog",
+		"dev-check-shiori-debug": "enableShioriDebug",
+		"dev-check-disable-auto-ghost": "disableAutoGhostChange",
+		"dev-check-disable-auto-check": "disableAutoCheck",
+		"dev-check-disable-auto-update": "disableAutoUpdate",
+		"dev-check-do-not-end-slash-minus": "doNotEndOnSlashMinus",
+	};
 
 	checkItems.forEach((item) => {
 		const row = document.createElement("label");
 		row.style.cssText = "display: block; margin-bottom: 4px; cursor: pointer;";
 		const isColCheck = item.id === "dev-check-collision";
-		const isChecked = isColCheck
-			? Boolean(
-					mascotApp?.settings?.showCollisionArea ??
-						mascotApp?.showCollisionArea ??
-						false,
-				)
-			: item.defaultChecked;
+		const settingKey = itemSettingKeys[item.id];
+		const currentSettingVal = settingKey
+			? ((mascotApp?.settings as Record<string, unknown> | undefined)?.[
+					settingKey
+				] as boolean | undefined)
+			: undefined;
+		const isChecked = currentSettingVal ?? item.defaultChecked;
+
 		row.innerHTML = `<input type="checkbox" id="${item.id}" ${isChecked ? "checked" : ""} style="margin-right: 4px;" /> ${item.label}`;
 
 		const input = row.querySelector("input");
-		if (isColCheck && input) {
+		if (input) {
 			input.addEventListener("change", () => {
 				const enabled = Boolean(input.checked);
-				if (mascotApp) {
-					if (!mascotApp.settings) mascotApp.settings = {};
-					mascotApp.settings.showCollisionArea = enabled;
-					mascotApp.showCollisionArea = enabled;
-					if (typeof mascotApp.handleMenuAction === "function") {
-						mascotApp.handleMenuAction("toggle-collision-area", { enabled });
-					} else {
-						renderAllCollisionOverlays(
-							mascotApp.ghostController ?? {
-								app: mascotApp as unknown as CollisionOverlayController["app"],
-							},
-						);
-						mascotApp.renderCollisionOverlay?.();
+				const targetApp = resolveApp();
+				if (targetApp) {
+					if (!targetApp.settings) targetApp.settings = {};
+					const settings = targetApp.settings as Record<string, unknown>;
+					if (settingKey) {
+						settings[settingKey] = enabled;
+						targetApp[settingKey] = enabled;
 					}
-				} else {
-					renderAllCollisionOverlays({ app: undefined });
+
+					// 各モジュールへの即時設定反映
+					if (
+						settingKey === "doNotEndOnSlashMinus" &&
+						targetApp.sakuraScriptPlayer
+					) {
+						(
+							targetApp.sakuraScriptPlayer as Record<string, unknown>
+						).doNotEndOnSlashMinus = enabled;
+					}
+					if (settingKey === "enableShioriDebug" && targetApp.ghostController) {
+						(
+							targetApp.ghostController as Record<string, unknown>
+						).enableShioriDebug = enabled;
+					}
+
+					try {
+						localStorage.setItem(
+							"nanai-android-mascot-settings",
+							JSON.stringify(settings),
+						);
+					} catch (_) {}
+
+					if (isColCheck) {
+						settings.showCollisionArea = enabled;
+						targetApp.showCollisionArea = enabled;
+						if (typeof targetApp.handleMenuAction === "function") {
+							(
+								targetApp.handleMenuAction as (act: string, p?: unknown) => void
+							)("toggle-collision-area", { enabled });
+						} else {
+							renderAllCollisionOverlays(
+								(targetApp.ghostController as CollisionOverlayController) ?? {
+									app: targetApp as unknown as CollisionOverlayController["app"],
+								},
+							);
+							if (typeof targetApp.renderCollisionOverlay === "function") {
+								(targetApp.renderCollisionOverlay as () => void)();
+							}
+						}
+					}
+
+					if (typeof targetApp.applySettings === "function") {
+						(targetApp.applySettings as () => void)();
+					}
 				}
 			});
 		}

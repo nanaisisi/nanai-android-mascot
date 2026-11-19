@@ -73,7 +73,13 @@ const count = (cmd: string) => calls.filter((c) => c.cmd === cmd).length;
 const emitted = () =>
 	calls
 		.filter((c) => c.cmd === "plugin:event|emit")
-		.map((c) => c.args.payload?.src);
+		.map(
+			(c) =>
+				(c.args as { payload?: { payload?: { src?: unknown } } }).payload
+					?.payload?.src ??
+				(c.args as { payload?: { src?: unknown } }).payload?.src,
+		)
+		.filter(Boolean);
 
 test("repeated surface updates reuse loaded image data", async () => {
 	calls.length = 0;

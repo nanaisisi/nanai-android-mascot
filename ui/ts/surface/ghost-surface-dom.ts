@@ -163,10 +163,14 @@ export async function applySurfaceImageToDom(
 
 	if (img) {
 		img.style.display = "block";
+		img.style.visibility = "visible";
+		img.style.opacity = "1";
 		if (fallbackSrc) {
 			img.onerror = () => {
 				img.onerror = null;
 				img.src = fallbackSrc;
+				img.style.display = "block";
+				img.style.visibility = "visible";
 			};
 		} else {
 			img.onerror = null;
@@ -176,13 +180,16 @@ export async function applySurfaceImageToDom(
 			await img.decode().catch(() => {});
 		}
 	} else if (placeholder) {
+		placeholder.style.display = "flex";
+		placeholder.style.visibility = "visible";
+		placeholder.style.opacity = "1";
 		const errorAttr = fallbackSrc
 			? `onerror="this.onerror=null; this.src='${fallbackSrc}';"`
 			: "";
 		placeholder.innerHTML = `<img src="${transparentSrc}" 
                                alt="scope${scopeId}" 
                                ${errorAttr}
-                               style="width: 100%; height: 100%; object-fit: contain; pointer-events: auto;">`;
+                               style="width: 100%; height: 100%; object-fit: contain; pointer-events: auto; visibility: visible; opacity: 1;">`;
 	}
 
 	renderCollisionOverlayForScope(

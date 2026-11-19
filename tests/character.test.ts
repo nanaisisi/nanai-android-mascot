@@ -215,7 +215,7 @@ test("character window covers subchar image updates, pointer interactions, dragg
 	});
 	globalListeners.mouseup?.();
 
-	// 4. Test long press timer
+	// 4. Test long press timer (touch only; mouse holds must not open menu)
 	rootEl._listeners?.mousedown?.({
 		button: 0,
 		clientX: 10,
@@ -225,6 +225,12 @@ test("character window covers subchar image updates, pointer interactions, dragg
 	});
 	vi.advanceTimersByTime(700);
 	globalListeners.mouseup?.();
+
+	rootEl._listeners?.touchstart?.({
+		touches: [{ clientX: 10, clientY: 10, screenX: 10, screenY: 10 }],
+	});
+	vi.advanceTimersByTime(700);
+	globalListeners.touchend?.();
 
 	// 5. Test drag move
 	rootEl._listeners?.mousedown?.({ button: 0, clientX: 10, clientY: 10 });
@@ -774,7 +780,7 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 		).toHaveLength(1);
 	});
 
-	test("long press emits mouseup without talk, and multi-click resets on timeout or > 10px move", () => {
+	test("long press on touch opens menu and emits mouseup without talk; desktop mousedown hold does not open menu", () => {
 		const expectedRect = {
 			left: 0,
 			top: 0,
@@ -784,6 +790,7 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 			naturalHeight: 10,
 		};
 
+		// Desktop mousedown hold (>600ms) must NOT open context menu
 		rootEl._listeners?.mousedown?.({
 			button: 0,
 			clientX: 15,
@@ -794,8 +801,22 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 		vi.advanceTimersByTime(650);
 		expect(
 			invokedCommands.filter((c) => c.cmd === "show_menu_window"),
-		).toHaveLength(1);
+		).toHaveLength(0);
 		globalListeners.mouseup?.({ button: 0, clientX: 15, clientY: 15 });
+
+		// Touch long press (>600ms) opens context menu and suppresses talk on touchend
+		emittedEvents.length = 0;
+		invokedCommands.length = 0;
+		rootEl._listeners?.touchstart?.({
+			touches: [{ clientX: 15, clientY: 15, screenX: 115, screenY: 115 }],
+		});
+		vi.advanceTimersByTime(650);
+		expect(
+			invokedCommands.filter((c) => c.cmd === "show_menu_window"),
+		).toHaveLength(1);
+		globalListeners.touchend?.({
+			changedTouches: [{ clientX: 15, clientY: 15 }],
+		});
 		expect(getGhostEvents()).toContainEqual({
 			type: "mouseup",
 			scopeId: 1,
@@ -803,7 +824,7 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 			clientY: 15,
 			rect: expectedRect,
 			button: 0,
-			device: "mouse",
+			device: "touch",
 		});
 		expect(getMenuActions()).toHaveLength(0);
 

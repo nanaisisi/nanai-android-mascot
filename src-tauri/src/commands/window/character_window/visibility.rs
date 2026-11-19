@@ -252,8 +252,16 @@ pub async fn show_character_window(
             }));
         }
 
-        let _ = sub_win.show();
-        let _ = sub_win.set_focus();
+        if is_new || !is_visible {
+            let _ = sub_win.show();
+        }
+        let menu_is_visible = app_handle
+            .get_webview_window("menu_window")
+            .and_then(|w| w.is_visible().ok())
+            .unwrap_or(false);
+        if is_new && !menu_is_visible {
+            let _ = sub_win.set_focus();
+        }
 
         if moved_or_resized {
             if let Some(state) = app_handle.try_state::<crate::common::state::AppState>() {

@@ -348,6 +348,70 @@ test("context-menu event handlers, sync listeners, mouse events and keyboard sho
 	assert.ok(true);
 });
 
+test("context menu ignores transient blur during grace window, closes on real blur, and resets submenu state on regular hover", async () => {
+	const internals = globalThis.__TAURI_INTERNALS__ as MockTauriInternals;
+	const origInvoke = internals.invoke;
+	const origHasFocus = (document as unknown as { hasFocus?: () => boolean })
+		.hasFocus;
+	const cmds: string[] = [];
+	let docFocused = false;
+	(document as unknown as { hasFocus?: () => boolean }).hasFocus = () =>
+		docFocused;
+	internals.invoke = async (cmd: string, args?: unknown) => {
+		cmds.push(cmd);
+		return origInvoke(
+			cmd,
+			args as { event?: string; handler?: MockTauriListener },
+		);
+	};
+
+	try {
+		// 1. Reset menu open state via sync-menu-scope -> blur within grace window (<350ms) must NOT close menu
+		await tauriListeners["sync-menu-scope"]?.({ payload: 0 });
+		cmds.length = 0;
+		globalListeners.blur?.();
+		await new Promise((r) => setTimeout(r, 110));
+		assert.equal(cmds.includes("hide_menu_window"), false);
+
+		// 2. Hovering submenu activates hasActiveSubmenu; hovering a regular item resets it and hides submenu window
+		const mockSubmenuBtn = {
+			id: "ghost-switch-btn",
+			classList: { contains: (c: string) => c === "has-submenu" },
+			getBoundingClientRect: () => ({ top: 100 }),
+			closest: (sel: string): unknown =>
+				sel === ".menu-item" ? mockSubmenuBtn : null,
+		};
+		const mockRegularItem = {
+			id: "friends-btn",
+			classList: { contains: () => false },
+			closest: (sel: string): unknown =>
+				sel === ".menu-item" ? mockRegularItem : null,
+		};
+		await new Promise((r) => setTimeout(r, 200));
+		documentListeners.mouseover?.({ target: mockSubmenuBtn });
+		documentListeners.mouseover?.({ target: mockRegularItem });
+		await new Promise((r) => setTimeout(r, 20));
+		assert.equal(cmds.includes("hide_submenu_window"), true);
+
+		// 3. After grace window (>350ms), focus cancels pending blur timer; uncancelled blur closes menu
+		await new Promise((r) => setTimeout(r, 180));
+		cmds.length = 0;
+		docFocused = false;
+		globalListeners.blur?.();
+		globalListeners.focus?.();
+		await new Promise((r) => setTimeout(r, 110));
+		assert.equal(cmds.includes("hide_menu_window"), false);
+
+		globalListeners.blur?.();
+		await new Promise((r) => setTimeout(r, 110));
+		assert.equal(cmds.includes("hide_menu_window"), true);
+	} finally {
+		internals.invoke = origInvoke;
+		(document as unknown as { hasFocus?: () => boolean }).hasFocus =
+			origHasFocus;
+	}
+});
+
 test("context menu enforces non-draggable invariant specification", () => {
 	let dragCalled = false;
 	const internals = globalThis.__TAURI_INTERNALS__ as MockTauriInternals;

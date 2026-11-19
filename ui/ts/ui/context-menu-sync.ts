@@ -34,6 +34,7 @@ const syncGlobal = globalThis as typeof globalThis & {
 export function setupContextMenuSync(
 	dispatcher: MenuDispatcher,
 	renderer: MenuSubmenuRenderer,
+	onScopeSync?: () => void,
 ) {
 	if (isTauriAvailable()) {
 		listen("sync-menu-scope", (rawEvent) => {
@@ -43,6 +44,7 @@ export function setupContextMenuSync(
 					? event.payload
 					: parseInt(String(event.payload), 10);
 			if (!Number.isNaN(scope)) {
+				onScopeSync?.();
 				dispatcher.setScope(scope);
 				renderer.renderDressupSubmenu(null, scope);
 				dispatcher.dispatchAction("request-sync");
@@ -121,6 +123,7 @@ export function setupContextMenuSync(
 					? event.data.scope
 					: parseInt(event.data.scope, 10);
 			if (!Number.isNaN(scope)) {
+				onScopeSync?.();
 				dispatcher.setScope(scope);
 				renderer.renderDressupSubmenu(null, scope);
 			}

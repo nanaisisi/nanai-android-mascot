@@ -252,6 +252,8 @@ function initCharacterWindow() {
 	let currentScale = 1.0;
 	let lastNaturalWidth = 0;
 	let lastNaturalHeight = 0;
+	let lastSyncedWidth = 0;
+	let lastSyncedHeight = 0;
 	let initialPos: { x: number; y: number } | null = null;
 
 	const refreshInitialPositionFromWindow = async () => {
@@ -272,7 +274,12 @@ function initCharacterWindow() {
 			img.width = targetW;
 			img.height = targetH;
 		}
-		if (isTauriAvailable()) {
+		if (
+			isTauriAvailable() &&
+			(targetW !== lastSyncedWidth || targetH !== lastSyncedHeight)
+		) {
+			lastSyncedWidth = targetW;
+			lastSyncedHeight = targetH;
 			void invoke("show_subchar_window", {
 				params: {
 					scope_id: scopeId,
@@ -989,12 +996,14 @@ function initCharacterWindow() {
 		});
 
 		if (longPressTimer) clearTimeout(longPressTimer as number);
-		longPressTimer = setTimeout(() => {
-			if (isInteracting && !hasMoved) {
-				longPressTriggered = true;
-				openCharacterMenu(screenX, screenY, startX, startY);
-			}
-		}, LONG_PRESS_DELAY);
+		if (device === "touch") {
+			longPressTimer = setTimeout(() => {
+				if (isInteracting && !hasMoved) {
+					longPressTriggered = true;
+					openCharacterMenu(screenX, screenY, startX, startY);
+				}
+			}, LONG_PRESS_DELAY);
+		}
 	};
 
 	let coordPopupEl: HTMLElement | null = null;

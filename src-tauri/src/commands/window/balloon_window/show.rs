@@ -296,6 +296,16 @@ fn compute_default_logical_balloon_pos(
     (raw_x, char_y - 20.0)
 }
 
+#[cfg(desktop)]
+fn restore_menu_focus_if_visible(app_handle: &tauri::AppHandle) {
+    use tauri::Manager;
+    if let Some(menu_win) = app_handle.get_webview_window("menu_window")
+        && menu_win.is_visible().unwrap_or(false)
+    {
+        let _ = menu_win.set_focus();
+    }
+}
+
 /// 独立バルーン（スコープ N）ウィンドウ表示コマンド
 #[tauri::command(rename_all = "snake_case")]
 #[allow(non_snake_case)]
@@ -537,9 +547,12 @@ pub async fn show_balloon_window(
                 let _ = balloon_win.set_position(tauri::Position::Physical(phys_pos));
             }
 
-            let _ = balloon_win.unminimize();
-            let _ = balloon_win.set_always_on_top(true);
-            let _ = balloon_win.show();
+            if !is_visible {
+                let _ = balloon_win.unminimize();
+                let _ = balloon_win.set_always_on_top(true);
+                let _ = balloon_win.show();
+                restore_menu_focus_if_visible(&app_handle);
+            }
             println!(
                 "✅ [Rust Window] 既存の balloon_window_{} を表示: x={}, y={}",
                 s_id, target_x, target_y
@@ -591,6 +604,7 @@ pub async fn show_balloon_window(
             let _ = balloon_win.unminimize();
             let _ = balloon_win.set_always_on_top(true);
             let _ = balloon_win.show();
+            restore_menu_focus_if_visible(&app_handle);
             println!(
                 "🎉 [Rust Window] 新規 balloon_window_{} を構築・表示: x={}, y={}",
                 s_id, target_x, target_y

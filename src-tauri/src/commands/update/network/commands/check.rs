@@ -1,41 +1,26 @@
 //! ゴーストネットワーク更新チェックコマンド
 
-use super::super::helpers::{resolve_update_ghost_dir, validate_update_path};
+use super::super::helpers::{
+    is_noupdate_excluded, read_noupdate_patterns, resolve_update_ghost_dir, validate_update_path,
+};
 use crate::commands::update::dau::*;
 
-/// ゴーストの更新チェック
-#[tauri::command]
-pub async fn check_ghost_update(
-    state: tauri::State<'_, crate::common::state::AppState>,
-    app_handle: tauri::AppHandle,
-    ghost_name: Option<String>,
-    ghost_path: Option<String>,
+pub(super) async fn check_dir_update(
+    target_dir: &std::path::Path,
+    target_name: &str,
+    homeurl: Option<String>,
+    missing_homeurl_msg: String,
 ) -> Result<UpdateCheckResult, String> {
-    let target_ghost = if let Some(name) = ghost_name {
-        name
-    } else {
-        state
-            .current_ghost_name
-            .lock()
-            .clone()
-            .unwrap_or_else(|| "とらふぃっく☆とれいん".to_string())
-    };
-
-    let ghost_dir = resolve_update_ghost_dir(&target_ghost, ghost_path.as_deref(), &app_handle);
-
-    let homeurl = match get_ghost_homeurl(&ghost_dir) {
+    let homeurl = match homeurl {
         Some(url) => url,
         None => {
             return Ok(UpdateCheckResult::new(
                 false,
                 "".to_string(),
-                target_ghost.clone(),
+                target_name.to_string(),
                 vec![],
                 0,
-                format!(
-                    "ゴースト「{}」に homeurl が設定されていません",
-                    target_ghost
-                ),
+                missing_homeurl_msg,
             ));
         }
     };
@@ -75,7 +60,11 @@ pub async fn check_ghost_update(
         )
     })?;
 
-    let entries = parse_update_definition(&content);
+    let noupdate_patterns = read_noupdate_patterns(target_dir);
+    let entries: Vec<_> = parse_update_definition(&content)
+        .into_iter()
+        .filter(|entry| !is_noupdate_excluded(entry.path(), &noupdate_patterns))
+        .collect();
     for entry in &entries {
         validate_update_path(entry.path())?;
     }
@@ -83,9 +72,9 @@ pub async fn check_ghost_update(
     // 候補ファイルの存在確認およびMD5ハッシュ計算を tokio::task::JoinSet により非同期並列実行
     let mut join_set = tokio::task::JoinSet::new();
     for (index, entry) in entries.into_iter().enumerate() {
-        let ghost_dir = ghost_dir.clone();
+        let target_dir = target_dir.to_path_buf();
         join_set.spawn_blocking(move || {
-            let local_file_path = ghost_dir.join(entry.path());
+            let local_file_path = target_dir.join(entry.path());
             let mut needs_update = false;
 
             if !local_file_path.exists() {
@@ -128,9 +117,37 @@ pub async fn check_ghost_update(
     Ok(UpdateCheckResult::new(
         has_update,
         homeurl,
-        target_ghost,
+        target_name.to_string(),
         diff_files,
         total_count,
         message,
     ))
+}
+
+/// ゴーストの更新チェック
+#[tauri::command]
+pub async fn check_ghost_update(
+    state: tauri::State<'_, crate::common::state::AppState>,
+    app_handle: tauri::AppHandle,
+    ghost_name: Option<String>,
+    ghost_path: Option<String>,
+) -> Result<UpdateCheckResult, String> {
+    let target_ghost = if let Some(name) = ghost_name {
+        name
+    } else {
+        state
+            .current_ghost_name
+            .lock()
+            .clone()
+            .unwrap_or_else(|| "とらふぃっく☆とれいん".to_string())
+    };
+
+    let ghost_dir = resolve_update_ghost_dir(&target_ghost, ghost_path.as_deref(), &app_handle);
+    let homeurl = get_ghost_homeurl(&ghost_dir);
+    let missing_msg = format!(
+        "ゴースト「{}」に homeurl が設定されていません",
+        target_ghost
+    );
+
+    check_dir_update(&ghost_dir, &target_ghost, homeurl, missing_msg).await
 }

@@ -53,20 +53,22 @@ pub fn perform_refresh_cleanup(target_dir: &Path, undelete_mask: &[String]) {
 }
 
 pub fn process_delete_txt(target_dir: &Path) {
-    let delete_txt_path = target_dir.join("delete.txt");
-    if delete_txt_path.exists()
-        && let Ok(del_content) = std::fs::read_to_string(&delete_txt_path)
-    {
-        for del_line in del_content.lines() {
-            let rel = del_line.trim().replace('\\', "/");
-            if !rel.is_empty() && !rel.starts_with("//") {
-                let to_del = target_dir.join(&rel);
-                let norm_del = normalize_path(&to_del);
-                if norm_del.starts_with(target_dir) && to_del.exists() {
-                    if to_del.is_dir() {
-                        std::fs::remove_dir_all(&to_del).ok();
-                    } else {
-                        std::fs::remove_file(&to_del).ok();
+    for filename in ["delete.txt", "delete1.txt"] {
+        let delete_txt_path = target_dir.join(filename);
+        if delete_txt_path.exists()
+            && let Ok(del_content) = std::fs::read_to_string(&delete_txt_path)
+        {
+            for del_line in del_content.lines() {
+                let rel = del_line.trim().replace('\\', "/");
+                if !rel.is_empty() && !rel.starts_with("//") {
+                    let to_del = target_dir.join(&rel);
+                    let norm_del = normalize_path(&to_del);
+                    if norm_del.starts_with(target_dir) && to_del.exists() {
+                        if to_del.is_dir() {
+                            std::fs::remove_dir_all(&to_del).ok();
+                        } else {
+                            std::fs::remove_file(&to_del).ok();
+                        }
                     }
                 }
             }
@@ -166,6 +168,24 @@ mod tests {
         assert!(temp_dir.join("save.dat").exists());
         assert!(!sub_dir.join("sub_del.txt").exists());
         assert!(sub_dir.join("config.ini").exists());
+
+        let _ = std::fs::remove_dir_all(&temp_dir);
+    }
+
+    #[test]
+    fn test_process_delete1_txt() {
+        let temp_dir = std::env::temp_dir().join("test_process_delete1_txt");
+        let _ = std::fs::remove_dir_all(&temp_dir);
+        std::fs::create_dir_all(&temp_dir).unwrap();
+
+        std::fs::write(temp_dir.join("old.txt"), "remove").unwrap();
+        std::fs::write(temp_dir.join("keep.txt"), "keep").unwrap();
+        std::fs::write(temp_dir.join("delete1.txt"), "// comment\nold.txt\n").unwrap();
+
+        process_delete_txt(&temp_dir);
+
+        assert!(!temp_dir.join("old.txt").exists());
+        assert!(temp_dir.join("keep.txt").exists());
 
         let _ = std::fs::remove_dir_all(&temp_dir);
     }

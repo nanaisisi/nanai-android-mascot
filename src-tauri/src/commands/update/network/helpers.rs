@@ -30,6 +30,96 @@ pub(super) fn resolve_update_ghost_dir(
     PathBuf::from(format!("assets/ghost/{}", ghost_name))
 }
 
+pub(super) fn resolve_update_balloon_dir(
+    balloon_name: Option<&str>,
+    balloon_path: Option<&str>,
+    app_handle: &tauri::AppHandle,
+) -> PathBuf {
+    if let Some(path) = balloon_path.map(str::trim).filter(|path| !path.is_empty()) {
+        let candidate = PathBuf::from(path);
+        if candidate.is_dir() {
+            return candidate;
+        }
+    }
+
+    let name = balloon_name
+        .map(str::trim)
+        .filter(|n| !n.is_empty())
+        .unwrap_or("default");
+    let candidates = [
+        format!("assets/balloon/{}", name),
+        format!("balloon/{}", name),
+    ];
+    for relative in candidates {
+        if let Ok(resolved) = crate::commands::update::resolve_asset_path(&relative, app_handle)
+            && resolved.is_dir()
+        {
+            return resolved;
+        }
+    }
+
+    PathBuf::from(format!("assets/balloon/{}", name))
+}
+
+pub(super) fn read_dir_homeurl(dir: &Path) -> Option<String> {
+    let descript_path = dir.join("descript.txt");
+    let map = crate::ghost::scan::read_descript_file(&descript_path)?;
+    let url = map.get("homeurl")?.trim();
+    if url.is_empty() {
+        return None;
+    }
+    if url.ends_with('/') {
+        Some(url.to_string())
+    } else {
+        Some(format!("{}/", url))
+    }
+}
+
+pub(super) fn read_noupdate_patterns(dir: &Path) -> Vec<String> {
+    let mut patterns = Vec::new();
+    let dev_opt_path = dir.join("developer_options.txt");
+    if dev_opt_path.is_file()
+        && let Ok(content) = std::fs::read_to_string(&dev_opt_path)
+    {
+        for line in content.lines() {
+            let trimmed = line.trim();
+            if trimmed.is_empty() || trimmed.starts_with("//") || trimmed.starts_with('#') {
+                continue;
+            }
+            if let Some(stripped) = trimmed.strip_prefix("noupdate=") {
+                let pat = stripped.trim().replace('\\', "/");
+                let pat = pat.strip_prefix("./").unwrap_or(&pat).to_string();
+                if !pat.is_empty() {
+                    patterns.push(pat);
+                }
+            } else if let Some((path_part, flags_part)) = trimmed.split_once(',') {
+                let has_noupdate = flags_part
+                    .split(',')
+                    .any(|f| f.trim().eq_ignore_ascii_case("noupdate"));
+                if has_noupdate {
+                    let pat = path_part.trim().replace('\\', "/");
+                    let pat = pat.strip_prefix("./").unwrap_or(&pat).to_string();
+                    if !pat.is_empty() {
+                        patterns.push(pat);
+                    }
+                }
+            }
+        }
+    }
+    patterns
+}
+
+pub(super) fn is_noupdate_excluded(rel_path: &str, patterns: &[String]) -> bool {
+    let norm = rel_path.replace('\\', "/");
+    let norm = norm.strip_prefix("./").unwrap_or(&norm);
+    patterns.iter().any(|pat| {
+        let pat_trimmed = pat.trim_end_matches('/');
+        norm == pat_trimmed
+            || norm.starts_with(&format!("{}/", pat_trimmed))
+            || norm.ends_with(pat_trimmed)
+    })
+}
+
 pub(super) fn validate_update_path(path: &str) -> Result<(), String> {
     let normalized = path.replace('\\', "/");
     if normalized.is_empty() || normalized.starts_with('/') {
@@ -85,4 +175,50 @@ pub(super) fn report_progress(app_handle: &tauri::AppHandle, params: ReportProgr
         "detail": params.detail()
     });
     let _ = app_handle.emit("update-progress", payload);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_read_noupdate_patterns_and_exclusion() {
+        let temp_dir = std::env::temp_dir().join("test_read_noupdate_patterns");
+        let _ = std::fs::remove_dir_all(&temp_dir);
+        std::fs::create_dir_all(&temp_dir).unwrap();
+
+        std::fs::write(
+            temp_dir.join("developer_options.txt"),
+            "// comment\nnoupdate=ghost/master/save.dat\n./secret_dir,nonar,noupdate\n",
+        )
+        .unwrap();
+
+        let patterns = read_noupdate_patterns(&temp_dir);
+        assert_eq!(patterns, vec!["ghost/master/save.dat", "secret_dir"]);
+        assert!(is_noupdate_excluded("ghost/master/save.dat", &patterns));
+        assert!(is_noupdate_excluded("secret_dir/key.txt", &patterns));
+        assert!(!is_noupdate_excluded("ghost/master/dic.txt", &patterns));
+
+        let _ = std::fs::remove_dir_all(&temp_dir);
+    }
+
+    #[test]
+    fn test_read_dir_homeurl() {
+        let temp_dir = std::env::temp_dir().join("test_read_dir_homeurl");
+        let _ = std::fs::remove_dir_all(&temp_dir);
+        std::fs::create_dir_all(&temp_dir).unwrap();
+
+        std::fs::write(
+            temp_dir.join("descript.txt"),
+            "name,TestShell\nhomeurl,https://example.com/shell\n",
+        )
+        .unwrap();
+
+        assert_eq!(
+            read_dir_homeurl(&temp_dir),
+            Some("https://example.com/shell/".to_string())
+        );
+
+        let _ = std::fs::remove_dir_all(&temp_dir);
+    }
 }

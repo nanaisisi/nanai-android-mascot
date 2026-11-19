@@ -88,6 +88,8 @@ pub fn get_invoke_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         commands::file::load_surface_pna,
         commands::update::network::commands::check_ghost_update,
         commands::update::network::commands::execute_ghost_update,
+        commands::update::network::commands::update_shell,
+        commands::update::network::commands::update_balloon,
         commands::update::generate_updates2_dau,
         commands::ext::scan_plugins,
         commands::ext::scan_headlines,

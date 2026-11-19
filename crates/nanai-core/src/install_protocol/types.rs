@@ -19,6 +19,9 @@ pub enum InstallIdentifier {
     CalendarPlugin,
     Profile,
     Taromime,
+    #[serde(rename = "ghost_or_shell")]
+    GhostOrShell,
+    Unknown,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
@@ -50,6 +53,8 @@ pub const INSTALL_IDENTIFIERS: &[&str] = &[
     "calendar.plugin",
     "profile",
     "taromime",
+    "ghost_or_shell",
+    "unknown",
 ];
 
 /// UKADOC仕様: インストールの失敗理由 (Install Reasons of Failure)

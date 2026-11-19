@@ -11,8 +11,20 @@ export async function handleSetPropertyCommand(
 	handler: import("../../sakura-command-handler.js").SakuraCommandHandler,
 	args: string[],
 ) {
-	const key = args[2] ?? "";
-	const val = args[3] ?? "";
+	let rawArgs: string[] = Array.isArray(args) ? args : [args];
+	if (rawArgs.length === 1 && rawArgs[0].includes(",")) {
+		rawArgs = rawArgs[0].split(",").map((s) => s.trim());
+	}
+	if (rawArgs[0]?.toLowerCase() === "set") {
+		rawArgs = rawArgs.slice(1);
+	}
+	if (rawArgs[0]?.toLowerCase() === "property") {
+		rawArgs = rawArgs.slice(1);
+	}
+
+	const key = rawArgs[0] ?? "";
+	const val = rawArgs[1] ?? "";
+
 	if (key) {
 		scriptLifetimeState.setVariable(key, val);
 		if (handler?.app?.ghostController?.sendShioriEvent) {
@@ -121,12 +133,21 @@ export async function handleGetPropertyCommand(
 ) {
 	const h = handler;
 
-	// 1. 配列指定時の \![get,property,eventName,...propKeys] 形式
-	if (Array.isArray(keyOrArgs)) {
-		const rawArgs =
-			keyOrArgs[0]?.toLowerCase() === "get" ? keyOrArgs.slice(1) : keyOrArgs;
-		const eventName = rawArgs[1] ?? "";
-		const propKeys = rawArgs.slice(2);
+	// 1. \![get,property,eventName,...propKeys] 形式の引数解釈と柔軟な正規化
+	let rawArgs: string[] = Array.isArray(keyOrArgs) ? keyOrArgs : [keyOrArgs];
+	if (rawArgs.length === 1 && rawArgs[0].includes(",")) {
+		rawArgs = rawArgs[0].split(",").map((s) => s.trim());
+	}
+	if (rawArgs[0]?.toLowerCase() === "get") {
+		rawArgs = rawArgs.slice(1);
+	}
+	if (rawArgs[0]?.toLowerCase() === "property") {
+		rawArgs = rawArgs.slice(1);
+	}
+
+	if (rawArgs.length >= 2) {
+		const eventName = rawArgs[0] ?? "";
+		const propKeys = rawArgs.slice(1);
 		if (!eventName || propKeys.length === 0) {
 			return;
 		}

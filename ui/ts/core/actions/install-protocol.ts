@@ -27,6 +27,8 @@ export const INSTALL_IDENTIFIERS = Object.freeze([
 	"calendar.plugin",
 	"profile",
 	"taromime",
+	"ghost_or_shell",
+	"unknown",
 ]);
 
 /**
@@ -57,6 +59,22 @@ export function normalizeInstallType(
 		return lower;
 	}
 	return lower || "unknown";
+}
+
+/**
+ * インストール失敗理由の正規化 (UKADOC「インストールの失敗理由」準拠)
+ * @param {string} reason
+ * @returns {string}
+ */
+export function normalizeInstallFailureReason(
+	reason: InstallFailureReason | string | null | undefined,
+): string {
+	if (!reason || typeof reason !== "string") return "unsupported";
+	const lower = reason.trim().toLowerCase();
+	if (INSTALL_FAILURE_REASONS.includes(lower)) {
+		return lower;
+	}
+	return "unsupported";
 }
 
 /**

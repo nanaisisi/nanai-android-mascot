@@ -2,11 +2,11 @@
 
 - **規格**: [owner-draw-menu.md](../../../../ukadoc-spec/manual/owner-draw-menu.md) ([公式版](https://ukatech.shillest.net/ukadoc-spec/manual/owner-draw-menu/))
 - **検索語**: menu_background.png
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-`extract_shell_menu_theme` が `menu.background.bitmap.filename` 等の `descript.txt` 指定またはフォールバック名 `menu_background.png` を読み込み、フロントエンドの `menuThemeRenderer`・`applyShellMenuTheme`・`context-menu.css` / `submenu-window.css` が `--menu-bg-image` としてメニュー領域サイズで表示する。ただし `load_menu_bitmap_data_url` はファイル不在時に 1x1 白 PNG Data URL を生成するため、画像省略時に標準メニュー表示へ戻る動作に一部乖離がある。
+`extract_shell_menu_theme` が `menu.background.bitmap.filename` 等の `descript.txt` 指定またはフォールバック名 `menu_background.png` の外部ファイルを読み込み、フロントエンドの `menuThemeRenderer`・`applyShellMenuTheme`・`context-menu.css` / `submenu-window.css` が `--menu-bg-image` としてメニュー領域サイズで表示する。`load_menu_bitmap_data_url` は内蔵ダミー PNG を生成せず、外部ファイル不在時は `None` を返却するため、画像省略時は標準メニュー表示へ戻る。
 
 ## 実装箇所
 

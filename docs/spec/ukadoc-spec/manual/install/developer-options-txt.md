@@ -2,11 +2,11 @@
 
 - **規格**: [install.md](../../../../ukadoc-spec/manual/install.md) ([公式版](https://ukatech.shillest.net/ukadoc-spec/manual/install/))
 - **検索語**: developer_options.txt
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-ネットワーク更新定義生成（`generate_updates2_dau`）・ディレクトリスキャン（`parse_developer_options`）・WASM / TS 判定（`parse_developer_options_txt` / `isNoUpdatePath`）では `developer_options.txt` の `noupdate` 除外を実装済み。一方、NAR アーカイブ作成処理（`create_nar_from_directory`）では固定の除外リスト（`IGNORE_FILE_NAMES` / `IGNORE_DIR_NAMES`: `profile`・`var`・`.git`・`thumbs.db` 等）を使用し、各コンテンツ階層の `developer_options.txt` による `nonar` 等の動的除外制御は未読込。
+ネットワーク更新定義生成（`generate_updates2_dau`）・ディレクトリスキャン（`parse_developer_options`）・WASM / TS 判定（`parse_developer_options_txt` / `isNoUpdatePath`）での `noupdate` 除外に加え、NAR アーカイブ作成処理（`create_nar_from_directory`）でも `developer_options.txt` を読み込んで `nonar` 指定のファイルを動的に除外する処理を実装済み。
 
 ## 実装箇所
 

@@ -85,9 +85,12 @@ export async function applySurfaceImageToDom(
 				if (fileName.startsWith("data:")) {
 					return fileName;
 				}
-				const resolveId =
-					fileName.replace(/\.[^/.]+$/, "").replace(/^surface/i, "") || "0";
+				const isSurfacePrefix = /^surface/i.test(fileName);
+				const resolveId = isSurfacePrefix
+					? fileName.replace(/\.[^/.]+$/, "").replace(/^surface/i, "") || "0"
+					: fileName;
 				const pnaFileName = fileName.replace(/\.[^/.]+$/, ".pna");
+				const pnaResolveId = isSurfacePrefix ? resolveId : pnaFileName;
 				let layerSrc = null;
 				let layerPnaSrc = null;
 
@@ -97,7 +100,12 @@ export async function applySurfaceImageToDom(
 						.catch(() => null);
 					if (!layerSrc) return null;
 					layerPnaSrc = await controller
-						.loadSurfaceAsset("load_surface_pna", ghostPath, shell, resolveId)
+						.loadSurfaceAsset(
+							"load_surface_pna",
+							ghostPath,
+							shell,
+							pnaResolveId,
+						)
 						.catch(() => null);
 				} else {
 					layerSrc = convertFileSrc(`${ghostPath}/shell/${shell}/${fileName}`);

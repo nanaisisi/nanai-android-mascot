@@ -2,11 +2,11 @@
 
 - **規格**: [shell.md](../../../../ukadoc-spec/manual/shell.md) ([公式版](https://ukatech.shillest.net/ukadoc-spec/manual/shell/))
 - **検索語**: composeSurfaceElements, compute_surface_composition_plan
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-`compute_surface_composition_plan`・`Shell::composition_plan`・`surface_composition_plan`・`composeSurfaceElements` により `element` 指定パーツ画像の合成計画とレイヤー描画を実装済み。非 Tauri 経路では `fileName` 直接指定で任意名パーツを読み込めるが、Tauri 経路の `applySurfaceImageToDom` はファイル名から `^surface` を除いた ID を作って `load_surface_image` を呼ぶため、`surface*.png` 以外の任意ファイル名パーツを読み込めない（またアニメ GIF / APNG / WebP は非対応）。
+`compute_surface_composition_plan`・`Shell::composition_plan`・`surface_composition_plan`・`composeSurfaceElements` により `element` 指定パーツ画像の合成計画とレイヤー描画を実装済み。非 Tauri 経路・Tauri 経路ともに任意の `(element).png` ファイル名パーツを直接読み込める。
 
 ## 実装箇所
 

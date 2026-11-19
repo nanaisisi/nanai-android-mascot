@@ -2,11 +2,11 @@
 
 - **規格**: [install.md](../../../../ukadoc-spec/manual/install.md) ([公式版](https://ukatech.shillest.net/ukadoc-spec/manual/install/))
 - **検索語**: assets/shell
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-`inspect_zip_archive` が `type,shell` を受理し、`install.txt` を含む追加シェルアーカイブを展開する。ただし展開先が `assets/shell/<dir>/` 固定となっており、`accept` で指定された既存対象ゴーストを特定してその `shell/<additional_shell>/` 配下へ配置する解決処理は未実装。
+`inspect_zip_archive` が `type,shell` を受理し、`install.txt` の `accept` 指定に基づいて既存の対象ゴーストを特定し、その `shell/<additional_shell>/` 配下へ展開する解決処理を実装済み。
 
 ## 実装箇所
 

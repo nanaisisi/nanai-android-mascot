@@ -2,11 +2,11 @@
 
 - **規格**: [owner-draw-menu.md](../../../../ukadoc-spec/manual/owner-draw-menu.md) ([公式版](https://ukatech.shillest.net/ukadoc-spec/manual/owner-draw-menu/))
 - **検索語**: menu_sidebar.png
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-`extract_shell_menu_theme` が `menu.sidebar.bitmap.filename` 等の指定および `menu_sidebar.png` を読み込み、`menuThemeRenderer` と `applyShellMenuTheme` が `body.has-sidebar` と画像の `naturalWidth` に基づく `--menu-sidebar-width` を反映して `.menu-sidebar` に描画する。一方、`submenu-window.css` にはサイドバー領域のスタイル定義がなく、`load_menu_bitmap_data_url` はファイル不在時に `shell_dir` へ `menu_sidebar.png` を実ファイル生成する副作用を持つ。
+`extract_shell_menu_theme` が `menu.sidebar.bitmap.filename` 等の指定および `menu_sidebar.png` の外部ファイルを読み込み、`menuThemeRenderer` と `applyShellMenuTheme` が `body.has-sidebar` と画像の `naturalWidth` に基づく `--menu-sidebar-width` を反映して `.menu-sidebar` に描画する。`load_menu_bitmap_data_url` は内蔵ダミー PNG の生成や `shell_dir` への実ファイル書き出しを行わず、外部ファイル不在時は `None` を返却する。
 
 ## 実装箇所
 

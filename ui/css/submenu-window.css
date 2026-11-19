@@ -1,91 +1,114 @@
 body {
-  margin: 0;
-  padding: 0;
-  background: transparent;
-  overflow: hidden;
-  font-family: var(--balloon-font-family);
-  color: var(--balloon-text-color, #111111);
-  user-select: none;
-  -webkit-user-select: none;
+	margin: 0;
+	padding: 0;
+	background: transparent;
+	overflow: hidden;
+	font-family: var(--balloon-font-family);
+	color: var(--balloon-text-color, #111111);
+	user-select: none;
+	-webkit-user-select: none;
 }
 
 .submenu-window-container {
-  width: 100%;
-  max-height: 300px;
-  overflow-y: auto;
-  background-color: var(--balloon-bg, #ffffff);
-  background-image: var(--menu-bg-image, var(--balloon-pattern, none));
-  background-repeat: var(--menu-bg-repeat, repeat);
-  background-position: var(--menu-bg-position, left top);
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-  outline: 0;
-  padding: 0.25rem 0;
-  font-size: var(--balloon-font-size, 0.8125rem);
-  color: var(--balloon-text-color, #111111);
-  cursor: move;
-  position: relative;
+	width: 100%;
+	max-height: 300px;
+	overflow-y: auto;
+	background-color: var(--balloon-bg, #ffffff);
+	background-image: var(--menu-bg-image, var(--balloon-pattern, none));
+	background-repeat: var(--menu-bg-repeat, repeat);
+	background-position: var(--menu-bg-position, left top);
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+	outline: 0;
+	padding: 0.25rem 0;
+	font-size: var(--balloon-font-size, 0.8125rem);
+	color: var(--balloon-text-color, #111111);
+	cursor: move;
+	position: relative;
 }
 
 .submenu-window-container .menu-item {
-  width: 100%;
-  padding: 0.04rem 0.3rem;
-  min-height: 14px;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  background: none;
-  border: none;
-  border-radius: 0;
-  text-align: left;
-  cursor: pointer;
-  font-family: inherit;
-  font-size: var(--menu-font-size, 0.7rem);
-  color: var(--balloon-text-color, #111111);
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
+	width: 100%;
+	padding: 0.04rem 0.3rem;
+	min-height: 14px;
+	touch-action: manipulation;
+	-webkit-tap-highlight-color: transparent;
+	background: none;
+	border: none;
+	border-radius: 0;
+	text-align: left;
+	cursor: pointer;
+	font-family: inherit;
+	font-size: var(--menu-font-size, 0.7rem);
+	color: var(--balloon-text-color, #111111);
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
 }
 
 .submenu-window-container .menu-item-indicator {
-  width: 1.2rem;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  flex-shrink: 0;
+	width: 1.2rem;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	flex-shrink: 0;
 }
 
 .submenu-window-container .menu-item-label {
-  flex-grow: 1;
-  text-align: left;
-  justify-content: flex-start;
+	flex-grow: 1;
+	text-align: left;
+	justify-content: flex-start;
 }
 
 .submenu-window-container .menu-item:hover,
 .submenu-window-container .menu-item:focus,
 .submenu-window-container .menu-item.is-current {
-  background-color: var(--balloon-highlight-bg, #0078d7);
-  background-image: var(--menu-fg-image, none);
-  background-repeat: var(--menu-fg-repeat, no-repeat);
-  background-position: var(--menu-fg-position, left top);
-  background-size: cover;
-  color: var(--balloon-highlight-text, #ffffff);
-  outline: none;
-  border-radius: 0;
+	background-color: var(--balloon-highlight-bg, #0078d7);
+	background-image: var(--menu-fg-image, none);
+	background-repeat: var(--menu-fg-repeat, no-repeat);
+	background-position: var(--menu-fg-position, left top);
+	background-size: cover;
+	color: var(--balloon-highlight-text, #ffffff);
+	outline: none;
+	border-radius: 0;
 }
 
 .submenu-window-container .menu-separator {
-  height: 1px;
-  border: none;
-  background-color: var(--balloon-separator-color, #999999);
-  margin: 1px 2px;
+	height: 1px;
+	border: none;
+	background-color: var(--balloon-separator-color, #999999);
+	margin: 1px 2px;
 }
 
 .submenu-window-container::-webkit-scrollbar {
-  width: 4px;
+	width: 4px;
 }
 
 .submenu-window-container::-webkit-scrollbar-thumb {
-  background: rgba(128, 128, 128, 0.4);
-  border-radius: 2px;
+	background: rgba(128, 128, 128, 0.4);
+	border-radius: 2px;
+}
+
+.menu-sidebar {
+	display: none;
+	width: 0;
+	min-width: 0;
+	align-self: stretch;
+	background: transparent;
+	background-image: var(--menu-sidebar-image, none);
+	background-repeat: no-repeat;
+	background-position: var(--menu-sidebar-position, left top);
+	background-size: 100% 100%;
+	flex-shrink: 0;
+	margin-right: 0;
+	padding-right: 0;
+	z-index: 10;
+	position: relative;
+}
+
+body.has-sidebar .menu-sidebar {
+	display: block;
+	width: var(--menu-sidebar-width, 28px);
+	min-width: var(--menu-sidebar-min-width, 28px);
 }

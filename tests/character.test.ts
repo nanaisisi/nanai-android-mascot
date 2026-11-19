@@ -1533,6 +1533,7 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 		const appended = new Map<string, Record<string, unknown>>();
 		const drawOps = {
 			strokeRects: [] as number[][],
+			fillRectCalls: 0,
 			fillTexts: [] as Array<{ text: string; x: number; y: number }>,
 			clearRects: 0,
 		};
@@ -1564,7 +1565,9 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 							clearRect() {
 								drawOps.clearRects += 1;
 							},
-							fillRect() {},
+							fillRect() {
+								drawOps.fillRectCalls += 1;
+							},
 							strokeRect(x: number, y: number, w: number, h: number) {
 								drawOps.strokeRects.push([x, y, w, h]);
 							},
@@ -1620,17 +1623,34 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 			assert.equal(canvas.style.display, "block");
 			assert.equal(canvas.width, 100);
 			assert.equal(canvas.height, 200);
-			assert.deepEqual(drawOps.strokeRects, [[10, 10, 40, 40]]);
+			assert.equal(drawOps.fillRectCalls, 0);
+			assert.deepEqual(drawOps.strokeRects, [
+				[1, 1, 98, 198],
+				[10, 10, 40, 40],
+			]);
 			assert.equal(drawOps.fillTexts[0]?.text, "Head");
 
-			// Rescaling character to 2x updates collision canvas dimensions & coordinates
+			// Rescaling character to 2x updates both window & part collision outlines
 			drawOps.strokeRects.length = 0;
 			await listenCallbacks["character-scale-changed"]?.({
 				payload: { scale: 2 },
 			});
 			assert.equal(canvas.width, 200);
 			assert.equal(canvas.height, 400);
-			assert.deepEqual(drawOps.strokeRects, [[20, 20, 80, 80]]);
+			assert.equal(drawOps.fillRectCalls, 0);
+			assert.deepEqual(drawOps.strokeRects, [
+				[1, 1, 198, 398],
+				[20, 20, 80, 80],
+			]);
+
+			// Empty part collisions with visible: true still keeps window boundary visible
+			drawOps.strokeRects.length = 0;
+			await listenCallbacks["update-subchar-collisions-1"]?.({
+				payload: { visible: true, collisions: [] },
+			});
+			assert.equal(canvas.style.display, "block");
+			assert.equal(drawOps.fillRectCalls, 0);
+			assert.deepEqual(drawOps.strokeRects, [[1, 1, 198, 398]]);
 
 			// Hiding collisions hides the canvas cleanly
 			await listenCallbacks["update-subchar-collisions-1"]?.({

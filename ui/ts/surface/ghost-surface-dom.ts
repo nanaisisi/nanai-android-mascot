@@ -244,11 +244,30 @@ export function renderCollisionOverlayForScope(
 	const resolvedSurfaceId = resolveSurfaceIdForScope(sm, scopeId, surfaceId);
 	const sid = String(resolvedSurfaceId);
 	const collisionsMap = sm?.collisions as Record<string, unknown[]> | undefined;
-	const colList = Array.isArray(collisionsMap?.[sid])
+	const baseColList = Array.isArray(collisionsMap?.[sid])
 		? collisionsMap[sid]
 		: Array.isArray(collisionsMap?.default)
 			? collisionsMap.default
 			: [];
+	const animationsMap = sm?.animations as Record<string, unknown> | undefined;
+	const animEntriesRaw = animationsMap?.[sid];
+	const animEntries = Array.isArray(animEntriesRaw)
+		? animEntriesRaw
+		: animEntriesRaw && typeof animEntriesRaw === "object"
+			? Object.values(animEntriesRaw)
+			: [];
+	const animColList: unknown[] = [];
+	for (const anim of animEntries) {
+		if (
+			anim &&
+			typeof anim === "object" &&
+			Array.isArray((anim as { collisions?: unknown[] }).collisions)
+		) {
+			animColList.push(...(anim as { collisions: unknown[] }).collisions);
+		}
+	}
+	const colList =
+		animColList.length > 0 ? [...baseColList, ...animColList] : baseColList;
 
 	if (isTauriAvailable()) {
 		try {

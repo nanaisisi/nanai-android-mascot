@@ -266,6 +266,13 @@ export const surfaceCollisionMethods = {
 		const height = canvas.height || 400;
 		ctx.clearRect(0, 0, width, height);
 
+		// ウインドウ系の当たり判定（サーフィス／ウィンドウ外枠）
+		if (width > 2 && height > 2) {
+			ctx.strokeStyle = "#0078d7";
+			ctx.lineWidth = 2;
+			ctx.strokeRect(1, 1, width - 2, height - 2);
+		}
+
 		const sid =
 			surfaceId !== null && surfaceId !== undefined
 				? String(surfaceId)
@@ -276,17 +283,10 @@ export const surfaceCollisionMethods = {
 		const colList = this.collisions?.[sid] || this.collisions?.default || [];
 		if (colList.length === 0) return;
 
-		const colors = [
-			"rgba(255, 0, 0, 0.5)",
-			"rgba(0, 120, 215, 0.5)",
-			"rgba(46, 125, 50, 0.5)",
-			"rgba(230, 81, 0, 0.5)",
-		];
-
 		colList.forEach((col, idx) => {
-			const color = colors[idx % colors.length];
-			ctx.strokeStyle = color;
-			ctx.fillStyle = color.replace("0.5", "0.2");
+			ctx.strokeStyle = "#ff0000";
+			ctx.fillStyle = "#ff0000";
+			ctx.font = "bold 11px sans-serif";
 			ctx.lineWidth = 2;
 
 			const name = String(col.name || `col${idx}`);
@@ -300,38 +300,48 @@ export const surfaceCollisionMethods = {
 						x2: number;
 						y2: number;
 					};
-					const w = r.x2 - r.x1;
-					const h = r.y2 - r.y1;
-					ctx.fillRect(r.x1, r.y1, w, h);
-					ctx.strokeRect(r.x1, r.y1, w, h);
-					ctx.fillStyle = "#ff0000";
-					ctx.font = "bold 11px sans-serif";
-					ctx.fillText(name, r.x1 + 4, r.y1 + 14);
+					const x = Math.min(r.x1, r.x2);
+					const y = Math.min(r.y1, r.y2);
+					const w = Math.abs(r.x2 - r.x1);
+					const h = Math.abs(r.y2 - r.y1);
+					ctx.strokeRect(x, y, w, h);
+					ctx.fillText(name, x + 4, y + 14);
 					return;
 				}
 				if (shapeObj.Circle) {
 					const c = shapeObj.Circle as { cx: number; cy: number; r: number };
 					ctx.beginPath();
 					ctx.arc(c.cx, c.cy, c.r, 0, Math.PI * 2);
-					ctx.fill();
 					ctx.stroke();
-					ctx.fillStyle = "#ff0000";
-					ctx.font = "bold 11px sans-serif";
 					ctx.fillText(name, c.cx - 10, c.cy);
+					return;
+				}
+				if (shapeObj.Ellipse) {
+					const e = shapeObj.Ellipse as {
+						cx: number;
+						cy: number;
+						rx: number;
+						ry: number;
+					};
+					ctx.beginPath();
+					ctx.ellipse(e.cx, e.cy, e.rx, e.ry, 0, 0, Math.PI * 2);
+					ctx.stroke();
+					ctx.fillText(name, e.cx - 10, e.cy);
 					return;
 				}
 			}
 
 			const shapeKind = String(col.shape || "rect").toLowerCase();
 			if (shapeKind === "rect" || col.x1 !== undefined) {
-				const x1 = col.x1 ?? 0;
-				const y1 = col.y1 ?? 0;
-				const w = (col.x2 ?? x1 + 40) - x1;
-				const h = (col.y2 ?? y1 + 40) - y1;
-				ctx.fillRect(x1, y1, w, h);
+				const rawX1 = col.x1 ?? 0;
+				const rawY1 = col.y1 ?? 0;
+				const rawX2 = col.x2 ?? rawX1 + 40;
+				const rawY2 = col.y2 ?? rawY1 + 40;
+				const x1 = Math.min(rawX1, rawX2);
+				const y1 = Math.min(rawY1, rawY2);
+				const w = Math.abs(rawX2 - rawX1);
+				const h = Math.abs(rawY2 - rawY1);
 				ctx.strokeRect(x1, y1, w, h);
-				ctx.fillStyle = "#ff0000";
-				ctx.font = "bold 11px sans-serif";
 				ctx.fillText(name, x1 + 4, y1 + 14);
 			} else if (shapeKind === "circle" || shapeKind === "ellipse") {
 				const cx = col.cx ?? 50;
@@ -340,11 +350,24 @@ export const surfaceCollisionMethods = {
 				const ry = col.ry ?? col.r ?? 30;
 				ctx.beginPath();
 				ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
-				ctx.fill();
 				ctx.stroke();
-				ctx.fillStyle = "#ff0000";
-				ctx.font = "bold 11px sans-serif";
 				ctx.fillText(name, cx - 10, cy);
+			} else if (shapeKind === "polygon" && Array.isArray(col.vertices)) {
+				const vertices = col.vertices.map((pt) =>
+					Array.isArray(pt)
+						? [Number(pt[0] ?? 0), Number(pt[1] ?? 0)]
+						: [Number(pt?.x ?? 0), Number(pt?.y ?? 0)],
+				);
+				if (vertices.length >= 2) {
+					ctx.beginPath();
+					ctx.moveTo(vertices[0][0], vertices[0][1]);
+					for (let i = 1; i < vertices.length; i += 1) {
+						ctx.lineTo(vertices[i][0], vertices[i][1]);
+					}
+					ctx.closePath();
+					ctx.stroke();
+					ctx.fillText(name, vertices[0][0] + 4, vertices[0][1] + 14);
+				}
 			}
 		});
 	},

@@ -242,12 +242,8 @@ function openCharacterMenu(
 	});
 }
 
-const COLLISION_OVERLAY_COLORS = [
-	"rgba(255, 0, 0, 0.5)",
-	"rgba(0, 120, 215, 0.5)",
-	"rgba(46, 125, 50, 0.5)",
-	"rgba(230, 81, 0, 0.5)",
-];
+const WINDOW_COLLISION_STROKE_COLOR = "#0078d7";
+const PART_COLLISION_STROKE_COLOR = "#ff0000";
 
 function resolveCollisionShape(col: Record<string, unknown>): {
 	kind: string;
@@ -288,18 +284,8 @@ function drawCollisionLabel(
 ) {
 	if (!name || typeof ctx.fillText !== "function") return;
 	ctx.font = "bold 11px sans-serif";
-	const padX = 3;
-	const textWidth =
-		typeof ctx.measureText === "function"
-			? ctx.measureText(name).width
-			: name.length * 7;
-	const boxY = Math.max(0, y - 12);
-	if (typeof ctx.fillRect === "function") {
-		ctx.fillStyle = "rgba(0, 0, 0, 0.72)";
-		ctx.fillRect(x, boxY, textWidth + padX * 2, 15);
-	}
-	ctx.fillStyle = "#ffffff";
-	ctx.fillText(name, x + padX, boxY + 11);
+	ctx.fillStyle = PART_COLLISION_STROKE_COLOR;
+	ctx.fillText(name, x, Math.max(11, y));
 }
 
 function drawCollisionAreasOnSubcharCanvas(
@@ -315,11 +301,14 @@ function drawCollisionAreasOnSubcharCanvas(
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 	}
 
+	if (canvas.width > 2 && canvas.height > 2) {
+		ctx.strokeStyle = WINDOW_COLLISION_STROKE_COLOR;
+		ctx.lineWidth = 2;
+		ctx.strokeRect?.(1, 1, canvas.width - 2, canvas.height - 2);
+	}
+
 	collisions.forEach((col, idx) => {
-		const color =
-			COLLISION_OVERLAY_COLORS[idx % COLLISION_OVERLAY_COLORS.length];
-		ctx.strokeStyle = color;
-		ctx.fillStyle = color.replace("0.5", "0.2");
+		ctx.strokeStyle = PART_COLLISION_STROKE_COLOR;
 		ctx.lineWidth = 2;
 
 		const name = String(col.name ?? `col${idx}`);
@@ -340,9 +329,8 @@ function drawCollisionAreasOnSubcharCanvas(
 			const y = Math.min(rawY1, rawY2) * scale;
 			const w = Math.abs(rawX2 - rawX1) * scale;
 			const h = Math.abs(rawY2 - rawY1) * scale;
-			ctx.fillRect?.(x, y, w, h);
 			ctx.strokeRect?.(x, y, w, h);
-			drawCollisionLabel(ctx, name, x + 2, y + 14);
+			drawCollisionLabel(ctx, name, x + 4, y + 14);
 			return;
 		}
 
@@ -357,7 +345,6 @@ function drawCollisionAreasOnSubcharCanvas(
 			} else {
 				ctx.arc?.(cx, cy, rx, 0, Math.PI * 2);
 			}
-			ctx.fill?.();
 			ctx.stroke?.();
 			drawCollisionLabel(ctx, name, Math.max(0, cx - 10), cy);
 			return;
@@ -384,9 +371,8 @@ function drawCollisionAreasOnSubcharCanvas(
 					ctx.lineTo?.(vertices[i][0], vertices[i][1]);
 				}
 				ctx.closePath?.();
-				ctx.fill?.();
 				ctx.stroke?.();
-				drawCollisionLabel(ctx, name, vertices[0][0] + 2, vertices[0][1] + 14);
+				drawCollisionLabel(ctx, name, vertices[0][0] + 4, vertices[0][1] + 14);
 			}
 		}
 	});
@@ -415,7 +401,7 @@ function initCharacterWindow() {
 			: null;
 
 	const renderSubcharCollisionCanvas = () => {
-		if (!showCollisions || currentCollisions.length === 0) {
+		if (!showCollisions) {
 			if (collisionCanvas?.style) {
 				collisionCanvas.style.display = "none";
 			}

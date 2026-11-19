@@ -25,13 +25,18 @@ const renderer = new MenuSubmenuRenderer(dispatcher);
 setupContextMenuSync(dispatcher, renderer);
 
 let hasActiveSubmenu = false;
+let lastSubmenuRequest: { type: string; time: number } | null = null;
 
 // 独立サブメニューウィンドウ（デスクトップ）またはインラインサブメニュー（モバイル/Android/Web）を開く補助関数
 function _triggerSubmenuWindow(menuType: string, buttonEl: Element) {
 	const now = Date.now();
-	const last = _triggerSubmenuWindow.lastRequest;
-	if (last?.type === menuType && now - last.time < 180) return;
-	_triggerSubmenuWindow.lastRequest = { type: menuType, time: now };
+	if (
+		lastSubmenuRequest?.type === menuType &&
+		now - lastSubmenuRequest.time < 180
+	) {
+		return;
+	}
+	lastSubmenuRequest = { type: menuType, time: now };
 
 	hasActiveSubmenu = true;
 	const wrapper = buttonEl.closest(".menu-item-wrapper");
@@ -119,7 +124,9 @@ document.addEventListener("click", (e) => {
 		return;
 	}
 
-	const action = menuItem.dataset.action || menuItem.id.replace("-btn", "");
+	const action =
+		(menuItem as HTMLElement).dataset?.action ||
+		menuItem.id.replace("-btn", "");
 	dispatcher.dispatchAction(action);
 });
 
@@ -140,8 +147,8 @@ function checkSubmenuFlip(wrapper: Element) {
 }
 
 // ホバー時にも右/左展開を判定 & サブメニュー呼び出し
-document.addEventListener("mouseover", (e: unknown) => {
-	const btn = (e.target as Element)?.closest?.(".menu-item.has-submenu");
+document.addEventListener("mouseover", (e: MouseEvent) => {
+	const btn = (e.target as Element | null)?.closest?.(".menu-item.has-submenu");
 	if (!btn) return;
 	const wrapper = btn.closest(".menu-item-wrapper") || btn.parentElement;
 	if (wrapper) {

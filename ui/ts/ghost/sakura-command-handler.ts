@@ -3,7 +3,6 @@
  * @brief さくらスクリプトの \! 拡張コマンドおよび入力ボックス (\![open,inputbox]) ハンドラ
  */
 
-import type { NanaiAndroidMascotApp } from "../../main.js";
 import {
 	closeCommunicateBox,
 	openCommunicateBox,
@@ -27,20 +26,35 @@ import {
 	handleWindowState,
 	setAlignmentToDesktop,
 } from "./command-handler/window.js";
-import type { SakuraScriptPlayer } from "./sakura-script.js";
+import type {
+	CommandAppExtensions,
+	CommandHandlerApp,
+	ModalDialogControllerLike,
+	PlaybackControllerLike,
+	SakuraScriptPlayer,
+	SyncObjectManagerLike,
+} from "./sakura-script.js";
+
+export type {
+	CommandAppExtensions,
+	CommandHandlerApp,
+	ModalDialogControllerLike,
+	PlaybackControllerLike,
+	SyncObjectManagerLike,
+};
 
 initDefaultCommandHandlers();
 
 export class SakuraCommandHandler {
 	player: SakuraScriptPlayer;
-	app: NanaiAndroidMascotApp;
+	app: CommandHandlerApp;
 	teachForm: HTMLElement | null;
 	communicateForm: HTMLElement | null;
 	[key: string]: unknown;
 
 	constructor(player: SakuraScriptPlayer) {
 		this.player = player;
-		this.app = player.app;
+		this.app = player.app as CommandHandlerApp;
 		this.teachForm = null;
 		this.communicateForm = null;
 		initDefaultCommandHandlers();

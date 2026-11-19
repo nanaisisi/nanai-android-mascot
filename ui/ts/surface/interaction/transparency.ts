@@ -8,13 +8,13 @@
  * @returns {boolean}
  */
 export function isPixelTransparent(
-	img: HTMLElement,
+	img: HTMLElement | null,
 	clientX: number,
 	clientY: number,
-) {
+): boolean {
 	if (img?.tagName !== "IMG") return false;
 	try {
-		const htmlImg = /** @type {HTMLImageElement} */ (img);
+		const htmlImg = img as HTMLImageElement;
 		const rect = htmlImg.getBoundingClientRect();
 		if (rect.width === 0 || rect.height === 0) return true;
 

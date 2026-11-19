@@ -2,16 +2,236 @@
  * Rust パース済みシェルマニフェスト（`shell_manifest` Tauri コマンド）の消費モジュール
  */
 import { invoke } from "../core/tauri-helper.js";
+import type {
+	CollisionArea,
+	CollisionShape,
+} from "../core/wasm/pkg/nanai_core.js";
 
-const sortedElementsCache = new WeakMap<unknown[], unknown[]>();
-const sortedAnimationsCache = new WeakMap<unknown[], unknown[]>();
-const sortedPatternsCache = new WeakMap<unknown[], unknown[]>();
+export type EnumVariantInput =
+	| string
+	| number
+	| Record<string, string | number | boolean | null | undefined>
+	| null
+	| undefined;
+
+export type RawPolygonVertex = [number, number] | { x?: number; y?: number };
+
+export type RawCollisionShape =
+	| CollisionShape
+	| { Rect: { x1?: number; y1?: number; x2?: number; y2?: number } }
+	| { Circle: { cx?: number; cy?: number; r?: number } }
+	| { Ellipse: { cx?: number; cy?: number; rx?: number; ry?: number } }
+	| { Polygon: { vertices?: RawPolygonVertex[] } }
+	| Record<string, unknown>;
+
+export interface RawCollisionArea {
+	id?: number | null;
+	name?: string;
+	shape?: RawCollisionShape | string;
+}
+
+export interface CollisionRectRecord {
+	id?: number;
+	name: string;
+	shape: "rect";
+	x1: number;
+	y1: number;
+	x2: number;
+	y2: number;
+	minX: number;
+	minY: number;
+	maxX: number;
+	maxY: number;
+}
+
+export interface CollisionCircleOrEllipseRecord {
+	id?: number;
+	name: string;
+	shape: "circle" | "ellipse";
+	cx: number;
+	cy: number;
+	rx: number;
+	ry: number;
+	minX: number;
+	minY: number;
+	maxX: number;
+	maxY: number;
+}
+
+export interface CollisionPolygonRecord {
+	id?: number;
+	name: string;
+	shape: "polygon";
+	vertices: Array<[number, number]>;
+	minX: number;
+	minY: number;
+	maxX: number;
+	maxY: number;
+}
+
+export type NormalizedCollisionRecord =
+	| CollisionRectRecord
+	| CollisionCircleOrEllipseRecord
+	| CollisionPolygonRecord;
+
+export interface CollisionContainsInput {
+	shape?: string | Record<string, unknown>;
+	x1?: number;
+	y1?: number;
+	x2?: number;
+	y2?: number;
+	cx?: number;
+	cy?: number;
+	rx?: number;
+	ry?: number;
+	r?: number;
+	vertices?: Array<[number, number] | { x?: number; y?: number }>;
+	minX?: number;
+	minY?: number;
+	maxX?: number;
+	maxY?: number;
+}
+
+export interface RawSurfaceElement {
+	id?: number;
+	method?: EnumVariantInput;
+	file?: string;
+	x?: number;
+	y?: number;
+	options?: string[];
+}
+
+export interface RawAnimationPattern {
+	index?: number;
+	surface?: number | string;
+	wait?: number;
+	wait_max?: number | null;
+	method?: EnumVariantInput;
+	x?: number;
+	y?: number;
+	options?: string[];
+}
+
+export interface RawSerikoAnimation {
+	id?: number;
+	interval?: EnumVariantInput;
+	name?: string | null;
+	collisions?: RawCollisionArea[];
+	patterns?: RawAnimationPattern[];
+	options?: string[][];
+}
+
+export interface RawSurfaceDefinition {
+	name?: string | null;
+	icon_rect?: number[] | null;
+	collisions?: RawCollisionArea[];
+	elements?: RawSurfaceElement[];
+	animations?: Record<string | number, RawSerikoAnimation>;
+	points?: Record<string, unknown>;
+	balloon_offsets?: Record<string, unknown>;
+	properties?: Record<string, string>;
+}
+
+export interface RawSurfaceManifestEntry {
+	number: number;
+	name?: string | null;
+	definition?: RawSurfaceDefinition;
+}
+
+export interface RawBindGroup {
+	number: number;
+	category: string;
+	part: string;
+	thumbnail?: string | null;
+	default?: boolean;
+	add_ids?: number[];
+}
+
+export interface RawCursorDefinition {
+	event: string;
+	collision: string;
+	cursor: string;
+}
+
+export interface RawShellManifest {
+	name?: string;
+	craftman?: string | null;
+	directory?: string;
+	descript?: { properties?: Record<string, string>; [key: string]: unknown };
+	surfaces?: RawSurfaceManifestEntry[];
+	aliases?: Record<string, number[]>;
+	kero_aliases?: Record<string, number[]>;
+	char_aliases?: Record<string | number, Record<string, number[]>>;
+	sakura_bind_groups?: RawBindGroup[];
+	kero_bind_groups?: RawBindGroup[];
+	collision_sort?: EnumVariantInput;
+	animation_sort?: EnumVariantInput;
+	cursors?: Record<string, RawCursorDefinition[]>;
+	tooltips?: Record<string, Record<string, string>>;
+	[key: string]: unknown;
+}
+
+export interface ManifestSurfaceElement {
+	id: number;
+	type: string;
+	file: string;
+	x: number;
+	y: number;
+}
+
+export interface ManifestAnimationPattern {
+	surface: string;
+	wait: number;
+	waitMax: number | null;
+	type: string;
+	x: number;
+	y: number;
+}
+
+export interface ManifestSurfaceAnimation {
+	id: number;
+	interval: string;
+	collisions: NormalizedCollisionRecord[];
+	patterns: ManifestAnimationPattern[];
+}
+
+export interface ManifestSurfaceData {
+	collisions: Record<string, NormalizedCollisionRecord[]>;
+	elements: Record<string, ManifestSurfaceElement[]>;
+	animations: Record<string, ManifestSurfaceAnimation[]>;
+	points: Record<string, Record<string, unknown>>;
+	balloonOffsets: Record<string, Record<string, unknown>>;
+	aliases: Record<string, number[]>;
+	keroAliases: Record<string, number[]>;
+	charAliases: Record<string | number, Record<string, number[]>>;
+	collisionSort: string;
+	animationSort: string;
+	cursors: Record<string, RawCursorDefinition[]>;
+	tooltips: Record<string, Record<string, string>>;
+	names: Record<string, string>;
+	iconRects: Record<string, number[]>;
+}
+
+const sortedElementsCache = new WeakMap<
+	RawSurfaceElement[],
+	RawSurfaceElement[]
+>();
+const sortedAnimationsCache = new WeakMap<
+	RawSerikoAnimation[],
+	RawSerikoAnimation[]
+>();
+const sortedPatternsCache = new WeakMap<
+	RawAnimationPattern[],
+	RawAnimationPattern[]
+>();
 
 export function enumToString(value: unknown): string {
 	if (value == null) return "";
 	if (typeof value === "string") return value.toLowerCase();
 	if (typeof value === "object") {
-		const [variant, val] = Object.entries(value)[0] ?? ["", ""];
+		const [variant, val] = Object.entries(
+			value as Record<string, unknown>,
+		)[0] ?? ["", ""];
 		const lower = variant.toLowerCase();
 		if (val == null) return lower;
 		return lower === "custom" ? String(val).toLowerCase() : `${lower},${val}`;
@@ -29,30 +249,80 @@ export function methodToString(value: unknown): string {
 	return s.startsWith("blend,") ? s.replace("blend,", "blend-") : s;
 }
 
-export function collisionRecord(area: unknown) {
-	const shape = area?.shape ?? {};
+interface CollisionShapeCoords {
+	vertices?: RawPolygonVertex[];
+	cx?: number;
+	cy?: number;
+	rx?: number;
+	ry?: number;
+	r?: number;
+	x1?: number;
+	y1?: number;
+	x2?: number;
+	y2?: number;
+}
+
+function asShapeCoords(val: unknown): CollisionShapeCoords {
+	return val && typeof val === "object" ? (val as CollisionShapeCoords) : {};
+}
+
+function parsePolygonVertex(p: RawPolygonVertex): [number, number] {
+	if (Array.isArray(p)) {
+		return [Number(p[0] ?? 0), Number(p[1] ?? 0)];
+	}
+	return [Number(p?.x ?? 0), Number(p?.y ?? 0)];
+}
+
+export function collisionRecord(area: {
+	id?: number | null;
+	name?: string;
+	shape: { Polygon: { vertices?: RawPolygonVertex[] } };
+}): CollisionPolygonRecord;
+export function collisionRecord(area: {
+	id?: number | null;
+	name?: string;
+	shape:
+		| { Circle: { cx?: number; cy?: number; r?: number } }
+		| { Ellipse: { cx?: number; cy?: number; rx?: number; ry?: number } };
+}): CollisionCircleOrEllipseRecord;
+export function collisionRecord(area: {
+	id?: number | null;
+	name?: string;
+	shape: { Rect: { x1?: number; y1?: number; x2?: number; y2?: number } };
+}): CollisionRectRecord;
+export function collisionRecord(
+	area: RawCollisionArea | CollisionArea | null | undefined,
+): NormalizedCollisionRecord;
+export function collisionRecord(
+	area: RawCollisionArea | CollisionArea | null | undefined,
+): NormalizedCollisionRecord {
+	const shape = area?.shape;
 	const id = area?.id != null ? Number(area.id) : undefined;
+	const name = String(area?.name ?? "").toLowerCase();
 	let kind = "rect";
-	let coords = shape;
-	if (typeof shape === "object") {
-		if ("Polygon" in shape) {
+	let coords: CollisionShapeCoords = {};
+
+	if (shape && typeof shape === "object") {
+		const shapeObj = shape as Record<string, unknown>;
+		if ("Polygon" in shapeObj) {
 			kind = "polygon";
-			coords = shape.Polygon;
-		} else if ("Circle" in shape) {
+			coords = asShapeCoords(shapeObj.Polygon);
+		} else if ("Circle" in shapeObj) {
 			kind = "circle";
-			coords = shape.Circle;
-		} else if ("Ellipse" in shape) {
+			coords = asShapeCoords(shapeObj.Circle);
+		} else if ("Ellipse" in shapeObj) {
 			kind = "ellipse";
-			coords = shape.Ellipse;
-		} else if ("Rect" in shape) {
-			coords = shape.Rect;
+			coords = asShapeCoords(shapeObj.Ellipse);
+		} else if ("Rect" in shapeObj) {
+			coords = asShapeCoords(shapeObj.Rect);
+		} else if (typeof shapeObj.shape === "string") {
+			kind = shapeObj.shape.toLowerCase();
+			coords = asShapeCoords(shapeObj);
 		}
 	}
 
 	if (kind === "polygon") {
-		const vertices = (coords?.vertices ?? []).map((p: unknown) =>
-			Array.isArray(p) ? p : [p?.x ?? 0, p?.y ?? 0],
-		);
+		const vertices = (coords.vertices ?? []).map(parsePolygonVertex);
 		let minX = Infinity;
 		let maxX = -Infinity;
 		let minY = Infinity;
@@ -65,7 +335,7 @@ export function collisionRecord(area: unknown) {
 		}
 		return {
 			id,
-			name: String(area?.name ?? "").toLowerCase(),
+			name,
 			shape: "polygon",
 			vertices,
 			minX: Number.isFinite(minX) ? minX : 0,
@@ -75,13 +345,13 @@ export function collisionRecord(area: unknown) {
 		};
 	}
 	if (kind === "circle" || kind === "ellipse") {
-		const cx = Number(coords?.cx ?? 0);
-		const cy = Number(coords?.cy ?? 0);
-		const rx = Number(coords?.rx ?? coords?.r ?? 0);
-		const ry = Number(coords?.ry ?? coords?.r ?? 0);
+		const cx = Number(coords.cx ?? 0);
+		const cy = Number(coords.cy ?? 0);
+		const rx = Number(coords.rx ?? coords.r ?? 0);
+		const ry = Number(coords.ry ?? coords.r ?? 0);
 		return {
 			id,
-			name: String(area?.name ?? "").toLowerCase(),
+			name,
 			shape: kind,
 			cx,
 			cy,
@@ -93,13 +363,13 @@ export function collisionRecord(area: unknown) {
 			maxY: cy + ry,
 		};
 	}
-	const x1 = Number(coords?.x1 ?? 0);
-	const y1 = Number(coords?.y1 ?? 0);
-	const x2 = Number(coords?.x2 ?? 0);
-	const y2 = Number(coords?.y2 ?? 0);
+	const x1 = Number(coords.x1 ?? 0);
+	const y1 = Number(coords.y1 ?? 0);
+	const x2 = Number(coords.x2 ?? 0);
+	const y2 = Number(coords.y2 ?? 0);
 	return {
 		id,
-		name: String(area?.name ?? "").toLowerCase(),
+		name,
 		shape: "rect",
 		x1,
 		y1,
@@ -112,7 +382,11 @@ export function collisionRecord(area: unknown) {
 	};
 }
 
-export function collisionContains(col: unknown, x: number, y: number): boolean {
+export function collisionContains(
+	col: CollisionContainsInput | NormalizedCollisionRecord | null | undefined,
+	x: number,
+	y: number,
+): boolean {
 	if (!col) return false;
 
 	if (
@@ -127,8 +401,9 @@ export function collisionContains(col: unknown, x: number, y: number): boolean {
 	}
 
 	if (col.shape === "polygon") {
-		const vertices = col.vertices ?? [];
-		if (vertices.length < 3) return false;
+		const rawVertices = col.vertices ?? [];
+		if (rawVertices.length < 3) return false;
+		const vertices = rawVertices.map(parsePolygonVertex);
 		let inside = false;
 		const n = vertices.length;
 		for (let i = 0, j = n - 1; i < n; j = i++) {
@@ -141,24 +416,35 @@ export function collisionContains(col: unknown, x: number, y: number): boolean {
 		return inside;
 	}
 	if (col.shape === "circle" || col.shape === "ellipse") {
-		const dx = (x - col.cx) / (col.rx || 0);
-		const dy = (y - col.cy) / (col.ry || 0);
-		return col.rx > 0 && col.ry > 0 && dx * dx + dy * dy <= 1;
+		const cx = col.cx ?? 0;
+		const cy = col.cy ?? 0;
+		const rx = col.rx ?? ("r" in col ? col.r : undefined) ?? 0;
+		const ry = col.ry ?? ("r" in col ? col.r : undefined) ?? 0;
+		const dx = (x - cx) / (rx || 0);
+		const dy = (y - cy) / (ry || 0);
+		return rx > 0 && ry > 0 && dx * dx + dy * dy <= 1;
 	}
+	const rect = col as CollisionContainsInput;
+	const x1 = rect.x1 ?? 0;
+	const x2 = rect.x2 ?? 0;
+	const y1 = rect.y1 ?? 0;
+	const y2 = rect.y2 ?? 0;
 	return (
-		x >= Math.min(col.x1, col.x2) &&
-		x <= Math.max(col.x1, col.x2) &&
-		y >= Math.min(col.y1, col.y2) &&
-		y <= Math.max(col.y1, col.y2)
+		x >= Math.min(x1, x2) &&
+		x <= Math.max(x1, x2) &&
+		y >= Math.min(y1, y2) &&
+		y <= Math.max(y1, y2)
 	);
 }
 
-export function manifestToSurfaceData(manifest: unknown) {
-	const collisions: Record<string, unknown[]> = {};
-	const elements: Record<string, unknown[]> = {};
-	const animations: Record<string, unknown[]> = {};
-	const points: Record<string, unknown> = {};
-	const balloonOffsets: Record<string, unknown> = {};
+export function manifestToSurfaceData(
+	manifest: RawShellManifest | null | undefined,
+): ManifestSurfaceData {
+	const collisions: Record<string, NormalizedCollisionRecord[]> = {};
+	const elements: Record<string, ManifestSurfaceElement[]> = {};
+	const animations: Record<string, ManifestSurfaceAnimation[]> = {};
+	const points: Record<string, Record<string, unknown>> = {};
+	const balloonOffsets: Record<string, Record<string, unknown>> = {};
 	const aliases = manifest?.aliases ?? {};
 	const keroAliases = manifest?.kero_aliases ?? {};
 	const charAliases = manifest?.char_aliases ?? {};
@@ -173,7 +459,9 @@ export function manifestToSurfaceData(manifest: unknown) {
 		const sid = String(surfaceEntry.number);
 		const def = surfaceEntry.definition ?? {};
 
-		collisions[sid] = (def.collisions ?? []).map(collisionRecord);
+		collisions[sid] = (def.collisions ?? []).map((area) =>
+			collisionRecord(area),
+		);
 		if (def.name) {
 			names[sid] = String(def.name);
 		}
@@ -193,103 +481,56 @@ export function manifestToSurfaceData(manifest: unknown) {
 		if (!sortedElements && rawElements.length > 0) {
 			sortedElements = rawElements
 				.slice()
-				.sort(
-					(a: unknown, b: unknown) =>
-						((a as { id?: number }).id ?? 0) - ((b as { id?: number }).id ?? 0),
-				);
+				.sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
 			sortedElementsCache.set(rawElements, sortedElements);
 		} else if (!sortedElements) {
 			sortedElements = [];
 		}
 
-		elements[sid] = sortedElements.map(
-			(
-				e:
-					| {
-							id?: number;
-							method?: unknown;
-							file?: string;
-							x?: number;
-							y?: number;
-					  }
-					| unknown,
-			) => ({
-				id: e.id ?? 0,
-				type: methodToString(e.method) || "overlay",
-				file: e.file ?? "",
-				x: e.x ?? 0,
-				y: e.y ?? 0,
-			}),
-		);
+		elements[sid] = sortedElements.map((e) => ({
+			id: e.id ?? 0,
+			type: methodToString(e.method) || "overlay",
+			file: e.file ?? "",
+			x: e.x ?? 0,
+			y: e.y ?? 0,
+		}));
 
 		const rawAnimations = Object.values(def.animations ?? {});
 		let sortedAnimations = sortedAnimationsCache.get(rawAnimations);
 		if (!sortedAnimations && rawAnimations.length > 0) {
 			sortedAnimations = rawAnimations
 				.slice()
-				.sort(
-					(a: unknown, b: unknown) =>
-						((a as { id?: number }).id ?? 0) - ((b as { id?: number }).id ?? 0),
-				);
+				.sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
 			sortedAnimationsCache.set(rawAnimations, sortedAnimations);
 		} else if (!sortedAnimations) {
 			sortedAnimations = [];
 		}
 
-		animations[sid] = sortedAnimations.map(
-			(
-				anim:
-					| {
-							id?: number;
-							interval?: unknown;
-							collisions?: unknown[];
-							patterns?: unknown[];
-					  }
-					| unknown,
-			) => ({
-				id: anim.id ?? 0,
-				interval: intervalToString(anim.interval) || "never",
-				collisions: (anim.collisions ?? []).map(collisionRecord),
-				patterns: (() => {
-					const animTyped = anim as { patterns?: unknown[] };
-					const rawPatterns = animTyped.patterns ?? [];
-					let sortedPatterns = sortedPatternsCache.get(rawPatterns);
-					if (!sortedPatterns && rawPatterns.length > 0) {
-						sortedPatterns = rawPatterns
-							.slice()
-							.sort(
-								(a: unknown, b: unknown) =>
-									((a as { index?: number }).index ?? 0) -
-									((b as { index?: number }).index ?? 0),
-							);
-						sortedPatternsCache.set(rawPatterns, sortedPatterns);
-					} else if (!sortedPatterns) {
-						sortedPatterns = [];
-					}
-					return sortedPatterns.map(
-						(
-							p:
-								| {
-										surface?: unknown;
-										wait?: number;
-										wait_max?: number;
-										method?: unknown;
-										x?: number;
-										y?: number;
-								  }
-								| unknown,
-						) => ({
-							surface: String(p.surface ?? -1),
-							wait: p.wait ?? 100,
-							waitMax: p.wait_max ?? null,
-							type: methodToString(p.method) || "overlay",
-							x: p.x ?? 0,
-							y: p.y ?? 0,
-						}),
-					);
-				})(),
-			}),
-		);
+		animations[sid] = sortedAnimations.map((anim) => ({
+			id: anim.id ?? 0,
+			interval: intervalToString(anim.interval) || "never",
+			collisions: (anim.collisions ?? []).map((area) => collisionRecord(area)),
+			patterns: (() => {
+				const rawPatterns = anim.patterns ?? [];
+				let sortedPatterns = sortedPatternsCache.get(rawPatterns);
+				if (!sortedPatterns && rawPatterns.length > 0) {
+					sortedPatterns = rawPatterns
+						.slice()
+						.sort((a, b) => (a.index ?? 0) - (b.index ?? 0));
+					sortedPatternsCache.set(rawPatterns, sortedPatterns);
+				} else if (!sortedPatterns) {
+					sortedPatterns = [];
+				}
+				return sortedPatterns.map((p) => ({
+					surface: String(p.surface ?? -1),
+					wait: p.wait ?? 100,
+					waitMax: p.wait_max ?? null,
+					type: methodToString(p.method) || "overlay",
+					x: p.x ?? 0,
+					y: p.y ?? 0,
+				}));
+			})(),
+		}));
 	}
 
 	return {
@@ -310,9 +551,15 @@ export function manifestToSurfaceData(manifest: unknown) {
 	};
 }
 
-export async function getShellManifest(ghostName: string, shellName: string) {
+export async function getShellManifest(
+	ghostName: string,
+	shellName: string,
+): Promise<RawShellManifest | null> {
 	try {
-		return await invoke("shell_manifest", { ghostName, shellName });
+		return await invoke<RawShellManifest | null>("shell_manifest", {
+			ghostName,
+			shellName,
+		});
 	} catch (err) {
 		console.warn(
 			`⚠️ shell_manifest 失敗 (ghost=${ghostName}, shell=${shellName}):`,
@@ -322,9 +569,22 @@ export async function getShellManifest(ghostName: string, shellName: string) {
 	}
 }
 
-export async function parseSurfacesTextWithRust(content: string) {
+export interface ParsedSurfacesTextResult {
+	collisions: Record<string, NormalizedCollisionRecord[]>;
+	elements: Record<string, ManifestSurfaceElement[]>;
+	animations: Record<string, ManifestSurfaceAnimation[]>;
+	points: Record<string, Record<string, unknown>>;
+	balloonOffsets: Record<string, Record<string, unknown>>;
+}
+
+export async function parseSurfacesTextWithRust(
+	content: string,
+): Promise<ParsedSurfacesTextResult | null> {
 	try {
-		const rawMap: unknown = await invoke("parse_surfaces_text", { content });
+		const rawMap = await invoke<Record<string, RawSurfaceManifestEntry> | null>(
+			"parse_surfaces_text",
+			{ content },
+		);
 		if (!rawMap || typeof rawMap !== "object") return null;
 
 		const surfaces = Object.values(rawMap);

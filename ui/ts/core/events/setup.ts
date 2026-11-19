@@ -299,7 +299,7 @@ export const setupMethods = {
 				});
 				return false;
 			};
-			el.addEventListener("contextmenu", handler as EventListener, true);
+			el.addEventListener("contextmenu", handler, true);
 		};
 
 		bindBalloon(

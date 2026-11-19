@@ -10,8 +10,37 @@ import {
 	isTauriAvailable,
 	listen,
 } from "../core/tauri-helper.js";
+import type {
+	BalloonMenuItem,
+	DressupMenuPayload,
+	RecentGhostInput,
+} from "./renderers/menu-balloon-dressup-renderer.js";
+import type {
+	MenuGhostInput,
+	MenuGhostItem,
+	MenuShellInput,
+} from "./renderers/menu-ghost-shell-renderer.js";
 import { renderSubmenuContent } from "./submenu-renderer.js";
 import { applyShellMenuTheme } from "./submenu-theme.js";
+
+interface TauriSubmenuEvent<T> {
+	payload: T;
+}
+
+interface SubmenuSyncGhostsPayload {
+	ghosts?: MenuGhostInput[];
+	currentGhost?: MenuGhostItem | string | null;
+	shells?: MenuShellInput[];
+	currentShell?: string | null;
+	recentGhosts?: RecentGhostInput[];
+	dressup?: DressupMenuPayload | null;
+	scope?: number;
+}
+
+interface SubmenuSyncShellsPayload {
+	shells?: MenuShellInput[];
+	currentShell?: string | null;
+}
 
 /**
  * [Design Invariant / 設計仕様]
@@ -20,33 +49,23 @@ import { applyShellMenuTheme } from "./submenu-theme.js";
  * 誤ってウィンドウドラッグ機能（startDraggingWindow）を追加しないよう注意してください。
  */
 
-/** @type {string} */
 let currentSubmenuType = "ghost";
-/** @type {string[]} */
-let cachedGhosts: unknown[] = [];
-/** @type {string|null} */
-let currentGhostName: null = null;
-/** @type {string[]} */
-let cachedShells: unknown[] = [];
-/** @type {string|null} */
-let currentShellName: null = null;
-/** @type {{ sakura: object, kero: object }|null} */
-let cachedDressup: null = null;
-/** @type {number} */
+let cachedGhosts: MenuGhostInput[] = [];
+let currentGhostName: string | null = null;
+let cachedShells: MenuShellInput[] = [];
+let currentShellName: string | null = null;
+let cachedDressup: DressupMenuPayload | null = null;
 let dressupScope = 0;
-/** @type {unknown[]} */
-let cachedBalloons: never[] = [];
-/** @type {string|null} */
-let currentBalloonTheme: null = null;
-/** @type {string[]} */
-let cachedRecentGhosts: never[] = [];
+let cachedBalloons: BalloonMenuItem[] = [];
+let currentBalloonTheme: string | null = null;
+let cachedRecentGhosts: RecentGhostInput[] = [];
 
 /**
  * サブメニューのアクションをイベントとして送信
  * @param {string} action
- * @param {any} [payload]
+ * @param {unknown} [payload]
  */
-async function dispatchSubmenuAction(action: unknown, payload = null) {
+async function dispatchSubmenuAction(action: string, payload: unknown = null) {
 	if (globalThis.parent && (globalThis.parent as unknown) !== globalThis) {
 		globalThis.parent.postMessage(
 			{
@@ -98,7 +117,8 @@ function renderContent() {
 }
 
 if (isTauriAvailable()) {
-	listen("set-submenu-type", (event) => {
+	listen("set-submenu-type", (rawEvent) => {
+		const event = rawEvent as TauriSubmenuEvent<{ type?: string } | null>;
 		if (event.payload?.type) {
 			currentSubmenuType = event.payload.type;
 			renderContent();
@@ -119,7 +139,7 @@ if (isTauriAvailable()) {
 							(res as { ghosts: unknown[] }).ghosts.length > 0 &&
 							cachedGhosts.length === 0
 						) {
-							cachedGhosts = (res as { ghosts: unknown[] }).ghosts;
+							cachedGhosts = (res as { ghosts: MenuGhostInput[] }).ghosts;
 							renderContent();
 						}
 					})
@@ -128,13 +148,18 @@ if (isTauriAvailable()) {
 		}
 	});
 
-	listen("sync-ghosts", (event) => {
+	listen("sync-ghosts", (rawEvent) => {
+		const event =
+			rawEvent as TauriSubmenuEvent<SubmenuSyncGhostsPayload | null>;
 		const data = event.payload;
 		if (data) {
 			cachedGhosts = data.ghosts || [];
-			currentGhostName = data.currentGhost;
+			currentGhostName =
+				typeof data.currentGhost === "string"
+					? data.currentGhost
+					: (data.currentGhost?.name ?? null);
 			cachedShells = data.shells || [];
-			currentShellName = data.currentShell;
+			currentShellName = data.currentShell ?? null;
 			cachedRecentGhosts = data.recentGhosts || [];
 			if (data.dressup) {
 				cachedDressup = data.dressup;
@@ -143,32 +168,40 @@ if (isTauriAvailable()) {
 				dressupScope = data.scope;
 			}
 			const activeShell =
-				data.shells?.find((s: unknown) => s.name === data.currentShell) ||
-				data.shells?.[0];
+				data.shells?.find(
+					(s) =>
+						typeof s === "object" && s !== null && s.name === data.currentShell,
+				) || data.shells?.[0];
 			applyShellMenuTheme(activeShell);
 			renderContent();
 		}
 	});
 
-	listen("sync-shells", (event) => {
+	listen("sync-shells", (rawEvent) => {
+		const event =
+			rawEvent as TauriSubmenuEvent<SubmenuSyncShellsPayload | null>;
 		const data = event.payload;
 		if (data) {
 			cachedShells = data.shells || cachedShells;
 			currentShellName = data.currentShell || currentShellName;
 			const activeShell =
-				cachedShells?.find((s: unknown) => s.name === currentShellName) ||
-				cachedShells?.[0];
+				cachedShells?.find(
+					(s) =>
+						typeof s === "object" && s !== null && s.name === currentShellName,
+				) || cachedShells?.[0];
 			applyShellMenuTheme(activeShell);
 			renderContent();
 		}
 	});
 
-	listen("sync-balloons", (event) => {
+	listen("sync-balloons", (rawEvent) => {
+		const event = rawEvent as TauriSubmenuEvent<BalloonMenuItem[] | null>;
 		cachedBalloons = event.payload || [];
 		renderContent();
 	});
 
-	listen("sync-theme", (event) => {
+	listen("sync-theme", (rawEvent) => {
+		const event = rawEvent as TauriSubmenuEvent<string | null | undefined>;
 		currentBalloonTheme = event.payload || null;
 		document.documentElement.setAttribute(
 			"data-balloon-theme",
@@ -185,11 +218,12 @@ if (isTauriAvailable()) {
 		renderContent();
 	});
 
-	listen("sync-menu-scope", (event) => {
+	listen("sync-menu-scope", (rawEvent) => {
+		const event = rawEvent as TauriSubmenuEvent<number | string>;
 		const scope =
 			typeof event.payload === "number"
 				? event.payload
-				: parseInt(event.payload, 10);
+				: parseInt(String(event.payload), 10);
 		if (!Number.isNaN(scope)) {
 			dressupScope = scope;
 			if (currentSubmenuType === "dressup") {

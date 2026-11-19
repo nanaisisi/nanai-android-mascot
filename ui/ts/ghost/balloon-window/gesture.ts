@@ -316,7 +316,7 @@ export function setupWindowGestures(
 			if (isDragging) {
 				finishMouseDrag();
 			} else {
-				stopCoordInterval();
+				stopCoordLoop();
 				hideCoordPopup();
 				if (isTauriAvailable()) {
 					void invoke("save_balloon_offset_from_position", { scopeId });

@@ -3,6 +3,8 @@
  * @brief シェルの descript.txt 由来のカスタムメニュー配色・背景ビットマップテーマ適用および画像プリロードモジュール
  */
 
+import type { MenuShellItem } from "./renderers/menu-theme-renderer.js";
+
 const imageCache = new Map<string, HTMLImageElement>();
 
 function preloadImage(url: string | null): Promise<void> {
@@ -28,10 +30,14 @@ function preloadImage(url: string | null): Promise<void> {
 	});
 }
 
-export function applyShellMenuTheme(activeShell: unknown) {
+export function applyShellMenuTheme(
+	activeShell: MenuShellItem | string | null | undefined,
+) {
 	const rootStyle = document.documentElement.style;
-	const theme = activeShell?.menu_theme;
-	const setOrRemove = (property: string, value: unknown) => {
+	const shellObj =
+		activeShell && typeof activeShell === "object" ? activeShell : null;
+	const theme = shellObj?.menu_theme;
+	const setOrRemove = (property: string, value: string | null | undefined) => {
 		if (value) rootStyle.setProperty(property, value);
 		else rootStyle.removeProperty(property);
 	};
@@ -52,15 +58,22 @@ export function applyShellMenuTheme(activeShell: unknown) {
 			typeof theme.font_height === "number"
 				? `${theme.font_height}px`
 				: String(theme.font_height).includes("px")
-					? theme.font_height
+					? String(theme.font_height)
 					: `${theme.font_height}px`;
 		setOrRemove("--balloon-font-size", h);
 	} else {
 		setOrRemove("--balloon-font-size", null);
 	}
 
-	const shellPath = activeShell?.path?.replace(/\\/g, "/") || "";
-	const resolveImg = (relativePath: string) => {
+	const shellPath = shellObj?.path?.replace(/\\/g, "/") || "";
+	const tauriGlobal = globalThis as typeof globalThis & {
+		__TAURI__?: {
+			core?: {
+				convertFileSrc?: (path: string) => string;
+			};
+		};
+	};
+	const resolveImg = (relativePath?: string | null) => {
 		if (!relativePath) return null;
 		const relStr = String(relativePath);
 		if (
@@ -74,8 +87,8 @@ export function applyShellMenuTheme(activeShell: unknown) {
 		const fullPath = shellPath
 			? `${shellPath}/${relStr.replace(/\\/g, "/")}`
 			: relStr;
-		return (globalThis as unknown).__TAURI__?.core?.convertFileSrc
-			? (globalThis as unknown).__TAURI__.core.convertFileSrc(fullPath)
+		return tauriGlobal.__TAURI__?.core?.convertFileSrc
+			? tauriGlobal.__TAURI__.core.convertFileSrc(fullPath)
 			: fullPath;
 	};
 
@@ -89,7 +102,7 @@ export function applyShellMenuTheme(activeShell: unknown) {
 		preloadImage(sideUrl),
 	]);
 
-	const applyAlignment = (alignRaw: string, prefix: string) => {
+	const applyAlignment = (alignRaw: string | undefined, prefix: string) => {
 		const align = String(alignRaw || "").toLowerCase();
 		let pos = "left top";
 		if (align.includes("right") && align.includes("bottom")) {

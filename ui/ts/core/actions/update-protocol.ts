@@ -49,11 +49,9 @@ export const UPDATE_RESULT_FAILURE_REASONS = Object.freeze([
 ]);
 
 /**
- * ネットワーク更新理由のバリデーション・正規化 (UKADOC「ネットワーク更新理由」準拠)
- * @param {string} [reason="manual"] - "manual" | "auto" | "script"
- * @returns {string}
+ * ネットワーク更新理由のバリデーション・正規化 (純TSフォールバック)
  */
-export function normalizeUpdateReason(
+export function normalizeUpdateReasonFallback(
 	reason: string | null | undefined,
 ): string {
 	if (!reason || typeof reason !== "string") return "manual";
@@ -64,7 +62,42 @@ export function normalizeUpdateReason(
 	return "manual";
 }
 
+/**
+ * ネットワーク更新理由のバリデーション・正規化 (UKADOC「ネットワーク更新理由」準拠)
+ * @param {string} [reason="manual"] - "manual" | "auto" | "script"
+ * @returns {string}
+ */
+export function normalizeUpdateReason(
+	reason: string | null | undefined,
+): string {
+	if (!reason || typeof reason !== "string") return "manual";
+	if (wasmBridge.isReady()) {
+		try {
+			const code = wasmBridge.normalizeUpdateReason(reason);
+			return UPDATE_REASONS[code] ?? "manual";
+		} catch {
+			// fallback
+		}
+	}
+	return normalizeUpdateReasonFallback(reason);
+}
+
 import { wasmBridge } from "../wasm-bridge.js";
+
+/**
+ * developer_options.txt の noupdate ディレクティブ除外判定 (純TSフォールバック)
+ */
+export function isNoUpdatePathFallback(
+	path: string,
+	patterns: string[] = [],
+): boolean {
+	if (!path || !Array.isArray(patterns) || patterns.length === 0) return false;
+	const norm = path.replace(/\\/g, "/").toLowerCase();
+	return patterns.some((pattern) => {
+		const patNorm = pattern.replace(/\\/g, "/").toLowerCase();
+		return norm === patNorm || norm.endsWith(`/${patNorm.replace(/^\//, "")}`);
+	});
+}
 
 /**
  * developer_options.txt の noupdate ディレクティブ除外判定
@@ -81,11 +114,7 @@ export function isNoUpdatePath(path: string, patterns: string[] = []): boolean {
 			// fallback
 		}
 	}
-	const norm = path.replace(/\\/g, "/").toLowerCase();
-	return patterns.some((pattern) => {
-		const patNorm = pattern.replace(/\\/g, "/").toLowerCase();
-		return norm === patNorm || norm.endsWith(`/${patNorm.replace(/^\//, "")}`);
-	});
+	return isNoUpdatePathFallback(path, patterns);
 }
 
 /**
@@ -101,6 +130,25 @@ export const UPDATE_EVENT_ORDER = Object.freeze([
 	"OnUpdate.OnMD5CompareComplete",
 	"OnUpdateComplete",
 ]);
+
+/**
+ * ネットワーク更新進捗率計算ヘルパー (純TSフォールバック)
+ */
+export function calculateUpdateProgressFallback(
+	current: number,
+	total: number,
+): { percent: number; isComplete: boolean } {
+	if (total <= 0 || !Number.isFinite(total)) {
+		return { percent: 100, isComplete: true };
+	}
+	const safeCurrent = Math.max(0, Number.isFinite(current) ? current : 0);
+	const clamped = Math.min(safeCurrent, total);
+	const percent = Math.floor((clamped / total) * 100);
+	return {
+		percent,
+		isComplete: clamped >= total,
+	};
+}
 
 /**
  * ネットワーク更新進捗率計算ヘルパー (0除算防御および 0〜100% 整数丸め)
@@ -119,16 +167,7 @@ export function calculateUpdateProgress(
 			// fallback
 		}
 	}
-	if (total <= 0 || !Number.isFinite(total)) {
-		return { percent: 100, isComplete: true };
-	}
-	const safeCurrent = Math.max(0, Number.isFinite(current) ? current : 0);
-	const clamped = Math.min(safeCurrent, total);
-	const percent = Math.floor((clamped / total) * 100);
-	return {
-		percent,
-		isComplete: clamped >= total,
-	};
+	return calculateUpdateProgressFallback(current, total);
 }
 
 /**

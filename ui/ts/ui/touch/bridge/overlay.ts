@@ -44,23 +44,31 @@ export function isNativeAndroidPlatform() {
 	return isTauriAvailable() && isAndroidPlatform();
 }
 
+export type OverlayInvokeHandler = (
+	cmd: string,
+	args?: Record<string, unknown>,
+) => Promise<unknown>;
+
+export interface OverlayManagerOptions {
+	invokeHandler?: OverlayInvokeHandler;
+	dispatchFn?: (eventName: string, data: unknown) => void;
+}
+
 /**
  * オーバーレイおよびプラットフォームIPC機能を管理するクラス
  */
 export class OverlayManager {
-	_invoke: unknown;
-	_dispatch: unknown;
+	_invoke: OverlayInvokeHandler;
+	_dispatch: (eventName: string, data: unknown) => void;
 	_isForegroundServiceActive: boolean;
 	_isOverlayEnabled: boolean;
 	_overlayTransparency: number;
 	_isClickThrough: boolean;
 	_isUnified = false;
 	/**
-	 * @param {object} [options={}]
-	 * @param {Function} [options.invokeHandler] カスタムinvoke関数
-	 * @param {Function} [options.dispatchFn] イベントディスパッチ用コールバック
+	 * @param {OverlayManagerOptions} [options={}]
 	 */
-	constructor(options = {}) {
+	constructor(options: OverlayManagerOptions = {}) {
 		this._invoke = options.invokeHandler || invoke;
 		this._dispatch =
 			typeof options.dispatchFn === "function" ? options.dispatchFn : () => {};
@@ -146,7 +154,7 @@ export class OverlayManager {
 	 * オーバーレイ権限リクエスト・案内コマンド
 	 * @returns {Promise<string>}
 	 */
-	async requestOverlayPermission() {
+	async requestOverlayPermission(): Promise<string> {
 		if (isTauriAvailable()) {
 			try {
 				const result = await this._invoke("request_overlay_permission");
@@ -155,7 +163,7 @@ export class OverlayManager {
 					enabled: true,
 					detail: result,
 				});
-				return result;
+				return result as string;
 			} catch (err) {
 				console.warn("requestOverlayPermission error:", err);
 				throw err;
@@ -177,14 +185,14 @@ export class OverlayManager {
 	 * @param {boolean} enabled
 	 * @returns {Promise<string>}
 	 */
-	async setupForegroundService(enabled: boolean) {
+	async setupForegroundService(enabled: boolean): Promise<string> {
 		if (isTauriAvailable()) {
 			try {
 				const result = await this._invoke("setup_foreground_service", {
 					enabled,
 				});
 				this._isForegroundServiceActive = enabled;
-				return result;
+				return result as string;
 			} catch (err) {
 				console.warn("setupForegroundService error:", err);
 				throw err;

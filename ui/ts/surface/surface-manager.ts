@@ -17,6 +17,7 @@ import {
 	getShellManifest,
 	manifestToSurfaceData,
 	parseSurfacesTextWithRust,
+	type RawShellManifest,
 } from "./shell-manifest.js";
 import {
 	type CollisionAreaRecord,
@@ -26,7 +27,10 @@ import {
 	surfaceCollisionMethods,
 } from "./surface-collision.js";
 import {
+	type ComposedLayerInput,
 	composeSurfaceElements,
+	drawComposedLayer,
+	loadLayerImage,
 	processChromaKey,
 } from "./surface-compositor.js";
 
@@ -193,6 +197,11 @@ function preprocessSurfacesTxtForWasm(text: string): string {
 			},
 		);
 }
+
+export {
+	expandRangeValues as expandSurfaceRange,
+	parseSurfacesTxtFallback as parseSurfacesTxt,
+};
 
 function parseCollisionFallbackLine(
 	trimmed: string,
@@ -523,51 +532,6 @@ function parseSurfacesTxtFallback(text: string) {
 	};
 }
 
-function loadHtmlImage(src: string): Promise<HTMLImageElement | null> {
-	if (!src || typeof Image === "undefined") return Promise.resolve(null);
-	return new Promise((resolve) => {
-		const img = new Image();
-		if (!src.startsWith("data:")) {
-			img.crossOrigin = "anonymous";
-		}
-		img.onload = () => resolve(img);
-		img.onerror = () => resolve(null);
-		img.src = src;
-	});
-}
-
-function drawComposedLayer(
-	ctx: CanvasRenderingContext2D,
-	img: HTMLImageElement,
-	layer: SurfaceLayerInput,
-) {
-	const x = Number(layer.x ?? 0);
-	const y = Number(layer.y ?? 0);
-	const method = String(layer.type ?? "overlay").toLowerCase();
-
-	if (method === "replace") {
-		const w = img.naturalWidth || img.width || 0;
-		const h = img.naturalHeight || img.height || 0;
-		if (w > 0 && h > 0) {
-			ctx.clearRect(x, y, w, h);
-		}
-		ctx.globalCompositeOperation = "source-over";
-	} else if (method === "add" || method === "addition") {
-		ctx.globalCompositeOperation = "lighter";
-	} else if (method === "multiply" || method === "blend-multiply") {
-		ctx.globalCompositeOperation = "multiply";
-	} else if (method === "screen" || method === "blend-screen") {
-		ctx.globalCompositeOperation = "screen";
-	} else if (method === "reduce") {
-		ctx.globalCompositeOperation = "destination-in";
-	} else {
-		ctx.globalCompositeOperation = "source-over";
-	}
-
-	ctx.drawImage(img, x, y);
-	ctx.globalCompositeOperation = "source-over";
-}
-
 export class SurfaceManager {
 	declare resolveSurfaceNumber: (
 		surfaceId: number | string | null | undefined,
@@ -757,9 +721,9 @@ export class SurfaceManager {
 		}
 	}
 
-	applyShellManifest(manifest: unknown): void {
+	applyShellManifest(manifest: RawShellManifest | unknown): void {
 		if (!manifest || typeof manifest !== "object") return;
-		const data = manifestToSurfaceData(manifest);
+		const data = manifestToSurfaceData(manifest as RawShellManifest);
 		this.collisions =
 			(data.collisions as Record<string, CollisionAreaRecord[]>) ?? {};
 		this.elements =
@@ -1092,10 +1056,10 @@ export class SurfaceManager {
 
 		try {
 			const [baseImg, ...layerImgs] = await Promise.all([
-				loadHtmlImage(baseImgSrc),
+				loadLayerImage(baseImgSrc),
 				...allLayers.map((layer) =>
 					resolveImagePath(layer.file).then((resolved) =>
-						resolved ? loadHtmlImage(resolved) : null,
+						resolved ? loadLayerImage(resolved) : null,
 					),
 				),
 			]);
@@ -1115,7 +1079,7 @@ export class SurfaceManager {
 			for (let i = 0; i < allLayers.length; i++) {
 				const img = layerImgs[i];
 				if (img) {
-					drawComposedLayer(ctx, img, allLayers[i]);
+					drawComposedLayer(ctx, img, allLayers[i] as ComposedLayerInput);
 				}
 			}
 			return canvas.toDataURL("image/png");

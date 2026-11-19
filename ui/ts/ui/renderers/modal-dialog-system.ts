@@ -7,6 +7,7 @@
 import {
 	createColorDialogForm,
 	createTermsDialogForm,
+	type ModalDialogControllerContext,
 } from "./modal-dialog-ui.js";
 
 export {
@@ -19,14 +20,14 @@ export {
  * @param {string} dialogType - "open" | "save" | "folder" | "color"
  * @param {string[]} params - オプション引数群
  * @param {number} [scope]
- * @returns {Promise<unknown>}
+ * @returns {Promise<HTMLElement | null>}
  */
 export async function openSystemDialog(
-	this: unknown,
+	this: ModalDialogControllerContext,
 	dialogType: string,
 	params: string[] = [],
 	scope?: number,
-) {
+): Promise<HTMLElement | null> {
 	const type = (dialogType || "open").toLowerCase();
 	let id = "";
 	let title = "";
@@ -65,7 +66,9 @@ export async function openSystemDialog(
 			} else {
 				const parts = rawColor.split(/[\s,]+/).map(Number);
 				if (parts.length >= 3) {
-					const [r, g, b] = parts;
+					const r = parts[0] ?? 0;
+					const g = parts[1] ?? 0;
+					const b = parts[2] ?? 0;
 					initialColor = `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
 				}
 			}
@@ -76,13 +79,13 @@ export async function openSystemDialog(
 
 	const sendSuccess = async (resultValue: string) => {
 		if (id?.startsWith("On")) {
-			await this.app?.ghostController?.sendShioriEvent(id, [
+			await this.app?.ghostController?.sendShioriEvent?.(id, [
 				type,
 				id,
 				resultValue,
 			]);
 		} else {
-			await this.app?.ghostController?.sendShioriEvent("OnSystemDialog", [
+			await this.app?.ghostController?.sendShioriEvent?.("OnSystemDialog", [
 				type,
 				eventId,
 				resultValue,
@@ -92,15 +95,15 @@ export async function openSystemDialog(
 
 	const sendCancel = async () => {
 		if (id?.startsWith("On")) {
-			await this.app?.ghostController?.sendShioriEvent(`${id}Cancel`, [
+			await this.app?.ghostController?.sendShioriEvent?.(`${id}Cancel`, [
 				type,
 				id,
 			]);
 		} else {
-			await this.app?.ghostController?.sendShioriEvent("OnSystemDialogCancel", [
-				type,
-				eventId,
-			]);
+			await this.app?.ghostController?.sendShioriEvent?.(
+				"OnSystemDialogCancel",
+				[type, eventId],
+			);
 		}
 	};
 
@@ -179,10 +182,10 @@ export async function openSystemDialog(
 			fileInput.setAttribute("directory", "");
 		}
 		if (filter) {
-			const exts = [];
+			const exts: string[] = [];
 			const parts = filter.split("|");
 			for (let i = 1; i < parts.length; i += 2) {
-				const patterns = parts[i].split(";");
+				const patterns = parts[i]?.split(";") ?? [];
 				for (const p of patterns) {
 					const clean = p.trim().replace(/^\*/, "");
 					if (clean && clean !== ".*") exts.push(clean);
@@ -199,7 +202,7 @@ export async function openSystemDialog(
 			const file = fileInput.files?.[0];
 			fileInput.remove();
 			if (file) {
-				const filePath = (file as unknown).path || file.name;
+				const filePath = (file as File & { path?: string }).path || file.name;
 				await sendSuccess(filePath);
 			} else {
 				await sendCancel();

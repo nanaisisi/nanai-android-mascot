@@ -3,12 +3,26 @@
  * @brief teachbox および communicatebox の管理
  */
 
-export function openTeachBox(this: unknown, params = [], options = {}) {
+import type { ModalDialogControllerContext } from "./modal-dialog-ui.js";
+
+export interface TeachBoxOptions {
+	notifyStart?: boolean;
+	scope?: number;
+	title?: string;
+}
+
+export function openTeachBox(
+	this: ModalDialogControllerContext,
+	params: readonly unknown[] = [],
+	options: TeachBoxOptions = {},
+): HTMLDivElement | null {
 	const { notifyStart = true, scope } = options;
 	this.closeTeachBox(false);
 
 	if (notifyStart) {
-		this.app.ghostController?.sendShioriEvent("OnTeachStart")?.catch(() => {});
+		this.app?.ghostController
+			?.sendShioriEvent?.("OnTeachStart")
+			?.catch?.(() => {});
 	}
 
 	const opts = this.parseBoxOptions(["Teach", ...params]);
@@ -52,7 +66,7 @@ export function openTeachBox(this: unknown, params = [], options = {}) {
 	submitBtn.className = "balloon-choice-btn";
 	submitBtn.style.marginTop = "0";
 
-	let dataListEl: { remove: () => void } | null = null;
+	let dataListEl: HTMLDataListElement | null = null;
 	const cleanup = () => {
 		if (dataListEl) {
 			dataListEl.remove?.();
@@ -65,22 +79,22 @@ export function openTeachBox(this: unknown, params = [], options = {}) {
 	const submit = async () => {
 		const val = input.value;
 		cleanup();
-		this.app.ghostController?.sendTeachInput?.(val);
+		this.app?.ghostController?.sendTeachInput?.(val);
 	};
 
-	let timer: number | null | undefined = null;
+	let timer: ReturnType<typeof setTimeout> | null = null;
 	const cancel = async (reason = "cancel") => {
 		if (timer) {
 			clearTimeout(timer);
 			timer = null;
 		}
 		cleanup();
-		await this.app.ghostController?.sendShioriEvent("OnTeachInputCancel", [
+		await this.app?.ghostController?.sendShioriEvent?.("OnTeachInputCancel", [
 			"",
 			reason,
 			...opts.references,
 		]);
-		this.app.ghostController?.clearTeachHistory?.();
+		this.app?.ghostController?.clearTeachHistory?.();
 	};
 
 	submitBtn.addEventListener("click", (e) => {
@@ -103,7 +117,7 @@ export function openTeachBox(this: unknown, params = [], options = {}) {
 	balloon.appendChild(form);
 	setTimeout(() => input.focus?.(), 50);
 
-	this.attachAutocomplete(input, "teachbox", "", form).then((dl: unknown) => {
+	this.attachAutocomplete(input, "teachbox", "", form).then((dl) => {
 		dataListEl = dl;
 	});
 
@@ -127,7 +141,10 @@ export function openTeachBox(this: unknown, params = [], options = {}) {
 	return form;
 }
 
-export function closeTeachBox(this: unknown, notifyCancel = false) {
+export function closeTeachBox(
+	this: ModalDialogControllerContext,
+	notifyCancel = false,
+) {
 	const existing = this.activeBoxes.get("teachbox");
 	if (existing) {
 		try {
@@ -135,16 +152,20 @@ export function closeTeachBox(this: unknown, notifyCancel = false) {
 		} catch {}
 		this.activeBoxes.delete("teachbox");
 		if (notifyCancel) {
-			this.app.ghostController?.sendShioriEvent("OnTeachInputCancel", [
+			this.app?.ghostController?.sendShioriEvent?.("OnTeachInputCancel", [
 				"",
 				"close",
 			]);
-			this.app.ghostController?.clearTeachHistory?.();
+			this.app?.ghostController?.clearTeachHistory?.();
 		}
 	}
 }
 
-export function openCommunicateBox(this: unknown, params = [], scope: unknown) {
+export function openCommunicateBox(
+	this: ModalDialogControllerContext,
+	params: readonly unknown[] = [],
+	scope?: number,
+): HTMLDivElement | null {
 	this.closeCommunicateBox(false);
 	const opts = this.parseBoxOptions(["Communicate", ...params]);
 	const balloon = this.getBalloonContainer(scope);
@@ -183,8 +204,8 @@ export function openCommunicateBox(this: unknown, params = [], scope: unknown) {
 	submitBtn.className = "balloon-choice-btn";
 	submitBtn.style.marginTop = "0";
 
-	let timer: number | null | undefined = null;
-	let dataListEl: { remove: () => void } | null = null;
+	let timer: ReturnType<typeof setTimeout> | null = null;
+	let dataListEl: HTMLDataListElement | null = null;
 	const cleanup = (force = false) => {
 		if (timer) {
 			clearTimeout(timer);
@@ -205,7 +226,7 @@ export function openCommunicateBox(this: unknown, params = [], scope: unknown) {
 	const submit = async () => {
 		const val = input.value;
 		cleanup();
-		await this.app.ghostController?.sendShioriEvent("OnCommunicate", [
+		await this.app?.ghostController?.sendShioriEvent?.("OnCommunicate", [
 			"user",
 			val,
 			...opts.references,
@@ -218,7 +239,7 @@ export function openCommunicateBox(this: unknown, params = [], scope: unknown) {
 			timer = null;
 		}
 		cleanup(true);
-		await this.app.ghostController?.sendShioriEvent(
+		await this.app?.ghostController?.sendShioriEvent?.(
 			"OnCommunicateInputCancel",
 			["", reason, ...opts.references],
 		);
@@ -244,11 +265,9 @@ export function openCommunicateBox(this: unknown, params = [], scope: unknown) {
 	balloon.appendChild(form);
 	setTimeout(() => input.focus?.(), 50);
 
-	this.attachAutocomplete(input, "communicatebox", "", form).then(
-		(dl: unknown) => {
-			dataListEl = dl;
-		},
-	);
+	this.attachAutocomplete(input, "communicatebox", "", form).then((dl) => {
+		dataListEl = dl;
+	});
 
 	if (opts.timeoutMs > 0) {
 		timer = setTimeout(() => {
@@ -264,7 +283,10 @@ export function openCommunicateBox(this: unknown, params = [], scope: unknown) {
 	return form;
 }
 
-export function closeCommunicateBox(this: unknown, notifyCancel = false) {
+export function closeCommunicateBox(
+	this: ModalDialogControllerContext,
+	notifyCancel = false,
+) {
 	const existing = this.activeBoxes.get("communicatebox");
 	if (existing) {
 		try {
@@ -272,7 +294,7 @@ export function closeCommunicateBox(this: unknown, notifyCancel = false) {
 		} catch {}
 		this.activeBoxes.delete("communicatebox");
 		if (notifyCancel) {
-			this.app.ghostController?.sendShioriEvent("OnCommunicateInputCancel", [
+			this.app?.ghostController?.sendShioriEvent?.("OnCommunicateInputCancel", [
 				"",
 				"close",
 			]);

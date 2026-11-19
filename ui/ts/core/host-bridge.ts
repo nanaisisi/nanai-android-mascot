@@ -38,7 +38,12 @@ export class TauriHostBridge implements HostBridge {
 		args: Record<string, unknown> = {},
 	): Promise<T> {
 		const modName = "@tauri-apps/api/core";
-		const { invoke } = await import(/* @vite-ignore */ modName);
+		const { invoke } = (await import(/* @vite-ignore */ modName)) as {
+			invoke: <R = unknown>(
+				cmd: string,
+				args?: Record<string, unknown>,
+			) => Promise<R>;
+		};
 		return await invoke<T>(cmd, args);
 	}
 

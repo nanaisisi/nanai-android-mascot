@@ -20,7 +20,20 @@ import type { AppSettings } from "./types.js";
 export class NanaiAndroidMascotApp {
 	declare loadSettings: () => void;
 	declare setupEventListeners: () => Promise<void>;
+	declare setupGhostInteractions: () => void;
+	declare setupUiButtons: () => void;
+	declare setupGlobalListeners: () => void;
+	declare setupExternalMenuListeners: () => Promise<void>;
 	declare applySettings: () => void;
+	declare applyBalloonTheme: () => void;
+	declare wait: (ms: number) => Promise<void>;
+	declare sendUpdateResultSummary: (
+		ghostName: string,
+		success: boolean,
+		detail: number | string,
+		failedFile: string | null,
+		checkOnly?: boolean,
+	) => Promise<void>;
 	declare startSecondTimer: () => void;
 	declare stopSecondTimer: () => void;
 	declare hideMenu: () => void;

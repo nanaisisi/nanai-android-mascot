@@ -33,14 +33,34 @@ export interface MenuActionContext {
 	showGhostInformation?: () => unknown;
 	handleMenuAction?: (action: string) => unknown;
 	showBalloon?: (message: string) => unknown;
-	hideBalloon?: () => unknown;
+	hideBalloon?: (scopeId?: number, reason?: string) => unknown;
 	elements?: {
 		ghostDisplay?: HTMLElement | null;
 		[key: string]: HTMLElement | null | undefined;
 	};
 	interactionManager?: {
-		balloonOffsetX: number;
-		balloonOffsetY: number;
+		balloonOffsetX?: number;
+		balloonOffsetY?: number;
+		resetShellPositions?: () => unknown;
+		resetBalloonPositions?: () => unknown;
+		[key: string]: unknown;
+	};
+	sakuraPlayer?: {
+		isPlaying?: boolean;
+		processStep?: () => void;
+		stop?: () => void;
+		[key: string]: unknown;
+	};
+	balloonThemeManager?: {
+		toggleBalloonSide?: (scopeId: number) => void;
+		[key: string]: unknown;
+	};
+	toggleBalloonSide?: (scopeId: number) => void;
+	app?: {
+		settings?: Record<string, unknown>;
+		sakuraPlayer?: unknown;
+		balloonThemeManager?: unknown;
+		renderCollisionOverlay?: () => void;
 		[key: string]: unknown;
 	};
 	checkEmail?: () => unknown;

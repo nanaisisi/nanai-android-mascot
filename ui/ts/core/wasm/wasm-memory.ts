@@ -3,11 +3,26 @@
  * @brief wasm-pack 生成パッケージに基づく WASM 初期化管理
  */
 
+import type { InitInput, InitOutput } from "./pkg/nanai_core.js";
 import init, * as wasmCore from "./pkg/nanai_core.js";
+
+function isBufferSourceLike(
+	value: unknown,
+): value is ArrayBuffer | ArrayBufferView {
+	return (
+		value instanceof ArrayBuffer ||
+		ArrayBuffer.isView(value) ||
+		(typeof value === "object" &&
+			value !== null &&
+			"byteLength" in value &&
+			typeof (value as { byteLength?: unknown }).byteLength === "number")
+	);
+}
 
 export class WasmMemoryManager {
 	private initialized = false;
 	private initPromise: Promise<boolean> | null = null;
+	private wasmExports: InitOutput | null = null;
 
 	public async init(bufferOrUrl?: ArrayBuffer | string): Promise<boolean> {
 		if (this.initialized) return true;
@@ -15,25 +30,22 @@ export class WasmMemoryManager {
 
 		this.initPromise = (async () => {
 			try {
-				if (
-					bufferOrUrl instanceof ArrayBuffer ||
-					(bufferOrUrl &&
-						(bufferOrUrl as any).byteLength !== undefined &&
-						typeof bufferOrUrl !== "string")
-				) {
-					await init(bufferOrUrl as any);
+				if (isBufferSourceLike(bufferOrUrl)) {
+					this.wasmExports = await init({
+						module_or_path: bufferOrUrl as InitInput,
+					});
 				} else if (
 					typeof bufferOrUrl === "string" &&
 					bufferOrUrl.trim().length > 0
 				) {
 					try {
-						await init(bufferOrUrl);
+						this.wasmExports = await init({ module_or_path: bufferOrUrl });
 					} catch (_e) {
 						// 引数文字列でのロード失敗時は引数なし init をフォールバック試行
-						await init();
+						this.wasmExports = await init();
 					}
 				} else {
-					await init();
+					this.wasmExports = await init();
 				}
 				this.initialized = true;
 				console.log("✨ [WASM Memory] wasm-pack nanai-core 初期化完了");
@@ -58,11 +70,15 @@ export class WasmMemoryManager {
 		return this.initialized ? wasmCore : null;
 	}
 
+	public getWasmExports(): InitOutput | null {
+		return this.initialized ? this.wasmExports : null;
+	}
+
 	public alloc(size: number): number | null {
-		const core = this.getWasmCore();
-		if (!core?.wasm_alloc) return null;
+		const exports = this.getWasmExports();
+		if (!exports?.wasm_alloc) return null;
 		try {
-			return core.wasm_alloc(size);
+			return exports.wasm_alloc(size);
 		} catch (err) {
 			console.warn("⚠️ [WASM Memory] alloc エラー:", err);
 			return null;
@@ -70,10 +86,10 @@ export class WasmMemoryManager {
 	}
 
 	public free(ptr: number, size: number): void {
-		const core = this.getWasmCore();
-		if (!core?.wasm_free || !ptr) return;
+		const exports = this.getWasmExports();
+		if (!exports?.wasm_free || !ptr) return;
 		try {
-			core.wasm_free(ptr, size);
+			exports.wasm_free(ptr, size);
 		} catch (err) {
 			console.warn("⚠️ [WASM Memory] free エラー:", err);
 		}

@@ -1,13 +1,74 @@
-export interface ModalDialogContext {
-	activeBoxes: Map<string, unknown>;
-	app?: {
-		ghostController?: {
-			sendShioriEvent?: (event: string, args?: string[]) => Promise<unknown>;
-			[key: string]: unknown;
-		};
+export interface ActiveDialogBox {
+	id?: string;
+	type?: string;
+	form?: HTMLElement;
+	cleanup: (force?: boolean) => void;
+}
+
+export interface BoxOptions {
+	id: string;
+	timeoutMs: number;
+	defaultText: string;
+	placeholder: string;
+	limit: number;
+	noClose: boolean;
+	noClear: boolean;
+	references: string[];
+}
+
+export interface ModalDialogApp {
+	elements?: {
+		balloonText?: HTMLElement | null;
+		keroBalloonText?: HTMLElement | null;
 		[key: string]: unknown;
 	};
+	ghostController?: {
+		sendShioriEvent?: (event: string, args?: string[]) => Promise<unknown>;
+		sendTeachInput?: (val: string) => unknown;
+		clearTeachHistory?: () => unknown;
+		[key: string]: unknown;
+	} | null;
 	[key: string]: unknown;
+}
+
+export interface ModalDialogPlayer {
+	currentScope?: number;
+	onChoiceSelected?: (id: string, text: string) => unknown;
+	[key: string]: unknown;
+}
+
+export interface ModalDialogContext {
+	activeBoxes: Map<string, ActiveDialogBox>;
+	app?: ModalDialogApp | null;
+	[key: string]: unknown;
+}
+
+export interface ModalDialogControllerContext extends ModalDialogContext {
+	app: ModalDialogApp | null;
+	player: ModalDialogPlayer | null;
+	choiceTimeoutTimer: ReturnType<typeof setTimeout> | null;
+	autocompleteCounter: number;
+	getBalloonContainer: (scope?: number) => HTMLElement | null;
+	parseBoxOptions: (params: readonly unknown[] | string) => BoxOptions;
+	attachAutocomplete: (
+		inputEl: HTMLElement | null | undefined,
+		boxType: string,
+		id?: string,
+		parentForm?: HTMLElement | null,
+	) => Promise<HTMLDataListElement | null>;
+	openInputBox: (
+		params?: readonly unknown[] | string,
+		scope?: number,
+		isPassword?: boolean,
+	) => HTMLDivElement | null;
+	closeInputBox: (
+		id?: string,
+		currentScope?: number,
+		notifyCancel?: boolean,
+	) => void;
+	closeTextAreaBox: (id?: string, currentScope?: number) => void;
+	closeTeachBox: (notifyCancel?: boolean) => void;
+	closeCommunicateBox: (notifyCancel?: boolean) => void;
 }
 
 export function createColorDialogForm(

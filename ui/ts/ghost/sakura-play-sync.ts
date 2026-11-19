@@ -10,10 +10,13 @@ import {
 	isNativeMultiWindow,
 	isTauriAvailable,
 } from "../core/tauri-helper.js";
-import type { SakuraPlaybackController } from "./sakura-play/controller.js";
 import type { SakuraScriptPlayer } from "./sakura-script.js";
 
-type PlayTarget = SakuraScriptPlayer | SakuraPlaybackController;
+export interface SakuraPlaybackTarget {
+	currentScope: number;
+}
+
+type PlayTarget = SakuraScriptPlayer | SakuraPlaybackTarget;
 
 export function createBalloonSyncManager(
 	player: PlayTarget,

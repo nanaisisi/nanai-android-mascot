@@ -3,12 +3,17 @@
  * @brief inputbox, passwordinput, textareabox の表示・制御処理
  */
 
+import type {
+	ActiveDialogBox,
+	ModalDialogControllerContext,
+} from "../modal-dialog-ui.js";
+
 export function openInputBox(
-	this: unknown,
-	params: unknown,
-	scope: unknown,
+	this: ModalDialogControllerContext,
+	params: readonly unknown[] | string = [],
+	scope?: number,
 	isPassword = false,
-) {
+): HTMLDivElement | null {
 	const opts = this.parseBoxOptions(params);
 	this.closeInputBox(opts.id);
 	const balloon = this.getBalloonContainer(scope);
@@ -47,9 +52,9 @@ export function openInputBox(
 	submitBtn.className = "balloon-choice-btn";
 	submitBtn.style.marginTop = "0";
 
-	let timer: number | null | undefined = null;
+	let timer: ReturnType<typeof setTimeout> | null = null;
 	const boxKey = `inputbox:${opts.id}`;
-	let dataListEl: { remove: () => void } | null = null;
+	let dataListEl: HTMLDataListElement | null = null;
 
 	const cleanup = (force = false) => {
 		if (timer) {
@@ -75,13 +80,13 @@ export function openInputBox(
 		const val = input.value;
 		cleanup();
 		if (opts.id.startsWith("On")) {
-			await this.app.ghostController?.sendShioriEvent(opts.id, [
+			await this.app?.ghostController?.sendShioriEvent?.(opts.id, [
 				val,
 				"",
 				...opts.references,
 			]);
 		} else {
-			await this.app.ghostController?.sendShioriEvent("OnUserInput", [
+			await this.app?.ghostController?.sendShioriEvent?.("OnUserInput", [
 				opts.id,
 				val,
 				"",
@@ -92,7 +97,7 @@ export function openInputBox(
 
 	const cancel = async (reason = "close") => {
 		cleanup(true);
-		await this.app.ghostController?.sendShioriEvent("OnUserInputCancel", [
+		await this.app?.ghostController?.sendShioriEvent?.("OnUserInputCancel", [
 			opts.id,
 			reason,
 			"",
@@ -121,11 +126,9 @@ export function openInputBox(
 	setTimeout(() => input.focus?.(), 50);
 
 	if (!isPassword) {
-		this.attachAutocomplete(input, "inputbox", opts.id, form).then(
-			(dl: unknown) => {
-				dataListEl = dl;
-			},
-		);
+		this.attachAutocomplete(input, "inputbox", opts.id, form).then((dl) => {
+			dataListEl = dl;
+		});
 	}
 
 	if (opts.timeoutMs > 0) {
@@ -134,7 +137,7 @@ export function openInputBox(
 		}, opts.timeoutMs);
 	}
 
-	const boxEntry = {
+	const boxEntry: ActiveDialogBox = {
 		id: opts.id,
 		type: isPassword ? "passwordinput" : "inputbox",
 		form,
@@ -146,15 +149,15 @@ export function openInputBox(
 }
 
 export function openPasswordInput(
-	this: unknown,
-	params: unknown,
-	scope: unknown,
-) {
+	this: ModalDialogControllerContext,
+	params: readonly unknown[] | string = [],
+	scope?: number,
+): HTMLDivElement | null {
 	return this.openInputBox(params, scope, true);
 }
 
 export function closeInputBox(
-	this: unknown,
+	this: ModalDialogControllerContext,
 	id?: string,
 	_currentScope?: number,
 	_notifyCancel?: boolean,
@@ -193,10 +196,10 @@ export function closeInputBox(
 }
 
 export function openTextAreaBox(
-	this: unknown,
-	params: unknown,
-	scope: unknown,
-) {
+	this: ModalDialogControllerContext,
+	params: readonly unknown[] | string = [],
+	scope?: number,
+): HTMLDivElement | null {
 	const opts = this.parseBoxOptions(params);
 	this.closeTextAreaBox(opts.id);
 	const balloon = this.getBalloonContainer(scope);
@@ -236,7 +239,7 @@ export function openTextAreaBox(
 	submitBtn.style.alignSelf = "flex-end";
 	submitBtn.style.marginTop = "0";
 
-	let timer: number | null | undefined = null;
+	let timer: ReturnType<typeof setTimeout> | null = null;
 	const boxKey = `textareabox:${opts.id}`;
 
 	const cleanup = (force = false) => {
@@ -259,13 +262,13 @@ export function openTextAreaBox(
 		const val = textarea.value.replace(/\r?\n/g, "\u0001");
 		cleanup();
 		if (opts.id.startsWith("On")) {
-			await this.app.ghostController?.sendShioriEvent(opts.id, [
+			await this.app?.ghostController?.sendShioriEvent?.(opts.id, [
 				val,
 				"",
 				...opts.references,
 			]);
 		} else {
-			await this.app.ghostController?.sendShioriEvent("OnTextAreaInput", [
+			await this.app?.ghostController?.sendShioriEvent?.("OnTextAreaInput", [
 				opts.id,
 				val,
 				"",
@@ -277,12 +280,10 @@ export function openTextAreaBox(
 	const cancel = async (reason = "close") => {
 		const currentVal = textarea.value.replace(/\r?\n/g, "\u0001");
 		cleanup(true);
-		await this.app.ghostController?.sendShioriEvent("OnTextAreaInputCancel", [
-			opts.id,
-			reason,
-			currentVal,
-			...opts.references,
-		]);
+		await this.app?.ghostController?.sendShioriEvent?.(
+			"OnTextAreaInputCancel",
+			[opts.id, reason, currentVal, ...opts.references],
+		);
 	};
 
 	submitBtn.addEventListener("click", (e) => {
@@ -311,7 +312,7 @@ export function openTextAreaBox(
 		}, opts.timeoutMs);
 	}
 
-	const boxEntry = {
+	const boxEntry: ActiveDialogBox = {
 		id: opts.id,
 		type: "textareabox",
 		form,
@@ -323,7 +324,7 @@ export function openTextAreaBox(
 }
 
 export function closeTextAreaBox(
-	this: unknown,
+	this: ModalDialogControllerContext,
 	id?: string,
 	_currentScope?: number,
 ) {

@@ -20,6 +20,7 @@ export interface GestureRecognizerInterface {
 		callback: (event: { dockState: string }) => void,
 	) => () => void;
 	setDockState?: (state: string) => void;
+	reset?: () => void;
 	destroy?: () => void;
 	[key: string]: unknown;
 }

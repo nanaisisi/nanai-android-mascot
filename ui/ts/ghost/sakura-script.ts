@@ -1,26 +1,95 @@
 /**
  * SakuraScriptPlayer facade (powered by Pure Rust / WASM core SakuraPlayerEngine)
  */
+import type { NanaiAndroidMascotApp } from "../../main.js";
 import {
 	emit,
 	frontendLog,
 	invoke,
 	isSinglePageUi,
 } from "../core/tauri-helper.js";
+import type { StepOutput } from "../core/wasm/pkg/nanai_core.js";
 import {
 	createSakuraPlayerWasm,
 	freeSakuraPlayerWasm,
 	stepSakuraPlayerWasm,
 } from "../core/wasm/wasm-sakura.js";
 
+export interface SyncObjectManagerLike {
+	set: (name: string) => void;
+	reset: (name: string) => void;
+	wait: (
+		name: string,
+		options?: { timeout?: number; resetOnWait?: boolean },
+	) => Promise<void>;
+}
+
+export interface PlaybackControllerLike {
+	setBalloonWait?: (param: string | undefined) => void;
+	setQuickMode?: (enable: boolean) => void;
+	syncObjects?: SyncObjectManagerLike;
+}
+
+export interface ModalDialogControllerLike {
+	openSystemDialog?: (
+		dialogType: string,
+		dialogParams: string[],
+		scope?: number,
+	) => Promise<unknown> | unknown;
+	openPasswordInput?: (params: string[], scope?: number) => unknown;
+	openInputBox?: (
+		params: string[],
+		scope?: number,
+		isPassword?: boolean,
+	) => unknown;
+	openTextAreaBox?: (params: string[], scope?: number) => unknown;
+	openSliderInput?: (params: string[], scope?: number) => unknown;
+	openIpInput?: (params: string[], scope?: number) => unknown;
+	openDateInput?: (params: string[], scope?: number) => unknown;
+	openTimeInput?: (params: string[], scope?: number) => unknown;
+	closeInputBox?: (
+		id?: string,
+		scope?: number,
+		notifyCancel?: boolean,
+	) => unknown;
+	closeTextAreaBox?: (id?: string, scope?: number) => unknown;
+	closeDialog?: (id?: string, notifyCancel?: boolean) => unknown;
+}
+
+export interface CommandAppExtensions {
+	modalDialogController?: ModalDialogControllerLike;
+	balloonTheme?: string;
+	alignmentToDesktop?: string;
+	networkActions?: {
+		checkEmail?: (account?: string) => Promise<unknown>;
+		[key: string]: unknown;
+	};
+	syncObjectManager?: SyncObjectManagerLike;
+	surfaceAnimationManager?: {
+		setSerikoTalkEnabled?: (scope: number, enabled: boolean) => void;
+		[key: string]: unknown;
+	};
+	sakuraCommandHandler?: {
+		runCommand?: (args: string[]) => Promise<unknown> | unknown;
+	};
+	dispatchAction?: (
+		action: string,
+		payload?: unknown,
+	) => Promise<unknown> | unknown;
+}
+
+export type CommandHandlerApp = NanaiAndroidMascotApp & CommandAppExtensions;
+
 export interface StepOutputData {
-	action: string;
+	action: StepOutput["action"] | string;
 	data?: {
 		scope?: number;
 		text?: string;
 		surface_id?: number;
 		balloon_id?: number;
 		animation_id?: number;
+		keep_settings?: boolean;
+		path?: string;
 		title?: string;
 		id?: string;
 		duration_ms?: number;
@@ -38,7 +107,11 @@ export class SakuraScriptPlayer {
 	private timerId: ReturnType<typeof setTimeout> | null = null;
 	private isLoopRunning = false;
 	private scopeBalloonIds = new Map<number, number>();
-	public app: any = null;
+	public app: CommandHandlerApp | null = null;
+	public choiceTimeout?: number;
+	public balloonTimeout?: number;
+	public playbackController?: PlaybackControllerLike;
+	[modeFlag: `is_${string}`]: unknown;
 
 	private isBalloonContentBlank(
 		htmlOrText: string,
@@ -62,8 +135,8 @@ export class SakuraScriptPlayer {
 		return this.playerInstance !== null || this.isLoopRunning;
 	}
 
-	constructor(script = "", app?: any) {
-		this.app = app;
+	constructor(script = "", app?: unknown) {
+		this.app = (app as CommandHandlerApp) ?? null;
 		if (script) {
 			this.loadScript(script);
 		}
@@ -91,12 +164,13 @@ export class SakuraScriptPlayer {
 		}
 	}
 
-	private getApp(): any {
+	private getApp(): CommandHandlerApp | null {
 		if (this.app) return this.app;
-		const g = globalThis as any;
+		const g = globalThis as { mascotApp?: CommandHandlerApp };
 		if (g.mascotApp) return g.mascotApp;
-		if (typeof window !== "undefined" && (window as any).app) {
-			return (window as any).app;
+		if (typeof window !== "undefined") {
+			const win = window as unknown as { app?: CommandHandlerApp };
+			if (win.app) return win.app;
 		}
 		return null;
 	}
@@ -235,7 +309,7 @@ export class SakuraScriptPlayer {
 		return null;
 	}
 
-	private getBalloonElements(app: any, scope: number) {
+	private getBalloonElements(app: CommandHandlerApp | null, scope: number) {
 		const textEl =
 			scope === 0
 				? app?.elements?.balloonText || this.getDocElement("balloon-text")
@@ -263,7 +337,11 @@ export class SakuraScriptPlayer {
 		return { textEl, dispEl, slotEl };
 	}
 
-	private appendTextToBalloon(app: any, scope: number, text: string): void {
+	private appendTextToBalloon(
+		app: CommandHandlerApp | null,
+		scope: number,
+		text: string,
+	): void {
 		const { textEl, dispEl, slotEl } = this.getBalloonElements(app, scope);
 
 		if (slotEl?.style && slotEl.style.display === "none") {
@@ -342,7 +420,7 @@ export class SakuraScriptPlayer {
 	}
 
 	private applyBalloonSurfaceChange(
-		app: any,
+		app: CommandHandlerApp | null,
 		scope: number,
 		balloonId: number,
 	): void {
@@ -419,14 +497,18 @@ export class SakuraScriptPlayer {
 		});
 	}
 
-	public clearAllBalloons(app?: any): void {
+	public clearAllBalloons(app?: CommandHandlerApp | null): void {
 		const targetApp = app || this.getApp();
 		for (let s = 0; s < 8; s++) {
 			this.clearBalloon(targetApp, s);
 		}
 	}
 
-	private clearBalloon(app: any, scope: number, _keepSettings = false): void {
+	private clearBalloon(
+		app: CommandHandlerApp | null,
+		scope: number,
+		_keepSettings = false,
+	): void {
 		const { textEl, dispEl } = this.getBalloonElements(app, scope);
 
 		if (textEl) {
@@ -449,7 +531,7 @@ export class SakuraScriptPlayer {
 	}
 
 	private addChoiceToBalloon(
-		app: any,
+		app: CommandHandlerApp | null,
 		scope: number,
 		title: string,
 		id: string,
@@ -496,7 +578,7 @@ export class SakuraScriptPlayer {
 	}
 
 	private addAnchorToBalloon(
-		app: any,
+		app: CommandHandlerApp | null,
 		scope: number,
 		title: string,
 		id: string,

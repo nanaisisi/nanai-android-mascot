@@ -11,5 +11,8 @@ export {
 	composeSurfaceElements,
 	processChromaKey,
 } from "./surface-compositor.js";
-export { SurfaceManager } from "./surface-manager.js";
-export { expandSurfaceRange, parseSurfacesTxt } from "./surface-parser.js";
+export {
+	expandSurfaceRange,
+	parseSurfacesTxt,
+	SurfaceManager,
+} from "./surface-manager.js";

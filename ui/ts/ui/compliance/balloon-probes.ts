@@ -169,6 +169,8 @@ export function runSakuraScriptTokensProbe(): UiComplianceProbeResult {
 		const ok = Array.isArray(tokens) && tokens.length > 0;
 
 		return {
+			id: "sakura-script-tokens-ui",
+			category: "Sakura Script",
 			specName,
 			usagePath,
 			passed: ok,
@@ -177,6 +179,8 @@ export function runSakuraScriptTokensProbe(): UiComplianceProbeResult {
 		};
 	} catch (err) {
 		return {
+			id: "sakura-script-tokens-ui",
+			category: "Sakura Script",
 			specName,
 			usagePath,
 			passed: false,

@@ -4,19 +4,37 @@ import {
 	DOCK_RIGHT_THRESHOLD,
 } from "./constants.js";
 
+export interface DockingSnapOptions {
+	leftThreshold?: number;
+	rightThreshold?: number;
+}
+
+export interface DockingTarget {
+	getBoundingClientRect: () => { left: number; width: number };
+	classList: {
+		contains: (token: string) => unknown;
+		remove: (...tokens: string[]) => void;
+		add: (...tokens: string[]) => void;
+	};
+	style: { left: string };
+}
+
 /**
  * ターゲット要素がドッキング（画面端退避）状態かどうか判定
  *
  * @param {HTMLElement} target
  * @returns {boolean}
  */
-export function isElementDocked(target: {
-	classList: { contains: (arg0: string) => unknown };
-}) {
+export function isElementDocked(
+	target:
+		| { classList: { contains: (token: string) => unknown } }
+		| null
+		| undefined,
+): boolean {
 	if (!target) return false;
 	return (
-		target.classList.contains("is-docked-left") ||
-		target.classList.contains("is-docked-right")
+		Boolean(target.classList.contains("is-docked-left")) ||
+		Boolean(target.classList.contains("is-docked-right"))
 	);
 }
 
@@ -32,16 +50,19 @@ export function isElementDocked(target: {
  * @returns {"left" | "right" | "none"} スナップ結果
  */
 export function applyDockingSnap(
-	target: {
-		getBoundingClientRect: () => unknown;
-		classList: {
-			remove: (arg0: string, arg1: string) => void;
-			add: (arg0: string) => void;
-		};
-	},
+	target:
+		| {
+				getBoundingClientRect: () => { left: number; width: number };
+				classList: {
+					remove: (...tokens: string[]) => void;
+					add: (...tokens: string[]) => void;
+				};
+		  }
+		| null
+		| undefined,
 	screenWidth: number,
-	options = {},
-) {
+	options: DockingSnapOptions = {},
+): "left" | "right" | "none" {
 	if (!target) return "none";
 	const leftThreshold = options.leftThreshold ?? DOCK_LEFT_THRESHOLD;
 	const rightThreshold = options.rightThreshold ?? DOCK_RIGHT_THRESHOLD;
@@ -71,16 +92,19 @@ export function applyDockingSnap(
  * @returns {boolean} 復帰処理が行われたかどうか
  */
 export function restoreFromDocking(
-	target: {
-		classList: {
-			contains: (arg0: string) => unknown;
-			remove: (arg0: string, arg1: string) => void;
-		};
-		style: { left: string };
-	},
+	target:
+		| {
+				classList: {
+					contains: (token: string) => unknown;
+					remove: (...tokens: string[]) => void;
+				};
+				style: { left: string };
+		  }
+		| null
+		| undefined,
 	screenWidth: number,
 	restoreOffset = DOCK_RESTORE_OFFSET,
-) {
+): boolean {
 	if (!target || !isElementDocked(target)) {
 		return false;
 	}

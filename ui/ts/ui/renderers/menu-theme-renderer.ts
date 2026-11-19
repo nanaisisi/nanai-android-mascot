@@ -1,7 +1,33 @@
 import { assetCache } from "../../core/asset-cache.js";
 import { convertFileSrc } from "../../core/tauri-helper.js";
 
-let lastValidShellTheme: unknown = null;
+export interface ShellMenuTheme {
+	background_color?: string;
+	foreground_color?: string;
+	background_font_color?: string;
+	font_color?: string;
+	foreground_font_color?: string;
+	disable_font_color?: string;
+	separator_color?: string;
+	frame_color?: string;
+	font_name?: string;
+	font_height?: number | string;
+	background_bitmap?: string;
+	foreground_bitmap?: string;
+	sidebar_bitmap?: string;
+	background_alignment?: string;
+	foreground_alignment?: string;
+	sidebar_alignment?: string;
+}
+
+export interface MenuShellItem {
+	name?: string;
+	display_name?: string;
+	path?: string;
+	menu_theme?: ShellMenuTheme | null;
+}
+
+let lastValidShellTheme: MenuShellItem | null = null;
 
 /**
  * 画像アセットをメモリ・GPUへ事前デコード読み込み (初回メニュー表示時のチラつき・ロード不全防止)
@@ -27,27 +53,20 @@ export const menuThemeRenderer = {
 	},
 
 	/**
-	 * @param {{ menu_theme?: unknown; path?: string; }} activeShell
+	 * @param {MenuShellItem | string | null | undefined} activeShell
 	 */
-	applyShellTheme(activeShell: unknown) {
+	applyShellTheme(activeShell: MenuShellItem | string | null | undefined) {
 		const rootStyle = document.documentElement.style;
-		if (
-			activeShell &&
-			typeof activeShell === "object" &&
-			(activeShell as { menu_theme?: unknown }).menu_theme
-		) {
-			lastValidShellTheme = activeShell;
-		} else if (
-			(!activeShell ||
-				(typeof activeShell === "object" &&
-					!(activeShell as { menu_theme?: unknown }).menu_theme)) &&
-			lastValidShellTheme
-		) {
-			activeShell = lastValidShellTheme;
+		let resolvedShell =
+			activeShell && typeof activeShell === "object" ? activeShell : null;
+		if (resolvedShell?.menu_theme) {
+			lastValidShellTheme = resolvedShell;
+		} else if (!resolvedShell?.menu_theme && lastValidShellTheme) {
+			resolvedShell = lastValidShellTheme;
 		}
 
-		if (activeShell?.menu_theme) {
-			const mt = activeShell.menu_theme;
+		if (resolvedShell?.menu_theme) {
+			const mt = resolvedShell.menu_theme;
 			if (mt.background_color)
 				rootStyle.setProperty("--balloon-bg", mt.background_color);
 			else rootStyle.removeProperty("--balloon-bg");
@@ -59,7 +78,7 @@ export const menuThemeRenderer = {
 			if (mt.background_font_color || mt.font_color) {
 				rootStyle.setProperty(
 					"--balloon-text-color",
-					mt.background_font_color || mt.font_color,
+					(mt.background_font_color || mt.font_color) ?? "",
 				);
 			} else {
 				rootStyle.removeProperty("--balloon-text-color");
@@ -93,15 +112,15 @@ export const menuThemeRenderer = {
 					typeof mt.font_height === "number"
 						? `${mt.font_height}px`
 						: String(mt.font_height).includes("px")
-							? mt.font_height
+							? String(mt.font_height)
 							: `${mt.font_height}px`;
 				rootStyle.setProperty("--balloon-font-size", heightVal);
 			} else {
 				rootStyle.removeProperty("--balloon-font-size");
 			}
 
-			const shellPath = activeShell.path || "";
-			const resolveImg = (relPath: string) => {
+			const shellPath = resolvedShell.path || "";
+			const resolveImg = (relPath?: string | null) => {
 				if (!relPath) return null;
 				if (
 					relPath.startsWith("data:") ||
@@ -125,7 +144,7 @@ export const menuThemeRenderer = {
 				return full;
 			};
 
-			const applyAlignment = (alignRaw: string, prefix: string) => {
+			const applyAlignment = (alignRaw: string | undefined, prefix: string) => {
 				const align = String(alignRaw || "").toLowerCase();
 				let pos = "left top";
 				if (align.includes("right") && align.includes("bottom")) {

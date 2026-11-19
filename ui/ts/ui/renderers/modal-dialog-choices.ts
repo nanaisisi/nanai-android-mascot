@@ -3,10 +3,22 @@
  * @brief 選択肢ボタン、タイムアウト処理、および一般ダイアログ閉鎖メソッド
  */
 
-export function closeDialog(this: unknown, id: string, notifyCancel = true) {
+import type { ModalDialogControllerContext } from "./modal-dialog-ui.js";
+
+export interface ChoiceButtonOptions {
+	id: string;
+	text: string;
+	onSelect?: (id: string, text: string) => void;
+}
+
+export function closeDialog(
+	this: ModalDialogControllerContext,
+	id?: string,
+	notifyCancel = true,
+) {
 	if (!id || id === "__SYSTEM_ALL_DIALOG__") {
 		const keys = Array.from(this.activeBoxes.keys());
-		let closedunknown = false;
+		let closedAny = false;
 		for (const key of keys) {
 			const box = this.activeBoxes.get(key);
 			if (box) {
@@ -14,11 +26,11 @@ export function closeDialog(this: unknown, id: string, notifyCancel = true) {
 					box.cleanup(true);
 				} catch {}
 				this.activeBoxes.delete(key);
-				closedunknown = true;
+				closedAny = true;
 			}
 		}
-		if (notifyCancel && closedunknown) {
-			this.app.ghostController?.sendShioriEvent("OnSystemDialogCancel", [
+		if (notifyCancel && closedAny) {
+			this.app?.ghostController?.sendShioriEvent?.("OnSystemDialogCancel", [
 				id || "__SYSTEM_ALL_DIALOG__",
 			]);
 		}
@@ -36,11 +48,14 @@ export function closeDialog(this: unknown, id: string, notifyCancel = true) {
 		}
 	}
 	if (closed && notifyCancel) {
-		this.app.ghostController?.sendShioriEvent("OnSystemDialogCancel", [id]);
+		this.app?.ghostController?.sendShioriEvent?.("OnSystemDialogCancel", [id]);
 	}
 }
 
-export function createChoiceButton({ id, text, onSelect }) {
+export function createChoiceButton(
+	this: ModalDialogControllerContext,
+	{ id, text, onSelect }: ChoiceButtonOptions,
+): HTMLButtonElement {
 	const btn = document.createElement("button");
 	btn.className = "balloon-choice-btn";
 	btn.setAttribute("data-choice-id", id);
@@ -56,38 +71,41 @@ export function createChoiceButton({ id, text, onSelect }) {
 		} else if (this.player?.onChoiceSelected) {
 			this.player.onChoiceSelected(id, text);
 		} else {
-			this.app.ghostController?.sendShioriEvent?.("OnChoiceSelectEx", [
+			this.app?.ghostController?.sendShioriEvent?.("OnChoiceSelectEx", [
 				text,
 				id,
 			]);
-			this.app.ghostController?.sendShioriEvent("OnChoiceSelect", [id, text]);
+			this.app?.ghostController?.sendShioriEvent?.("OnChoiceSelect", [
+				id,
+				text,
+			]);
 		}
 	});
 	return btn;
 }
 
 export function setChoiceTimeout(
-	this: unknown,
-	timeoutMs: number | undefined,
-	onTimeout: () => void,
+	this: ModalDialogControllerContext,
+	timeoutMs?: number,
+	onTimeout?: () => void,
 ) {
 	if (this.choiceTimeoutTimer) {
 		clearTimeout(this.choiceTimeoutTimer);
 		this.choiceTimeoutTimer = null;
 	}
-	if (timeoutMs > 0) {
+	if (timeoutMs && timeoutMs > 0) {
 		this.choiceTimeoutTimer = setTimeout(() => {
 			this.choiceTimeoutTimer = null;
 			if (onTimeout) {
 				onTimeout();
 			} else {
-				this.app.ghostController?.sendShioriEvent("OnChoiceTimeout", []);
+				this.app?.ghostController?.sendShioriEvent?.("OnChoiceTimeout", []);
 			}
 		}, timeoutMs);
 	}
 }
 
-export function closeAll(this: unknown) {
+export function closeAll(this: ModalDialogControllerContext) {
 	for (const box of this.activeBoxes.values()) {
 		try {
 			box.cleanup();

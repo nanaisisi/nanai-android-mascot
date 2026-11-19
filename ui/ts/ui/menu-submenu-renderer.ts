@@ -4,28 +4,43 @@
  */
 
 import type { MenuDispatcher } from "./menu-dispatcher.js";
-import { menuBalloonDressupRenderer } from "./renderers/menu-balloon-dressup-renderer.js";
+import {
+	type BalloonMenuItem,
+	type DressupMenuPayload,
+	menuBalloonDressupRenderer,
+	type RecentGhostInput,
+} from "./renderers/menu-balloon-dressup-renderer.js";
 import { menuCaptionRenderer } from "./renderers/menu-caption-renderer.js";
-import { menuGhostShellRenderer } from "./renderers/menu-ghost-shell-renderer.js";
-import { menuThemeRenderer } from "./renderers/menu-theme-renderer.js";
+import {
+	type MenuGhostInput,
+	type MenuGhostItem,
+	type MenuShellInput,
+	menuGhostShellRenderer,
+} from "./renderers/menu-ghost-shell-renderer.js";
+import {
+	type MenuShellItem,
+	menuThemeRenderer,
+} from "./renderers/menu-theme-renderer.js";
 
 export class MenuSubmenuRenderer {
-	dispatcher: MenuDispatcher;
-	dressupData: null;
+	dispatcher: Pick<MenuDispatcher, "dispatchAction">;
+	dressupData: DressupMenuPayload | null;
 	/**
-	 * @param {import('./menu-dispatcher.js').MenuDispatcher} dispatcher
+	 * @param {Pick<MenuDispatcher, "dispatchAction">} dispatcher
 	 */
-	constructor(dispatcher: MenuDispatcher) {
+	constructor(dispatcher: Pick<MenuDispatcher, "dispatchAction">) {
 		this.dispatcher = dispatcher;
-		/** @type {unknown} */
 		this.dressupData = null;
 	}
 
-	renderShellSubmenu(shells: unknown, currentShell: unknown) {
+	renderShellSubmenu(shells: MenuShellInput[], currentShell?: string | null) {
 		menuGhostShellRenderer.renderShellSubmenu.call(this, shells, currentShell);
 	}
 
-	renderBalloonSubmenu(balloons: unknown, currentBalloonTheme: string | null) {
+	renderBalloonSubmenu(
+		balloons: BalloonMenuItem[] | null | undefined,
+		currentBalloonTheme?: string | null,
+	) {
 		menuBalloonDressupRenderer.renderBalloonSubmenu.call(
 			this,
 			balloons,
@@ -33,19 +48,22 @@ export class MenuSubmenuRenderer {
 		);
 	}
 
-	renderGhostSubmenu(ghosts: unknown, currentGhost: unknown) {
+	renderGhostSubmenu(
+		ghosts: MenuGhostInput[],
+		currentGhost?: MenuGhostItem | string | null,
+	) {
 		menuGhostShellRenderer.renderGhostSubmenu.call(this, ghosts, currentGhost);
 	}
 
-	renderCallGhostSubmenu(ghosts: unknown) {
+	renderCallGhostSubmenu(ghosts: MenuGhostInput[]) {
 		menuGhostShellRenderer.renderCallGhostSubmenu.call(this, ghosts);
 	}
 
-	renderDressupSubmenu(dressup: null, scope = 0) {
+	renderDressupSubmenu(dressup?: DressupMenuPayload | null, scope = 0) {
 		menuBalloonDressupRenderer.renderDressupSubmenu.call(this, dressup, scope);
 	}
 
-	renderRecentSubmenu(recentGhosts = []) {
+	renderRecentSubmenu(recentGhosts: RecentGhostInput[] = []) {
 		menuBalloonDressupRenderer.renderRecentSubmenu.call(this, recentGhosts);
 	}
 
@@ -53,13 +71,13 @@ export class MenuSubmenuRenderer {
 		menuThemeRenderer.applyTheme(theme);
 	}
 
-	applyShellTheme(activeShell: unknown) {
+	applyShellTheme(activeShell: MenuShellItem | string | null | undefined) {
 		menuThemeRenderer.applyShellTheme(activeShell);
 	}
 
 	applyCaptions(
 		captions: Record<string, string> | undefined,
-		rootEl = document,
+		rootEl: ParentNode = document,
 	) {
 		menuCaptionRenderer.applyCaptions(captions, rootEl);
 	}

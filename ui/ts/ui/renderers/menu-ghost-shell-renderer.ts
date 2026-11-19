@@ -1,19 +1,38 @@
+import type { MenuDispatcher } from "../menu-dispatcher.js";
+import type { MenuShellItem } from "./menu-theme-renderer.js";
+
+export interface MenuGhostItem {
+	name?: string;
+	[key: string]: unknown;
+}
+
+export type MenuGhostInput = string | MenuGhostItem;
+export type MenuShellInput = string | MenuShellItem;
+
+export interface MenuRendererContext {
+	dispatcher: Pick<MenuDispatcher, "dispatchAction">;
+}
+
 /**
  * @file menu-ghost-shell-renderer.js
  * @brief ゴーストおよびシェル切り替えサブメニューの描画ロジック
  */
 export const menuGhostShellRenderer = {
 	/**
-	 * @param {unknown[]} shells
-	 * @param {unknown} currentShell
+	 * @param {MenuShellInput[]} shells
+	 * @param {string | null | undefined} currentShell
 	 */
-	renderShellSubmenu(shells: unknown[], currentShell: unknown) {
+	renderShellSubmenu(
+		this: MenuRendererContext,
+		shells: MenuShellInput[],
+		currentShell?: string | null,
+	) {
 		const container = document.getElementById("shell-submenu");
 		if (!container) return;
 
 		container.innerHTML = "";
 
-		shells.forEach((shellItem: { name: unknown; display_name: unknown }) => {
+		shells.forEach((shellItem) => {
 			const shellName =
 				typeof shellItem === "string" ? shellItem : shellItem?.name || "master";
 			const displayName =
@@ -34,46 +53,54 @@ export const menuGhostShellRenderer = {
 	},
 
 	/**
-	 * @param {unknown[]} ghosts
-	 * @param {{ name: unknown; }} currentGhost
+	 * @param {MenuGhostInput[]} ghosts
+	 * @param {MenuGhostItem | string | null | undefined} currentGhost
 	 */
-	renderGhostSubmenu(ghosts: unknown[], currentGhost: { name: unknown }) {
+	renderGhostSubmenu(
+		this: MenuRendererContext,
+		ghosts: MenuGhostInput[],
+		currentGhost?: MenuGhostItem | string | null,
+	) {
 		const container = document.getElementById("ghost-submenu");
 		if (!container) return;
 
 		container.innerHTML = "";
+		const currentName =
+			typeof currentGhost === "string" ? currentGhost : currentGhost?.name;
 
-		ghosts.forEach((ghost: { name: string | undefined }) => {
-			const isCurrent = currentGhost && currentGhost.name === ghost.name;
+		ghosts.forEach((ghost) => {
+			const ghostName = typeof ghost === "string" ? ghost : ghost?.name || "";
+			const isCurrent = Boolean(currentGhost) && currentName === ghostName;
 			const btn = document.createElement("button");
 			btn.type = "button";
 			btn.className = `menu-item${isCurrent ? " is-current" : ""}`;
-			btn.dataset.ghostName = ghost.name;
-			btn.innerHTML = `<span class="menu-item-indicator">${isCurrent ? "✓" : ""}</span><span class="menu-item-label">${ghost.name}</span>`;
+			btn.dataset.ghostName = ghostName;
+			btn.innerHTML = `<span class="menu-item-indicator">${isCurrent ? "✓" : ""}</span><span class="menu-item-label">${ghostName}</span>`;
 			btn.addEventListener("click", () => {
-				this.dispatcher.dispatchAction("switch-to-ghost", ghost.name);
+				this.dispatcher.dispatchAction("switch-to-ghost", ghostName);
 			});
 			container.appendChild(btn);
 		});
 	},
 
 	/**
-	 * @param {unknown[]} ghosts
+	 * @param {MenuGhostInput[]} ghosts
 	 */
-	renderCallGhostSubmenu(ghosts: unknown[]) {
+	renderCallGhostSubmenu(this: MenuRendererContext, ghosts: MenuGhostInput[]) {
 		const container = document.getElementById("call-ghost-submenu");
 		if (!container) return;
 
 		container.innerHTML = "";
 
-		ghosts.forEach((ghost: { name: string | undefined }) => {
+		ghosts.forEach((ghost) => {
+			const ghostName = typeof ghost === "string" ? ghost : ghost?.name || "";
 			const btn = document.createElement("button");
 			btn.type = "button";
 			btn.className = "menu-item";
-			btn.dataset.ghostName = ghost.name;
-			btn.innerHTML = `<span class="menu-item-indicator">➕</span><span class="menu-item-label">${ghost.name}</span>`;
+			btn.dataset.ghostName = ghostName;
+			btn.innerHTML = `<span class="menu-item-indicator">➕</span><span class="menu-item-label">${ghostName}</span>`;
 			btn.addEventListener("click", () => {
-				this.dispatcher.dispatchAction("call-ghost", ghost.name);
+				this.dispatcher.dispatchAction("call-ghost", ghostName);
 			});
 			container.appendChild(btn);
 		});

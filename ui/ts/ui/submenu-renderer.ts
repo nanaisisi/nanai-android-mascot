@@ -1,4 +1,27 @@
-import { invoke } from "../core/tauri-helper.js";
+import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import type {
+	BalloonMenuItem,
+	DressupMenuPayload,
+	RecentGhostInput,
+} from "./renderers/menu-balloon-dressup-renderer.js";
+import type {
+	MenuGhostInput,
+	MenuShellInput,
+} from "./renderers/menu-ghost-shell-renderer.js";
+
+export interface SubmenuRenderOptions {
+	currentSubmenuType: string;
+	cachedGhosts: MenuGhostInput[];
+	currentGhostName: string | null;
+	cachedShells: MenuShellInput[];
+	currentShellName: string | null;
+	cachedDressup: DressupMenuPayload | null;
+	dressupScope: number;
+	cachedBalloons: BalloonMenuItem[];
+	currentBalloonTheme: string | null;
+	cachedRecentGhosts: RecentGhostInput[];
+	dispatchSubmenuAction: (action: string, payload?: unknown) => void;
+}
 
 /**
  * サブメニューの内容を描画するレンダラ
@@ -15,7 +38,7 @@ export function renderSubmenuContent({
 	currentBalloonTheme,
 	cachedRecentGhosts,
 	dispatchSubmenuAction,
-}) {
+}: SubmenuRenderOptions) {
 	const container = document.getElementById("submenu-content");
 	if (!container) return;
 	container.innerHTML = "";
@@ -29,7 +52,7 @@ export function renderSubmenuContent({
 			container.appendChild(empty);
 			return;
 		}
-		cachedGhosts.forEach((ghostItem: { name: unknown }) => {
+		cachedGhosts.forEach((ghostItem) => {
 			const ghostName =
 				typeof ghostItem === "string" ? ghostItem : ghostItem?.name || "";
 			const isCurrent = !isCall && ghostName === currentGhostName;
@@ -47,7 +70,7 @@ export function renderSubmenuContent({
 		});
 	} else if (currentSubmenuType === "shell") {
 		(cachedShells.length > 0 ? cachedShells : ["master"]).forEach(
-			(shellItem: { name: unknown; display_name: unknown }) => {
+			(shellItem) => {
 				const shellName =
 					typeof shellItem === "string"
 						? shellItem
@@ -99,7 +122,7 @@ export function renderSubmenuContent({
 			}
 		}
 	} else if (currentSubmenuType === "balloon") {
-		const renderBalloons = (balloonsList: unknown[]) => {
+		const renderBalloons = (balloonsList: BalloonMenuItem[]) => {
 			container.innerHTML = "";
 			const activeTheme =
 				currentBalloonTheme ||
@@ -124,7 +147,7 @@ export function renderSubmenuContent({
 							name: "NAMデフォルト+(頭上)",
 						},
 					]
-			).forEach((balloonItem: { dir_name: unknown; name: unknown }) => {
+			).forEach((balloonItem) => {
 				const dirName = String(
 					balloonItem.dir_name || balloonItem.name || "",
 				).trim();
@@ -154,7 +177,7 @@ export function renderSubmenuContent({
 				.catch(() => invoke("list_balloons"))
 				.then((res) => {
 					if (Array.isArray(res) && res.length > 0) {
-						renderBalloons(res);
+						renderBalloons(res as BalloonMenuItem[]);
 					} else {
 						renderBalloons([]);
 					}
@@ -171,44 +194,34 @@ export function renderSubmenuContent({
 			container.appendChild(empty);
 			return;
 		}
-		cachedRecentGhosts.forEach(
-			(
-				item: {
-					name: unknown;
-					hasSubmenu: unknown;
-					subitems: string | unknown[];
-					shells: string | unknown[];
-					action: unknown;
-				} | null,
-			) => {
-				const ghostName = typeof item === "string" ? item : item?.name || "";
-				const hasSub =
-					typeof item === "object" &&
-					item !== null &&
-					(item.hasSubmenu ||
-						(item.subitems && item.subitems.length > 0) ||
-						(item.shells && item.shells.length > 0));
+		cachedRecentGhosts.forEach((item) => {
+			const ghostName = typeof item === "string" ? item : item?.name || "";
+			const hasSub =
+				typeof item === "object" &&
+				item !== null &&
+				(item.hasSubmenu ||
+					(item.subitems && item.subitems.length > 0) ||
+					(item.shells && item.shells.length > 0));
 
-				const btn = document.createElement("button");
-				btn.type = "button";
-				btn.className = `menu-item${hasSub ? " has-submenu" : ""}`;
-				if (hasSub) {
-					btn.setAttribute("aria-haspopup", "true");
-				}
-				btn.innerHTML = `<span class="menu-item-indicator"></span><span class="menu-item-label">${ghostName}</span>`;
-				btn.addEventListener("click", () => {
-					const action =
-						typeof item === "object" && item?.action
-							? item.action
-							: "recent-ghost";
-					dispatchSubmenuAction(
-						action,
-						typeof item === "object" ? item : ghostName,
-					);
-				});
-				container.appendChild(btn);
-			},
-		);
+			const btn = document.createElement("button");
+			btn.type = "button";
+			btn.className = `menu-item${hasSub ? " has-submenu" : ""}`;
+			if (hasSub) {
+				btn.setAttribute("aria-haspopup", "true");
+			}
+			btn.innerHTML = `<span class="menu-item-indicator"></span><span class="menu-item-label">${ghostName}</span>`;
+			btn.addEventListener("click", () => {
+				const action =
+					typeof item === "object" && item?.action
+						? item.action
+						: "recent-ghost";
+				dispatchSubmenuAction(
+					action,
+					typeof item === "object" ? item : ghostName,
+				);
+			});
+			container.appendChild(btn);
+		});
 	} else if (
 		currentSubmenuType === "utility" ||
 		currentSubmenuType === "utility-root" ||
@@ -306,7 +319,9 @@ export function renderSubmenuContent({
 			btn.className = "menu-item";
 			btn.innerHTML = `<span class="menu-item-indicator"></span><span class="menu-item-label">${item.label}</span>${item.shortcut ? `<span style="opacity:0.6; font-size:0.75rem; margin-left:8px;">${item.shortcut}</span>` : ""}`;
 			btn.addEventListener("click", () => {
-				dispatchSubmenuAction(item.action);
+				if (item.action) {
+					dispatchSubmenuAction(item.action);
+				}
 			});
 			container.appendChild(btn);
 		});
@@ -462,7 +477,9 @@ export function renderSubmenuContent({
 			btn.innerHTML = `<span class="menu-item-indicator">${item.checked ? "✓" : ""}</span><span class="menu-item-label">${item.label}</span>`;
 			if (!isDisabled) {
 				btn.addEventListener("click", () => {
-					dispatchSubmenuAction(item.action);
+					if (item.action) {
+						dispatchSubmenuAction(item.action);
+					}
 				});
 			}
 			container.appendChild(btn);

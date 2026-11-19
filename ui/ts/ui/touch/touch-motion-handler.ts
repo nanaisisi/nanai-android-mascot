@@ -3,25 +3,44 @@
  * @description ドラッグ、撫で (Stroke)、ピンチ、回転、スワイプ、画面端スナップの認識ハンドラ
  */
 
-import { TOUCH_GESTURE_TYPES } from "./touch-gesture-event.js";
+import {
+	TOUCH_GESTURE_TYPES,
+	type TouchEventLike,
+} from "./touch-gesture-event.js";
 import {
 	getTouchAngle,
 	getTouchCenter,
 	getTouchDistance,
 } from "./touch-helpers.js";
+import type { TouchStateRecognizer } from "./touch-start-handler.js";
+
+export interface TouchMotionRecognizer extends TouchStateRecognizer {
+	_dockState: string;
+	options: TouchStateRecognizer["options"] & {
+		strokeThreshold: number;
+		slopThreshold: number;
+		minScale: number;
+		maxScale: number;
+		swipeMinDistance: number;
+		swipeMinVelocity: number;
+		snapThreshold: number;
+		screenWidth: number;
+	};
+}
 
 /**
  * シングルタッチ時の移動処理 (ドラッグ & 撫で認識)
- * @param {import("./touch-gesture-recognizer.js").TouchGestureRecognizer} recognizer
- * @param {TouchEvent} e
+ * @param {TouchMotionRecognizer} recognizer
+ * @param {TouchEvent | TouchEventLike} e
  */
 export function processSingleTouchMove(
-	recognizer: this,
-	e: { touches: unknown[] },
+	recognizer: TouchMotionRecognizer,
+	e: TouchEvent | TouchEventLike,
 ) {
 	if (recognizer._isPinching) return;
+	const t = e.touches?.[0];
+	if (!t) return;
 
-	const t = e.touches[0];
 	const now = Date.now();
 	const deltaX = t.clientX - recognizer._startX;
 	const deltaY = t.clientY - recognizer._startY;
@@ -87,12 +106,12 @@ export function processSingleTouchMove(
 
 /**
  * マルチタッチ時の移動処理 (ピンチ & 回転認識)
- * @param {import("./touch-gesture-recognizer.js").TouchGestureRecognizer} recognizer
- * @param {TouchEvent} e
+ * @param {TouchMotionRecognizer} recognizer
+ * @param {TouchEvent | TouchEventLike} e
  */
 export function processMultiTouchMove(
-	recognizer: this,
-	e: { touches: string | unknown[] },
+	recognizer: TouchMotionRecognizer,
+	e: TouchEvent | TouchEventLike,
 ) {
 	recognizer._clearLongPressTimer();
 	if (!e?.touches || e.touches.length < 2) return;
@@ -144,12 +163,12 @@ export function processMultiTouchMove(
 
 /**
  * ドラッグ終了時のスワイプおよびスナップ判定
- * @param {import("./touch-gesture-recognizer.js").TouchGestureRecognizer} recognizer
- * @param {TouchEvent} e
+ * @param {TouchMotionRecognizer} recognizer
+ * @param {TouchEvent | TouchEventLike} e
  */
 export function handleDragEndAndSnap(
-	recognizer: this,
-	e: { changedTouches: unknown[] },
+	recognizer: TouchMotionRecognizer,
+	e: TouchEvent | TouchEventLike,
 ) {
 	recognizer._isDragging = false;
 	const lastTouch = e?.changedTouches?.[0];
@@ -169,7 +188,7 @@ export function handleDragEndAndSnap(
 	const totalTime = Math.max(1, Date.now() - recognizer._startTime);
 	const velocity = totalDist / totalTime;
 
-	let swipeDirection = null;
+	let swipeDirection: string | null = null;
 	if (
 		totalDist >= recognizer.options.swipeMinDistance &&
 		velocity >= recognizer.options.swipeMinVelocity
@@ -195,7 +214,7 @@ export function handleDragEndAndSnap(
 	// 画面端スナップ（Docked State / Snap）の判定
 	const screenW = recognizer.options.screenWidth;
 	const snapThreshold = recognizer.options.snapThreshold;
-	let snapEdge = null;
+	let snapEdge: string | null = null;
 
 	if (
 		endX <= snapThreshold ||

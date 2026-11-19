@@ -30,8 +30,9 @@ class AssetCacheManager {
 		if (!url) return null;
 
 		const targetMap = this.getCategoryMap(category);
-		if (targetMap.has(url)) {
-			return targetMap.get(url)?.image;
+		const cached = targetMap.get(url);
+		if (cached) {
+			return cached.image;
 		}
 
 		if (typeof Image === "undefined") return null;

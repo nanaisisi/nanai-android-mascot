@@ -3,7 +3,7 @@
  * @description Helper functions for AndroidBridge lifecycle and state management
  */
 
-import type { DockManager } from "./bridge/dock-manager.js";
+import type { DockManager } from "./bridge/dock.js";
 import {
 	ANDROID_LIFECYCLE_STATES,
 	detectPlatformMode,

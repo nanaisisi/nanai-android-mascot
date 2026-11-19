@@ -3,12 +3,19 @@
  * @brief sliderinput の表示・制御処理
  */
 
+import type {
+	ActiveDialogBox,
+	ModalDialogControllerContext,
+} from "../../modal-dialog-ui.js";
+
 export function openSliderInput(
-	this: unknown,
-	params: string | unknown[],
-	scope: unknown,
-) {
-	const id = params[0] || "SliderInput";
+	this: ModalDialogControllerContext,
+	params: readonly unknown[] | string = [],
+	scope?: number,
+): HTMLDivElement | null {
+	const rawId = params[0];
+	const id =
+		typeof rawId === "string" && rawId ? rawId : String(rawId || "SliderInput");
 	let timeoutMs = 0;
 	let currentVal = 0;
 	let minVal = 0;
@@ -75,7 +82,7 @@ export function openSliderInput(
 	submitBtn.className = "balloon-choice-btn";
 	submitBtn.style.marginTop = "0";
 
-	let timer: number | null | undefined = null;
+	let timer: ReturnType<typeof setTimeout> | null = null;
 	const boxKey = `inputbox:${id}`;
 
 	const cleanup = (force = false) => {
@@ -97,13 +104,13 @@ export function openSliderInput(
 		cleanup();
 		const info = `${minVal},${maxVal}`;
 		if (id.startsWith("On")) {
-			await this.app.ghostController?.sendShioriEvent(id, [
+			await this.app?.ghostController?.sendShioriEvent?.(id, [
 				val,
 				info,
 				...references,
 			]);
 		} else {
-			await this.app.ghostController?.sendShioriEvent("OnUserInput", [
+			await this.app?.ghostController?.sendShioriEvent?.("OnUserInput", [
 				id,
 				val,
 				info,
@@ -115,7 +122,7 @@ export function openSliderInput(
 	const cancel = async (reason = "close") => {
 		cleanup(true);
 		const info = `${minVal},${maxVal}`;
-		await this.app.ghostController?.sendShioriEvent("OnUserInputCancel", [
+		await this.app?.ghostController?.sendShioriEvent?.("OnUserInputCancel", [
 			id,
 			reason,
 			info,
@@ -150,7 +157,7 @@ export function openSliderInput(
 		}, timeoutMs);
 	}
 
-	const boxEntry = {
+	const boxEntry: ActiveDialogBox = {
 		id,
 		type: "sliderinput",
 		form,

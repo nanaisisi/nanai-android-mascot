@@ -25,7 +25,7 @@ export class InteractionManager {
 	}
 
 	get balloonOffsetX(): number {
-		return this.balloonDragManager.balloonOffsetX;
+		return this.balloonDragManager.balloonOffsetX ?? 0;
 	}
 
 	set balloonOffsetX(val: number) {
@@ -33,7 +33,7 @@ export class InteractionManager {
 	}
 
 	get balloonOffsetY(): number {
-		return this.balloonDragManager.balloonOffsetY;
+		return this.balloonDragManager.balloonOffsetY ?? 0;
 	}
 
 	set balloonOffsetY(val: number) {

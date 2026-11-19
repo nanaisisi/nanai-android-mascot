@@ -169,21 +169,10 @@ export function buildInstallRerouteArgs(
 }
 
 /**
- * 例外オブジェクトやエラー文字列から UKADOC 準拠の「インストールの失敗理由」を抽出
- * @param {unknown} err
- * @returns {string} - "unsupported" | "extraction" | "unlha32 error" | "artificial" | "write error" | "invalid path"
+ * 例外オブジェクトやエラー文字列から UKADOC 準拠の「インストールの失敗理由」を抽出 (純TSフォールバック)
  */
-export function parseErrorReason(err: unknown): string {
-	const msg = String((err as { message?: string })?.message || err || "");
-
-	if (wasmBridge.isReady()) {
-		try {
-			return wasmBridge.parseInstallErrorReason(msg);
-		} catch {
-			// fallback
-		}
-	}
-
+export function parseInstallErrorReasonFallback(err: unknown): string {
+	const msg = String((err as { message?: unknown })?.message ?? err ?? "");
 	const lower = msg.toLowerCase();
 	if (
 		lower.includes("unsupported") ||
@@ -217,14 +206,40 @@ export function parseErrorReason(err: unknown): string {
 		return "unlha32 error";
 	}
 	if (
-		lower.includes("write error") ||
-		lower.includes("fileio") ||
-		lower.includes("permission denied") ||
-		lower.includes("io error")
+		lower.includes("permission") ||
+		lower.includes("access denied") ||
+		lower.includes("write") ||
+		lower.includes("書き込み")
 	) {
 		return "write error";
 	}
+	if (
+		lower.includes("format") ||
+		lower.includes("invalid") ||
+		lower.includes("形式")
+	) {
+		return "format error";
+	}
 	return "extraction";
+}
+
+/**
+ * 例外オブジェクトやエラー文字列から UKADOC 準拠の「インストールの失敗理由」を抽出
+ * @param {unknown} err
+ * @returns {string} - "unsupported" | "extraction" | "unlha32 error" | "artificial" | "write error" | "invalid path" | "format error"
+ */
+export function parseErrorReason(err: unknown): string {
+	const msg = String((err as { message?: unknown })?.message ?? err ?? "");
+
+	if (wasmBridge.isReady()) {
+		try {
+			return wasmBridge.parseInstallErrorReason(msg);
+		} catch {
+			// fallback
+		}
+	}
+
+	return parseInstallErrorReasonFallback(msg);
 }
 
 export const parseInstallErrorReason = parseErrorReason;

@@ -10,6 +10,12 @@ import {
 	checkIsThrottled,
 	getAndroidBridgeState,
 } from "./android-bridge-state.js";
+import type { BackButtonHandler } from "./bridge/back-button.js";
+import type {
+	DockManagerOptions,
+	GestureRecognizerInterface,
+} from "./bridge/dock.js";
+import type { BridgeEventCallback } from "./bridge/events.js";
 import {
 	ANDROID_EVENTS,
 	ANDROID_LIFECYCLE_STATES,
@@ -24,6 +30,7 @@ import {
 	type PlatformMode,
 	setupVisibilityListeners,
 } from "./bridge/index.js";
+import type { OverlayInvokeHandler } from "./bridge/overlay.js";
 
 export {
 	ANDROID_EVENTS,
@@ -37,6 +44,16 @@ export {
 	type PlatformMode,
 };
 
+export interface AndroidBridgeOptions {
+	gestureRecognizer?: GestureRecognizerInterface | null;
+	element?: unknown;
+	dockMargin?: number;
+	autoRestoreOnTap?: boolean;
+	invokeHandler?: OverlayInvokeHandler;
+	targetElement?: unknown;
+	syncUiClasses?: boolean;
+}
+
 /**
  * AndroidプラットフォームとのIPCおよびライフサイクル管理を提供するブリッジクラス
  */
@@ -48,7 +65,7 @@ export class AndroidBridge {
 	_dockManager: DockManager;
 	_overlayManager: OverlayManager;
 
-	constructor(options: Record<string, unknown> = {}) {
+	constructor(options: AndroidBridgeOptions = {}) {
 		this._cleanupFns = [];
 		this._lifecycleState = ANDROID_LIFECYCLE_STATES.ACTIVE;
 
@@ -57,7 +74,7 @@ export class AndroidBridge {
 
 		// 戻るボタン管理モジュール
 		this._backButtonManager = new BackButtonManager(
-			(eventName: unknown, data: unknown) => {
+			(eventName: string, data: unknown) => {
 				this._dispatch(eventName, data);
 			},
 		);
@@ -76,7 +93,7 @@ export class AndroidBridge {
 		// オーバーレイ & プラットフォーム管理モジュール
 		this._overlayManager = new OverlayManager({
 			invokeHandler: options.invokeHandler,
-			dispatchFn: (eventName: unknown, data: unknown) => {
+			dispatchFn: (eventName: string, data: unknown) => {
 				this._dispatch(eventName, data);
 			},
 		});
@@ -113,7 +130,7 @@ export class AndroidBridge {
 				this._lifecycleState = state;
 			},
 			getGestureRecognizer: () => this._dockManager.gestureRecognizer,
-			dispatch: (eventName: unknown, data: unknown) => {
+			dispatch: (eventName: string, data: unknown) => {
 				this._dispatch(eventName, data);
 			},
 		});
@@ -180,11 +197,13 @@ export class AndroidBridge {
 		this._overlayManager._isOverlayEnabled = val;
 	}
 
-	setGestureRecognizer(recognizer: unknown) {
+	setGestureRecognizer(
+		recognizer: GestureRecognizerInterface | null | undefined,
+	) {
 		this._dockManager.setGestureRecognizer(recognizer);
 	}
 
-	setDockMode(dockState: unknown) {
+	setDockMode(dockState: string) {
 		return this._dockManager.setDockMode(dockState);
 	}
 
@@ -212,7 +231,7 @@ export class AndroidBridge {
 		return this._dockManager.getDockOptions();
 	}
 
-	setDockOptions(options: unknown) {
+	setDockOptions(options: Partial<DockManagerOptions> = {}) {
 		return this._dockManager.setDockOptions(options);
 	}
 
@@ -291,7 +310,7 @@ export class AndroidBridge {
 		return this._overlayManager.trimMemory(level);
 	}
 
-	registerBackHandler(handler: unknown) {
+	registerBackHandler(handler: BackButtonHandler | null | undefined) {
 		return this._backButtonManager.registerBackHandler(handler);
 	}
 
@@ -299,7 +318,7 @@ export class AndroidBridge {
 		return this._backButtonManager.handlerCount;
 	}
 
-	getListenerCount(eventName: unknown) {
+	getListenerCount(eventName?: string) {
 		return this._emitter.listenerCount(eventName);
 	}
 
@@ -331,15 +350,21 @@ export class AndroidBridge {
 		this._lifecycleState = ANDROID_LIFECYCLE_STATES.STOPPED;
 	}
 
-	on(eventName: unknown, callback: unknown) {
+	on<T = unknown>(
+		eventName: string,
+		callback: BridgeEventCallback<T> | null | undefined,
+	) {
 		return this._emitter.on(eventName, callback);
 	}
 
-	off(eventName: unknown, callback: unknown) {
+	off<T = unknown>(
+		eventName: string,
+		callback: BridgeEventCallback<T> | null | undefined,
+	) {
 		this._emitter.off(eventName, callback);
 	}
 
-	_dispatch(eventName: unknown, data: unknown) {
+	_dispatch(eventName: string, data?: unknown) {
 		this._emitter.dispatch(eventName, data);
 	}
 }

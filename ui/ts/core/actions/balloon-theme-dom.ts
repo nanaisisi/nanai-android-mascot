@@ -1,7 +1,26 @@
-import { type ValidRectLayoutResult, wasmBridge } from "../wasm-bridge.js";
+import { wasmBridge } from "../wasm-bridge.js";
 import { BALLOON_CSS_VARS } from "./balloon-theme-constants.js";
 
-export type { ValidRectLayoutResult };
+export interface ValidRectLayoutResult {
+	source: string;
+	top: number;
+	right: number;
+	bottom: number;
+	left: number;
+	scopeId: number;
+	cacheKey: string;
+	slice?: string;
+	width?: string;
+	repeat?: string;
+	cssBorderImage?: string;
+}
+
+export interface ValidRectInsets {
+	top: number;
+	right: number;
+	bottom: number;
+	left: number;
+}
 
 export interface BalloonAppInterface {
 	balloonUserScale?: number;
@@ -12,14 +31,11 @@ export interface BalloonAppInterface {
 	[key: string]: unknown;
 }
 
-/**
- * UKADOC/SSP 規格準拠 validrect (テキスト描画範囲) プロパティパース
- */
-export function parseValidRect(
+function parseValidRectFallback(
 	props: Record<string, string> = {},
 	imageWidth?: number,
 	imageHeight?: number,
-) {
+): ValidRectInsets {
 	const getProp = (key: string) =>
 		props[key] || props[`sakura.${key}`] || props[`kero.${key}`];
 
@@ -87,6 +103,49 @@ export function parseValidRect(
 }
 
 /**
+ * UKADOC/SSP 規格準拠 validrect (テキスト描画範囲) プロパティパース
+ */
+export function parseValidRect(
+	props: Record<string, string> = {},
+	imageWidth?: number,
+	imageHeight?: number,
+): ValidRectInsets {
+	const fallback = parseValidRectFallback(props, imageWidth, imageHeight);
+	if (wasmBridge.isReady()) {
+		try {
+			const wasmLayout = wasmBridge.computeValidRectLayout(
+				fallback.left,
+				fallback.top,
+				fallback.right,
+				fallback.bottom,
+				props["border.repeat"],
+				props["balloon.image"],
+				undefined,
+				0,
+			);
+			if (wasmLayout?.slice) {
+				const parts = wasmLayout.slice
+					.split(" ")
+					.slice(0, 4)
+					.map((n) => Number.parseInt(n, 10));
+				if (parts.length === 4 && parts.every((n) => !Number.isNaN(n))) {
+					const [wt, wr, wb, wl] = parts;
+					return {
+						top: fallback.top < 8 ? fallback.top : wt,
+						right: fallback.right < 8 ? fallback.right : wr,
+						bottom: fallback.bottom < 8 ? fallback.bottom : wb,
+						left: fallback.left < 8 ? fallback.left : wl,
+					};
+				}
+			}
+		} catch {
+			// Fallback on WASM error
+		}
+	}
+	return fallback;
+}
+
+/**
  * 有効テキスト表示領域 (validrect) 設定からスタイルを算出 (キャッシュ対応・WASM駆動)
  */
 export function computeValidRectLayout(
@@ -107,14 +166,40 @@ export function computeValidRectLayout(
 		return cache.get(cacheKey) as ValidRectLayoutResult;
 	}
 
+	let wasmLayout = null;
+	if (wasmBridge.isReady()) {
+		try {
+			wasmLayout = wasmBridge.computeValidRectLayout(
+				l,
+				t,
+				r,
+				b,
+				props["border.repeat"],
+				props["balloon.image"],
+				bgImageUrl ?? undefined,
+				scopeId,
+			);
+		} catch {
+			// Fallback on WASM error
+		}
+	}
+
 	const result: ValidRectLayoutResult = {
-		source,
+		source: wasmLayout?.source || source,
 		top: t,
 		right: r,
 		bottom: b,
 		left: l,
-		scopeId,
+		scopeId: wasmLayout?.scopeId ?? scopeId,
 		cacheKey,
+		...(wasmLayout
+			? {
+					slice: wasmLayout.slice,
+					width: wasmLayout.width,
+					repeat: wasmLayout.repeat,
+					cssBorderImage: wasmLayout.cssBorderImage,
+				}
+			: {}),
 	};
 	cache.set(cacheKey, result);
 	return result;

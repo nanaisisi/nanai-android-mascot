@@ -64,6 +64,19 @@ export function verifyRecommendedGhost(
 	return { isRecommended: true };
 }
 
+interface TauriCoreWithConvert {
+	convertFileSrc?: (path: string) => string;
+}
+
+function resolveBalloonAssetUrl(fullPath: string): string {
+	const tauriCore = (
+		globalThis.__TAURI__ as { core?: TauriCoreWithConvert } | undefined
+	)?.core;
+	return tauriCore?.convertFileSrc
+		? tauriCore.convertFileSrc(fullPath)
+		: fullPath;
+}
+
 export function applyAssetProperties(
 	root: HTMLElement,
 	props: Record<string, string>,
@@ -135,6 +148,16 @@ export function applyAssetProperties(
 		img.src = cleanUrl;
 	};
 
+	const setFallbackAsset = (
+		theme: string,
+		file: string,
+		cssVarName: string,
+	) => {
+		const url = resolveBalloonAssetUrl(`assets/balloon/${theme}/${file}`);
+		preloadBalloonAsset(url);
+		root.style.setProperty(cssVarName, `url("${url}")`);
+	};
+
 	const setBalloonImage = (propName: string, cssVarName: string) => {
 		const filename = p[propName];
 		if (filename) {
@@ -148,20 +171,10 @@ export function applyAssetProperties(
 						}
 					})
 					.catch(() => {
-						const fullPath = `assets/balloon/${themeName}/${filename}`;
-						const url = globalThis.__TAURI__?.core?.convertFileSrc
-							? globalThis.__TAURI__.core.convertFileSrc(fullPath)
-							: fullPath;
-						preloadBalloonAsset(url);
-						root.style.setProperty(cssVarName, `url("${url}")`);
+						setFallbackAsset(themeName, filename, cssVarName);
 					});
 			} else {
-				const fullPath = `assets/balloon/${themeName}/${filename}`;
-				const url = globalThis.__TAURI__?.core?.convertFileSrc
-					? globalThis.__TAURI__.core.convertFileSrc(fullPath)
-					: fullPath;
-				preloadBalloonAsset(url);
-				root.style.setProperty(cssVarName, `url("${url}")`);
+				setFallbackAsset(themeName, filename, cssVarName);
 			}
 		}
 	};
@@ -192,20 +205,10 @@ export function applyAssetProperties(
 					}
 				})
 				.catch(() => {
-					const fullPath = `assets/balloon/${themeName}/${file}`;
-					const url = globalThis.__TAURI__?.core?.convertFileSrc
-						? globalThis.__TAURI__.core.convertFileSrc(fullPath)
-						: fullPath;
-					preloadBalloonAsset(url);
-					root.style.setProperty(cssVar, `url("${url}")`);
+					setFallbackAsset(themeName, file, cssVar);
 				});
 		} else {
-			const fullPath = `assets/balloon/${themeName}/${file}`;
-			const url = globalThis.__TAURI__?.core?.convertFileSrc
-				? globalThis.__TAURI__.core.convertFileSrc(fullPath)
-				: fullPath;
-			preloadBalloonAsset(url);
-			root.style.setProperty(cssVar, `url("${url}")`);
+			setFallbackAsset(themeName, file, cssVar);
 		}
 	};
 

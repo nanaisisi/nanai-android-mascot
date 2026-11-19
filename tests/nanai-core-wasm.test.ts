@@ -1,58 +1,101 @@
-import { describe, expect, it } from "vitest";
-import { parseErrorReason as parseInstallErrorReason } from "../ui/ts/core/actions/install-protocol";
+import { describe, expect, it, vi } from "vitest";
+import {
+	computeValidRectLayout,
+	parseValidRect,
+} from "../ui/ts/core/actions/balloon-theme-dom";
+import {
+	parseErrorReason as parseInstallErrorReason,
+	parseInstallErrorReasonFallback,
+} from "../ui/ts/core/actions/install-protocol";
+import {
+	buildRawSstpRequest,
+	parseRawSstpResponse,
+} from "../ui/ts/core/actions/sstp-fmo-actions";
 import {
 	calculateUpdateProgress,
+	calculateUpdateProgressFallback,
 	isNoUpdatePath,
+	isNoUpdatePathFallback,
 	normalizeUpdateReason,
+	normalizeUpdateReasonFallback,
+	UPDATE_REASONS,
 } from "../ui/ts/core/actions/update-protocol";
 import { wasmBridge } from "../ui/ts/core/wasm-bridge";
 
 describe("nanai-core WASM module parity and fallback", () => {
-	it("matches calculateUpdateProgress behavior between TS and WASM fallback", () => {
-		const testCases: [number, number][] = [
-			[0, 10],
-			[5, 10],
-			[7, 10],
-			[10, 10],
-			[15, 10],
-			[0, 0],
-			[-1, 10],
+	it("matches calculateUpdateProgress behavior between WASM and TS fallback", async () => {
+		await wasmBridge.init();
+		const testCases: Array<[number, number, number, boolean]> = [
+			[0, 10, 0, false],
+			[5, 10, 50, false],
+			[7, 10, 70, false],
+			[10, 10, 100, true],
+			[15, 10, 100, true],
+			[0, 0, 100, true],
+			[-1, 10, 0, false],
 		];
 
-		for (const [curr, total] of testCases) {
+		for (const [curr, total, expectedPercent, expectedComplete] of testCases) {
+			const tsFallback = calculateUpdateProgressFallback(curr, total);
 			const tsRes = calculateUpdateProgress(curr, total);
 			const bridgeRes = wasmBridge.calculateUpdateProgress(curr, total);
 
-			expect(bridgeRes.percent).toBe(tsRes.percent);
-			expect(bridgeRes.isComplete).toBe(tsRes.isComplete);
+			expect(tsFallback).toEqual({
+				percent: expectedPercent,
+				isComplete: expectedComplete,
+			});
+			expect(bridgeRes).toEqual(tsFallback);
+			expect(tsRes).toEqual(tsFallback);
 		}
 	});
 
-	it("matches normalizeUpdateReason behavior", () => {
-		const testCases = ["manual", "auto", "script", "other"];
-		for (const reason of testCases) {
+	it("matches normalizeUpdateReason behavior between WASM and TS fallback", async () => {
+		await wasmBridge.init();
+		const testCases: Array<[string | null | undefined, string, number]> = [
+			["manual", "manual", 0],
+			["AUTO", "auto", 1],
+			[" script ", "script", 2],
+			["other", "manual", 0],
+			[null, "manual", 0],
+		];
+		for (const [reason, expected, expectedCode] of testCases) {
+			const fallbackReason = normalizeUpdateReasonFallback(reason);
 			const tsReason = normalizeUpdateReason(reason);
-			expect(typeof tsReason).toBe("string");
+			const wasmCode = wasmBridge.normalizeUpdateReason(reason ?? undefined);
+
+			expect(fallbackReason).toBe(expected);
+			expect(tsReason).toBe(expected);
+			expect(wasmCode).toBe(expectedCode);
+			expect(UPDATE_REASONS[wasmCode]).toBe(expected);
 		}
 	});
 
-	it("matches parseInstallErrorReason behavior", () => {
-		const testCases = [
-			"Archive error: unsupported format",
-			"User cancel operation",
-			"Detected Zip-Slip attempt",
-			"Corrupt lha archive header",
-			"Permission denied write error",
-			"Unknown internal error",
+	it("matches parseInstallErrorReason behavior across all 7 WASM reason codes and TS fallback", async () => {
+		await wasmBridge.init();
+		const testCases: Array<[string, string]> = [
+			["Archive error: unsupported format", "unsupported"],
+			["invalid type: unknown", "unsupported"],
+			["User cancel operation", "artificial"],
+			["Detected Zip-Slip attempt", "invalid path"],
+			["Corrupt lha archive header", "unlha32 error"],
+			["Permission denied write error", "write error"],
+			["Invalid archive format header", "format error"],
+			["Unknown internal error", "extraction"],
 		];
 
-		for (const err of testCases) {
+		for (const [err, expected] of testCases) {
+			const wasmReason = wasmBridge.parseInstallErrorReason(err);
 			const tsReason = parseInstallErrorReason(err);
-			expect(typeof tsReason).toBe("string");
+			const fallbackReason = parseInstallErrorReasonFallback(err);
+
+			expect(wasmReason).toBe(expected);
+			expect(tsReason).toBe(expected);
+			expect(fallbackReason).toBe(expected);
 		}
 	});
 
-	it("matches isNoUpdatePath behavior between TS and WASM fallback", () => {
+	it("matches isNoUpdatePath behavior between WASM and TS fallback", async () => {
+		await wasmBridge.init();
 		const patterns = ["ghost/master/dev.log", "*.tmp", "profile/*"];
 		const paths = [
 			"ghost/master/dev.log",
@@ -63,13 +106,104 @@ describe("nanai-core WASM module parity and fallback", () => {
 		];
 
 		for (const p of paths) {
-			expect(wasmBridge.isNoUpdatePath(p, patterns)).toBe(
-				isNoUpdatePath(p, patterns),
-			);
+			const fallback = isNoUpdatePathFallback(p, patterns);
+			expect(wasmBridge.isNoUpdatePath(p, patterns)).toBe(fallback);
+			expect(isNoUpdatePath(p, patterns)).toBe(fallback);
 		}
 		expect(wasmBridge.isNoUpdatePath("file.txt", [])).toBe(
-			isNoUpdatePath("file.txt", []),
+			isNoUpdatePathFallback("file.txt", []),
 		);
+	});
+
+	it("computes validrect and balloon text layouts via WASM params objects", async () => {
+		await wasmBridge.init();
+		expect(wasmBridge.isReady()).toBe(true);
+
+		const validRect = wasmBridge.computeValidRectLayout(
+			10,
+			14,
+			12,
+			16,
+			"stretch",
+			"balloons0.png",
+			undefined,
+			1,
+		);
+		expect(validRect).not.toBeNull();
+		expect(validRect?.slice).toBe("14 12 16 10 fill");
+		expect(validRect?.width).toBe("14px 12px 16px 10px");
+		expect(validRect?.repeat).toBe("stretch");
+		expect(validRect?.scopeId).toBe(1);
+
+		const textLayout = wasmBridge.computeBalloonTextLayout(
+			"Hello\nWorld",
+			200,
+			14,
+			18,
+			10,
+		);
+		expect(textLayout).not.toBeNull();
+		expect(textLayout?.line_count).toBe(2);
+		expect(textLayout?.lines.map((l) => l.text)).toEqual(["Hello", "World"]);
+		expect(textLayout?.total_height_px).toBe(36);
+	});
+
+	it("allocates and frees WASM buffers cleanly", async () => {
+		await wasmBridge.init();
+		expect(wasmBridge.isReady()).toBe(true);
+
+		const ptr = wasmBridge.allocBuffer(64);
+		expect(typeof ptr).toBe("number");
+		expect(ptr).toBeGreaterThan(0);
+		expect(() => wasmBridge.freeBuffer(ptr as number, 64)).not.toThrow();
+	});
+
+	it("preserves parseValidRect, computeValidRectLayout, and SSTP raw helpers across WASM and fallback", async () => {
+		await wasmBridge.init();
+		const props = {
+			"validrect.left": "10",
+			"validrect.top": "14",
+			"validrect.right": "10",
+			"validrect.bottom": "14",
+			"border.repeat": "stretch",
+		};
+		const wasmInsets = parseValidRect(props);
+		const wasmLayout = computeValidRectLayout(
+			new Map(),
+			props,
+			"balloons0.png",
+			0,
+		);
+		const sstpReqPayload = {
+			method: "SEND",
+			sender: "NanaiTest",
+			script: "\\0Hello\\e",
+		};
+		const wasmRawReq = buildRawSstpRequest(sstpReqPayload);
+		const rawResp =
+			"SSTP/1.4 200 OK\r\nCharset: UTF-8\r\nScript: \\0Hi\\e\r\nReference0: r0\r\n\r\nBody";
+		const wasmParsedResp = parseRawSstpResponse(rawResp);
+
+		const readySpy = vi.spyOn(wasmBridge, "isReady").mockReturnValue(false);
+		try {
+			expect(parseValidRect(props)).toEqual(wasmInsets);
+			const fallbackLayout = computeValidRectLayout(
+				new Map(),
+				props,
+				"balloons0.png",
+				0,
+			);
+			expect(fallbackLayout.top).toBe(wasmLayout.top);
+			expect(fallbackLayout.right).toBe(wasmLayout.right);
+			expect(fallbackLayout.bottom).toBe(wasmLayout.bottom);
+			expect(fallbackLayout.left).toBe(wasmLayout.left);
+			expect(fallbackLayout.cacheKey).toBe(wasmLayout.cacheKey);
+			expect(fallbackLayout.source).toBe(wasmLayout.source);
+			expect(buildRawSstpRequest(sstpReqPayload)).toBe(wasmRawReq);
+			expect(parseRawSstpResponse(rawResp)).toEqual(wasmParsedResp);
+		} finally {
+			readySpy.mockRestore();
+		}
 	});
 
 	it("creates and updates MascotEngine WASM single source of truth state", async () => {

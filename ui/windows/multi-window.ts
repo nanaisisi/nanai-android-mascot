@@ -5,13 +5,23 @@
 
 import { invoke, isTauriAvailable } from "../ts/core/tauri-helper.js";
 
-async function findWindow(label: string) {
+interface TauriWindowHandle {
+	label?: string;
+	show: () => Promise<void>;
+	unminimize: () => Promise<void>;
+	setFocus: () => Promise<void>;
+	hide: () => Promise<void>;
+}
+
+async function findWindow(label: string): Promise<TauriWindowHandle | null> {
 	if (!globalThis.__TAURI__ && !globalThis.__TAURI_INTERNALS__) return null;
 	try {
 		const modName = "@tauri-apps/api/window";
-		const { getAllWindows } = await import(/* @vite-ignore */ modName);
+		const { getAllWindows } = (await import(/* @vite-ignore */ modName)) as {
+			getAllWindows: () => Promise<TauriWindowHandle[]>;
+		};
 		const windows = await getAllWindows();
-		return windows.find((window) => window.label === label) ?? null;
+		return windows.find((win) => win.label === label) ?? null;
 	} catch (_err) {
 		return null;
 	}

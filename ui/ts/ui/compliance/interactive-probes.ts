@@ -1,6 +1,7 @@
 import { mouseMethods } from "../../core/events/mouse.js";
 import { surfaceCollisionMethods } from "../../surface/surface-collision.js";
 import {
+	type ActiveDialogBox,
 	createColorDialogForm,
 	createTermsDialogForm,
 	type ModalDialogContext,
@@ -134,7 +135,7 @@ export async function runSystemDialogUiProbe(): Promise<UiComplianceProbeResult>
 	try {
 		return await withCapableDomDocument(async () => {
 			const shioriCalls: Array<{ event: string; args?: string[] }> = [];
-			const activeBoxes = new Map<string, unknown>();
+			const activeBoxes = new Map<string, ActiveDialogBox>();
 			const context: ModalDialogContext = {
 				activeBoxes,
 				app: {

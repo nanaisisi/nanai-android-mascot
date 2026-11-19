@@ -2,13 +2,13 @@
 
 - **規格**: [shiori.version.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/shiori.version.md)
 - **検索語**: shiori.version
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `shiori.version` キーをパース・参照する実装が行われている。
+`src-tauri/src/ghost/scan/directory/manifest/parser.rs` および SHIORI プロパティ評価系において `shiori.version` キーのパースおよびバージョン情報返却が完全実装済み。
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory/manifest.rs:145` `.and_then(|m| m.get("shiori.version").cloned());`
-- `src-tauri/src/shiori/property/tests.rs:16` `assert_eq!(evaluate_property_query("shiori.version"), "3.0");`
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs` (`shiori.version`)
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs` (`shiori.version`)

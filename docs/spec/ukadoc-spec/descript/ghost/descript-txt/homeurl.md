@@ -2,16 +2,14 @@
 
 - **規格**: [homeurl.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/homeurl.md)
 - **検索語**: homeurl
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `homeurl` キーをパース（`craftmanurl` のフォールバックおよびネットワーク更新参照用）し、`GhostInfo.craftman_url` へ設定する実装が行われている。
+`src-tauri/src/commands/update/dau.rs` および `crates/nanai-core/src/descript_parser/types.rs` (`homeurl()`) において、ネットワーク更新基点URL `homeurl` キーのパース・参照および取得が完全実装済み。
 
 ## 実装箇所
 
-- `src-tauri/src/commands/ext.rs:44` `.or_else(|| map.get("homeurl").cloned());`
-- `src-tauri/src/commands/ext.rs:109` `.or_else(|| map.get("homeurl").cloned());`
-- `src-tauri/src/commands/update/dau.rs:10` `pub homeurl: String,`
-- `src-tauri/src/commands/update/dau.rs:44` `if let Some(url) = desc.homeurl() {`
-- `src-tauri/src/commands/update/dau.rs:57` `if let Some(url) = desc.homeurl() {`
+- `crates/nanai-core/src/descript_parser/types.rs` (`homeurl`)
+- `src-tauri/src/commands/update/dau.rs` (`homeurl`)
+- `src-tauri/src/commands/ext.rs` (`homeurl`)

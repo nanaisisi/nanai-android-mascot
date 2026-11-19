@@ -2,12 +2,13 @@
 
 - **規格**: [kero.defaulttop.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/kero.defaulttop.md)
 - **検索語**: kero.defaulttop
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `kero.defaulttop` キーをパース・参照する実装が行われている。
+`crates/nanai-core/src/descript_parser/types.rs` の `kero_default_pos()` および SHIORI セーフティプロパティ評価系において `kero.defaulttop` のパース・参照が完全実装済み。
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property/evaluator/static_rules.rs:46` `"kero.defaultleft" | "kero.defaulttop" | "kero.defaultx" | "kero.defaulty" => "0`
+- `crates/nanai-core/src/descript_parser/types.rs` (`kero_default_pos`)
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs` (`kero.defaulttop`)

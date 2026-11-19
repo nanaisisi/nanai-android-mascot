@@ -2,12 +2,12 @@
 
 - **規格**: [seriko.defaultsurfacedirectoryname.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/seriko.defaultsurfacedirectoryname.md)
 - **検索語**: seriko.defaultsurfacedirectoryname
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `seriko.defaultsurfacedirectoryname` キーをパース・参照する実装が行われている。
+`crates/nanai-core/src/descript_parser/types.rs` の `default_surface_directory_name()` において `seriko.defaultsurfacedirectoryname` ディレクティブのパースおよび取得が完全実装済み。
 
 ## 実装箇所
 
-実装コード内に「seriko.defaultsurfacedirectoryname」は検出されませんでした。
+- `crates/nanai-core/src/descript_parser/types.rs` (`default_surface_directory_name`)

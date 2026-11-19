@@ -212,10 +212,21 @@ impl DescriptManifest {
             .and_then(|v| v.parse::<i32>().ok())
     }
 
-    /// デスクトップ位置揃え設定 (`seriko.alignmenttodesktop`)
+    /// デスクトップ位置揃え設定 (`seriko.alignmenttodesktop`, `sakura.seriko.alignmenttodesktop`, `kero.seriko.alignmenttodesktop`)
     pub fn alignment_to_desktop(&self) -> Option<&str> {
         self.get("seriko.alignmenttodesktop")
             .or_else(|| self.get("sakura.seriko.alignmenttodesktop"))
+            .or_else(|| self.get("kero.seriko.alignmenttodesktop"))
+    }
+
+    /// Kero側デスクトップ位置揃え設定 (`kero.seriko.alignmenttodesktop`)
+    pub fn kero_alignment_to_desktop(&self) -> Option<&str> {
+        self.get("kero.seriko.alignmenttodesktop")
+    }
+
+    /// [seriko.defaultsurfacedirectoryname,ディレクトリ名]: デフォルトサーフィスディレクトリ名
+    pub fn default_surface_directory_name(&self) -> Option<&str> {
+        self.get("seriko.defaultsurfacedirectoryname")
     }
 
     /// SSTP COMMUNICATE 許可判定 (`sstp.allowcommunicate`)
@@ -255,5 +266,33 @@ impl DescriptManifest {
     pub fn char_alignment_to_desktop(&self, index: u32) -> Option<&str> {
         let key = format!("char{}.seriko.alignmenttodesktop", index);
         self.get(&key)
+    }
+
+    /// [don't need onmousemove,数値]: `don't need onmousemove` 判定
+    pub fn dont_need_onmousemove(&self) -> bool {
+        self.get("don't need onmousemove")
+            .map(|v| v == "1" || v.eq_ignore_ascii_case("true"))
+            .unwrap_or(false)
+    }
+
+    /// [don't need bind,数値]: `don't need bind` 判定
+    pub fn dont_need_bind(&self) -> bool {
+        self.get("don't need bind")
+            .map(|v| v == "1" || v.eq_ignore_ascii_case("true"))
+            .unwrap_or(false)
+    }
+
+    /// [don't need seriko talk,数値]: `don't need seriko talk` 判定
+    pub fn dont_need_seriko_talk(&self) -> bool {
+        self.get("don't need seriko talk")
+            .map(|v| v == "1" || v.eq_ignore_ascii_case("true"))
+            .unwrap_or(false)
+    }
+
+    /// [name.allowoverride,数値]: シェル名オーバーライド許可判定 (既定値 1)
+    pub fn is_name_allow_override(&self) -> bool {
+        self.get("name.allowoverride")
+            .map(|v| v != "0" && v != "false")
+            .unwrap_or(true)
     }
 }

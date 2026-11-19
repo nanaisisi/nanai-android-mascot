@@ -2,12 +2,13 @@
 
 - **規格**: [mousecursor.hand.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/mousecursor.hand/) (ukadoc-spec/descript/ghost/descript-txt/mousecursor.hand.md)
 - **検索語**: mousecursor.hand
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `mousecursor.hand` をパース・参照する実装が行われている。
+`ui/ts/core/actions/balloon-descript/assets.ts` の `setMouseCursor()` において `mousecursor.hand` をパースし、`--balloon-cursor-hand` カスタムプロパティおよび CSS `cursor` スタイリングへ反映する実装が完全に行われている。
 
 ## 実装箇所
 
-実装コード内に「mousecursor.hand」は検出されませんでした。
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs` (`currentghost.balloon.mousecursor.hand`)
+- `ui/ts/core/actions/balloon-descript/assets.ts` (`mousecursor.hand`)

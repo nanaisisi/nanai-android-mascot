@@ -2,12 +2,12 @@
 
 - **規格**: [shiori.forceencoding.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/shiori.forceencoding.md)
 - **検索語**: shiori.forceencoding
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `shiori.forceencoding` キーをパース・参照する実装が行われている。
+`src-tauri/src/ghost/scan/directory/manifest/parser.rs` において `shiori.forceencoding` キーのパースおよび強制エンコーディング適用が完全実装済み。
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory/manifest.rs:154` `.and_then(|m| m.get("shiori.forceencoding").cloned());`
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs` (`shiori.forceencoding`)

@@ -259,6 +259,10 @@ export function applyAssetProperties(
 	setMouseCursor("mousecursor.text", "--balloon-cursor-text");
 	// [mousecursor.wait,ファイル名]:
 	setMouseCursor("mousecursor.wait", "--balloon-cursor-wait");
+	// [mousecursor.grip,ファイル名]:
+	setMouseCursor("mousecursor.grip", "--balloon-cursor-grip");
+	// [mousecursor.hand,ファイル名]:
+	setMouseCursor("mousecursor.hand", "--balloon-cursor-hand");
 
 	// [arrow0.x,座標], [arrow0.y,座標], [arrow1.x,座標], [arrow1.y,座標]:
 	const applyArrowCoord = (

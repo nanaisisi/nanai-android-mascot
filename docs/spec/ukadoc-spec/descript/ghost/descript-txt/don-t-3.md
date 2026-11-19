@@ -2,12 +2,12 @@
 
 - **規格**: [don-t-3.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/don-t-3.md)
 - **検索語**: don't need seriko talk
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `don't need seriko talk` キーをパース・参照する実装が行われている。
+`crates/nanai-core/src/descript_parser/types.rs` の `dont_need_seriko_talk()` において `don't need seriko talk` ディレクティブのパースおよび評価が完全実装済み。
 
 ## 実装箇所
 
-実装コード内に「don't need seriko talk」は検出されませんでした。
+- `crates/nanai-core/src/descript_parser/types.rs` (`dont_need_seriko_talk`)

@@ -237,3 +237,125 @@ test("renderSubmenuContent covers all submenu types (ghost, shell, dressup, ball
 
 	assert.ok(true);
 });
+
+test("utility submenu places developer items immediately below open-folder and hides them when developer mode is disabled", () => {
+	const g = globalThis as unknown as {
+		localStorage?: Storage;
+	};
+	const origLocalStorage = g.localStorage;
+	const dispatched: DispatchedAction[] = [];
+	const dispatchSubmenuAction = (action: string, payload?: unknown) => {
+		dispatched.push({ action, payload });
+	};
+
+	try {
+		// 1. Developer mode enabled
+		g.localStorage = {
+			length: 1,
+			clear: () => {},
+			key: () => null,
+			removeItem: () => {},
+			setItem: () => {},
+			getItem: (key: string) =>
+				key === "nanai-android-mascot-settings"
+					? JSON.stringify({ developerModeEnabled: true })
+					: null,
+		} satisfies Storage;
+
+		children.length = 0;
+		renderSubmenuContent({
+			currentSubmenuType: "utility",
+			cachedGhosts: [],
+			currentGhostName: "",
+			cachedShells: [],
+			currentShellName: "",
+			cachedDressup: null,
+			dressupScope: 0,
+			cachedBalloons: [],
+			currentBalloonTheme: "",
+			cachedRecentGhosts: [],
+			dispatchSubmenuAction,
+		});
+
+		const labels = children.map((el) => el.innerHTML);
+		const folderIdx = labels.findIndex((html) =>
+			html.includes("フォルダを選択する (S)"),
+		);
+		const scriptLogIdx = labels.findIndex((html) =>
+			html.includes("スクリプトログ (L)"),
+		);
+		const devPaletteIdx = labels.findIndex((html) =>
+			html.includes("開発用パレット (D)"),
+		);
+		const clearCacheIdx = labels.findIndex((html) =>
+			html.includes("ゴーストキャッシュ開放 (G)"),
+		);
+
+		assert.ok(folderIdx >= 0);
+		assert.equal(scriptLogIdx, folderIdx + 1);
+		assert.equal(devPaletteIdx, folderIdx + 2);
+		assert.equal(clearCacheIdx, folderIdx + 3);
+		assert.equal(
+			children.some((el) => el.tagName === "HR"),
+			false,
+		);
+
+		children[scriptLogIdx].click();
+		children[devPaletteIdx].click();
+		assert.deepEqual(
+			dispatched.map((d) => d.action),
+			["script-log", "dev-palette"],
+		);
+
+		// 2. Developer mode disabled
+		g.localStorage = {
+			length: 1,
+			clear: () => {},
+			key: () => null,
+			removeItem: () => {},
+			setItem: () => {},
+			getItem: (key: string) =>
+				key === "nanai-android-mascot-settings"
+					? JSON.stringify({ developerModeEnabled: false })
+					: null,
+		} satisfies Storage;
+
+		children.length = 0;
+		renderSubmenuContent({
+			currentSubmenuType: "utility",
+			cachedGhosts: [],
+			currentGhostName: "",
+			cachedShells: [],
+			currentShellName: "",
+			cachedDressup: null,
+			dressupScope: 0,
+			cachedBalloons: [],
+			currentBalloonTheme: "",
+			cachedRecentGhosts: [],
+			dispatchSubmenuAction,
+		});
+
+		const nonDevLabels = children.map((el) => el.innerHTML);
+		const nonDevFolderIdx = nonDevLabels.findIndex((html) =>
+			html.includes("フォルダを選択する (S)"),
+		);
+		const nonDevClearCacheIdx = nonDevLabels.findIndex((html) =>
+			html.includes("ゴーストキャッシュ開放 (G)"),
+		);
+		assert.equal(
+			nonDevLabels.some(
+				(html) =>
+					html.includes("スクリプトログ (L)") ||
+					html.includes("開発用パレット (D)"),
+			),
+			false,
+		);
+		assert.equal(nonDevClearCacheIdx, nonDevFolderIdx + 1);
+	} finally {
+		if (origLocalStorage === undefined) {
+			delete g.localStorage;
+		} else {
+			g.localStorage = origLocalStorage;
+		}
+	}
+});

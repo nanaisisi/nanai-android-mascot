@@ -253,13 +253,19 @@ export function handleMenuActionImpl(
 	}
 	if (action === "script-log" || action === "show-script-log") {
 		if (isTauriAvailable()) {
-			void invoke("show_ssp_log_window").catch(() => {});
+			void invoke("show_ssp_log_window").catch(() => {
+				context.modalManager?.show?.("plugins-modal-content");
+			});
 		} else {
 			context.modalManager?.show?.("plugins-modal-content");
 		}
 		return;
 	}
-	if (action === "dev-palette" || action === "show-dev-palette") {
+	if (
+		action === "dev-palette" ||
+		action === "show-dev-palette" ||
+		action === "open-dev"
+	) {
 		const ghostName = context.ghostController?.currentGhost?.name || "Emily";
 		showDevPalette({ ghostName, app: context.app || context });
 		return;
@@ -291,7 +297,9 @@ export function handleMenuActionImpl(
 	}
 	if (action === "show-error-log" || action === "error-log") {
 		if (isTauriAvailable()) {
-			void invoke("show_ssp_log_window").catch(() => {});
+			void invoke("show_ssp_log_window").catch(() => {
+				context.modalManager?.show?.("plugins-modal-content");
+			});
 		} else {
 			context.modalManager?.show?.("plugins-modal-content");
 		}

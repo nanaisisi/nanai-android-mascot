@@ -322,6 +322,18 @@ test("context-menu event handlers, sync listeners, mouse events and keyboard sho
 		ctrlKey: true,
 		preventDefault() {},
 	});
+	documentListeners.keydown?.({
+		key: "d",
+		shiftKey: true,
+		ctrlKey: true,
+		preventDefault() {},
+	});
+	documentListeners.keydown?.({
+		key: "l",
+		shiftKey: false,
+		ctrlKey: true,
+		preventDefault() {},
+	});
 
 	// Single accelerator keys
 	for (const k of [

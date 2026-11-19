@@ -3,9 +3,19 @@
  * @brief 独立開発パレット UI モジュール (サブメニューではなく独立した開発者用デバッグツール)
  */
 
+import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
+
 export interface DevPaletteOptions {
 	ghostName?: string;
 	app?: unknown;
+}
+
+function closeDevPalette(el: HTMLElement) {
+	el.remove();
+	const modalOverlay = document.getElementById("modal-overlay");
+	if (isTauriAvailable() && modalOverlay?.style.display !== "flex") {
+		void invoke("hide_modal_window").catch(() => {});
+	}
 }
 
 export function showDevPalette(options: DevPaletteOptions = {}) {
@@ -13,7 +23,7 @@ export function showDevPalette(options: DevPaletteOptions = {}) {
 
 	const existing = document.getElementById("nanai-dev-palette-window");
 	if (existing) {
-		existing.remove();
+		closeDevPalette(existing);
 		return;
 	}
 
@@ -24,10 +34,11 @@ export function showDevPalette(options: DevPaletteOptions = {}) {
 	paletteEl.style.cssText = `
 		position: fixed;
 		z-index: 99999;
-		top: 60px;
-		right: 20px;
-		width: 260px;
-		max-height: 80vh;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 280px;
+		max-height: 88vh;
 		background: #ffffff;
 		border: 1px solid #0078d7;
 		border-radius: 6px;
@@ -191,6 +202,12 @@ export function showDevPalette(options: DevPaletteOptions = {}) {
 	paletteEl.appendChild(body);
 	document.body.appendChild(paletteEl);
 
-	const closeBtn = document.getElementById("close-dev-palette-btn");
-	closeBtn?.addEventListener("click", () => paletteEl.remove());
+	if (isTauriAvailable()) {
+		void invoke("show_modal_window").catch(() => {});
+	}
+
+	const closeBtn =
+		document.getElementById("close-dev-palette-btn") ||
+		paletteEl.querySelector?.("#close-dev-palette-btn");
+	closeBtn?.addEventListener("click", () => closeDevPalette(paletteEl));
 }

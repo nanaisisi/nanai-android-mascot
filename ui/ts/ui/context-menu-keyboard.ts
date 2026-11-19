@@ -43,6 +43,12 @@ export function handleMenuKeydown(
 		} else if (e.key.toLowerCase() === "k") {
 			e.preventDefault();
 			dispatcher.dispatchAction("keep-temporary-ghost");
+		} else if (e.shiftKey && e.key.toLowerCase() === "d") {
+			e.preventDefault();
+			dispatcher.dispatchAction("dev-palette");
+		} else if (!e.shiftKey && e.key.toLowerCase() === "l") {
+			e.preventDefault();
+			dispatcher.dispatchAction("script-log");
 		} else if (e.shiftKey && e.key.toLowerCase() === "f12") {
 			e.preventDefault();
 			dispatcher.dispatchAction("reset-shell-position");

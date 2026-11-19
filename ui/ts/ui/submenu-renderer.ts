@@ -250,6 +250,18 @@ export function renderSubmenuContent({
 				shortcut: "Ctrl+F",
 			},
 			{
+				action: "script-log",
+				label: "スクリプトログ (L)",
+				shortcut: "Ctrl+L",
+				isDevOnly: true,
+			},
+			{
+				action: "dev-palette",
+				label: "開発用パレット (D)",
+				shortcut: "Ctrl+Shift+D",
+				isDevOnly: true,
+			},
+			{
 				action: "clear-cache",
 				label: "ゴーストキャッシュ開放 (G)",
 				shortcut: "Ctrl+F",
@@ -277,19 +289,6 @@ export function renderSubmenuContent({
 				label: "バルーンを消す (B)",
 				shortcut: "Ctrl+Shift+Del",
 			},
-			{ type: "separator", isDevOnly: true },
-			{
-				action: "script-log",
-				label: "スクリプトログ (L)",
-				shortcut: "Ctrl+L",
-				isDevOnly: true,
-			},
-			{
-				action: "dev-palette",
-				label: "開発用パレット (D)",
-				shortcut: "Ctrl+Shift+D",
-				isDevOnly: true,
-			},
 		];
 
 		let isDevMode = isTauriAvailable();
@@ -307,12 +306,6 @@ export function renderSubmenuContent({
 
 		utilityItems.forEach((item) => {
 			if (item.isDevOnly && !isDevMode) return;
-			if (item.type === "separator") {
-				const separator = document.createElement("hr");
-				separator.className = "menu-separator";
-				container.appendChild(separator);
-				return;
-			}
 
 			const btn = document.createElement("button");
 			btn.type = "button";

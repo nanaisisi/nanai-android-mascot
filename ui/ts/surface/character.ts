@@ -1488,6 +1488,18 @@ function initCharacterWindow() {
 			if (isTauriAvailable()) {
 				void invoke("reset_balloon_positions").catch(() => {});
 			}
+		} else if (e?.ctrlKey && e?.shiftKey && !e?.altKey && key === "d") {
+			e.preventDefault?.();
+			void emit("menu-action", {
+				action: "dev-palette",
+				payload: { scope: scopeId },
+			});
+		} else if (e?.ctrlKey && !e?.shiftKey && !e?.altKey && key === "l") {
+			e.preventDefault?.();
+			void emit("menu-action", {
+				action: "script-log",
+				payload: { scope: scopeId },
+			});
 		}
 	};
 

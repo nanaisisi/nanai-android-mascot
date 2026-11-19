@@ -7,11 +7,12 @@ use wasm_bindgen::prelude::*;
 pub fn normalize_install_type(install_type: Option<&str>) -> String {
     match install_type {
         Some(t) => {
-            let trimmed = t.trim();
-            if trimmed.is_empty() {
-                "unknown".to_string()
-            } else {
-                trimmed.to_ascii_lowercase()
+            let lower = t.trim().to_ascii_lowercase();
+            match lower.as_str() {
+                "calendar plugin" | "calendar.plugin" => "calendar.plugin".to_string(),
+                "calendar skin" | "calendar.skin" | "calendar" => "calendar.skin".to_string(),
+                "" => "unknown".to_string(),
+                other => other.to_string(),
             }
         }
         None => "unknown".to_string(),

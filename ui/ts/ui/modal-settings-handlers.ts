@@ -216,8 +216,28 @@ export class ModalSettingsHandlers {
 				makeUpdates2Dau.checked = (s.makeUpdates2Dau as boolean) ?? true;
 			if (makeUpdatesTxt)
 				makeUpdatesTxt.checked = (s.makeUpdatesTxt as boolean) ?? true;
-			if (alwaysUtf8Charset)
-				alwaysUtf8Charset.checked = (s.alwaysUtf8Charset as boolean) ?? false;
+			const alwaysUtf8I18n = getCheck("always-utf8-charset-i18n");
+			const defaultReadmeCharsetSel = document.getElementById(
+				"default-readme-charset-select",
+			) as HTMLSelectElement | null;
+
+			const isAlwaysUtf8 = (s.alwaysUtf8Charset as boolean) ?? false;
+			if (alwaysUtf8Charset) alwaysUtf8Charset.checked = isAlwaysUtf8;
+			if (alwaysUtf8I18n) alwaysUtf8I18n.checked = isAlwaysUtf8;
+
+			if (alwaysUtf8Charset && alwaysUtf8I18n) {
+				alwaysUtf8Charset.addEventListener("change", () => {
+					if (alwaysUtf8I18n) alwaysUtf8I18n.checked = alwaysUtf8Charset.checked;
+				});
+				alwaysUtf8I18n.addEventListener("change", () => {
+					if (alwaysUtf8Charset) alwaysUtf8Charset.checked = alwaysUtf8I18n.checked;
+				});
+			}
+
+			if (defaultReadmeCharsetSel && s.defaultReadmeCharset) {
+				defaultReadmeCharsetSel.value = String(s.defaultReadmeCharset);
+			}
+
 			if (cacheHashCalculation)
 				cacheHashCalculation.checked =
 					(s.cacheHashCalculation as boolean) ?? true;
@@ -288,7 +308,20 @@ export class ModalSettingsHandlers {
 					includeBetaOnAutoupdate: includeBetaOnAutoupdate?.checked ?? false,
 					makeUpdates2Dau: makeUpdates2Dau?.checked ?? true,
 					makeUpdatesTxt: makeUpdatesTxt?.checked ?? true,
-					alwaysUtf8Charset: alwaysUtf8Charset?.checked ?? false,
+					alwaysUtf8Charset:
+						alwaysUtf8Charset?.checked ||
+						(
+							document.getElementById(
+								"always-utf8-charset-i18n",
+							) as HTMLInputElement | null
+						)?.checked ||
+						false,
+					defaultReadmeCharset:
+						(
+							document.getElementById(
+								"default-readme-charset-select",
+							) as HTMLSelectElement | null
+						)?.value || "auto",
 					cacheHashCalculation: cacheHashCalculation?.checked ?? true,
 					narLocationOpt: getRadio("nar-location-opt")?.value || "ask",
 					narCustomDirPath: narCustomDirPath?.value || "",

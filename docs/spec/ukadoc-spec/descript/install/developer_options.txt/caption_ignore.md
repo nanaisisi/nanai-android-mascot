@@ -2,12 +2,12 @@
 
 - **規格**: [caption_ignore.md](https://ukatech.shillest.net/ukadoc-spec/descript/install/developer_options.txt/caption_ignore/) (ukadoc-spec/descript/install/developer_options.txt/caption_ignore.md)
 - **検索語**: 自動的に除外される対象
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `developer_options.txt` に記載された自動除外定義（`.dev_ignore`, `.git` 等）を判定・処理する実装が行われている。
+`src-tauri/src/commands/install/archive/packaging.rs` において `IGNORE_FILE_NAMES`（`desktop.ini`, `thumbs.db`, `folder.htt`, `mscreate.dir`, `.ds_store`, `_catalog.vix`）および `IGNORE_DIR_NAMES`（`profile`, `var`, `__macosx`, `xtrastuf.mac`）の自動除外ルールが完全実装済み。
 
 ## 実装箇所
 
-実装コード内に「自動的に除外される対象」は検出されませんでした。
+- `src-tauri/src/commands/install/archive/packaging.rs` (`IGNORE_FILE_NAMES`, `IGNORE_DIR_NAMES`)

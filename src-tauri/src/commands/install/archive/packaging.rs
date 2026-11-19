@@ -7,16 +7,28 @@ use walkdir::WalkDir;
 use zip::ZipWriter;
 use zip::write::SimpleFileOptions;
 
+// [自動的に除外される対象]: UKADOC / SSP developer_options.txt 仕様自動除外定義
 const IGNORE_FILE_NAMES: &[&str] = &[
     "thumbs.db",
     "desktop.ini",
+    "folder.htt",
+    "mscreate.dir",
     ".ds_store",
+    "_catalog.vix",
     ".git",
     ".vscode",
     ".idea",
 ];
 
-const IGNORE_DIR_NAMES: &[&str] = &[".git", ".vscode", ".idea", "profile"];
+const IGNORE_DIR_NAMES: &[&str] = &[
+    "profile",
+    "var",
+    "__macosx",
+    "xtrastuf.mac",
+    ".git",
+    ".vscode",
+    ".idea",
+];
 
 /// Create a .nar archive from `source_dir` and write to `output_nar_path`
 pub fn create_nar_from_directory(source_dir: &Path, output_nar_path: &Path) -> Result<u64, String> {

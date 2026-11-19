@@ -7,6 +7,28 @@ import { wasmBridge } from "../../wasm-bridge.js";
  * // [descript.txt（Balloonの）]: Balloon descript.txt アセット・画像属性バインディング
  */
 /**
+ * OS/システムロケールに基づく既定文字コードの判定 (UKADOC 規格「OSの標準設定」準拠)
+ */
+export function getOSSystemDefaultCharset(): string {
+	if (typeof navigator !== "undefined" && navigator.language) {
+		const lang = navigator.language.toLowerCase();
+		if (lang.startsWith("ja")) {
+			return "Shift_JIS"; // 日本語 OS システムロケール (CP932)
+		}
+		if (lang.startsWith("zh-cn") || lang === "zh") {
+			return "GBK"; // 簡体字中国語 OS システムロケール (CP936)
+		}
+		if (lang.startsWith("zh-tw") || lang.startsWith("zh-hk")) {
+			return "Big5"; // 繁体字中国語 OS システムロケール (CP950)
+		}
+		if (lang.startsWith("ko")) {
+			return "EUC-KR"; // 韓国語 OS システムロケール (CP949)
+		}
+	}
+	return "Shift_JIS"; // 伺か/SSP エコシステム既定値
+}
+
+/**
  * [推奨の意味] [recommended.ghost,ゴースト名] [recommended.ghost.path,パス] の検証関数 (WASM駆動)
  */
 export function verifyRecommendedGhost(
@@ -99,9 +121,9 @@ export function applyAssetProperties(
 	// [readme,ファイル名]: props["readme"]
 	if (p.readme) root.style.setProperty("--balloon-readme", p.readme);
 
-	// [readme.charset,文字コード]: props["readme.charset"]
-	if (p["readme.charset"])
-		root.style.setProperty("--balloon-readme-charset", p["readme.charset"]);
+	// [readme.charset,文字コード]: props["readme.charset"] (未指定時はハードコードせず None / システム設定に委ねる)
+	const readmeCharset = p["readme.charset"] || p.charset || "";
+	root.style.setProperty("--balloon-readme-charset", readmeCharset);
 
 	// [推奨の意味], [recommended.ghost,ゴースト名], [recommended.ghost.path,パス]:
 	if (p["recommended.ghost"]) {

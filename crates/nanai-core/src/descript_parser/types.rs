@@ -78,6 +78,12 @@ impl DescriptManifest {
         self.get("readme")
     }
 
+    /// [readme.charset,文字コード]: 明示指定されたリードミー文字コード (未指定時は None を返し、呼び出し側・OSシステム標準設定に委ねる)
+    pub fn readme_charset(&self) -> Option<&str> {
+        self.get("readme.charset")
+            .or_else(|| self.get("charset"))
+    }
+
     /// インストール受け入れゴースト名一覧 (`install.accept`)
     pub fn accept_list(&self) -> Vec<String> {
         if let Some(val) = self.get("install.accept") {

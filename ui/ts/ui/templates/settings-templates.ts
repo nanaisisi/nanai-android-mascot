@@ -150,6 +150,30 @@ export const settingsTemplates = {
         </fieldset>
       </div>
 
+      <!-- 国際化タブコンテンツ (SSP本物互換) -->
+      <div class="ssp-tab-content" id="ssp-tab-i18n" style="display: none; padding: 12px; font-size: 11px; background: #fff; max-height: 420px; overflow-y: auto;">
+        <div style="font-weight: bold; margin-bottom: 6px; color: #333;">国際化: 言語・省略時の文字コード設定 (SSP 準拠)</div>
+
+        <fieldset style="border: 1px solid #ccc; padding: 6px; margin-bottom: 6px;">
+          <legend style="font-weight: bold;">省略時の文字コード (readme / descript.txt 未指定時)</legend>
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <label><input type="checkbox" id="always-utf8-charset-i18n" /> 常にUTF-8文字コードを使用する (OSの標準設定を上書き)</label>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span>省略時の文字コード (readme/descript):</span>
+              <select id="default-readme-charset-select" style="padding: 2px 4px; font-size: 11px;">
+                <option value="auto" selected>OSの標準設定 (システムロケール)</option>
+                <option value="Shift_JIS">Shift_JIS (CP932)</option>
+                <option value="UTF-8">UTF-8</option>
+                <option value="EUC-JP">EUC-JP</option>
+                <option value="GBK">GBK / GB2312 (簡体字中国語)</option>
+                <option value="Big5">Big5 (繁体字中国語)</option>
+                <option value="EUC-KR">EUC-KR (韓国語)</option>
+              </select>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+
       <div class="ssp-settings-footer" style="padding: 8px 12px; background: #f0f0f0; border-top: 1px solid #ccc; display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
         <span style="color: #666;">一部の設定を除き、変更はすぐに反映されます。</span>
         <div>

@@ -261,6 +261,27 @@ export function findHitCollisionName(
 	return wasmBridge.findHitCollisionName(collisions, x, y);
 }
 
+export function collectSurfaceCollisions(
+	context: SurfaceCollisionContext,
+	sid: string,
+): CollisionAreaRecord[] {
+	const baseColList =
+		context.collisions?.[sid] || context.collisions?.default || [];
+	const animEntriesRaw = context.animations?.[sid];
+	const animEntries = Array.isArray(animEntriesRaw)
+		? animEntriesRaw
+		: animEntriesRaw && typeof animEntriesRaw === "object"
+			? Object.values(animEntriesRaw)
+			: [];
+	const animCols: CollisionAreaRecord[] = [];
+	for (const anim of animEntries) {
+		if (anim && Array.isArray(anim.collisions)) {
+			animCols.push(...anim.collisions);
+		}
+	}
+	return animCols.length > 0 ? [...baseColList, ...animCols] : baseColList;
+}
+
 export const surfaceCollisionMethods = {
 	findHitCollisionName,
 
@@ -270,126 +291,25 @@ export const surfaceCollisionMethods = {
 		surfaceId: number | string | null = null,
 		scopeId = 0,
 	): void {
-		if (!canvas || typeof canvas.getContext !== "function") return;
-		const ctx = canvas.getContext("2d");
-		if (!ctx) return;
-
-		const width = canvas.width || 200;
-		const height = canvas.height || 400;
-		ctx.clearRect(0, 0, width, height);
-
-		// 【1つ目の線】ウインドウ(サーフェス全体)の境界線 (Window Boundary Line)
-		if (width > 2 && height > 2) {
-			ctx.strokeStyle = "rgba(0, 120, 215, 0.9)";
-			ctx.lineWidth = 2;
-			if (typeof ctx.setLineDash === "function") {
-				ctx.setLineDash([4, 4]);
-			}
-			ctx.strokeRect(1, 1, width - 2, height - 2);
-			if (typeof ctx.setLineDash === "function") {
-				ctx.setLineDash([]);
-			}
-			ctx.fillStyle = "#0078d7";
-			ctx.font = "bold 10px sans-serif";
-			ctx.fillText(`Window (${width}x${height})`, 4, 12);
-		}
-
 		const sid =
 			surfaceId !== null && surfaceId !== undefined
 				? String(surfaceId)
 				: String(
 						this.currentSurfaceIdFor?.(scopeId) ?? (scopeId === 1 ? 10 : 0),
 					);
-
-		const colList = this.collisions?.[sid] || this.collisions?.default || [];
-		if (colList.length === 0) return;
-
-		colList.forEach((col, idx) => {
-			ctx.strokeStyle = "#ff0000";
-			ctx.fillStyle = "#ff0000";
-			ctx.font = "bold 11px sans-serif";
-			ctx.lineWidth = 2;
-
-			const name = String(col.name || `col${idx}`);
-
-			if (col.shape && typeof col.shape === "object") {
-				const shapeObj = col.shape as Record<string, unknown>;
-				if (shapeObj.Rect) {
-					const r = shapeObj.Rect as {
-						x1: number;
-						y1: number;
-						x2: number;
-						y2: number;
-					};
-					const x = Math.min(r.x1, r.x2);
-					const y = Math.min(r.y1, r.y2);
-					const w = Math.abs(r.x2 - r.x1);
-					const h = Math.abs(r.y2 - r.y1);
-					ctx.strokeRect(x, y, w, h);
-					ctx.fillText(name, x + 4, y + 14);
-					return;
-				}
-				if (shapeObj.Circle) {
-					const c = shapeObj.Circle as { cx: number; cy: number; r: number };
-					ctx.beginPath();
-					ctx.arc(c.cx, c.cy, c.r, 0, Math.PI * 2);
-					ctx.stroke();
-					ctx.fillText(name, c.cx - 10, c.cy);
-					return;
-				}
-				if (shapeObj.Ellipse) {
-					const e = shapeObj.Ellipse as {
-						cx: number;
-						cy: number;
-						rx: number;
-						ry: number;
-					};
-					ctx.beginPath();
-					ctx.ellipse(e.cx, e.cy, e.rx, e.ry, 0, 0, Math.PI * 2);
-					ctx.stroke();
-					ctx.fillText(name, e.cx - 10, e.cy);
-					return;
-				}
-			}
-
-			const shapeKind = String(col.shape || "rect").toLowerCase();
-			if (shapeKind === "rect" || col.x1 !== undefined) {
-				const rawX1 = col.x1 ?? 0;
-				const rawY1 = col.y1 ?? 0;
-				const rawX2 = col.x2 ?? rawX1 + 40;
-				const rawY2 = col.y2 ?? rawY1 + 40;
-				const x1 = Math.min(rawX1, rawX2);
-				const y1 = Math.min(rawY1, rawY2);
-				const w = Math.abs(rawX2 - rawX1);
-				const h = Math.abs(rawY2 - rawY1);
-				ctx.strokeRect(x1, y1, w, h);
-				ctx.fillText(name, x1 + 4, y1 + 14);
-			} else if (shapeKind === "circle" || shapeKind === "ellipse") {
-				const cx = col.cx ?? 50;
-				const cy = col.cy ?? 50;
-				const rx = col.rx ?? col.r ?? 30;
-				const ry = col.ry ?? col.r ?? 30;
-				ctx.beginPath();
-				ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
-				ctx.stroke();
-				ctx.fillText(name, cx - 10, cy);
-			} else if (shapeKind === "polygon" && Array.isArray(col.vertices)) {
-				const vertices = col.vertices.map((pt) =>
-					Array.isArray(pt)
-						? [Number(pt[0] ?? 0), Number(pt[1] ?? 0)]
-						: [Number(pt?.x ?? 0), Number(pt?.y ?? 0)],
-				);
-				if (vertices.length >= 2) {
-					ctx.beginPath();
-					ctx.moveTo(vertices[0][0], vertices[0][1]);
-					for (let i = 1; i < vertices.length; i += 1) {
-						ctx.lineTo(vertices[i][0], vertices[i][1]);
-					}
-					ctx.closePath();
-					ctx.stroke();
-					ctx.fillText(name, vertices[0][0] + 4, vertices[0][1] + 14);
-				}
-			}
+		const colList = collectSurfaceCollisions(this, sid);
+		const iconRect = Array.isArray(this.iconRects?.[sid])
+			? this.iconRects[sid]
+			: null;
+		const points =
+			this.points?.[sid] && typeof this.points[sid] === "object"
+				? this.points[sid]
+				: null;
+		renderCollisionOverlay(canvas, {
+			collisions: colList as Array<Record<string, unknown>>,
+			mode: this.collisionMode,
+			iconRect,
+			points,
 		});
 	},
 

@@ -1,6 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { wasmBridge } from "../ui/ts/core/wasm-bridge.js";
 import {
+	registerCollisionOverlayLayer,
+	registerCollisionShapeSpec,
+	renderCollisionOverlay,
+	unregisterCollisionOverlayLayer,
+	unregisterCollisionShapeSpec,
+} from "../ui/ts/surface/collision-overlay-renderer.js";
+import {
 	findHitCollisionName,
 	surfaceCollisionMethods,
 } from "../ui/ts/surface/surface-collision.js";
@@ -698,5 +705,200 @@ Face,顔領域
 		expect(sm.positions.get(0)).toEqual({ x: 10, y: 20 });
 		expect(sm.getBaseMoveOffset(0)).toEqual({ x: 15, y: -5 });
 		expect(sm.getBaseMoveOffset(2)).toEqual({ x: 0, y: 0 });
+	});
+
+	it("renderCollisionOverlay draws wireframe shapes, window layers, rect mode, and supports dynamic spec/layer registration", () => {
+		const ops = {
+			strokeRects: [] as number[][],
+			ellipses: [] as number[][],
+			moves: [] as number[][],
+			lines: [] as number[][],
+			strokes: 0,
+			fillRects: 0,
+			fills: 0,
+			fillTexts: [] as Array<{ text: string; x: number; y: number }>,
+		};
+
+		const mockCanvas = {
+			width: 240,
+			height: 420,
+			getContext: () => ({
+				strokeStyle: "",
+				fillStyle: "",
+				lineWidth: 1,
+				font: "",
+				clearRect() {},
+				setLineDash() {},
+				beginPath() {},
+				closePath() {},
+				moveTo(x: number, y: number) {
+					ops.moves.push([x, y]);
+				},
+				lineTo(x: number, y: number) {
+					ops.lines.push([x, y]);
+				},
+				stroke() {
+					ops.strokes += 1;
+				},
+				fill() {
+					ops.fills += 1;
+				},
+				fillRect() {
+					ops.fillRects += 1;
+				},
+				strokeRect(x: number, y: number, w: number, h: number) {
+					ops.strokeRects.push([x, y, w, h]);
+				},
+				ellipse(cx: number, cy: number, rx: number, ry: number) {
+					ops.ellipses.push([cx, cy, rx, ry]);
+				},
+				arc(cx: number, cy: number, r: number) {
+					ops.ellipses.push([cx, cy, r, r]);
+				},
+				fillText(text: string, x: number, y: number) {
+					ops.fillTexts.push({ text, x, y });
+				},
+			}),
+		} as unknown as HTMLCanvasElement;
+
+		renderCollisionOverlay(mockCanvas, {
+			scale: 1,
+			iconRect: [5, 5, 25, 25],
+			points: {
+				center_x: 120,
+				center_y: 210,
+				"future.anchor.x": 60,
+				"future.anchor.y": 80,
+			},
+			collisions: [
+				{ name: "Head", shape: { Rect: { x1: 10, y1: 10, x2: 50, y2: 40 } } },
+				{ name: "Nose", shape: { Circle: { cx: 30, cy: 25, r: 5 } } },
+				{
+					name: "CheekBox",
+					shape: { type: "ellipse", x1: 20, y1: 20, x2: 60, y2: 40 },
+				},
+				{
+					name: "Ribbon",
+					shape: {
+						Polygon: {
+							vertices: [
+								[100, 100],
+								[120, 100],
+								[110, 120],
+							],
+						},
+					},
+				},
+				{
+					name: "RegionMask",
+					shape: {
+						Region: {
+							file: "atari.png",
+							r: 255,
+							g: 0,
+							b: 0,
+							x1: 12,
+							y1: 14,
+							x2: 42,
+							y2: 54,
+						},
+					},
+				},
+			],
+		});
+
+		expect(ops.fillRects).toBe(0);
+		expect(ops.fills).toBe(0);
+		expect(ops.strokeRects).toEqual([
+			[1, 1, 238, 418], // window-bounds
+			[5, 5, 20, 20], // icon-rect
+			[10, 10, 40, 30], // Head Rect
+			[12, 14, 30, 40], // RegionMask resolved bounds
+		]);
+		expect(ops.ellipses).toEqual([
+			[30, 25, 5, 5], // Nose Circle
+			[40, 30, 20, 10], // CheekBox bounding-box Ellipse converted to center-radius
+		]);
+		expect(ops.fillTexts.map((t) => t.text)).toEqual([
+			"icon.rect",
+			"point.center",
+			"point.future.anchor",
+			"Head",
+			"Nose",
+			"CheekBox",
+			"Ribbon",
+			"RegionMask",
+		]);
+
+		// mode: "rect" hides labels (\![enter,collisionmode,rect]) while keeping wireframes
+		ops.fillTexts.length = 0;
+		ops.strokeRects.length = 0;
+		renderCollisionOverlay(mockCanvas, {
+			mode: "rect",
+			collisions: [
+				{ name: "Head", shape: "rect", x1: 1, y1: 2, x2: 11, y2: 12 },
+			],
+		});
+		expect(ops.fillTexts).toEqual([]);
+		expect(ops.strokeRects).toEqual([
+			[1, 1, 238, 418],
+			[1, 2, 10, 10],
+		]);
+
+		// Dynamic future shape & layer registration works cleanly
+		try {
+			registerCollisionShapeSpec<{ cx: number; cy: number; size: number }>({
+				kind: "diamond",
+				normalize: (coords) => ({
+					cx: Number(coords.cx ?? 0),
+					cy: Number(coords.cy ?? 0),
+					size: Number(coords.size ?? 10),
+				}),
+				stroke: (ctx, norm, scale) => {
+					const s = norm.size * scale;
+					ctx.strokeRect?.(
+						norm.cx * scale - s / 2,
+						norm.cy * scale - s / 2,
+						s,
+						s,
+					);
+				},
+				getLabelAnchor: (norm, scale) => ({
+					x: norm.cx * scale,
+					y: norm.cy * scale,
+				}),
+			});
+			registerCollisionOverlayLayer({
+				id: "custom-window-guide",
+				order: 15,
+				strokeColor: "#6a1b9a",
+				render: ({ ctx, options }) => {
+					if (options.metadata?.guide) {
+						ctx.strokeRect?.(2, 2, 10, 10);
+					}
+				},
+			});
+
+			ops.strokeRects.length = 0;
+			ops.fillTexts.length = 0;
+			renderCollisionOverlay(mockCanvas, {
+				metadata: { guide: true },
+				collisions: [
+					{
+						name: "FuturePart",
+						shape: { Diamond: { cx: 50, cy: 60, size: 20 } },
+					},
+				],
+			});
+			expect(ops.strokeRects).toEqual([
+				[1, 1, 238, 418],
+				[2, 2, 10, 10],
+				[40, 50, 20, 20],
+			]);
+			expect(ops.fillTexts.map((t) => t.text)).toEqual(["FuturePart"]);
+		} finally {
+			unregisterCollisionShapeSpec("diamond");
+			unregisterCollisionOverlayLayer("custom-window-guide");
+		}
 	});
 });

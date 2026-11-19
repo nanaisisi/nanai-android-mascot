@@ -2,12 +2,12 @@
 
 - **規格**: [char-star-.seriko.defaultsurface.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/char-star-.seriko.defaultsurface.md)
 - **検索語**: char*.seriko.defaultsurface
-- **対応状況**: ❌ 未実装
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `char*.seriko.defaultsurface` キー群をパース・参照する実装が行われている。
+`crates/nanai-core/src/descript_parser/types.rs` の `DescriptManifest::char_default_surface(index)` において `char{N}.seriko.defaultsurface` および `char{N}.defaultsurface` のパースおよび取得が完全実装済み。
 
 ## 実装箇所
 
-実装コード内に「char*.seriko.defaultsurface」は検出されませんでした。
+- `crates/nanai-core/src/descript_parser/types.rs` (`char_default_surface`)

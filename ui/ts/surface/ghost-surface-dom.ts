@@ -280,7 +280,9 @@ export function renderCollisionOverlayForScope(
 	const pointsMap = sm?.points as
 		| Record<string, Record<string, unknown>>
 		| undefined;
-	const iconRect = Array.isArray(iconRectsMap?.[sid]) ? iconRectsMap[sid] : null;
+	const iconRect = Array.isArray(iconRectsMap?.[sid])
+		? iconRectsMap[sid]
+		: null;
 	const points =
 		pointsMap?.[sid] && typeof pointsMap[sid] === "object"
 			? pointsMap[sid]

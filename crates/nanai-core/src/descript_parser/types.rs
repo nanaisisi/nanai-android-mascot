@@ -224,4 +224,36 @@ impl DescriptManifest {
             .map(|v| v != "0" && v != "false")
             .unwrap_or(true)
     }
+
+    /// [char*.name,名前]: キャラクター別名前
+    pub fn char_name(&self, index: u32) -> Option<&str> {
+        let key = format!("char{}.name", index);
+        self.get(&key)
+    }
+
+    /// [char*.seriko.defaultsurface,数値], [char*.balloon.defaultsurface,数値]: キャラクター別デフォルトサーフィスID
+    pub fn char_default_surface(&self, index: u32) -> Option<i32> {
+        let key1 = format!("char{}.seriko.defaultsurface", index);
+        let key2 = format!("char{}.defaultsurface", index);
+        self.get(&key1)
+            .or_else(|| self.get(&key2))
+            .and_then(|v| v.parse::<i32>().ok())
+    }
+
+    /// [char*.defaultx,X座標], [char*.defaulty,Y座標], [char*.defaultleft,X座標], [char*.defaulttop,Y座標]: キャラクター別デフォルト座標
+    pub fn char_default_pos(&self, index: u32) -> Option<(i32, i32)> {
+        let x_key1 = format!("char{}.defaultx", index);
+        let x_key2 = format!("char{}.defaultleft", index);
+        let y_key1 = format!("char{}.defaulty", index);
+        let y_key2 = format!("char{}.defaulttop", index);
+        let x = self.get(&x_key1).or_else(|| self.get(&x_key2)).and_then(|v| v.parse::<i32>().ok())?;
+        let y = self.get(&y_key1).or_else(|| self.get(&y_key2)).and_then(|v| v.parse::<i32>().ok())?;
+        Some((x, y))
+    }
+
+    /// [char*.seriko.alignmenttodesktop,位置情報]: キャラクター別デスクトップ位置揃え設定
+    pub fn char_alignment_to_desktop(&self, index: u32) -> Option<&str> {
+        let key = format!("char{}.seriko.alignmenttodesktop", index);
+        self.get(&key)
+    }
 }

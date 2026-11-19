@@ -25,11 +25,7 @@ export interface CollisionShapeSpec<TNorm = unknown> {
 	aliases?: string[];
 	matches?: (kind: string, coords: Record<string, unknown>) => boolean;
 	normalize: (coords: Record<string, unknown>) => TNorm | null;
-	stroke: (
-		ctx: CanvasRenderingContext2D,
-		norm: TNorm,
-		scale: number,
-	) => void;
+	stroke: (ctx: CanvasRenderingContext2D, norm: TNorm, scale: number) => void;
 	getLabelAnchor: (norm: TNorm, scale: number) => LabelAnchor | null;
 }
 

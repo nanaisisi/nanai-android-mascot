@@ -93,6 +93,10 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
             .and_then(|v| v.trim().parse::<i32>().ok())
     });
 
+    // [balloon.defaultsurface,数値], [sakura.balloon.defaultsurface,数値], [kero.balloon.defaultsurface,数値], [char*.balloon.defaultsurface,数値]:
+    // [char*.defaultx,X座標], [char*.defaulty,Y座標], [char*.defaultleft,X座標], [char*.defaulttop,Y座標]:
+    // [char*.seriko.alignmenttodesktop,位置情報], [char*.seriko.defaultsurface,数値], [char*.name,名前]:
+    // char0.defaultx char0.defaulty char0.defaultleft char0.defaulttop char0.balloon.defaultsurface char0.seriko.alignmenttodesktop char0.seriko.defaultsurface char1.name
     let mut char_balloon_defaultsurfaces = BTreeMap::new();
     if let Some(ref m) = meta_map {
         for (k, v) in m.iter() {

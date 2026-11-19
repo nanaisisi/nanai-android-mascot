@@ -295,6 +295,22 @@ impl DescriptManifest {
             .unwrap_or(false)
     }
 
+    /// [sakura.icon.frame.color.r/g/b,数値]: Sakura 側アイコン枠色 (RGB)
+    pub fn sakura_icon_frame_color_rgb(&self) -> Option<(u8, u8, u8)> {
+        let r = self.get("sakura.icon.frame.color.r")?.parse::<u8>().ok()?;
+        let g = self.get("sakura.icon.frame.color.g")?.parse::<u8>().ok()?;
+        let b = self.get("sakura.icon.frame.color.b")?.parse::<u8>().ok()?;
+        Some((r, g, b))
+    }
+
+    /// [kero.icon.frame.color.r/g/b,数値]: Kero 側アイコン枠色 (RGB)
+    pub fn kero_icon_frame_color_rgb(&self) -> Option<(u8, u8, u8)> {
+        let r = self.get("kero.icon.frame.color.r")?.parse::<u8>().ok()?;
+        let g = self.get("kero.icon.frame.color.g")?.parse::<u8>().ok()?;
+        let b = self.get("kero.icon.frame.color.b")?.parse::<u8>().ok()?;
+        Some((r, g, b))
+    }
+
     /// [name.allowoverride,数値]: シェル名オーバーライド許可判定 (既定値 1)
     pub fn is_name_allow_override(&self) -> bool {
         self.get("name.allowoverride")

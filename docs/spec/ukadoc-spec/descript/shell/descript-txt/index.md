@@ -24,27 +24,27 @@
 | [char\*.seriko.alignmenttodesktop,位置情報](char-star-.seriko.alignmenttodesktop.md)           | char                                  |       ✅ 実装済 (shell.rs)       |
 | [charset,文字コード](charset.md)                                                               | charset                               |       ✅ 実装済 (shell.rs)       |
 | [craftman,作者名](craftman.md)                                                                 | craftman                              |       ✅ 実装済 (shell.rs)       |
-| [craftmanurl,URL](craftmanurl.md)                                                              | craftmanurl                           |      ⚠️ 一部対応 (shell.rs)      |
-| [craftmanw,作者名](craftmanw.md)                                                               | craftmanw                             |      ⚠️ 一部対応 (shell.rs)      |
-| [homeurl,URL](homeurl.md)                                                                      | homeurl                               |      ⚠️ 一部対応 (shell.rs)      |
+| [craftmanurl,URL](craftmanurl.md)                                                              | craftmanurl                           |       ✅ 実装済 (shell.rs)       |
+| [craftmanw,作者名](craftmanw.md)                                                               | craftmanw                             |       ✅ 実装済 (shell.rs)       |
+| [homeurl,URL](homeurl.md)                                                                      | homeurl                               |       ✅ 実装済 (shell.rs)       |
 | [id,ID名](id.md)                                                                               | id                                    |       ✅ 対応済 (shell.rs)       |
 | [descript.txt（Shellの）](introduction_descript.txt.md)                                        | descript.txt                          |       ✅ 実装済 (shell.rs)       |
 | [kero.balloon.alignment,位置情報](kero.balloon.alignment.md)                                   | kero.balloon.alignment                |       ✅ 実装済 (shell.rs)       |
 | [kero.balloon.dontmove,数値](kero.balloon.dontmove_.md)                                        | kero.balloon.dontmove                 |       ✅ 実装済 (shell.rs)       |
 | [kero.balloon.offsetx,座標](kero.balloon.offsetx.md)                                           | kero.balloon.offsetx                  |       ✅ 実装済 (shell.rs)       |
 | [kero.balloon.offsety,座標](kero.balloon.offsety.md)                                           | kero.balloon.offsety                  |       ✅ 実装済 (shell.rs)       |
-| [kero.balloon.syncscale,true](kero.balloon.syncscale_.md)                                      | kero.balloon.syncscale                |      ⚠️ 一部対応 (shell.rs)      |
-| [kero.bindgroup\*.addid,ID](kero.bindgroup-star-.addid.md)                                     | kero.bindgroup                        |            ❌ 未実装             |
-| [kero.bindgroup\*.default,数値](kero.bindgroup-star-.default.md)                               | kero.bindgroup                        |            ❌ 未実装             |
-| [kero.bindgroup\*.name,カテゴリ名,パーツ名,サムネイル名](kero.bindgroup-star-.name.md)         | kero.bindgroup                        |            ❌ 未実装             |
+| [kero.balloon.syncscale,true](kero.balloon.syncscale_.md)                                      | kero.balloon.syncscale                |       ✅ 実装済 (shell.rs)       |
+| [kero.bindgroup\*.addid,ID](kero.bindgroup-star-.addid.md)                                     | kero.bindgroup                        |       ✅ 実装済 (queries.rs)     |
+| [kero.bindgroup\*.default,数値](kero.bindgroup-star-.default.md)                               | kero.bindgroup                        |       ✅ 実装済 (queries.rs)     |
+| [kero.bindgroup\*.name,カテゴリ名,パーツ名,サムネイル名](kero.bindgroup-star-.name.md)         | kero.bindgroup                        |       ✅ 実装済 (queries.rs)     |
 | [kero.bindoption\*.group,カテゴリ名,オプション](kero.bindoption-star-.group.md)                | kero.bindoption                       |       ✅ 実装済 (shell.rs)       |
-| [kero.defaultleft,X座標](kero.defaultleft.md)                                                  | kero.defaultleft                      |      ⚠️ 一部対応 (shell.rs)      |
-| [kero.defaulttop,Y座標](kero.defaulttop.md)                                                    | kero.defaulttop                       |      ⚠️ 一部対応 (shell.rs)      |
-| [kero.defaultx,X座標](kero.defaultx.md)                                                        | kero.defaultx                         |      ⚠️ 一部対応 (shell.rs)      |
-| [kero.defaulty,Y座標](kero.defaulty.md)                                                        | kero.defaulty                         |      ⚠️ 一部対応 (shell.rs)      |
-| [kero.icon.frame.color.b,数値](kero.icon.frame.color.b.md)                                     | kero.icon.frame.color.b               |            ❌ 未実装             |
-| [kero.icon.frame.color.g,数値](kero.icon.frame.color.g.md)                                     | kero.icon.frame.color.g               |            ❌ 未実装             |
-| [kero.icon.frame.color.r,数値](kero.icon.frame.color.r.md)                                     | kero.icon.frame.color.r               |            ❌ 未実装             |
+| [kero.defaultleft,X座標](kero.defaultleft.md)                                                  | kero.defaultleft                      |       ✅ 実装済 (shell.rs)       |
+| [kero.defaulttop,Y座標](kero.defaulttop.md)                                                    | kero.defaulttop                       |       ✅ 実装済 (shell.rs)       |
+| [kero.defaultx,X座標](kero.defaultx.md)                                                        | kero.defaultx                         |       ✅ 実装済 (shell.rs)       |
+| [kero.defaulty,Y座標](kero.defaulty.md)                                                        | kero.defaulty                         |       ✅ 実装済 (shell.rs)       |
+| [kero.icon.frame.color.b,数値](kero.icon.frame.color.b.md)                                     | kero.icon.frame.color.b               |       ✅ 実装済 (types.rs)       |
+| [kero.icon.frame.color.g,数値](kero.icon.frame.color.g.md)                                     | kero.icon.frame.color.g               |       ✅ 実装済 (types.rs)       |
+| [kero.icon.frame.color.r,数値](kero.icon.frame.color.r.md)                                     | kero.icon.frame.color.r               |       ✅ 実装済 (types.rs)       |
 | [kero.menu,autoまたはhidden](kero.menu.md)                                                     | kero.menu                             |      ⚠️ 一部対応 (shell.rs)      |
 | [kero.menuitem\*,ID](kero.menuitem-star.md)                                                    | kero.menuitem                         |      ⚠️ 一部対応 (shell.rs)      |
 | [kero.menuitemex\*,メニュー名,ID](kero.menuitemex-star.md)                                     | kero.menuitemex                       |            ❌ 未実装             |
@@ -83,17 +83,17 @@
 | [sakura.balloon.offsetx,座標](sakura.balloon.offsetx.md)                                       | sakura.balloon.offsetx                |       ✅ 実装済 (shell.rs)       |
 | [sakura.balloon.offsety,座標](sakura.balloon.offsety.md)                                       | sakura.balloon.offsety                |       ✅ 実装済 (shell.rs)       |
 | [sakura.balloon.syncscale,true](sakura.balloon.syncscale_.md)                                  | sakura.balloon.syncscale              |       ✅ 実装済 (shell.rs)       |
-| [sakura.bindgroup\*.addid,ID](sakura.bindgroup-star-.addid.md)                                 | sakura.bindgroup                      |            ❌ 未実装             |
-| [sakura.bindgroup\*.default,数値](sakura.bindgroup-star-.default.md)                           | sakura.bindgroup                      |            ❌ 未実装             |
-| [sakura.bindgroup\*.name,カテゴリ名,パーツ名,サムネイル名](sakura.bindgroup-star-.name.md)     | sakura.bindgroup                      |            ❌ 未実装             |
+| [sakura.bindgroup\*.addid,ID](sakura.bindgroup-star-.addid.md)                                 | sakura.bindgroup                      |       ✅ 実装済 (queries.rs)     |
+| [sakura.bindgroup\*.default,数値](sakura.bindgroup-star-.default.md)                           | sakura.bindgroup                      |       ✅ 実装済 (queries.rs)     |
+| [sakura.bindgroup\*.name,カテゴリ名,パーツ名,サムネイル名](sakura.bindgroup-star-.name.md)     | sakura.bindgroup                      |       ✅ 実装済 (queries.rs)     |
 | [sakura.bindoption\*.group,カテゴリ名,オプション](sakura.bindoption-star-.group.md)            | sakura.bindoption                     |       ✅ 実装済 (shell.rs)       |
 | [sakura.defaultleft,X座標](sakura.defaultleft.md)                                              | sakura.defaultleft                    |      ⚠️ 一部対応 (shell.rs)      |
 | [sakura.defaulttop,Y座標](sakura.defaulttop.md)                                                | sakura.defaulttop                     |      ⚠️ 一部対応 (shell.rs)      |
 | [sakura.defaultx,X座標](sakura.defaultx.md)                                                    | sakura.defaultx                       |      ⚠️ 一部対応 (shell.rs)      |
 | [sakura.defaulty,Y座標](sakura.defaulty.md)                                                    | sakura.defaulty                       |      ⚠️ 一部対応 (shell.rs)      |
-| [sakura.icon.frame.color.b,数値](sakura.icon.frame.color.b.md)                                 | sakura.icon.frame.color.b             |            ❌ 未実装             |
-| [sakura.icon.frame.color.g,数値](sakura.icon.frame.color.g.md)                                 | sakura.icon.frame.color.g             |            ❌ 未実装             |
-| [sakura.icon.frame.color.r,数値](sakura.icon.frame.color.r.md)                                 | sakura.icon.frame.color.r             |            ❌ 未実装             |
+| [sakura.icon.frame.color.b,数値](sakura.icon.frame.color.b.md)                                 | sakura.icon.frame.color.b             |       ✅ 実装済 (types.rs)       |
+| [sakura.icon.frame.color.g,数値](sakura.icon.frame.color.g.md)                                 | sakura.icon.frame.color.g             |       ✅ 実装済 (types.rs)       |
+| [sakura.icon.frame.color.r,数値](sakura.icon.frame.color.r.md)                                 | sakura.icon.frame.color.r             |       ✅ 実装済 (types.rs)       |
 | [sakura.menu,autoまたはhidden](sakura.menu.md)                                                 | sakura.menu                           |      ⚠️ 一部対応 (shell.rs)      |
 | [sakura.menuitem\*,ID](sakura.menuitem-star.md)                                                | sakura.menuitem                       |      ⚠️ 一部対応 (shell.rs)      |
 | [sakura.menuitemex\*,メニュー名,ID](sakura.menuitemex-star.md)                                 | sakura.menuitemex                     |            ❌ 未実装             |

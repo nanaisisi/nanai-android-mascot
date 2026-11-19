@@ -6,12 +6,14 @@
 
 ## 突合結果
 
-\\![close,...] コマンドのパース処理を実装 (crates/ui/src/script/parser/brackets/handlers/raiselike.rs -> SakuraCommand::Close)。
+\\![close,...] コマンドのパース処理を実装 (`crates/ui/src/script/parser/brackets/handlers/raiselike/execution.rs` -> `SakuraCommand::Close`)。
+フロントエンド (`ui/ts/ghost/command-handler/communicatebox.ts`, `ui/ts/ui/renderers/modal-dialog-communication.ts`) においてコミュニケートボックスの削除処理 (`closeCommunicateBox`) および `OnCommunicateInputCancel` イベント送信を実装済。
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/fmo.rs:42` `fn CloseHandle(hObject: HANDLE) -> BOOL;`
-- `src-tauri/src/shiori/fmo.rs:53` `CloseHandle(handle);`
-- `src-tauri/src/shiori/ffi/builder.rs:84` `.event("OnClose")`
-- `crates/ui/src/script/command.rs:118` `Close {`
-- `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:249` `callback(SakuraCommand::Close { service, target });`
+- `crates/ui/src/script/command.rs:132` `Close {`
+- `crates/ui/src/script/parser/brackets/handlers/raiselike/execution.rs:113` `callback(SakuraCommand::Close { service, target });`
+- `crates/nanai-core/src/sakura_script/types.rs:35` `CloseCommunicatebox`
+- `ui/ts/ghost/command-handler/communicatebox.ts:127` `export function closeCommunicateBox(`
+- `ui/ts/ghost/command-handler/defaults/dialog-handlers.ts:86` `registerCommandHandler("close:communicatebox", ...)`
+- `ui/ts/ui/renderers/modal-dialog-communication.ts:286` `export function closeCommunicateBox(`

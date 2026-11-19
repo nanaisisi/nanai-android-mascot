@@ -6,10 +6,9 @@
 
 ## 突合結果
 
-ダイアログ展開時に `inputbox.autocomplete` SHIORIイベントを送信し、バイト値1区切りのテキスト候補リストから `<datalist>` を動的生成・入力要素へ紐付ける処理を実装 (`ui/js/ui/renderers/modal-dialog-controller.js` -> `attachAutocomplete`)。
-
+ダイアログ展開時に `inputbox.autocomplete` SHIORIイベントを送信し、バイト値1区切りのテキスト候補リストから `<datalist>` を動的生成・入力要素へ紐付ける処理を実装 (`ui/ts/ui/renderers/inputs/input-helpers.ts` -> `attachAutocomplete`)。
 
 ## 実装箇所
 
-- `ui/js/ui/renderers/modal-dialog-controller.js:22` `* inputbox.autocomplete イベントを問い合わせて datalist を設定`
-- `ui/js/ui/renderers/modal-dialog-controller.js:36` `"inputbox.autocomplete",`
+- `ui/ts/ui/renderers/inputs/input-helpers.ts:11` `export async function attachAutocomplete(`
+- `ui/ts/ui/renderers/inputs/input-helpers.ts:21` `"inputbox.autocomplete",`

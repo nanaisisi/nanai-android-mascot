@@ -6,8 +6,10 @@
 
 ## 突合結果
 
-実装コードに「OnTeachInputCancel」が見つからない。
+ティーチボックスのキャンセル時に `OnTeachInputCancel` SHIORIイベントを送信する処理を実装 (`ui/ts/ghost/command-handler/teachbox.ts` -> `OnTeachInputCancel`)。
 
 ## 実装箇所
 
-- `ui/js/ghost/command-handler/teachbox.js:62` `await handler.app.ghostController?.sendShioriEvent("OnTeachInputCancel", [`
+- `crates/nanai-core/src/shiori_protocol_helpers/events/input.rs:189` `pub fn build_on_teach_input_cancel_request`
+- `ui/ts/ghost/command-handler/teachbox.ts:73` `await handler.app.ghostController?.sendShioriEvent("OnTeachInputCancel", [`
+- `ui/ts/ui/renderers/modal-dialog-communication.ts:92` `await this.app?.ghostController?.sendShioriEvent?.("OnTeachInputCancel", [`

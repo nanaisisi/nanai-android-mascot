@@ -6,8 +6,10 @@
 
 ## 突合結果
 
-実装コード内に「OnCommunicate」を確認。
+コミュニケートボックス送信時に `OnCommunicate` SHIORIイベント (Reference0: "user", Reference1: 送信テキスト) を送信する処理を実装 (`ui/ts/ghost/command-handler/communicatebox.ts` -> `sendShioriEvent`)。
 
 ## 実装箇所
 
-- `crates/ui/src/shiori/protocol/response/mod.rs:41` `/// Reference1..N（互換性のため Reference1 = 通信先 OnCommunicate の Reference2）`
+- `crates/nanai-core/src/shiori_protocol_helpers/events/input.rs:145` `pub fn build_on_communicate_request`
+- `crates/ui/src/shiori/protocol/response/types.rs:37` `/// Reference1..N（互換性のため Reference1 = 通信先 OnCommunicate の Reference2）`
+- `ui/ts/ghost/command-handler/communicatebox.ts:83` `await handler.app.ghostController?.sendShioriEvent("OnCommunicate", [`

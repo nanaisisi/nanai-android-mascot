@@ -6,12 +6,14 @@
 
 ## 突合結果
 
-\\![close,...] コマンドのパース処理を実装 (crates/ui/src/script/parser/brackets/handlers/raiselike.rs -> SakuraCommand::Close)。
+\\![close,...] コマンドのパース処理を実装 (`crates/ui/src/script/parser/brackets/handlers/raiselike/execution.rs` -> `SakuraCommand::Close`)。
+フロントエンド (`ui/ts/ghost/command-handler/inputbox.ts`, `ui/ts/ui/renderers/inputs/text-inputs.ts`) において複数行テキストエリアボックスの削除処理 (`closeTextAreaBox`) を実装済。
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/fmo.rs:42` `fn CloseHandle(hObject: HANDLE) -> BOOL;`
-- `src-tauri/src/shiori/fmo.rs:53` `CloseHandle(handle);`
-- `src-tauri/src/shiori/ffi/builder.rs:84` `.event("OnClose")`
-- `crates/ui/src/script/command.rs:118` `Close {`
-- `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:249` `callback(SakuraCommand::Close { service, target });`
+- `crates/ui/src/script/command.rs:132` `Close {`
+- `crates/ui/src/script/parser/brackets/handlers/raiselike/execution.rs:113` `callback(SakuraCommand::Close { service, target });`
+- `crates/nanai-core/src/sakura_script/types.rs:29` `CloseTextarea`
+- `ui/ts/ghost/command-handler/inputbox.ts:216` `export function closeTextAreaBox(`
+- `ui/ts/ghost/command-handler/defaults/dialog-handlers.ts:71` `registerCommandHandler("close:textarea", ...)`
+- `ui/ts/ui/renderers/inputs/text-inputs.ts:326` `export function closeTextAreaBox(`

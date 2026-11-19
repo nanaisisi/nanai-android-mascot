@@ -2,16 +2,15 @@
 
 - **規格**: [OnInstallFailure.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/install/OnInstallFailure/) (ukadoc-spec/list/shiori-event/install/OnInstallFailure.md)
 - **検索語**: OnInstallFailure
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-実装コードに「OnInstallFailure」が見つからない。
+UKADOC 規格準拠の「OnInstallFailure」イベント引数生成および失敗理由パース (`parse_install_error_reason` / `parseErrorReason`) を Rust コアおよび TypeScript アクションとして完全実装。
 
 
 ## 実装箇所
 
-- `crates/nanai-core/src/install_protocol.rs:155` `/// OnInstallFailure SHIORI 引数生成`
-- `ui/ts/core/actions/ghost-install-action.ts:121` `"OnInstallFailure",`
-- `ui/ts/core/actions/install-protocol.ts:10` `* - OnInstallFailure: Reference0=失敗理由 ("unsupported", "extraction", "unlha32 err`
-- `ui/ts/core/actions/install-protocol.ts:223` `* OnInstallFailure SHIORI 引数生成`
+- `crates/nanai-core/src/install_protocol/helpers.rs` (`parse_install_error_reason`)
+- `ui/ts/core/actions/install-protocol.ts` (`parseErrorReason`, `buildInstallFailureArgs`)
+- `ui/ts/core/actions/ghost-install-action.ts` (`OnInstallFailure`)

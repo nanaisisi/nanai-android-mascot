@@ -21,8 +21,12 @@ export const INSTALL_IDENTIFIERS = Object.freeze([
 	"balloon",
 	"plugin",
 	"headline",
-	"package",
+	"rss",
 	"supplement",
+	"ghost with balloon",
+	"shell with balloon",
+	"package",
+	"language",
 	"calendar.skin",
 	"calendar.plugin",
 	"profile",
@@ -33,12 +37,15 @@ export const INSTALL_IDENTIFIERS = Object.freeze([
 
 /**
  * UKADOC仕様: インストールの失敗理由 (Install Reasons of Failure)
- * 定義一覧: unsupported, extraction, unlha32 error, artificial, write error, invalid path, format error
+ * 定義一覧: unsupported, extraction, unlha32, unlha32 error, invalid type, password, artificial, write error, invalid path, format error
  */
 export const INSTALL_FAILURE_REASONS = Object.freeze([
 	"unsupported",
 	"extraction",
+	"unlha32",
 	"unlha32 error",
+	"invalid type",
+	"password",
 	"artificial",
 	"write error",
 	"invalid path",
@@ -193,8 +200,19 @@ export function parseInstallErrorReasonFallback(err: unknown): string {
 	const msg = String((err as { message?: unknown })?.message ?? err ?? "");
 	const lower = msg.toLowerCase();
 	if (
-		lower.includes("unsupported") ||
+		lower.includes("password") ||
+		lower.includes("パスワード")
+	) {
+		return "password";
+	}
+	if (
 		lower.includes("invalid type") ||
+		lower.includes("install.txt")
+	) {
+		return "invalid type";
+	}
+	if (
+		lower.includes("unsupported") ||
 		lower.includes("サポートされていない")
 	) {
 		return "unsupported";
@@ -216,8 +234,6 @@ export function parseInstallErrorReasonFallback(err: unknown): string {
 		return "invalid path";
 	}
 	if (
-		lower.includes("unlha32") ||
-		lower.includes("lha") ||
 		lower.includes("corrupt") ||
 		lower.includes("crc")
 	) {
@@ -237,6 +253,12 @@ export function parseInstallErrorReasonFallback(err: unknown): string {
 		lower.includes("形式")
 	) {
 		return "format error";
+	}
+	if (
+		lower.includes("unlha32") ||
+		lower.includes("lha")
+	) {
+		return "unlha32";
 	}
 	return "extraction";
 }

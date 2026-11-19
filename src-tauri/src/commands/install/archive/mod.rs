@@ -17,6 +17,7 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
     mut zip: zip::ZipArchive<R>,
     fallback_name: &str,
     app_handle: &tauri::AppHandle,
+    password: Option<&str>,
 ) -> Result<GhostInfo, String> {
     let inspection = inspect_zip_archive(&mut zip, fallback_name, app_handle)?;
 
@@ -62,6 +63,7 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
         inspection.root_prefix(),
         &target_dir,
         inspection.bundled_resources(),
+        password,
     )?;
 
     if inspection.kind() == "balloon" {

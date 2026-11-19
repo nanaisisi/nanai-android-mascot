@@ -11,6 +11,7 @@ pub use archive::extract_ghost_archive_from_reader;
 /// ネイティブのファイル選択ダイアログを開き、選んだアーカイブを取り込む。キャンセル時は None
 #[tauri::command]
 pub async fn pick_and_install_ghost_archive(
+    password: Option<String>,
     app_handle: tauri::AppHandle,
 ) -> Result<Option<GhostInfo>, String> {
     use tauri_plugin_dialog::DialogExt;
@@ -34,7 +35,7 @@ pub async fn pick_and_install_ghost_archive(
 
     let Some(fp) = picked else { return Ok(None) };
     let path = fp.into_path().map_err(|e| e.to_string())?;
-    install_ghost_archive(path.to_string_lossy().to_string(), app_handle)
+    install_ghost_archive(path.to_string_lossy().to_string(), password, app_handle)
         .await
         .map(Some)
 }
@@ -43,6 +44,7 @@ pub async fn pick_and_install_ghost_archive(
 #[tauri::command]
 pub async fn install_ghost_archive(
     archive_path: String,
+    password: Option<String>,
     app_handle: tauri::AppHandle,
 ) -> Result<GhostInfo, String> {
     println!("📦 Installing ghost archive from path: {}", archive_path);
@@ -58,7 +60,7 @@ pub async fn install_ghost_archive(
         .map(|s| s.to_string_lossy().to_string())
         .unwrap_or_else(|| "imported_ghost".to_string());
 
-    extract_ghost_archive_from_reader(zip, &fallback, &app_handle)
+    extract_ghost_archive_from_reader(zip, &fallback, &app_handle, password.as_deref())
 }
 
 /// ゴーストアーカイブ (.nar / .zip) のバイナリ直接取り込み・解凍コマンド
@@ -66,6 +68,7 @@ pub async fn install_ghost_archive(
 pub async fn install_ghost_archive_bytes(
     file_name: String,
     bytes: Vec<u8>,
+    password: Option<String>,
     app_handle: tauri::AppHandle,
 ) -> Result<GhostInfo, String> {
     println!(
@@ -83,7 +86,7 @@ pub async fn install_ghost_archive_bytes(
         .map(|s| s.to_string_lossy().to_string())
         .unwrap_or_else(|| "imported_ghost".to_string());
 
-    extract_ghost_archive_from_reader(zip, &fallback, &app_handle)
+    extract_ghost_archive_from_reader(zip, &fallback, &app_handle, password.as_deref())
 }
 
 /// フォルダを指定して .nar (ZIP形式) アーカイブを圧縮作成・パッキングするコマンド

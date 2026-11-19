@@ -74,9 +74,11 @@ describe("nanai-core WASM module parity and fallback", () => {
 		await wasmBridge.init();
 		const testCases: Array<[string, string]> = [
 			["Archive error: unsupported format", "unsupported"],
-			["invalid type: unknown", "unsupported"],
+			["invalid type: unknown", "invalid type"],
+			["Protected archive password incorrect", "password"],
 			["User cancel operation", "artificial"],
 			["Detected Zip-Slip attempt", "invalid path"],
+			["Unlha32 extraction failed", "unlha32"],
 			["Corrupt lha archive header", "unlha32 error"],
 			["Permission denied write error", "write error"],
 			["Invalid archive format header", "format error"],

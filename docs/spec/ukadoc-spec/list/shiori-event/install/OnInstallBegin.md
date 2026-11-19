@@ -6,10 +6,10 @@
 
 ## 突合結果
 
-実装コードに「OnInstallBegin」が見つからない。
+UKADOC 規格準拠の「OnInstallBegin」イベント引数構築 (`build_install_begin_args`) を Rust コアおよび TypeScript アクションとして完全実装。
 
 
 ## 実装箇所
 
-- `ui/js/core/actions/install-protocol.js:6` `* - OnInstallBegin: Reference0=識別子 ("install" 等)`
-- `ui/js/core/actions/install-protocol.js:36` `* OnInstallBegin SHIORI 引数生成`
+- `crates/nanai-core/src/install_protocol/events.rs` (`build_install_begin_args`)
+- `ui/ts/core/actions/install-protocol.ts` (`buildInstallBeginArgs`)

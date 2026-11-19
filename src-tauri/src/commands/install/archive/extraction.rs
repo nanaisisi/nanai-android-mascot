@@ -11,11 +11,27 @@ pub fn extract_zip_entries<R: std::io::Read + std::io::Seek>(
     root_prefix: &str,
     target_dir: &Path,
     bundled_resources: &[BundledResourceTarget],
+    password: Option<&str>,
 ) -> Result<(), String> {
     for i in 0..zip.len() {
-        let mut entry = zip
-            .by_index(i)
-            .map_err(|e| format!("Failed to read archive entry #{}: {}", i, e))?;
+        let mut entry = match password {
+            Some(pwd) => zip.by_index_decrypt(i, pwd.as_bytes()).map_err(|e| {
+                let msg = e.to_string().to_lowercase();
+                if msg.contains("password") || msg.contains("encrypted") || msg.contains("decryption") {
+                    format!("password error (incorrect password or encrypted): {}", e)
+                } else {
+                    format!("Failed to read archive entry #{}: {}", i, e)
+                }
+            })?,
+            None => zip.by_index(i).map_err(|e| {
+                let msg = e.to_string().to_lowercase();
+                if msg.contains("password") || msg.contains("encrypted") || msg.contains("decryption") {
+                    format!("password error (archive is password-protected): {}", e)
+                } else {
+                    format!("Failed to read archive entry #{}: {}", i, e)
+                }
+            })?,
+        };
 
         let decoded_name = decode_zip_entry_name(entry.name_raw());
         let entry_name = decoded_name.replace('\\', "/");
@@ -67,7 +83,14 @@ pub fn extract_zip_entries<R: std::io::Read + std::io::Seek>(
             let mut outfile = std::fs::File::create(&out_path)
                 .map_err(|e| format!("Failed to extract '{}': {}", out_path.display(), e))?;
             std::io::copy(&mut entry, &mut outfile)
-                .map_err(|e| format!("Failed writing file '{}': {}", out_path.display(), e))?;
+                .map_err(|e| {
+                    let msg = e.to_string().to_lowercase();
+                    if msg.contains("password") || msg.contains("encrypted") || msg.contains("decryption") {
+                        format!("password error during extraction: {}", e)
+                    } else {
+                        format!("Failed writing file '{}': {}", out_path.display(), e)
+                    }
+                })?;
             if let Some(mtime) = entry_mtime {
                 let _ = outfile.set_modified(mtime);
             }

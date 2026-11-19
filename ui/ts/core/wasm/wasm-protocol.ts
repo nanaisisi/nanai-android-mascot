@@ -102,7 +102,10 @@ export function buildShioriNotifyWasm(
 const INSTALL_ERROR_REASONS_BY_INDEX: readonly InstallFailureReason[] = [
 	"unsupported",
 	"extraction",
+	"unlha32",
 	"unlha32 error",
+	"invalid type",
+	"password",
 	"artificial",
 	"write error",
 	"invalid path",

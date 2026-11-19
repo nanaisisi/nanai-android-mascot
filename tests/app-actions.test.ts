@@ -1,8 +1,19 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-globalThis.window = globalThis;
-globalThis.localStorage = { removeItem() {} };
+function createMockStorage(removeItem: () => void = () => {}): Storage {
+	return {
+		length: 0,
+		clear() {},
+		getItem: () => null,
+		key: () => null,
+		removeItem,
+		setItem() {},
+	};
+}
+
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
+globalThis.localStorage = createMockStorage();
 globalThis.document = {
 	createElement: () => ({
 		textContent: "",
@@ -11,7 +22,7 @@ globalThis.document = {
 	}),
 	querySelector: () => ({ style: {} }),
 	querySelectorAll: () => [],
-};
+} as unknown as Document;
 
 const { actionMethods } = await import("../ui/ts/core/app-actions.js");
 
@@ -19,16 +30,29 @@ test("actionMethods.handleMenuAction covers all branches including Tauri folder 
 	const mockApp = {
 		...actionMethods,
 		ghostController: {
-			currentGhost: { name: "Mock", isTemporary: true },
+			currentGhost: { name: "Mock", isTemporary: true } as {
+				name: string;
+				isTemporary: boolean;
+			} | null,
 			selectGhost: async () => {},
 			selectShell: async () => {},
 			sendShioriEvent: () => {},
 			scanGhosts: async () => {},
 		},
-		availableBalloons: [{ dir_name: "default", name: "Default Balloon" }],
+		availableBalloons: [{ dir_name: "default", name: "Default Balloon" }] as
+			| Array<{ dir_name: string; name: string }>
+			| undefined,
 		modalManager: { show() {} },
-		elements: { ghostDisplay: { style: {}, classList: { remove() {} } } },
-		interactionManager: { balloonOffsetX: 0, balloonOffsetY: 0 },
+		elements: { ghostDisplay: { style: {}, classList: { remove() {} } } } as {
+			ghostDisplay: {
+				style: Record<string, unknown>;
+				classList: { remove: () => void };
+			};
+		} | null,
+		interactionManager: { balloonOffsetX: 0, balloonOffsetY: 0 } as {
+			balloonOffsetX: number;
+			balloonOffsetY: number;
+		} | null,
 		showBalloon() {},
 		hideBalloon() {},
 		closeApp() {},
@@ -127,13 +151,11 @@ test("actionMethods.handleMenuAction covers all branches including Tauri folder 
 	handle("resetwindowpos");
 
 	// Trigger catch block in localStorage.removeItem
-	globalThis.localStorage = {
-		removeItem() {
-			throw new Error("storage fail");
-		},
-	};
+	globalThis.localStorage = createMockStorage(() => {
+		throw new Error("storage fail");
+	});
 	handle("reset-balloon-position");
-	globalThis.localStorage = { removeItem() {} };
+	globalThis.localStorage = createMockStorage();
 
 	// Reset positions with elements null / interactionManager null
 	mockApp.elements = null;

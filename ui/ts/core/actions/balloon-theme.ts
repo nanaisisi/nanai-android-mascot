@@ -1,6 +1,5 @@
-// @ts-nocheck
 /**
- * @file balloon-theme.js
+ * @file balloon-theme.ts
  * @brief バルーンスキンテーマ切替およびスキャン・リセット処理 (BalloonThemeManager)
  */
 import {
@@ -10,12 +9,14 @@ import {
 import { emit, invoke, isTauriAvailable, listen } from "../tauri-helper.js";
 import {
 	applyBalloonScale,
+	type BalloonThemeManagerInterface,
 	setBalloonThemeImpl,
 } from "./balloon-theme-apply.js";
 import { BALLOON_THEMES } from "./balloon-theme-constants.js";
 import {
 	computeValidRectLayout,
 	resetBalloonDescriptDom,
+	type ValidRectLayoutResult,
 } from "./balloon-theme-dom.js";
 
 export {
@@ -34,25 +35,48 @@ export {
 	resetBalloonDescriptDom,
 } from "./balloon-theme-dom.js";
 
+export interface BalloonInfoItem {
+	dir_name?: string;
+	name?: string;
+	id?: string;
+	[key: string]: unknown;
+}
+
+export type BalloonThemeApp = NonNullable<BalloonThemeManagerInterface["app"]>;
+
+interface BalloonThemeActionContext {
+	_balloonThemeManager?: BalloonThemeManager;
+	balloonThemeManager?: BalloonThemeManager;
+	[key: string]: unknown;
+}
+
 /**
  * バルーンスキン・テーマ・有効テキスト領域(validrect)およびタイポグラフィ統合マネージャー
  */
-export class BalloonThemeManager {
-	/**
-	 * @param {any} [app]
-	 */
-	constructor(app = null) {
+export class BalloonThemeManager implements BalloonThemeManagerInterface {
+	[key: string]: unknown;
+	app: BalloonThemeApp | null;
+	currentTheme: string;
+	userScale: number;
+	dpiScale: number;
+	availableBalloons: Array<BalloonInfoItem | string>;
+	_validRectCache: Map<string, ValidRectLayoutResult>;
+	_currentSide?: "left" | "right";
+
+	constructor(app: BalloonThemeApp | null = null) {
 		this.app = app;
 		this.currentTheme = app?.currentBalloonTheme || "default";
 		this.userScale = app?.balloonUserScale || 1;
 		this.dpiScale = app?.balloonDpiScale || 1;
 		this.availableBalloons = app?.availableBalloons || [];
-		/** @type {Map<string, import("./balloon-theme-dom.js").ValidRectLayoutResult>} */
 		this._validRectCache = new Map();
 
 		if (isTauriAvailable()) {
 			void listen("request-balloon-scale-change", (event) => {
-				const userScale = Number(event.payload?.userScale);
+				const payload = (
+					event as { payload?: { userScale?: unknown } } | null | undefined
+				)?.payload;
+				const userScale = Number(payload?.userScale);
 				if (!Number.isNaN(userScale) && userScale > 0) {
 					this.applyScale(userScale);
 				}
@@ -63,7 +87,11 @@ export class BalloonThemeManager {
 	/**
 	 * 有効テキスト領域 (validrect) レイアウト設定を算出 (キャッシュ対応)
 	 */
-	computeValidRect(props = {}, bgImageUrl = null, scopeId = 0) {
+	computeValidRect(
+		props: Record<string, string> = {},
+		bgImageUrl: string | null = null,
+		scopeId = 0,
+	): ValidRectLayoutResult {
 		return computeValidRectLayout(
 			this._validRectCache,
 			props,
@@ -75,7 +103,7 @@ export class BalloonThemeManager {
 	/**
 	 * validrect キャッシュの明示的クリア（オプションで特定scopeIdのみクリア可能）
 	 */
-	clearValidRectCache(targetScopeId = null) {
+	clearValidRectCache(targetScopeId: number | null = null): void {
 		if (targetScopeId !== null && typeof targetScopeId === "number") {
 			if (targetScopeId === 0) {
 				for (const key of Array.from(this._validRectCache.keys())) {
@@ -96,22 +124,22 @@ export class BalloonThemeManager {
 		this._validRectCache.clear();
 	}
 
-	getValidRectCache(key) {
+	getValidRectCache(key: string): ValidRectLayoutResult | undefined {
 		return this._validRectCache.get(key);
 	}
 
-	get validRectCacheSize() {
+	get validRectCacheSize(): number {
 		return this._validRectCache.size;
 	}
 
-	hasValidRectCache(key) {
+	hasValidRectCache(key: string): boolean {
 		return this._validRectCache.has(key);
 	}
 
 	/**
 	 * バルーンアライメント表示位置の左右反転切り替え
 	 */
-	toggleBalloonSide(scopeId: number = 0) {
+	toggleBalloonSide(scopeId: number = 0): void {
 		this._currentSide = this._currentSide === "left" ? "right" : "left";
 		const nextSide = this._currentSide;
 		const activeTheme =
@@ -161,11 +189,11 @@ export class BalloonThemeManager {
 	/**
 	 * バルーンテーマを順繰りに切り替え
 	 */
-	cycleTheme() {
-		let themes = BALLOON_THEMES;
+	cycleTheme(): string {
+		let themes: string[] = BALLOON_THEMES;
 		if (this.availableBalloons.length > 0) {
-			themes = this.availableBalloons.map(
-				(b) => b.dir_name || b.name || b.id || b,
+			themes = this.availableBalloons.map((b) =>
+				typeof b === "string" ? b : b.dir_name || b.name || b.id || "",
 			);
 		}
 		const idx = themes.indexOf(this.currentTheme);
@@ -178,34 +206,36 @@ export class BalloonThemeManager {
 	/**
 	 * バルーンテーマの設定
 	 */
-	async setTheme(themeName) {
+	async setTheme(themeName?: string): Promise<void> {
 		return setBalloonThemeImpl(this, themeName);
 	}
 
 	async loadSkinImages(
 		theme = "default",
 		scopeId = 0,
-		side = "auto",
-		balloonId = null,
-	) {
+		side: "left" | "right" | "top" | "auto" = "auto",
+		balloonId: number | null = null,
+	): Promise<string | null> {
 		return loadBalloonSkinImages(theme, scopeId, side, balloonId);
 	}
 
-	async applyDescript(params) {
+	async applyDescript(
+		params: Parameters<typeof applyBalloonDescript>[0],
+	): ReturnType<typeof applyBalloonDescript> {
 		return applyBalloonDescript(params);
 	}
 
 	/**
 	 * スケール率変更の反映
 	 */
-	applyScale(scale) {
+	applyScale(scale: number | string) {
 		return applyBalloonScale(this, scale);
 	}
 
 	/**
 	 * 利用可能なバルーン一覧を取得
 	 */
-	async scanAvailableBalloons() {
+	async scanAvailableBalloons(): Promise<Array<BalloonInfoItem | string>> {
 		if (isTauriAvailable()) {
 			try {
 				let res = await invoke("list_balloons").catch(() => null);
@@ -213,8 +243,8 @@ export class BalloonThemeManager {
 					res = await invoke("scan_balloons").catch(() => null);
 				}
 				if (Array.isArray(res)) {
-					this.availableBalloons = res;
-					return res;
+					this.availableBalloons = res as Array<BalloonInfoItem | string>;
+					return this.availableBalloons;
 				}
 			} catch (e) {
 				console.error("Failed to scan balloons:", e);
@@ -223,27 +253,24 @@ export class BalloonThemeManager {
 		return [];
 	}
 
-	async scanBalloons() {
+	async scanBalloons(): Promise<Array<BalloonInfoItem | string>> {
 		return this.scanAvailableBalloons();
 	}
 
 	/**
 	 * バルーン descript スタイルを初期化
 	 */
-	resetDescript() {
+	resetDescript(): void {
 		this.clearValidRectCache();
 		this.dpiScale = 1;
 		if (this.app) {
 			this.app.balloonDpiScale = 1;
 		}
-		resetBalloonDescriptDom(this.userScale, this.app);
+		resetBalloonDescriptDom(this.userScale, this.app ?? undefined);
 	}
 }
 
-function getOrInitBalloonThemeManager(context: {
-	balloonThemeManager?: BalloonThemeManager;
-	[key: string]: unknown;
-}) {
+function getOrInitBalloonThemeManager(context: BalloonThemeActionContext) {
 	if (!context.balloonThemeManager) {
 		context.balloonThemeManager = new BalloonThemeManager(context);
 	}
@@ -254,56 +281,62 @@ function getOrInitBalloonThemeManager(context: {
  * 既存の Mixin 用アクションオブジェクト
  */
 export const balloonThemeActions = {
-	get balloonThemeManager() {
-		return this._balloonThemeManager;
+	get balloonThemeManager(): BalloonThemeManager | undefined {
+		return (this as unknown as BalloonThemeActionContext)._balloonThemeManager;
 	},
-	set balloonThemeManager(mgr) {
-		this._balloonThemeManager = mgr;
+	set balloonThemeManager(mgr: BalloonThemeManager | undefined) {
+		(this as unknown as BalloonThemeActionContext)._balloonThemeManager = mgr;
 	},
 
-	async setTheme(themeName: string) {
+	async setTheme(this: BalloonThemeActionContext, themeName?: string) {
 		const mgr = getOrInitBalloonThemeManager(this);
 		return mgr.setTheme(themeName);
 	},
 
-	async setBalloonTheme(themeName: string) {
-		return this.setTheme(themeName);
+	async setBalloonTheme(this: BalloonThemeActionContext, themeName?: string) {
+		const mgr = getOrInitBalloonThemeManager(this);
+		return mgr.setTheme(themeName);
 	},
 
-	cycleTheme() {
+	cycleTheme(this: BalloonThemeActionContext) {
 		const mgr = getOrInitBalloonThemeManager(this);
 		return mgr.cycleTheme();
 	},
 
-	cycleBalloonTheme() {
-		return this.cycleTheme();
+	cycleBalloonTheme(this: BalloonThemeActionContext) {
+		const mgr = getOrInitBalloonThemeManager(this);
+		return mgr.cycleTheme();
 	},
 
-	applyBalloonScale(scale: number | string) {
+	applyBalloonScale(this: BalloonThemeActionContext, scale: number | string) {
 		const mgr = getOrInitBalloonThemeManager(this);
 		return mgr.applyScale(scale);
 	},
 
-	applyBalloonScaleAction(scale: number | string) {
-		return this.applyBalloonScale(scale);
+	applyBalloonScaleAction(
+		this: BalloonThemeActionContext,
+		scale: number | string,
+	) {
+		const mgr = getOrInitBalloonThemeManager(this);
+		return mgr.applyScale(scale);
 	},
 
-	resetBalloonDescript() {
+	resetBalloonDescript(this: BalloonThemeActionContext) {
 		const mgr = getOrInitBalloonThemeManager(this);
 		mgr.resetDescript();
 	},
 
-	async scanAvailableBalloons() {
+	async scanAvailableBalloons(this: BalloonThemeActionContext) {
 		const mgr = getOrInitBalloonThemeManager(this);
 		return mgr.scanAvailableBalloons();
 	},
 
-	async scanBalloons() {
+	async scanBalloons(this: BalloonThemeActionContext) {
 		const mgr = getOrInitBalloonThemeManager(this);
 		return mgr.scanBalloons();
 	},
 
-	toggleBalloonSide(scopeId: number = 0) {
+	toggleBalloonSide(this: BalloonThemeActionContext, scopeId: number = 0) {
 		const mgr = getOrInitBalloonThemeManager(this);
 		return mgr.toggleBalloonSide(scopeId);
 	},

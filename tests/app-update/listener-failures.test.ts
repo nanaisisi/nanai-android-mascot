@@ -9,7 +9,7 @@ test("updateMethods.startNetworkUpdate handles update-progress listen failure an
 	const savedInternals = globalThis.__TAURI_INTERNALS__;
 
 	// Listen failure
-	globalThis.__TAURI_INTERNALS__ = {
+	const internals = {
 		metadata: { currentWindow: { label: "main" } },
 		invoke: async (cmd: string) => {
 			if (cmd === "check_ghost_update") {
@@ -37,6 +37,7 @@ test("updateMethods.startNetworkUpdate handles update-progress listen failure an
 			},
 		},
 	};
+	globalThis.__TAURI_INTERNALS__ = internals;
 
 	const mockApp = {
 		...updateMethods,
@@ -50,7 +51,7 @@ test("updateMethods.startNetworkUpdate handles update-progress listen failure an
 	await mockApp.startNetworkUpdate();
 
 	// Unlisten failure
-	globalThis.__TAURI_INTERNALS__.plugins.event.listen = async () => () => {
+	internals.plugins.event.listen = async () => () => {
 		throw new Error("unlisten fail");
 	};
 	await mockApp.startNetworkUpdate();

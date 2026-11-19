@@ -324,20 +324,24 @@ export function handleMenuActionImpl(
 		return gc?.selectGhost?.(currentName);
 	}
 	if (action === "reset-shell-position" || action === "resetwindowpos") {
+		const resetShellEl = (el: HTMLElement | null | undefined) => {
+			if (!el) return;
+			if (el.style) {
+				el.style.left = "";
+				el.style.top = "";
+				el.style.transform = "";
+				el.style.margin = "";
+			}
+			el.classList?.remove?.("is-docked-left", "is-docked-right");
+		};
 		context.interactionManager?.resetShellPositions?.();
+		resetShellEl(context.elements?.ghostDisplay);
 		if (typeof document !== "undefined") {
 			const targets = document.querySelectorAll(
 				".ghost-display, .character-slot, .ghost-character, .character-placeholder",
 			);
 			targets.forEach((el) => {
-				const hEl = el as HTMLElement;
-				if (hEl?.style) {
-					hEl.style.left = "";
-					hEl.style.top = "";
-					hEl.style.transform = "";
-					hEl.style.margin = "";
-				}
-				hEl.classList.remove("is-docked-left", "is-docked-right");
+				resetShellEl(el as HTMLElement);
 			});
 		}
 		if (isTauriAvailable()) {
@@ -347,7 +351,23 @@ export function handleMenuActionImpl(
 		return;
 	}
 	if (action === "reset-balloon-position" || action === "resetballoonpos") {
-		context.interactionManager?.resetBalloonPositions?.();
+		if (context.interactionManager) {
+			if (
+				typeof context.interactionManager.resetBalloonPositions === "function"
+			) {
+				context.interactionManager.resetBalloonPositions();
+			} else {
+				context.interactionManager.balloonOffsetX = 0;
+				context.interactionManager.balloonOffsetY = 0;
+			}
+		}
+		if (typeof localStorage !== "undefined") {
+			try {
+				localStorage.removeItem("nanai_balloon_offset");
+			} catch (_e) {
+				// Fallback if localStorage access fails
+			}
+		}
 		if (typeof document !== "undefined") {
 			const balloons = document.querySelectorAll(".balloon-display");
 			balloons.forEach((el) => {

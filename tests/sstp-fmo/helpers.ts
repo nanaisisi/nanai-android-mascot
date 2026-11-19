@@ -20,7 +20,9 @@ export function teardownTauriMock() {
 	delete (globalThis as unknown as Record<string, unknown>).__TAURI_INTERNALS__;
 }
 
-export function createMockRoot() {
+export function createMockRoot(): HTMLElement & {
+	vars: Record<string, string>;
+} {
 	const vars: Record<string, string> = {};
 	return {
 		style: {
@@ -29,11 +31,12 @@ export function createMockRoot() {
 			},
 			removeProperty(k: string) {
 				delete vars[k];
+				return "";
 			},
 			getPropertyValue(k: string) {
 				return vars[k] || "";
 			},
 		},
 		vars,
-	};
+	} as unknown as HTMLElement & { vars: Record<string, string> };
 }

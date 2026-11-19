@@ -1,15 +1,20 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import { SakuraCommandHandler } from "../../ui/ts/ghost/sakura-command-handler.js";
-import { createMockApp, setupMockDom } from "./helpers.js";
+import {
+	createMockApp,
+	createMockPlayer,
+	type MockCommandEvent,
+	setupMockDom,
+} from "./helpers.js";
 
 setupMockDom();
 
 describe("SakuraCommandHandler - Dialog Commands", () => {
 	it("handles open and close commands for extended modal dialogs", async () => {
-		const eventsSent = [];
+		const eventsSent: MockCommandEvent[] = [];
 		const mockApp = createMockApp(eventsSent);
-		const player = { currentScope: 0, app: mockApp };
+		const player = createMockPlayer(mockApp);
 		const handler = new SakuraCommandHandler(player);
 
 		// 12. open passwordinput, textareabox, sliderinput & close dialogs

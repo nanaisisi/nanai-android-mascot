@@ -1,22 +1,27 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-globalThis.window = globalThis;
-globalThis.location = { search: "?name=MockGhost&version=1.0.0" };
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
+globalThis.location = {
+	search: "?name=MockGhost&version=1.0.0",
+} as unknown as Location;
 
-const elements = {};
+const elements: Record<string, { textContent: string }> = {};
 globalThis.document = {
-	getElementById(id) {
+	getElementById(id: string) {
 		elements[id] = elements[id] || { textContent: "" };
-		return elements[id];
+		return elements[id] as unknown as HTMLElement;
 	},
-};
+} as unknown as Document;
 
-let eventListener = null;
+type BannerListener = (event: {
+	payload?: { name?: string; version?: string };
+}) => void;
+let eventListener: BannerListener | null = null;
 globalThis.__TAURI__ = {
 	event: {
-		listen: async (_eventName, cb) => {
-			eventListener = cb;
+		listen: async (_eventName: unknown, cb: unknown) => {
+			eventListener = cb as BannerListener;
 		},
 	},
 };

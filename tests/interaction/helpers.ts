@@ -3,12 +3,12 @@
  */
 
 export function setupInteractionDomGlobals() {
-	globalThis.window = globalThis;
+	globalThis.window = globalThis as unknown as Window & typeof globalThis;
 	globalThis.innerWidth = 800;
 	globalThis.innerHeight = 600;
 	if (!globalThis.document) {
-		globalThis.document = /** @type {any} */ ({
-			createElement(tag) {
+		globalThis.document = {
+			createElement(tag: string) {
 				if (tag === "canvas") {
 					return {
 						width: 0,
@@ -25,7 +25,7 @@ export function setupInteractionDomGlobals() {
 				}
 				return {};
 			},
-		});
+		} as unknown as Document;
 	}
 	if (!globalThis.addEventListener) {
 		globalThis.addEventListener = () => {};

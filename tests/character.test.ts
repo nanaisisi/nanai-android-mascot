@@ -1412,7 +1412,7 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 			},
 		});
 
-		let resolveBalloonSync: (() => void) | null = null;
+		const balloonSync: { resolve: (() => void) | null } = { resolve: null };
 		const internals = (
 			globalThis as unknown as {
 				__TAURI_INTERNALS__: {
@@ -1425,7 +1425,7 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 			if (cmd === "sync_character_balloon") {
 				invokedCommands.push({ cmd, args });
 				return new Promise<void>((resolve) => {
-					resolveBalloonSync = resolve;
+					balloonSync.resolve = resolve;
 				});
 			}
 			return origInvoke(cmd, args);
@@ -1475,7 +1475,7 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 			).toHaveLength(1);
 
 			// Resolving in-flight sync keeps coalesced count at 1 when position is unchanged
-			resolveBalloonSync?.();
+			balloonSync.resolve?.();
 			await flush();
 			expect(
 				invokedCommands.filter((c) => c.cmd === "sync_character_balloon"),

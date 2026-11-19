@@ -1,45 +1,77 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
+import type { AppModalTarget, ModalManager } from "../ui/ts/ui/modal.js";
 
-globalThis.window = globalThis;
+interface MockExplorerRow {
+	className: string;
+	innerHTML: string;
+	_listeners?: Record<string, (event?: unknown) => void>;
+	addEventListener: (type: string, cb: (event?: unknown) => void) => void;
+	click: () => void;
+	dblclick: () => void;
+}
+
+interface MockExplorerElement {
+	value: string;
+	textContent: string;
+	innerHTML: string;
+	children: MockExplorerRow[];
+	_listeners?: Record<string, (event?: unknown) => void>;
+	appendChild: (child: MockExplorerRow) => void;
+	addEventListener: (type: string, cb: (event?: unknown) => void) => void;
+	querySelector: (sel: string) => MockExplorerElement;
+	querySelectorAll: () => unknown[];
+}
+
+interface MockHeaderElement {
+	dataset: Record<string, string>;
+	textContent: string;
+	_listeners?: Record<string, (event?: unknown) => void>;
+	addEventListener: (t: string, cb: (event?: unknown) => void) => void;
+}
+
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
 globalThis.document = {
-	createElement: (_tag) => ({
-		className: "",
-		innerHTML: "",
-		addEventListener(type, cb) {
-			this._listeners = this._listeners || {};
-			this._listeners[type] = cb;
-		},
-		click() {
-			this._listeners?.click?.({});
-		},
-		dblclick() {
-			this._listeners?.dblclick?.({});
-		},
-	}),
-};
+	createElement: (_tag: string) => {
+		const row: MockExplorerRow = {
+			className: "",
+			innerHTML: "",
+			addEventListener(type: string, cb: (event?: unknown) => void) {
+				this._listeners = this._listeners || {};
+				this._listeners[type] = cb;
+			},
+			click() {
+				this._listeners?.click?.({});
+			},
+			dblclick() {
+				this._listeners?.dblclick?.({});
+			},
+		};
+		return row as unknown as HTMLElement;
+	},
+} as unknown as Document;
 
 const { setupExplorerListeners } = await import(
 	"../ui/ts/ui/modal-explorer.js"
 );
 
 test("setupExplorerListeners covers load, render, filtering, sorting, and user actions", async () => {
-	const elements = {};
-	const getEl = (id) => {
+	const elements: Record<string, MockExplorerElement> = {};
+	const getEl = (id: string): MockExplorerElement => {
 		if (!elements[id]) {
 			elements[id] = {
 				value: "",
 				textContent: "",
 				innerHTML: "",
 				children: [],
-				appendChild(child) {
+				appendChild(child: MockExplorerRow) {
 					this.children.push(child);
 				},
-				addEventListener(type, cb) {
+				addEventListener(type: string, cb: (event?: unknown) => void) {
 					this._listeners = this._listeners || {};
 					this._listeners[type] = cb;
 				},
-				querySelector: (sel) => getEl(sel.replace("#", "")),
+				querySelector: (sel: string) => getEl(sel.replace("#", "")),
 				querySelectorAll: () => [],
 			};
 		}
@@ -47,16 +79,18 @@ test("setupExplorerListeners covers load, render, filtering, sorting, and user a
 	};
 
 	const mockModalManager = {
+		_thList: null as MockHeaderElement[] | null,
+		hidden: false,
 		content: {
-			querySelector: (sel) => getEl(sel.replace("#", "")),
-			querySelectorAll: (sel) => {
+			querySelector: (sel: string) => getEl(sel.replace("#", "")),
+			querySelectorAll: (sel: string) => {
 				if (sel === "th[data-sort]") {
 					if (!mockModalManager._thList) {
 						mockModalManager._thList = [
 							{
 								dataset: { sort: "name" },
 								textContent: "Name",
-								addEventListener(t, cb) {
+								addEventListener(t: string, cb: (event?: unknown) => void) {
 									this._listeners = this._listeners || {};
 									this._listeners[t] = cb;
 								},
@@ -64,7 +98,7 @@ test("setupExplorerListeners covers load, render, filtering, sorting, and user a
 							{
 								dataset: { sort: "craftman" },
 								textContent: "Craftman",
-								addEventListener(t, cb) {
+								addEventListener(t: string, cb: (event?: unknown) => void) {
 									this._listeners = this._listeners || {};
 									this._listeners[t] = cb;
 								},
@@ -72,7 +106,7 @@ test("setupExplorerListeners covers load, render, filtering, sorting, and user a
 							{
 								dataset: {},
 								textContent: "NoKey",
-								addEventListener(t, cb) {
+								addEventListener(t: string, cb: (event?: unknown) => void) {
 									this._listeners = this._listeners || {};
 									this._listeners[t] = cb;
 								},
@@ -89,20 +123,28 @@ test("setupExplorerListeners covers load, render, filtering, sorting, and user a
 		},
 	};
 
-	const mockApp = {
-		ghostController: {
-			currentGhost: { name: "Ghost1" },
-			scanGhosts: async () => [
-				{ name: "Ghost1", craftman: "AuthorA", path: "/path1" },
-				{ name: "Ghost2", craftman: "AuthorB", path: "/path2" },
-			],
-			selectGhost: async (name) => {
-				this.selectedName = name;
-			},
+	const mockGhostController: {
+		currentGhost: { name: string };
+		selectedName?: string;
+		scanGhosts: () => Promise<
+			Array<{ name: string; craftman: string; path: string }>
+		>;
+		selectGhost: (name: string) => Promise<void>;
+	} = {
+		currentGhost: { name: "Ghost1" },
+		scanGhosts: async () => [
+			{ name: "Ghost1", craftman: "AuthorA", path: "/path1" },
+			{ name: "Ghost2", craftman: "AuthorB", path: "/path2" },
+		],
+		selectGhost: async (name: string) => {
+			mockGhostController.selectedName = name;
 		},
 	};
+	const mockApp: AppModalTarget = {
+		ghostController: mockGhostController,
+	};
 
-	setupExplorerListeners(mockModalManager, mockApp);
+	setupExplorerListeners(mockModalManager as unknown as ModalManager, mockApp);
 	await new Promise((r) => setTimeout(r, 20));
 
 	// Test search input
@@ -115,7 +157,9 @@ test("setupExplorerListeners covers load, render, filtering, sorting, and user a
 	refreshBtn._listeners?.click?.({});
 
 	// Test sorting: click header ascending, then descending, then new key, then no-key header
-	const thList = mockModalManager.content.querySelectorAll("th[data-sort]");
+	const thList = mockModalManager.content.querySelectorAll(
+		"th[data-sort]",
+	) as MockHeaderElement[];
 	thList[0]._listeners?.click?.({});
 	thList[0]._listeners?.click?.({});
 	thList[1]._listeners?.click?.({});
@@ -133,7 +177,7 @@ test("setupExplorerListeners covers load, render, filtering, sorting, and user a
 	switchBtn._listeners?.click?.({});
 
 	// Test switch btn with no selection
-	mockApp.ghostController.scanGhosts = async () => [];
+	mockGhostController.scanGhosts = async () => [];
 	refreshBtn._listeners?.click?.({});
 	await new Promise((r) => setTimeout(r, 20));
 	switchBtn._listeners?.click?.({});

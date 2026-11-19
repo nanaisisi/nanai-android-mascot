@@ -1,11 +1,23 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 
-const calls = [];
-globalThis.window = globalThis;
+interface InvokeCall {
+	cmd: string;
+	args: {
+		ghostPath: string;
+		shellName: string;
+		surfaceId: string;
+	};
+}
+
+const calls: InvokeCall[] = [];
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
 globalThis.__TAURI_INTERNALS__ = {
 	transformCallback: () => 0,
-	invoke: async (cmd, args) => {
+	invoke: async (
+		cmd: string,
+		args: { ghostPath: string; shellName: string; surfaceId: string },
+	) => {
 		calls.push({ cmd, args });
 		return `mock-data:${cmd}:${args.surfaceId}`;
 	},

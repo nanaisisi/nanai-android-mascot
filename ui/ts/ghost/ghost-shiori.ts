@@ -162,9 +162,6 @@ export const ghostShioriMethods = {
 
 		this._secondTimerId = setInterval(async () => {
 			if (this._secondSending) return;
-			if (this.app?.sakuraPlayer?.isPlaying) {
-				return;
-			}
 			this._secondSending = true;
 			this.uptimeSeconds = (this.uptimeSeconds || 0) + 1;
 			const isSpeaking = this.app?.sakuraPlayer?.isPlaying ? 1 : 0;

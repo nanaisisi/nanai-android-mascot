@@ -4,12 +4,12 @@ import { updateMethods } from "../../ui/ts/core/app-update.js";
 
 describe("core-coverage-boost: app-update edge cases", () => {
 	it("startNetworkUpdate executes checkOnly mode with updates found", async () => {
-		globalThis.window = globalThis;
-		const sentEvents = [];
+		globalThis.window = globalThis as unknown as Window & typeof globalThis;
+		const sentEvents: Array<{ evt: string; args: unknown[] }> = [];
 		let shownBalloon = "";
 
 		globalThis.__TAURI_INTERNALS__ = {
-			invoke: async (cmd) => {
+			invoke: async (cmd: string) => {
 				if (cmd === "check_ghost_update") {
 					return {
 						has_update: true,
@@ -24,7 +24,7 @@ describe("core-coverage-boost: app-update edge cases", () => {
 				}
 				return null;
 			},
-			transformCallback: (cb) => cb,
+			transformCallback: (cb: unknown) => cb,
 			plugins: {
 				event: {
 					listeners: {},
@@ -39,12 +39,12 @@ describe("core-coverage-boost: app-update edge cases", () => {
 			...updateMethods,
 			ghostController: {
 				currentGhost: { name: "TestGhost", path: "/ghost/path" },
-				sendShioriEvent: async (evt, args) => {
+				sendShioriEvent: async (evt: string, args: unknown[]) => {
 					sentEvents.push({ evt, args });
 					return null;
 				},
 			},
-			showBalloon: (msg) => {
+			showBalloon: (msg: string) => {
 				shownBalloon = msg;
 			},
 		};
@@ -59,17 +59,17 @@ describe("core-coverage-boost: app-update edge cases", () => {
 	});
 
 	it("startNetworkUpdate in checkOnly mode handles check failure", async () => {
-		globalThis.window = globalThis;
-		const sentEvents = [];
+		globalThis.window = globalThis as unknown as Window & typeof globalThis;
+		const sentEvents: Array<{ evt: string; args: unknown[] }> = [];
 
 		globalThis.__TAURI_INTERNALS__ = {
-			invoke: async (cmd) => {
+			invoke: async (cmd: string) => {
 				if (cmd === "check_ghost_update") {
 					throw new Error("404 not found");
 				}
 				return null;
 			},
-			transformCallback: (cb) => cb,
+			transformCallback: (cb: unknown) => cb,
 			plugins: {
 				event: {
 					listeners: {},
@@ -84,7 +84,7 @@ describe("core-coverage-boost: app-update edge cases", () => {
 			...updateMethods,
 			ghostController: {
 				currentGhost: { name: "TestGhost", path: "/ghost/path" },
-				sendShioriEvent: async (evt, args) => {
+				sendShioriEvent: async (evt: string, args: unknown[]) => {
 					sentEvents.push({ evt, args });
 					return null;
 				},

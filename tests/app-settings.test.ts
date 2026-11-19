@@ -1,16 +1,29 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-globalThis.window = globalThis;
-globalThis.document = {
-	body: { classList: { toggle() {} } },
-	addEventListener(type, cb) {
+interface MockDocument {
+	body: { classList: { toggle: (token: string, force?: boolean) => boolean } };
+	_listeners?: Record<string, () => void>;
+	addEventListener: (type: string, cb: () => void) => void;
+	visibilityState: DocumentVisibilityState;
+}
+
+const mockDocument: MockDocument = {
+	body: { classList: { toggle: () => false } },
+	addEventListener(type: string, cb: () => void) {
 		this._listeners = this._listeners || {};
 		this._listeners[type] = cb;
 	},
 	visibilityState: "visible",
 };
+
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
+globalThis.document = mockDocument as unknown as Document;
 globalThis.localStorage = {
+	length: 0,
+	clear: () => {},
+	key: () => null,
+	removeItem: () => {},
 	getItem: () =>
 		JSON.stringify({
 			darkMode: true,
@@ -19,7 +32,7 @@ globalThis.localStorage = {
 			balloonTheme: "default",
 		}),
 	setItem: () => {},
-};
+} satisfies Storage;
 
 const { settingsMethods } = await import("../ui/ts/core/app-settings.js");
 
@@ -38,14 +51,14 @@ test("settingsMethods coverage for loadSettings, applySettings, showBalloon, hid
 			balloonText: { textContent: "", innerHTML: "hello" },
 		},
 		currentBalloonTheme: "default",
-		setBalloonTheme(theme) {
+		setBalloonTheme(theme: string) {
 			this.currentBalloonTheme = theme;
 		},
 		applyBalloonTheme() {
 			this.setBalloonTheme(this.settings.balloonTheme);
 		},
 		sakuraPlayer: {
-			play(script) {
+			play(script: string) {
 				return `played:${script}`;
 			},
 		},
@@ -64,7 +77,7 @@ test("settingsMethods coverage for loadSettings, applySettings, showBalloon, hid
 	globalThis.__TAURI_INTERNALS__ = {
 		metadata: { currentWindow: { label: "main" } },
 		invoke: async () => {},
-		transformCallback: (cb) => cb,
+		transformCallback: (cb: unknown) => cb,
 		plugins: { event: { emit: async () => {} } },
 	};
 	mockApp.applySettings();
@@ -76,17 +89,17 @@ test("settingsMethods coverage for loadSettings, applySettings, showBalloon, hid
 	mockApp.hideBalloon(0);
 
 	// Test showBalloon & hideBalloon (Tauri available)
-	const emittedEvents = [];
+	const emittedEvents: Array<{ event: string; payload: unknown }> = [];
 	globalThis.__TAURI_INTERNALS__ = {
 		metadata: { currentWindow: { label: "main" } },
-		invoke: async (cmd) => {
+		invoke: async (cmd: string) => {
 			if (cmd === "show_balloon_window" || cmd === "hide_balloon_window")
 				return;
 		},
-		transformCallback: (cb) => cb,
+		transformCallback: (cb: unknown) => cb,
 		plugins: {
 			event: {
-				emit: async (event, payload) => {
+				emit: async (event: string, payload: unknown) => {
 					emittedEvents.push({ event, payload });
 				},
 			},
@@ -105,22 +118,30 @@ test("settingsMethods coverage for loadSettings, applySettings, showBalloon, hid
 
 	// Test startSecondTimer visibilitychange (visible & hidden branches)
 	mockApp.startSecondTimer();
-	document.visibilityState = "visible";
-	document._listeners?.visibilitychange?.();
-	document.visibilityState = "hidden";
-	document._listeners?.visibilitychange?.();
-	document.visibilityState = "visible";
+	mockDocument.visibilityState = "visible";
+	mockDocument._listeners?.visibilitychange?.();
+	mockDocument.visibilityState = "hidden";
+	mockDocument._listeners?.visibilitychange?.();
+	mockDocument.visibilityState = "visible";
 
 	assert.ok(true);
 });
 
 test("settingsMethods edge branches (missing elements, localStorage error/null, theme fallbacks)", async () => {
-	const mockApp = {
+	const mockApp: typeof settingsMethods & {
+		settings: Record<string, unknown>;
+		elements: {
+			balloonText?: { textContent: string; innerHTML: string };
+			balloonDisplay?: { style: Record<string, unknown> };
+		};
+		currentBalloonTheme: string | null;
+		setBalloonTheme: (theme: string) => void;
+	} = {
 		...settingsMethods,
 		settings: {},
 		elements: {},
 		currentBalloonTheme: null,
-		setBalloonTheme(theme) {
+		setBalloonTheme(theme: string) {
 			this.currentBalloonTheme = theme;
 		},
 	};
@@ -147,7 +168,7 @@ test("settingsMethods edge branches (missing elements, localStorage error/null, 
 	// Test Tauri success with empty innerHTML and null currentBalloonTheme
 	globalThis.__TAURI_INTERNALS__ = {
 		invoke: async () => {},
-		transformCallback: (cb) => cb,
+		transformCallback: (cb: unknown) => cb,
 		plugins: { event: { emit: async () => {} } },
 	};
 	mockApp.elements = {
@@ -161,12 +182,12 @@ test("settingsMethods edge branches (missing elements, localStorage error/null, 
 
 	// Test Tauri error catch for showBalloon, hideBalloon, set_character_scale, & empty innerHTML / null currentBalloonTheme
 	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (cmd) => {
+		invoke: async (cmd: string) => {
 			if (cmd === "show_balloon_window") throw new Error("show fail");
 			if (cmd === "hide_balloon_window") throw new Error("hide fail");
 			if (cmd === "set_character_scale") throw new Error("scale fail");
 		},
-		transformCallback: (cb) => cb,
+		transformCallback: (cb: unknown) => cb,
 		plugins: { event: { emit: async () => {} } },
 	};
 	mockApp.elements = {
@@ -188,13 +209,13 @@ test("showBalloon hides and clears balloon when message is empty or whitespace-o
 	const emitted: Array<{ event: string; payload: unknown }> = [];
 	globalThis.__TAURI_INTERNALS__ = {
 		metadata: { currentWindow: { label: "main" } },
-		invoke: async (cmd, args) => {
+		invoke: async (cmd: string, args: unknown) => {
 			invoked.push({ cmd, args });
 		},
-		transformCallback: (cb) => cb,
+		transformCallback: (cb: unknown) => cb,
 		plugins: {
 			event: {
-				emit: async (event, payload) => {
+				emit: async (event: string, payload: unknown) => {
 					emitted.push({ event, payload });
 				},
 			},

@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { ModalDialogController } from "../../ui/ts/ui/renderers/modal-dialog-controller.js";
+import type { ModalDialogApp } from "../../ui/ts/ui/renderers/modal-dialog-ui.js";
 import {
 	createMockElement,
 	resetCreatedElements,
@@ -7,9 +8,9 @@ import {
 } from "./helpers.js";
 
 describe("ModalDialogController Choice & Extended Events (Slot-11 Cycle 8)", () => {
-	let app: unknown;
-	let controller: unknown;
-	let sentEvents: unknown[];
+	let app: ModalDialogApp;
+	let controller: ModalDialogController;
+	let sentEvents: Array<{ name: string; args: unknown }>;
 
 	beforeEach(() => {
 		setupMockDom();
@@ -19,8 +20,8 @@ describe("ModalDialogController Choice & Extended Events (Slot-11 Cycle 8)", () 
 
 		app = {
 			elements: {
-				balloonText: mockBalloon,
-				keroBalloonText: createMockElement("div"),
+				balloonText: mockBalloon as unknown as HTMLElement,
+				keroBalloonText: createMockElement("div") as unknown as HTMLElement,
 			},
 			ghostController: {
 				sendShioriEvent: async (name: string, args: unknown) => {

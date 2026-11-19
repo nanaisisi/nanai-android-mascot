@@ -1,9 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { NanaiAndroidMascotApp } from "../ui/main.js";
 import { DictationManager } from "../ui/ts/core/actions/dictation.js";
 
 describe("DictationManager", () => {
-	let originalWindow: unknown;
-	let originalSpeechSynthesisUtterance: unknown;
+	let originalWindow: typeof globalThis.window;
+	let originalSpeechSynthesisUtterance: typeof globalThis.SpeechSynthesisUtterance;
 
 	beforeEach(() => {
 		originalWindow = globalThis.window;
@@ -18,9 +19,11 @@ describe("DictationManager", () => {
 
 	it("handles environment without window gracefully", () => {
 		const saved = globalThis.window;
-		delete globalThis.window;
+		delete (globalThis as { window?: Window & typeof globalThis }).window;
 		try {
-			const manager = new DictationManager({});
+			const manager = new DictationManager(
+				{} as unknown as NanaiAndroidMascotApp,
+			);
 			expect(manager.synth).toBeNull();
 			expect(manager.recognition).toBeNull();
 			manager.startListening();
@@ -33,6 +36,14 @@ describe("DictationManager", () => {
 
 	it("initializes speech recognition and handles events", () => {
 		class MockSpeechRecognition {
+			lang: string;
+			interimResults: boolean;
+			maxAlternatives: number;
+			onresult:
+				| ((event: { results: { transcript: string }[][] }) => void)
+				| null;
+			onerror: ((event: { error: unknown }) => void) | null;
+			onend: (() => void) | null;
 			constructor() {
 				this.lang = "";
 				this.interimResults = true;
@@ -46,7 +57,11 @@ describe("DictationManager", () => {
 		}
 
 		class MockSpeechSynthesisUtterance {
-			constructor(text) {
+			text: string;
+			lang: string;
+			rate: number;
+			pitch: number;
+			constructor(text: string) {
 				this.text = text;
 				this.lang = "";
 				this.rate = 0;
@@ -54,14 +69,15 @@ describe("DictationManager", () => {
 			}
 		}
 
-		const mockSpeak = vi.fn();
+		const mockSpeak = vi.fn<(utterance: SpeechSynthesisUtterance) => void>();
 		globalThis.window = {
 			SpeechRecognition: MockSpeechRecognition,
 			speechSynthesis: {
 				speak: mockSpeak,
-			},
-		};
-		globalThis.SpeechSynthesisUtterance = MockSpeechSynthesisUtterance;
+			} as unknown as SpeechSynthesis,
+		} as unknown as Window & typeof globalThis;
+		globalThis.SpeechSynthesisUtterance =
+			MockSpeechSynthesisUtterance as unknown as typeof SpeechSynthesisUtterance;
 
 		const mockApp = {
 			ghostController: {
@@ -69,8 +85,13 @@ describe("DictationManager", () => {
 			},
 		};
 
-		const manager = new DictationManager(mockApp);
+		const manager = new DictationManager(
+			mockApp as unknown as NanaiAndroidMascotApp,
+		);
 		expect(manager.recognition).toBeInstanceOf(MockSpeechRecognition);
+		if (!manager.recognition) {
+			throw new Error("Expected manager.recognition to be initialized");
+		}
 		expect(manager.recognition.lang).toBe("ja-JP");
 		expect(manager.isListening).toBe(false);
 
@@ -86,7 +107,7 @@ describe("DictationManager", () => {
 		const fakeEvent = {
 			results: [[{ transcript: "こんにちは、ナナイ" }]],
 		};
-		manager.recognition.onresult(fakeEvent);
+		manager.recognition.onresult?.(fakeEvent);
 		expect(mockApp.ghostController.sendShioriEvent).toHaveBeenCalledWith(
 			"OnUserInput",
 			["こんにちは、ナナイ"],
@@ -96,14 +117,14 @@ describe("DictationManager", () => {
 		const consoleWarnSpy = vi
 			.spyOn(console, "warn")
 			.mockImplementation(() => {});
-		manager.recognition.onerror({ error: "network" });
+		manager.recognition.onerror?.({ error: "network" });
 		expect(consoleWarnSpy).toHaveBeenCalledWith(
 			"⚠️ [Dictation] Speech recognition error:",
 			"network",
 		);
 
 		// onend event
-		manager.recognition.onend();
+		manager.recognition.onend?.();
 		expect(manager.isListening).toBe(false);
 
 		// stopListening when listening
@@ -160,15 +181,20 @@ describe("DictationManager", () => {
 
 		globalThis.window = {
 			webkitSpeechRecognition: MockWebkitSpeechRecognition,
-			speechSynthesis: {},
-		};
+			speechSynthesis: {} as unknown as SpeechSynthesis,
+		} as unknown as Window & typeof globalThis;
 
-		const manager = new DictationManager(null);
+		const manager = new DictationManager(
+			null as unknown as NanaiAndroidMascotApp,
+		);
 		expect(manager.recognition).toBeInstanceOf(MockWebkitSpeechRecognition);
 	});
 
 	it("handles onresult when app or ghostController or sendShioriEvent is missing", () => {
 		class MockSpeechRecognition {
+			onresult:
+				| ((event: { results: { transcript: string }[][] }) => void)
+				| null;
 			constructor() {
 				this.onresult = null;
 			}
@@ -177,17 +203,31 @@ describe("DictationManager", () => {
 		}
 		globalThis.window = {
 			SpeechRecognition: MockSpeechRecognition,
-			speechSynthesis: {},
-		};
+			speechSynthesis: {} as unknown as SpeechSynthesis,
+		} as unknown as Window & typeof globalThis;
 
-		const manager1 = new DictationManager(null);
+		const manager1 = new DictationManager(
+			null as unknown as NanaiAndroidMascotApp,
+		);
+		const rec1 = manager1.recognition;
+		if (!rec1?.onresult) {
+			throw new Error("Expected manager1.recognition.onresult to be set");
+		}
+		const onResult1 = rec1.onresult;
 		expect(() =>
-			manager1.recognition.onresult({ results: [[{ transcript: "test" }]] }),
+			onResult1({ results: [[{ transcript: "test" }]] }),
 		).not.toThrow();
 
-		const manager2 = new DictationManager({});
+		const manager2 = new DictationManager(
+			{} as unknown as NanaiAndroidMascotApp,
+		);
+		const rec2 = manager2.recognition;
+		if (!rec2?.onresult) {
+			throw new Error("Expected manager2.recognition.onresult to be set");
+		}
+		const onResult2 = rec2.onresult;
 		expect(() =>
-			manager2.recognition.onresult({ results: [[{ transcript: "test" }]] }),
+			onResult2({ results: [[{ transcript: "test" }]] }),
 		).not.toThrow();
 	});
 });

@@ -1,5 +1,22 @@
 import { vi } from "vitest";
 import { eventMethods } from "../../ui/ts/core/app-events.js";
+import type { LifecycleContext } from "../../ui/ts/ghost/shiori-notify/ghost-lifecycle/lifecycle-events.js";
+import { shioriNotifyMethods } from "../../ui/ts/ghost/shiori-notify.js";
+
+export type MockNotifyObject = Omit<
+	typeof shioriNotifyMethods,
+	"sendShioriNotify"
+> &
+	LifecycleContext;
+
+export function createMockNotifyObj(
+	controller: MockShioriController,
+): MockNotifyObject {
+	return {
+		...shioriNotifyMethods,
+		sendShioriNotify: controller.sendShioriNotify,
+	} as unknown as MockNotifyObject;
+}
 
 export interface MockShioriController {
 	app: { ghostId: string };

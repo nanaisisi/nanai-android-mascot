@@ -65,3 +65,5 @@ if (tauriApi) {
 		);
 	}
 }
+
+export {};

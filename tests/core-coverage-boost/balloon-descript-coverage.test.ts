@@ -6,12 +6,12 @@ import { applySpecialFontProperties } from "../../ui/ts/core/actions/balloon-des
 
 describe("core-coverage-boost: balloon-descript edge cases (font & assets)", () => {
 	it("applyBaseFontProperties handles font.size pt-to-px, styles, decorations, outline, and shadow", () => {
-		const styleMap = new Map();
+		const styleMap = new Map<string, string>();
 		const mockRoot = {
 			style: {
-				setProperty: (k, v) => styleMap.set(k, v),
+				setProperty: (k: string, v: string) => styleMap.set(k, v),
 			},
-		};
+		} as unknown as HTMLElement;
 
 		const props = {
 			id: "custom-balloon",
@@ -55,12 +55,12 @@ describe("core-coverage-boost: balloon-descript edge cases (font & assets)", () 
 	});
 
 	it("applySpecialFontProperties handles number, sstp, and disable font properties", () => {
-		const styleMap = new Map();
+		const styleMap = new Map<string, string>();
 		const mockRoot = {
 			style: {
-				setProperty: (k, v) => styleMap.set(k, v),
+				setProperty: (k: string, v: string) => styleMap.set(k, v),
 			},
-		};
+		} as unknown as HTMLElement;
 
 		const props = {
 			"cursor.font.color": "rgb(200, 200, 200)",
@@ -98,13 +98,16 @@ describe("core-coverage-boost: balloon-descript edge cases (font & assets)", () 
 	});
 
 	it("applyAssetProperties handles markers, coordinates, alpha options, and vertical writing mode", () => {
-		const styleMap = new Map();
+		const styleMap = new Map<string, string>();
 		const mockRoot = {
 			style: {
-				setProperty: (k, v) => styleMap.set(k, v),
+				setProperty: (k: string, v: string) => styleMap.set(k, v),
 			},
-		};
-		const instance = { currentBalloonTheme: "test-theme" };
+		} as unknown as HTMLElement;
+		const instance: {
+			currentBalloonTheme: string;
+			onlineMarkerInterval?: number;
+		} = { currentBalloonTheme: "test-theme" };
 
 		const props = {
 			readme: "readme.txt",

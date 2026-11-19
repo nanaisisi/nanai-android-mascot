@@ -44,11 +44,13 @@ describe("InternalWindowManager & VirtualWindow - Interactions", () => {
 		);
 		assert.ok(seHandle);
 
-		let mouseMoveCb: ((e?: unknown) => void) | null = null;
-		let mouseUpCb: (() => void) | null = null;
+		const handlers: {
+			mouseMove?: (e?: unknown) => void;
+			mouseUp?: () => void;
+		} = {};
 		globalThis.addEventListener = ((evt: string, cb: (e?: unknown) => void) => {
-			if (evt === "mousemove") mouseMoveCb = cb;
-			if (evt === "mouseup") mouseUpCb = cb as () => void;
+			if (evt === "mousemove") handlers.mouseMove = cb;
+			if (evt === "mouseup") handlers.mouseUp = cb as () => void;
 		}) as unknown as typeof globalThis.addEventListener;
 		globalThis.removeEventListener =
 			(() => {}) as unknown as typeof globalThis.removeEventListener;
@@ -61,8 +63,8 @@ describe("InternalWindowManager & VirtualWindow - Interactions", () => {
 		} as unknown as MouseEvent);
 		assert.equal(win.isResizing, true);
 
-		mouseMoveCb?.({ clientX: 150, clientY: 150 });
-		mouseUpCb?.();
+		handlers.mouseMove?.({ clientX: 150, clientY: 150 });
+		handlers.mouseUp?.();
 
 		assert.equal(win.isResizing, false);
 	});
@@ -73,11 +75,13 @@ describe("InternalWindowManager & VirtualWindow - Interactions", () => {
 		});
 		assert.ok(win.titleBarElement);
 
-		let mouseMoveCb: ((e?: unknown) => void) | null = null;
-		let mouseUpCb: (() => void) | null = null;
+		const handlers: {
+			mouseMove?: (e?: unknown) => void;
+			mouseUp?: () => void;
+		} = {};
 		globalThis.addEventListener = ((evt: string, cb: (e?: unknown) => void) => {
-			if (evt === "mousemove") mouseMoveCb = cb;
-			if (evt === "mouseup") mouseUpCb = cb as () => void;
+			if (evt === "mousemove") handlers.mouseMove = cb;
+			if (evt === "mouseup") handlers.mouseUp = cb as () => void;
 		}) as unknown as typeof globalThis.addEventListener;
 		globalThis.removeEventListener =
 			(() => {}) as unknown as typeof globalThis.removeEventListener;
@@ -91,8 +95,8 @@ describe("InternalWindowManager & VirtualWindow - Interactions", () => {
 		} as unknown as MouseEvent);
 		assert.equal(win.isDragging, true);
 
-		mouseMoveCb?.({ clientX: 80, clientY: 90 });
-		mouseUpCb?.();
+		handlers.mouseMove?.({ clientX: 80, clientY: 90 });
+		handlers.mouseUp?.();
 
 		assert.equal(win.isDragging, false);
 	});

@@ -55,7 +55,7 @@ describe("Balloon Skin & Typography Cycle 9 Robustness (Slot-10)", () => {
 						cssVars[k] = v;
 					},
 				},
-			};
+			} as unknown as HTMLElement;
 
 			applyBaseFontProperties(mockRoot, {
 				"font.shadowcolor": "100, 100, 100",
@@ -86,7 +86,7 @@ describe("Balloon Skin & Typography Cycle 9 Robustness (Slot-10)", () => {
 						cssVars[k] = v;
 					},
 				},
-			};
+			} as unknown as HTMLElement;
 
 			applyBaseFontProperties(mockRoot, {
 				"font.shadowcolor": "0, 0, 0",
@@ -104,7 +104,7 @@ describe("Balloon Skin & Typography Cycle 9 Robustness (Slot-10)", () => {
 						cssVars[k] = v;
 					},
 				},
-			};
+			} as unknown as HTMLElement;
 
 			applyBaseFontProperties(mockRoot, {
 				"font.outline": "1",
@@ -124,8 +124,13 @@ describe("Balloon Skin & Typography Cycle 9 Robustness (Slot-10)", () => {
 						cssVars[k] = v;
 					},
 				},
-			};
-			const instanceContext = {
+			} as unknown as HTMLElement;
+			const instanceContext: {
+				scopeId: number;
+				balloonAlignment: string;
+				balloonDontMove?: boolean;
+				balloonSyncScale?: boolean;
+			} = {
 				scopeId: 2,
 				balloonAlignment: "",
 			};
@@ -159,7 +164,7 @@ describe("Balloon Skin & Typography Cycle 9 Robustness (Slot-10)", () => {
 						cssVars[k] = v;
 					},
 				},
-			};
+			} as unknown as HTMLElement;
 
 			applyAlignmentProperties(
 				mockRoot,
@@ -209,7 +214,7 @@ describe("Balloon Skin & Typography Cycle 9 Robustness (Slot-10)", () => {
 			});
 
 			assert.equal(mgr.validRectCacheSize, 1);
-			assert.equal(mgr.hasValidRectCache("12_10_12_10_stretch_test.png"), true);
+			assert.equal(mgr.hasValidRectCache("12_10_12_10_test.png"), true);
 			assert.equal(mgr.hasValidRectCache("non_existent"), false);
 
 			mgr.clearValidRectCache();

@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
+import type { NanaiAndroidMascotApp } from "../ui/main.js";
 
 const deferred = () => {
-	let resolve: ((value?: unknown) => void) | undefined;
+	let resolve: (value?: unknown) => void = () => {};
 	const promise = new Promise((r) => {
 		resolve = r;
 	});
@@ -12,18 +13,24 @@ const deferred = () => {
 const calls: string[] = [];
 let showGate: ReturnType<typeof deferred> | undefined;
 let hideGate: ReturnType<typeof deferred> | undefined;
-globalThis.window = globalThis;
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
 globalThis.__TAURI_INTERNALS__ = {
 	transformCallback: () => 0,
-	invoke: async (cmd) => {
+	invoke: async (cmd: string) => {
 		calls.push(cmd);
 		if (cmd === "show_loading_banner_window") await showGate?.promise;
 		if (cmd === "hide_loading_banner_window") await hideGate?.promise;
 		return null;
 	},
 };
-globalThis.localStorage = { setItem() {}, getItem: () => null };
-globalThis.document = { getElementById: () => null, querySelector: () => null };
+globalThis.localStorage = {
+	setItem() {},
+	getItem: () => null,
+} as unknown as Storage;
+globalThis.document = {
+	getElementById: () => null,
+	querySelector: () => null,
+} as unknown as Document;
 
 const { GhostController } = await import("../ui/ts/ghost/ghost.js");
 
@@ -35,11 +42,11 @@ function setup() {
 	const app = {
 		surfaceManager: { loadSurfacesTxt: () => assets.promise },
 		settings: { autoSwitchBalloonWithGhost: false },
-	};
+	} as unknown as NanaiAndroidMascotApp;
 	const gc = new GhostController(app);
 	gc.ghosts = [{ name: "g", path: "ghost/g" }];
 	gc.updateGhostCharacter = async () => {};
-	gc.sendShioriEvent = async (event) => {
+	gc.sendShioriEvent = async (event: string) => {
 		calls.push(event);
 	};
 	gc.startSecondChangeTimer = () => {};
@@ -52,11 +59,11 @@ test("boot waits for assets and for banner to finish hiding", async () => {
 	assets.resolve();
 	await new Promise((r) => setImmediate(r));
 	assert.equal(calls.includes("OnBoot"), false);
-	showGate.resolve();
+	showGate?.resolve();
 	await new Promise((r) => setImmediate(r));
 	assert.equal(calls.includes("OnBoot"), false);
 	assert.equal(calls.includes("hide_loading_banner_window"), true);
-	hideGate.resolve();
+	hideGate?.resolve();
 	await starting;
 	assert.ok(
 		calls.indexOf("hide_loading_banner_window") < calls.indexOf("OnBoot"),
@@ -66,12 +73,15 @@ test("boot waits for assets and for banner to finish hiding", async () => {
 test("automatic startup waits until selected ghost is ready", async () => {
 	for (const initialGhostName of ["g", undefined]) {
 		const { gc } = setup();
-		gc.app.initialGhostName = initialGhostName;
+		gc.app.initialGhostName = initialGhostName ?? null;
 		gc.scanGhosts = async () => {
 			gc.ghosts = [{ name: "g", path: "ghost/g" }];
+			return gc.ghosts;
 		};
 		const gate = deferred();
-		gc.selectGhost = () => gate.promise;
+		gc.selectGhost = async () => {
+			await gate.promise;
+		};
 		let finished = false;
 		const startup = gc.autoLoadGhost().then(() => {
 			finished = true;
@@ -88,9 +98,9 @@ test("stale ghost load cannot hide the next ghost's banner or boot", async () =>
 	const { gc, assets } = setup();
 	const first = gc.selectGhost("g");
 	const second = gc.selectGhost("g");
-	showGate.resolve();
+	showGate?.resolve();
 	assets.resolve();
-	hideGate.resolve();
+	hideGate?.resolve();
 	await Promise.all([first, second]);
 	assert.equal(calls.filter((c) => c === "OnBoot").length, 1);
 });

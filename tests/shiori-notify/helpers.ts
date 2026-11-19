@@ -3,6 +3,10 @@
  * @description Helper functions and mock environments for SHIORI notify tests.
  */
 
+import type { CoreContext } from "../../ui/ts/ghost/shiori-notify/core.js";
+import type { BootContext } from "../../ui/ts/ghost/shiori-notify/ghost-lifecycle/boot.js";
+import type { GhostCallsContext } from "../../ui/ts/ghost/shiori-notify/ghost-lifecycle/ghost-calls.js";
+import type { LifecycleContext } from "../../ui/ts/ghost/shiori-notify/ghost-lifecycle/lifecycle-events.js";
 import { shioriNotifyMethods } from "../../ui/ts/ghost/shiori-notify.js";
 
 export interface MockIpcCall {
@@ -32,7 +36,40 @@ export interface MockControllerOptions {
 	balloonPaths?: string[];
 }
 
-export function createMockController(options: MockControllerOptions = {}) {
+export type MockNotifyController = Omit<
+	typeof shioriNotifyMethods,
+	"sendShioriNotify" | "sendCapabilityNotify"
+> &
+	LifecycleContext &
+	BootContext &
+	GhostCallsContext & {
+		sendShioriNotify: (
+			event: string,
+			references?: unknown[],
+		) => Promise<unknown>;
+		sendCapabilityNotify: () => Promise<unknown>;
+		app: { ghostId: string };
+		currentGhost: {
+			name: string;
+			sakura_name: string;
+			kero_name: string;
+			path: string;
+		};
+		ghosts: Array<{
+			name: string;
+			sakura_name: string;
+			kero_name: string;
+			path: string;
+		}>;
+		shells: string[];
+		balloons: string[];
+		balloonPaths: string[];
+		[key: string]: unknown;
+	};
+
+export function createMockController(
+	options: MockControllerOptions = {},
+): MockNotifyController {
 	const ghostName = options.ghostName ?? "Ghost1";
 	const sakuraName = options.sakuraName ?? "Sakura1";
 	const keroName = options.keroName ?? "Kero1";
@@ -40,6 +77,17 @@ export function createMockController(options: MockControllerOptions = {}) {
 
 	return {
 		...shioriNotifyMethods,
+		sendShioriNotify(
+			this: CoreContext,
+			event: string,
+			references: unknown[] = [],
+		) {
+			return shioriNotifyMethods.sendShioriNotify.call(
+				this,
+				event,
+				references as Array<string | number>,
+			);
+		},
 		app: { ghostId: options.ghostId ?? "main" },
 		currentGhost: {
 			name: ghostName,
@@ -67,14 +115,14 @@ export function createMockController(options: MockControllerOptions = {}) {
 			"assets/balloon/default",
 			"assets/balloon/modern",
 		],
-	};
+	} as unknown as MockNotifyController;
 }
 
 export function setupMockTauriIpc(
 	calls: MockIpcCall[],
 	handler?: (cmd: string, args: unknown) => Promise<unknown> | unknown,
 ) {
-	globalThis.window = globalThis;
+	globalThis.window = globalThis as unknown as Window & typeof globalThis;
 	(globalThis as unknown as Record<string, unknown>).__TAURI_INTERNALS__ = {
 		invoke: async (cmd: string, args: unknown) => {
 			calls.push({ cmd, args: args as MockIpcCall["args"] });

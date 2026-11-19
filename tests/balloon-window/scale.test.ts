@@ -11,17 +11,25 @@ import { setupBalloonMockEnvironment } from "./mock-balloon-env.js";
 test("updateBalloonWindowScale updates style transform with user and dpi scale", () => {
 	setupBalloonMockEnvironment();
 
-	const mockBox = { style: { transform: "", transformOrigin: "" } } as unknown;
+	const mockBox = { style: { transform: "", transformOrigin: "" } };
 
-	const s1 = updateBalloonWindowScale(mockBox, 1.5, 1.0);
+	const s1 = updateBalloonWindowScale(
+		mockBox as unknown as HTMLElement,
+		1.5,
+		1.0,
+	);
 	assert.strictEqual(s1, 1.5);
 	assert.strictEqual(mockBox.style.transform, "scale(1.5)");
 	assert.strictEqual(mockBox.style.transformOrigin, "top left");
 
-	const s2 = updateBalloonWindowScale(mockBox, 1.0, 0.8);
+	const s2 = updateBalloonWindowScale(
+		mockBox as unknown as HTMLElement,
+		1.0,
+		0.8,
+	);
 	assert.strictEqual(s2, 0.8);
 	assert.strictEqual(mockBox.style.transform, "scale(0.8)");
 
 	// Null safety
-	updateBalloonWindowScale(null as unknown, 1.0, 1.0);
+	updateBalloonWindowScale(null, 1.0, 1.0);
 });

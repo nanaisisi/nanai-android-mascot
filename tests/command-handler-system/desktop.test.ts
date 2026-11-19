@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-globalThis.window = globalThis;
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
 
 import {
 	handleExecuteResetBalloonPos,
@@ -9,9 +9,10 @@ import {
 	handleSetTaskTrayIcon,
 	handleSetTrayBalloon,
 } from "../../ui/ts/ghost/command-handler/system/desktop.js";
+import type { SakuraCommandHandler } from "../../ui/ts/ghost/sakura-command-handler.js";
 
 describe("system/desktop.js", () => {
-	let originalTauri: unknown;
+	let originalTauri: typeof globalThis.__TAURI__;
 
 	beforeEach(() => {
 		originalTauri = globalThis.__TAURI__;
@@ -24,7 +25,9 @@ describe("system/desktop.js", () => {
 
 	it("handleSetAlignmentOnDesktop handles positioning and 'free' mode", async () => {
 		class MockPhysicalPosition {
-			constructor(x, y) {
+			x: number;
+			y: number;
+			constructor(x: number, y: number) {
 				this.x = x;
 				this.y = y;
 			}
@@ -44,9 +47,9 @@ describe("system/desktop.js", () => {
 				}),
 				PhysicalPosition: MockPhysicalPosition,
 			},
-		};
+		} as unknown as typeof globalThis.__TAURI__;
 
-		const handler = { app: {} };
+		const handler = { app: {} } as unknown as SakuraCommandHandler;
 		await handleSetAlignmentOnDesktop(handler, [
 			"set",
 			"alignmentondesktop",
@@ -66,14 +69,14 @@ describe("system/desktop.js", () => {
 	});
 
 	it("handleExecuteResetWindowPos & handleExecuteResetBalloonPos dispatch actions", async () => {
-		const dispatched = [];
+		const dispatched: string[] = [];
 		const handler = {
 			app: {
-				dispatchAction: async (action) => {
+				dispatchAction: async (action: string) => {
 					dispatched.push(action);
 				},
 			},
-		};
+		} as unknown as SakuraCommandHandler;
 
 		await handleExecuteResetWindowPos(handler, []);
 		expect(dispatched).toContain("reset-shell-position");
@@ -83,45 +86,53 @@ describe("system/desktop.js", () => {
 	});
 
 	it("handleSetTaskTrayIcon & handleSetTrayBalloon invoke Tauri when available", async () => {
-		globalThis.__TAURI_INTERNALS__ = {
+		const tauriInternals = {
 			invoke: vi.fn().mockResolvedValue(undefined),
 		};
+		const globalWithInternals = globalThis as unknown as {
+			__TAURI_INTERNALS__?: typeof tauriInternals;
+		};
+		globalWithInternals.__TAURI_INTERNALS__ = tauriInternals;
 
-		await handleSetTaskTrayIcon({}, ["set", "tasktrayicon", "test.ico"]);
-		expect(globalThis.__TAURI_INTERNALS__.invoke).toHaveBeenCalledWith(
+		await handleSetTaskTrayIcon({} as unknown as SakuraCommandHandler, [
+			"set",
+			"tasktrayicon",
+			"test.ico",
+		]);
+		expect(tauriInternals.invoke).toHaveBeenCalledWith(
 			"set_tray_icon",
 			{ iconPath: "test.ico" },
 			undefined,
 		);
 
-		await handleSetTrayBalloon({}, [
+		await handleSetTrayBalloon({} as unknown as SakuraCommandHandler, [
 			"set",
 			"trayballoon",
 			"Sample Title",
 			"Sample Msg",
 		]);
-		expect(globalThis.__TAURI_INTERNALS__.invoke).toHaveBeenCalledWith(
+		expect(tauriInternals.invoke).toHaveBeenCalledWith(
 			"show_tray_notification",
 			{ title: "Sample Title", text: "Sample Msg" },
 			undefined,
 		);
 
-		delete globalThis.__TAURI_INTERNALS__;
+		delete globalWithInternals.__TAURI_INTERNALS__;
 	});
 
 	it("handleSetTrayBalloon and reset commands trigger SHIORI events", async () => {
 		vi.useFakeTimers();
-		const events = [];
+		const events: Array<{ name: string; refs: string[] }> = [];
 		const handler = {
 			app: {
 				dispatchAction: vi.fn(),
 				ghostController: {
-					sendShioriEvent: vi.fn(async (name, refs) => {
+					sendShioriEvent: vi.fn(async (name: string, refs: string[]) => {
 						events.push({ name, refs });
 					}),
 				},
 			},
-		};
+		} as unknown as SakuraCommandHandler;
 
 		await handleSetTrayBalloon(handler, [
 			"set",

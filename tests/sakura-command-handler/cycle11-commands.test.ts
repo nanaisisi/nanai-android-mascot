@@ -4,13 +4,18 @@ import {
 	SakuraCommandHandler,
 	scriptLifetimeState,
 } from "../../ui/ts/ghost/sakura-command-handler.js";
-import { createMockApp, setupMockDom } from "./helpers.js";
+import {
+	createMockApp,
+	createMockPlayer,
+	type MockCommandEvent,
+	setupMockDom,
+} from "./helpers.js";
 
 setupMockDom();
 
 describe("SakuraCommandHandler - Cycle 11 Extended Commands", () => {
 	it("handles get,property command and emits event with resolved property values", async () => {
-		const eventsSent: Array<{ ev: string; args: unknown[] }> = [];
+		const eventsSent: MockCommandEvent[] = [];
 		const mockApp = createMockApp(eventsSent);
 
 		// Mock evaluateProperty on ghostController
@@ -20,7 +25,7 @@ describe("SakuraCommandHandler - Cycle 11 Extended Commands", () => {
 			return null;
 		};
 
-		const player = { currentScope: 0, app: mockApp };
+		const player = createMockPlayer(mockApp);
 		const handler = new SakuraCommandHandler(player);
 
 		scriptLifetimeState.setVariable("custom.temp", "customValue");
@@ -41,7 +46,7 @@ describe("SakuraCommandHandler - Cycle 11 Extended Commands", () => {
 	});
 
 	it("falls back to property.get SHIORI event if evaluateProperty is unavailable", async () => {
-		const eventsSent: Array<{ ev: string; args: unknown[] }> = [];
+		const eventsSent: MockCommandEvent[] = [];
 		const mockApp = createMockApp(eventsSent);
 
 		mockApp.ghostController.sendShioriEvent = async (
@@ -56,7 +61,7 @@ describe("SakuraCommandHandler - Cycle 11 Extended Commands", () => {
 			return { response: { value: "" } };
 		};
 
-		const player = { currentScope: 0, app: mockApp };
+		const player = createMockPlayer(mockApp);
 		const handler = new SakuraCommandHandler(player);
 
 		await handler.runCommand([

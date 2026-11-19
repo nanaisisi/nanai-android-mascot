@@ -95,24 +95,41 @@ test("balloon-window covers interactive elements, theme/manifest loading, and Ta
 
 	// 6. Test submodules directly
 	const mockBox = { style: { transform: "", transformOrigin: "" } };
-	const scaleResult = updateBalloonWindowScale(mockBox, 1.25, 0.8);
+	const scaleResult = updateBalloonWindowScale(
+		mockBox as unknown as HTMLElement,
+		1.25,
+		0.8,
+	);
 	assert.strictEqual(scaleResult, 1);
-	const scaleResult2 = updateScaleDirect(mockBox, 1.5, 1.0);
+	const scaleResult2 = updateScaleDirect(
+		mockBox as unknown as HTMLElement,
+		1.5,
+		1.0,
+	);
 	assert.strictEqual(scaleResult2, 1.5);
 	assert.strictEqual(mockBox.style.transform, "scale(1.5)");
 	updateScaleDirect(null, 1.0, 1.0);
 
-	setupInteractiveElements(null, 0);
-	const choiceBtn = {
+	setupInteractiveElements(null as unknown as HTMLElement, 0);
+	const choiceBtn: {
+		getAttribute: () => string;
+		textContent: string;
+		_cb?: (e?: unknown) => void;
+		addEventListener: (_t: unknown, cb: (e?: unknown) => void) => void;
+	} = {
 		getAttribute: () => "choice_direct",
 		textContent: "Direct Choice",
-		addEventListener(_t: unknown, cb: unknown) {
+		addEventListener(_t: unknown, cb: (e?: unknown) => void) {
 			this._cb = cb;
 		},
 	};
-	const anchorLink = {
+	const anchorLink: {
+		getAttribute: () => string;
+		_cb?: (e?: unknown) => void;
+		addEventListener: (_t: unknown, cb: (e?: unknown) => void) => void;
+	} = {
 		getAttribute: () => "anchor_direct",
-		addEventListener(_t: unknown, cb: unknown) {
+		addEventListener(_t: unknown, cb: (e?: unknown) => void) {
 			this._cb = cb;
 		},
 	};
@@ -123,7 +140,7 @@ test("balloon-window covers interactive elements, theme/manifest loading, and Ta
 			return [];
 		},
 	};
-	setupInteractiveDirect(mockText, 1);
+	setupInteractiveDirect(mockText as unknown as HTMLElement, 1);
 	choiceBtn._cb?.({ stopPropagation() {} });
 	anchorLink._cb?.({ stopPropagation() {} });
 
@@ -135,7 +152,7 @@ test("balloon-window covers interactive elements, theme/manifest loading, and Ta
 	assert.ok(loadedChar);
 
 	let callbackDpi = 0;
-	let callbackDontMove = null;
+	let callbackDontMove: unknown = null;
 	const themeRes = await applyBalloonDescript({
 		theme: "ivory",
 		scopeId: 0,
@@ -154,12 +171,12 @@ test("balloon-window covers interactive elements, theme/manifest loading, and Ta
 	let userScaleState = 1.0;
 	const mockGestureBox = {
 		style: { transform: "", transformOrigin: "" },
-		listeners: {},
-		addEventListener(ev: string | number, cb: unknown) {
-			this.listeners[ev] = cb;
+		listeners: {} as Record<string, (e?: unknown) => void>,
+		addEventListener(ev: string | number, cb: (e?: unknown) => void) {
+			this.listeners[String(ev)] = cb;
 		},
 	};
-	setupGesturesDirect(mockGestureBox, {
+	setupGesturesDirect(mockGestureBox as unknown as HTMLElement, {
 		scopeId: 0,
 		getIsBalloonDontMove: () => false,
 		getUserScale: () => userScaleState,
@@ -200,10 +217,15 @@ test("balloon-window covers interactive elements, theme/manifest loading, and Ta
 	mockGestureBox.listeners.touchend({ touches: [] });
 	const pinchRequestEvent = env.emittedEvents.find(
 		(e) =>
-			e.event === "request-balloon-scale-change" && e.payload?.userScale > 1.25,
+			e.event === "request-balloon-scale-change" &&
+			typeof e.payload?.userScale === "number" &&
+			e.payload.userScale > 1.25,
 	);
 	assert.ok(pinchRequestEvent);
-	setupWindowGestures(null, {});
+	setupWindowGestures(
+		null,
+		{} as unknown as Parameters<typeof setupWindowGestures>[1],
+	);
 
 	delete globalThis.__TAURI__;
 	delete globalThis.__TAURI_INTERNALS__;
@@ -484,16 +506,16 @@ test("balloon-window updates scroll on content, invokes resize_balloon_window on
 
 	try {
 		const balloonBox = enhanceMockElement(
-			env.getEl("balloon-box") as Record<string, unknown>,
+			env.getEl("balloon-box") as unknown as Record<string, unknown>,
 		);
 		const balloonText = enhanceMockElement(
-			env.getEl("balloon-text") as Record<string, unknown>,
+			env.getEl("balloon-text") as unknown as Record<string, unknown>,
 		);
 		const arrowUp = enhanceMockElement(
-			env.getEl("balloon-arrow-up") as Record<string, unknown>,
+			env.getEl("balloon-arrow-up") as unknown as Record<string, unknown>,
 		);
 		const arrowDown = enhanceMockElement(
-			env.getEl("balloon-arrow-down") as Record<string, unknown>,
+			env.getEl("balloon-arrow-down") as unknown as Record<string, unknown>,
 		);
 		balloonText.scrollTop = 0;
 		balloonText.clientHeight = 100;

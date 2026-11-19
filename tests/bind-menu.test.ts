@@ -35,6 +35,7 @@ test("bind-menu functions cover options, grouping, payload, seeding, and surface
 	assert.equal(bindGroupsForScope(manifest, 1).length, 0);
 
 	const option = bindOptionForScope(manifest, 0);
+	assert.ok(option);
 	assert.equal(option.category, "Hat");
 	assert.equal(option.options[0], "multiple");
 

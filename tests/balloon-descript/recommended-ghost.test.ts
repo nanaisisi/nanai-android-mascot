@@ -80,20 +80,30 @@ describe("recommended.ghost and recommended.ghost.path UKADOC verification", () 
 			currentGhostName: "Emily",
 			currentGhostPath: "/app/ghost/emily",
 		};
-		applyAssetProperties(mockRoot, props, matchingInstance as unknown);
+		applyAssetProperties(
+			mockRoot,
+			props,
+			matchingInstance as unknown as Parameters<typeof applyAssetProperties>[2],
+		);
 
-		assert.equal(vars["--balloon-recommended-ghost"], "Emily");
-		assert.equal(vars["--balloon-recommended-ghost-path"], "ghost/emily");
-		assert.equal(vars["--balloon-recommended-warning"], undefined);
+		const getVar = (key: string): string | undefined => vars[key];
+		assert.equal(getVar("--balloon-recommended-ghost"), "Emily");
+		assert.equal(getVar("--balloon-recommended-ghost-path"), "ghost/emily");
+		assert.equal(getVar("--balloon-recommended-warning"), undefined);
 
 		// Mismatched instance
 		const mismatchInstance = {
 			currentGhostName: "Sakura",
 			currentGhostPath: "/app/ghost/sakura",
 		};
-		applyAssetProperties(mockRoot, props, mismatchInstance as unknown);
+		applyAssetProperties(
+			mockRoot,
+			props,
+			mismatchInstance as unknown as Parameters<typeof applyAssetProperties>[2],
+		);
 
-		assert.ok(vars["--balloon-recommended-warning"]);
-		assert.ok(vars["--balloon-recommended-warning"].includes("Emily"));
+		const warning = getVar("--balloon-recommended-warning");
+		assert.ok(warning);
+		assert.ok(warning.includes("Emily"));
 	});
 });

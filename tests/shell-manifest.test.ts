@@ -108,14 +108,21 @@ test("shell-manifest functions cover enums, collision records, and containment",
 	assert.equal(surfaceData.aliases.smile[0], 0);
 
 	// 7. getShellManifest & parseSurfacesTextWithRust (with Tauri mock)
-	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (cmd, _args) => {
+	const tauriGlobal = globalThis as unknown as {
+		__TAURI_INTERNALS__?: {
+			invoke: (cmd: string, args?: unknown) => Promise<unknown>;
+			transformCallback?: (cb: unknown) => unknown;
+		};
+	};
+	const mockInternals = {
+		invoke: async (cmd: string, _args?: unknown) => {
 			if (cmd === "shell_manifest") return mockManifest;
 			if (cmd === "parse_surfaces_text") return { 0: mockManifest.surfaces[0] };
 		},
-		transformCallback: (cb) => cb,
+		transformCallback: (cb: unknown) => cb,
 	};
-	globalThis.window = globalThis;
+	tauriGlobal.__TAURI_INTERNALS__ = mockInternals;
+	globalThis.window = globalThis as unknown as Window & typeof globalThis;
 
 	const shRes = await getShellManifest("ghost", "shell");
 	assert.ok(shRes);
@@ -124,12 +131,12 @@ test("shell-manifest functions cover enums, collision records, and containment",
 	assert.ok(parseRes);
 
 	// Test error catch branches
-	globalThis.__TAURI_INTERNALS__.invoke = async () => {
+	mockInternals.invoke = async () => {
 		throw new Error("fail");
 	};
 	assert.equal(await getShellManifest("g", "s"), null);
 	assert.equal(await parseSurfacesTextWithRust("bad"), null);
 
-	delete globalThis.__TAURI_INTERNALS__;
+	delete tauriGlobal.__TAURI_INTERNALS__;
 	assert.ok(true);
 });

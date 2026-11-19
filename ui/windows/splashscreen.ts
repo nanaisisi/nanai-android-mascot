@@ -43,3 +43,5 @@ const g = globalThis as unknown as { __TAURI__?: unknown };
 if (typeof g.__TAURI__ !== "undefined") {
 	console.log("Tauri環境で実行中");
 }
+
+export {};

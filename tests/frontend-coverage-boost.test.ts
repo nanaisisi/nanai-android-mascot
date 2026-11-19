@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-globalThis.window = globalThis;
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
 globalThis.document = {
 	documentElement: { style: { setProperty() {} } },
 	querySelector: () => ({ style: {} }),
-};
+} as unknown as Document;
 
 const { balloonDescriptActions } = await import(
 	"../ui/ts/core/actions/balloon-descript.js"
@@ -85,7 +85,11 @@ test("balloonDescriptActions rgbFromComponents and applyBalloonDescript", () => 
 		null,
 	);
 
-	balloonDescriptActions.elements = {
+	const descriptHost =
+		balloonDescriptActions as typeof balloonDescriptActions & {
+			elements?: { balloonDisplay: { style: Record<string, string> } };
+		};
+	descriptHost.elements = {
 		balloonDisplay: { style: {} },
 	};
 	balloonDescriptActions.applyBalloonDescript(props);

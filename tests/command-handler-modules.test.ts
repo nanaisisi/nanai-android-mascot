@@ -32,6 +32,7 @@ import {
 	handleAnimCommand,
 	handleBindCommand,
 } from "../ui/ts/ghost/command-handler/surface.js";
+import type { SakuraCommandHandler } from "../ui/ts/ghost/sakura-command-handler.js";
 
 describe("command-handler/surface.js", () => {
 	it("handles bind and bind-noevent commands", async () => {
@@ -39,7 +40,7 @@ describe("command-handler/surface.js", () => {
 		const handler = {
 			app: { surfaceManager: { bindDressup: bindSpy } },
 			player: { currentScope: 0 },
-		};
+		} as unknown as SakuraCommandHandler;
 
 		await handleBindCommand(handler, ["bind", "head", "ribbon", "1"], true);
 		expect(bindSpy).toHaveBeenCalledWith("head", "ribbon", "1", 0, true);
@@ -68,7 +69,7 @@ describe("command-handler/surface.js", () => {
 				},
 			},
 			player: { currentScope: 1 },
-		};
+		} as unknown as SakuraCommandHandler;
 
 		await handleAnimCommand(handler, ["anim", "pause", "10"]);
 		expect(pauseSpy).toHaveBeenCalledWith(10, 1);
@@ -108,7 +109,7 @@ describe("command-handler/ghost.js", () => {
 					callGhost: callGhostSpy,
 				},
 			},
-		};
+		} as unknown as SakuraCommandHandler;
 
 		await handleRaiseCommand(handler, [
 			"raise",
@@ -148,7 +149,7 @@ describe("command-handler/playback.js", () => {
 					setQuickMode: setQuickModeSpy,
 				},
 			},
-		};
+		} as unknown as SakuraCommandHandler;
 
 		await handleSetChoiceTimeout(handler, ["set", "choicetimeout", "4000"]);
 		expect(handler.player.choiceTimeout).toBe(4000);
@@ -187,7 +188,7 @@ describe("command-handler/media.js", () => {
 				networkActions: { checkEmail: checkEmailSpy },
 				startNetworkUpdate: updateSpy,
 			},
-		};
+		} as unknown as SakuraCommandHandler;
 
 		await handleSetWallpaper(handler, ["setwallpaper", "bg.png", "center"]);
 		await handleSaveWallpaper(handler, ["savewallpaper"]);
@@ -216,16 +217,16 @@ describe("command-handler/media.js", () => {
 		await handleUpdateByMyself(handler);
 		expect(updateSpy).toHaveBeenCalledTimes(2);
 
-		const events = [];
+		const events: Array<{ name: string; refs: string[] }> = [];
 		const soundHandler = {
 			app: {
 				ghostController: {
-					sendShioriEvent: vi.fn(async (name, refs) => {
+					sendShioriEvent: vi.fn(async (name: string, refs: string[]) => {
 						events.push({ name, refs });
 					}),
 				},
 			},
-		};
+		} as unknown as SakuraCommandHandler;
 		const { handleSoundEventNotify } = await import(
 			"../ui/ts/ghost/command-handler/media.js"
 		);
@@ -245,7 +246,7 @@ describe("command-handler/media.js", () => {
 
 describe("command-handler/plugin.js", () => {
 	it("handles plugin events safely when tauri is not available", async () => {
-		const handler = {};
+		const handler = {} as unknown as SakuraCommandHandler;
 		await handlePluginEvent(handler, [
 			"raiseplugin",
 			"PluginA",

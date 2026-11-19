@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import { SakuraCommandHandler } from "../../ui/ts/ghost/sakura-command-handler.js";
-import { createMockApp, setupMockDom } from "./helpers.js";
+import { createMockApp, createMockPlayer, setupMockDom } from "./helpers.js";
 
 setupMockDom();
 
@@ -19,7 +19,7 @@ describe("SakuraCommandHandler - Cycle 10 Extended Commands", () => {
 			makotoActions.push({ action: "reload", module: moduleName });
 		};
 
-		const player = { currentScope: 0, app: mockApp };
+		const player = createMockPlayer(mockApp);
 		const handler = new SakuraCommandHandler(player);
 
 		// 1. load:makoto
@@ -58,7 +58,7 @@ describe("SakuraCommandHandler - Cycle 10 Extended Commands", () => {
 			aigraphReloaded = true;
 		};
 
-		const player = { currentScope: 0, app: mockApp };
+		const player = createMockPlayer(mockApp);
 		const handler = new SakuraCommandHandler(player);
 
 		// 1. open,aigraph

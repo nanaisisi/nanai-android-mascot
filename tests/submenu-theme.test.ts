@@ -1,32 +1,36 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
+import type { MenuShellItem } from "../ui/ts/ui/renderers/menu-theme-renderer.js";
 
-globalThis.window = globalThis;
-const styleProps = {};
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
+const styleProps: Record<string, string> = {};
+const bodyClasses = new Set<string>();
 globalThis.document = {
 	documentElement: {
 		style: {
-			setProperty(prop, val) {
+			setProperty(prop: string, val: string) {
 				styleProps[prop] = val;
 			},
-			removeProperty(prop) {
+			removeProperty(prop: string) {
+				const prev = styleProps[prop] ?? "";
 				delete styleProps[prop];
+				return prev;
 			},
 		},
 	},
 	body: {
 		classList: {
-			classes: new Set(),
-			toggle(c, force) {
-				if (force) this.classes.add(c);
-				else this.classes.delete(c);
+			toggle(c: string, force?: boolean) {
+				if (force) bodyClasses.add(c);
+				else bodyClasses.delete(c);
+				return bodyClasses.has(c);
 			},
-			contains(c) {
-				return this.classes.has(c);
+			contains(c: string) {
+				return bodyClasses.has(c);
 			},
 		},
 	},
-};
+} as unknown as Document;
 
 const { applyShellMenuTheme } = await import("../ui/ts/ui/submenu-theme.js");
 
@@ -70,7 +74,7 @@ test("applyShellMenuTheme covers theme colors, bitmaps, and alignments", () => {
 			foreground_bitmap: null,
 			sidebar_bitmap: null,
 		},
-	};
+	} as unknown as MenuShellItem;
 	applyShellMenuTheme(shell2);
 	assert.equal(styleProps["--balloon-text-color"], "#111111");
 	assert.equal(styleProps["--balloon-border-color"], "rgb(10, 20, 30)");
@@ -79,13 +83,16 @@ test("applyShellMenuTheme covers theme colors, bitmaps, and alignments", () => {
 	assert.equal(document.body.classList.contains("has-sidebar"), false);
 
 	// 3. Tauri convertFileSrc test
-	globalThis.__TAURI__ = {
+	const tauriGlobal = globalThis as unknown as {
+		__TAURI__?: { core?: { convertFileSrc?: (p: string) => string } };
+	};
+	tauriGlobal.__TAURI__ = {
 		core: {
-			convertFileSrc: (p) => `tauri://${p}`,
+			convertFileSrc: (p: string) => `tauri://${p}`,
 		},
 	};
 	applyShellMenuTheme(shell1);
-	delete globalThis.__TAURI__;
+	delete tauriGlobal.__TAURI__;
 
 	assert.ok(true);
 });

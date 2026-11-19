@@ -13,18 +13,20 @@ test("balloonActions test", () => {
 });
 
 test("balloonDescriptActions test", () => {
-	const setPropertyCalls = [];
+	const setPropertyCalls: Array<[string, string]> = [];
 	globalThis.document = {
 		documentElement: {
 			style: {
-				setProperty(k, v) {
+				setProperty(k: string, v: string) {
 					setPropertyCalls.push([k, v]);
 				},
-				removeProperty() {},
+				removeProperty() {
+					return "";
+				},
 			},
 		},
 		querySelector: () => ({ style: {} }),
-	};
+	} as unknown as Document;
 	const props = {
 		"font.color.r": "100",
 		"font.color.g": "150",
@@ -52,10 +54,18 @@ test("balloonDescriptActions test", () => {
 	const nullRgb = balloonDescriptActions.rgbFromComponents({}, "font.color");
 	assert.equal(nullRgb, null);
 
-	balloonDescriptActions.elements = {
+	const descriptHost =
+		balloonDescriptActions as typeof balloonDescriptActions & {
+			elements?: {
+				balloonDisplay: {
+					style: { setProperty: (k: string, v: string) => void };
+				};
+			};
+		};
+	descriptHost.elements = {
 		balloonDisplay: {
 			style: {
-				setProperty(k, v) {
+				setProperty(k: string, v: string) {
 					setPropertyCalls.push([k, v]);
 				},
 			},
@@ -70,28 +80,40 @@ test("balloonThemeActions test", async () => {
 		documentElement: {
 			style: {
 				setProperty() {},
-				removeProperty() {},
+				removeProperty() {
+					return "";
+				},
 			},
 			setAttribute() {},
 		},
 		body: { className: "" },
 		querySelector: () => ({ style: {} }),
-	};
+	} as unknown as Document;
 	globalThis.localStorage = {
 		setItem() {},
 		getItem() {
 			return null;
 		},
-	};
+	} as unknown as Storage;
 
-	balloonThemeActions.elements = {
+	const themeHost = balloonThemeActions as typeof balloonThemeActions & {
+		elements?: {
+			balloonDisplay: {
+				setAttribute: () => void;
+				style: Record<string, string>;
+			};
+		};
+		showBalloon?: () => void;
+		hideBalloon?: () => void;
+	};
+	themeHost.elements = {
 		balloonDisplay: {
 			setAttribute() {},
 			style: {},
 		},
 	};
-	balloonThemeActions.showBalloon = () => {};
-	balloonThemeActions.hideBalloon = () => {};
+	themeHost.showBalloon = () => {};
+	themeHost.hideBalloon = () => {};
 
 	// 1. Calling when balloonThemeManager is null
 	delete (balloonThemeActions as unknown as Record<string, unknown>)
@@ -130,7 +152,15 @@ test("ghostActions test", () => {
 		querySelector: () => ({ addEventListener() {} }),
 	};
 	const modalOverlay = { style: {} };
-	ghostActions.ghostController = {
+	const ghostHost = ghostActions as typeof ghostActions & {
+		ghostController?: Record<string, unknown>;
+		modalManager?: Record<string, unknown>;
+		elements?: Record<string, unknown>;
+		showBalloon?: () => void;
+		hideBalloon?: () => void;
+		hideMenu?: () => void;
+	};
+	ghostHost.ghostController = {
 		currentGhost: {
 			name: "TestGhost",
 			version: "1.0",
@@ -145,18 +175,18 @@ test("ghostActions test", () => {
 		selectGhost() {},
 		sendShioriEvent() {},
 	};
-	ghostActions.modalManager = {
+	ghostHost.modalManager = {
 		content: modalContent,
 		overlay: modalOverlay,
 		showWindowIfNeeded() {},
 		hide() {},
 	};
-	ghostActions.elements = {
+	ghostHost.elements = {
 		ghostDisplay: { style: {} },
 	};
-	ghostActions.showBalloon = () => {};
-	ghostActions.hideBalloon = () => {};
-	ghostActions.hideMenu = () => {};
+	ghostHost.showBalloon = () => {};
+	ghostHost.hideBalloon = () => {};
+	ghostHost.hideMenu = () => {};
 
 	ghostActions.showGhostInformation();
 	assert.ok(modalContent.innerHTML.includes("TestGhost"));

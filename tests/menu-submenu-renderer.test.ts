@@ -1,10 +1,10 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-globalThis.window = globalThis;
-globalThis.location = { search: "?scope=0" };
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
+globalThis.location = { search: "?scope=0" } as unknown as Location;
 globalThis.document = {
-	getElementById(_id) {
+	getElementById(_id: string) {
 		return {
 			innerHTML: "",
 			appendChild() {},
@@ -12,23 +12,24 @@ globalThis.document = {
 			style: {},
 			querySelector: () => null,
 			querySelectorAll: () => [],
-		};
+		} as unknown as HTMLElement;
 	},
-	createElement: (_tag) => ({
-		innerHTML: "",
-		appendChild() {},
-		style: {},
-		dataset: {},
-		addEventListener() {},
-	}),
-	querySelectorAll: () => [],
+	createElement: (_tag: string) =>
+		({
+			innerHTML: "",
+			appendChild() {},
+			style: {},
+			dataset: {},
+			addEventListener() {},
+		}) as unknown as HTMLElement,
+	querySelectorAll: () => [] as unknown as NodeListOf<Element>,
 	documentElement: {
 		getAttribute: () => "default",
 		setAttribute() {},
-		style: { removeProperty() {}, setProperty() {} },
+		style: { removeProperty: () => "", setProperty() {} },
 	},
-	body: { classList: { add() {}, remove() {} } },
-};
+	body: { classList: { add() {}, remove() {} } as unknown as DOMTokenList },
+} as unknown as Document;
 
 const { MenuDispatcher } = await import("../ui/ts/ui/menu-dispatcher.js");
 const { MenuSubmenuRenderer } = await import(

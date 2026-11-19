@@ -6,21 +6,30 @@ import {
 	handleAnimCommand,
 	handleBindCommand,
 } from "../../ui/ts/ghost/command-handler/surface.js";
+import type { SakuraCommandHandler } from "../../ui/ts/ghost/sakura-command-handler.js";
 
 describe("command-handler/dialog.js & surface.js", () => {
 	it("handleOpenDialogCommand invokes modalDialogController.openSystemDialog with dialogType and parameters", async () => {
-		let openedDialog = null;
+		let openedDialog: {
+			type: string;
+			params: string[];
+			scope?: number;
+		} | null = null;
 		const handler = {
 			player: { currentScope: 1 },
 			app: {
 				modalDialogController: {
-					openSystemDialog: async (type: any, params: any, scope: any) => {
+					openSystemDialog: async (
+						type: string,
+						params: string[],
+						scope?: number,
+					) => {
 						openedDialog = { type, params, scope };
 						return "selected-path";
 					},
 				},
 			},
-		};
+		} as unknown as SakuraCommandHandler;
 
 		// 1. Explicit dialog type & parameters
 		const res1 = await handleOpenDialogCommand(handler, [
@@ -47,7 +56,10 @@ describe("command-handler/dialog.js & surface.js", () => {
 		});
 
 		// 3. Graceful return when modalDialogController is not present
-		const noControllerHandler = { player: { currentScope: 0 }, app: {} };
+		const noControllerHandler = {
+			player: { currentScope: 0 },
+			app: {},
+		} as unknown as SakuraCommandHandler;
 		const res3 = await handleOpenDialogCommand(noControllerHandler, [
 			"open",
 			"dialog",
@@ -56,18 +68,29 @@ describe("command-handler/dialog.js & surface.js", () => {
 	});
 
 	it("handleAnimCommand handles pause, resume, stop, clear, and offset", async () => {
-		const animActions: unknown = [];
+		const animActions: Array<{
+			action: string;
+			id: string | number;
+			scope: number;
+			x?: number;
+			y?: number;
+		}> = [];
 		const mockSurfaceManager = {
-			pauseAnimationById: (id: any, scope: any) => {
+			pauseAnimationById: (id: string | number, scope: number) => {
 				animActions.push({ action: "pause", id, scope });
 			},
-			resumeAnimationById: (id: any, scope: any) => {
+			resumeAnimationById: (id: string | number, scope: number) => {
 				animActions.push({ action: "resume", id, scope });
 			},
-			stopAnimationById: (id: any, scope: any) => {
+			stopAnimationById: (id: string | number, scope: number) => {
 				animActions.push({ action: "stop", id, scope });
 			},
-			setAnimationOffset: (id: any, x: any, y: any, scope: any) => {
+			setAnimationOffset: (
+				id: string | number,
+				x: number,
+				y: number,
+				scope: number,
+			) => {
 				animActions.push({ action: "offset", id, x, y, scope });
 			},
 		};
@@ -75,7 +98,7 @@ describe("command-handler/dialog.js & surface.js", () => {
 		const handler = {
 			player: { currentScope: 0 },
 			app: { surfaceManager: mockSurfaceManager },
-		};
+		} as unknown as SakuraCommandHandler;
 
 		// pause and typo "pouse"
 		await handleAnimCommand(handler, ["anim", "pause", "10"]);
@@ -99,25 +122,35 @@ describe("command-handler/dialog.js & surface.js", () => {
 	});
 
 	it("handleAnimCommand handles 'add' subcommands: move, base, overlay, overlayfast", async () => {
-		const baseMoveOffsets: unknown = [];
-		const ghostOffsets: unknown = [];
-		const surfaceUpdates:
-			| { layers: unknown }[]
-			| { base: any; scope: any; layers: any }[] = [];
+		const baseMoveOffsets: Array<{ scope: number; x: number; y: number }> = [];
+		const ghostOffsets: Array<{ scope: number; x: number; y: number }> = [];
+		const surfaceUpdates: Array<{
+			base: string | number;
+			scope: number;
+			layers: unknown;
+		}> = [];
 
-		const mockSurfaceManager = {
-			setBaseMoveOffset: (scope: any, x: any, y: any) => {
+		const mockSurfaceManager: {
+			setBaseMoveOffset: (scope: number, x: number, y: number) => void;
+			currentSurfaceIdFor: (scope: number) => 1 | 11;
+			resolveSurfaceNumber?: (num: string | number, _scope: number) => string;
+		} = {
+			setBaseMoveOffset: (scope: number, x: number, y: number) => {
 				baseMoveOffsets.push({ scope, x, y });
 			},
 			currentSurfaceIdFor: (scope: number) => (scope === 1 ? 11 : 1),
-			resolveSurfaceNumber: (num: any, _scope: any) => `0${num}`,
+			resolveSurfaceNumber: (num: string | number, _scope: number) => `0${num}`,
 		};
 
 		const mockGhostController = {
-			setScopeMoveOffset: (scope: any, x: any, y: any) => {
+			setScopeMoveOffset: (scope: number, x: number, y: number) => {
 				ghostOffsets.push({ scope, x, y });
 			},
-			updateSurface: async (base: any, scope: any, layers: any) => {
+			updateSurface: async (
+				base: string | number,
+				scope: number,
+				layers: unknown,
+			) => {
 				surfaceUpdates.push({ base, scope, layers });
 			},
 		};
@@ -128,7 +161,7 @@ describe("command-handler/dialog.js & surface.js", () => {
 				surfaceManager: mockSurfaceManager,
 				ghostController: mockGhostController,
 			},
-		};
+		} as unknown as SakuraCommandHandler;
 
 		// 1. anim, add (empty)
 		await handleAnimCommand(handler, ["anim", "add"]);
@@ -139,14 +172,15 @@ describe("command-handler/dialog.js & surface.js", () => {
 		assert.deepStrictEqual(ghostOffsets, [{ scope: 0, x: 10, y: 20 }]);
 
 		// 3. anim, add, move without ghostController.setScopeMoveOffset (DOM fallback)
-		const mockElement = { style: {} };
+		const mockElement = { style: {} as Record<string, string> };
 		globalThis.document = {
-			getElementById: (id) => (id === "ghost-display" ? mockElement : null),
-		};
+			getElementById: (id: string) =>
+				id === "ghost-display" ? (mockElement as unknown as HTMLElement) : null,
+		} as unknown as Document;
 		const domFallbackHandler = {
 			player: { currentScope: 0 },
 			app: { surfaceManager: mockSurfaceManager, ghostController: {} },
-		};
+		} as unknown as SakuraCommandHandler;
 		await handleAnimCommand(domFallbackHandler, [
 			"anim",
 			"add",
@@ -186,23 +220,29 @@ describe("command-handler/dialog.js & surface.js", () => {
 	});
 
 	it("handleBindCommand calls surfaceManager.bindDressup", async () => {
-		const dressupCalls: unknown = [];
+		const dressupCalls: Array<{
+			cat: string;
+			part: string;
+			status: string;
+			scope: number;
+			raise: boolean;
+		}> = [];
 		const handler = {
 			player: { currentScope: 0 },
 			app: {
 				surfaceManager: {
 					bindDressup: async (
-						cat: any,
-						part: any,
-						status: any,
-						scope: any,
-						raise: any,
+						cat: string,
+						part: string,
+						status: string,
+						scope: number,
+						raise: boolean,
 					) => {
 						dressupCalls.push({ cat, part, status, scope, raise });
 					},
 				},
 			},
-		};
+		} as unknown as SakuraCommandHandler;
 
 		await handleBindCommand(handler, ["bind", "head", "ribbon", "1"], true);
 		assert.deepStrictEqual(dressupCalls, [

@@ -14,9 +14,14 @@ test("setupInteractiveElements binds click events to choices and anchors", async
 		"../../ui/ts/ghost/balloon-window/interactive.js"
 	);
 
-	setupInteractiveElements(null as unknown, 0);
+	setupInteractiveElements(null as unknown as HTMLElement, 0);
 
-	const choiceBtn: unknown = {
+	const choiceBtn: {
+		getAttribute: (a: string) => string | null;
+		textContent: string;
+		_cb?: (e: unknown) => void;
+		addEventListener: (_t: string, cb: (e: unknown) => void) => void;
+	} = {
 		getAttribute: (a: string) =>
 			a === "data-choice-id" ? "choice_id_1" : null,
 		textContent: "Choice Text",
@@ -25,7 +30,12 @@ test("setupInteractiveElements binds click events to choices and anchors", async
 		},
 	};
 
-	const anchorLink: unknown = {
+	const anchorLink: {
+		getAttribute: (a: string) => string | null;
+		textContent: string;
+		_cb?: (e: unknown) => void;
+		addEventListener: (_t: string, cb: (e: unknown) => void) => void;
+	} = {
 		getAttribute: (a: string) =>
 			a === "data-anchor-id" ? "anchor_id_1" : null,
 		textContent: "Anchor Text",
@@ -42,7 +52,7 @@ test("setupInteractiveElements binds click events to choices and anchors", async
 		},
 	};
 
-	setupInteractiveElements(mockTextEl as unknown, 0);
+	setupInteractiveElements(mockTextEl as unknown as HTMLElement, 0);
 
 	choiceBtn._cb?.({ stopPropagation() {} });
 	anchorLink._cb?.({ stopPropagation() {} });
@@ -50,14 +60,14 @@ test("setupInteractiveElements binds click events to choices and anchors", async
 	await new Promise((r) => setTimeout(r, 10));
 
 	const choiceEvent = emittedEvents.find(
-		(e: unknown) =>
+		(e) =>
 			e.event === "balloon-choice-selected" &&
 			e.payload?.choiceId === "choice_id_1",
 	);
 	assert.ok(choiceEvent);
 
 	const anchorEvent = emittedEvents.find(
-		(e: unknown) =>
+		(e) =>
 			e.event === "balloon-anchor-selected" &&
 			e.payload?.anchorId === "anchor_id_1",
 	);

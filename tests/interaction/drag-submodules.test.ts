@@ -121,16 +121,16 @@ describe("drag interaction submodules", () => {
 		assert.equal(applyDockingSnap(null, 1000), "none");
 		assert.equal(restoreFromDocking(null, 1000), false);
 
-		const classes = new Set();
-		const mockEl = /** @type {any} */ ({
+		const classes = new Set<string>();
+		const mockEl = {
 			classList: {
-				contains: (c) => classes.has(c),
-				add: (c) => classes.add(c),
-				remove: (...args) => {
+				contains: (c: string) => classes.has(c),
+				add: (c: string) => classes.add(c),
+				remove: (...args: string[]) => {
 					for (const a of args) classes.delete(a);
 				},
 			},
-			style: {},
+			style: { left: "" },
 			center: 50,
 			getBoundingClientRect() {
 				return {
@@ -140,7 +140,7 @@ describe("drag interaction submodules", () => {
 					height: 50,
 				};
 			},
-		});
+		};
 
 		assert.equal(isElementDocked(mockEl), false);
 
@@ -210,12 +210,13 @@ describe("drag interaction submodules", () => {
 		// With Tauri and resolved window position
 		globalThis.__TAURI_INTERNALS__ = {
 			metadata: { currentWindow: { label: "main" } },
-			invoke: async (cmd) => {
+			invoke: async (cmd: string) => {
 				if (cmd === "plugin:window|current_window_position")
 					return { type: "Physical", x: 100, y: 100 };
 				if (cmd === "plugin:window|set_window_position") return {};
+				return null;
 			},
-			transformCallback: (cb) => cb,
+			transformCallback: (cb: unknown) => cb,
 		};
 		const nativeSessionTauri = createNativeDragSession();
 		assert.equal(nativeSessionTauri.canStartNativeDrag("mousedown"), true);

@@ -14,14 +14,23 @@ export interface BalloonThemeManagerInterface {
 		balloonUserScale?: number;
 		balloonDpiScale?: number;
 		currentBalloonTheme?: string;
+		availableBalloons?: Array<
+			| {
+					dir_name?: string;
+					name?: string;
+					id?: string;
+					[key: string]: unknown;
+			  }
+			| string
+		>;
 		ghostController?: {
 			sendBalloonScalingNotify?: (
 				afterX: number,
 				beforeX: number,
 				afterY: number,
 				beforeY: number,
-			) => Promise<unknown>;
-			sendShioriEvent?: (event: string, args?: string[]) => Promise<unknown>;
+			) => unknown;
+			sendShioriEvent?: (event: string, args?: string[]) => unknown;
 			[key: string]: unknown;
 		};
 		showBalloon?: (message: string) => unknown;
@@ -32,8 +41,8 @@ export interface BalloonThemeManagerInterface {
 		};
 		applyBalloonDescript?: (props: unknown) => unknown;
 		[key: string]: unknown;
-	};
-	clearValidRectCache: () => void;
+	} | null;
+	clearValidRectCache: (targetScopeId?: number | null) => void;
 	resetDescript: () => void;
 	[key: string]: unknown;
 }

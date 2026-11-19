@@ -3,12 +3,56 @@
  * @brief BalloonWindow モジュールテスト用の DOM / Tauri 環境モック
  */
 
-const emittedEvents: { event: unknown; payload: unknown }[] = [];
+export interface MockEmittedEvent {
+	event?: unknown;
+	payload?: {
+		userScale?: number;
+		choiceId?: string;
+		anchorId?: string;
+		[key: string]: unknown;
+	};
+	[key: string]: unknown;
+}
+
+export interface MockBalloonStyle {
+	transform?: string;
+	transformOrigin?: string;
+	padding?: string;
+	backgroundImage?: string;
+	display?: string;
+	maxWidth?: string;
+	width?: string;
+	boxSizing?: string;
+	setProperty?: (name: string, val: string) => void;
+	[key: string]: unknown;
+}
+
+export interface MockInteractiveChild {
+	getAttribute: (a: string) => string | null;
+	textContent?: string;
+	_cb?: (e?: unknown) => void;
+	addEventListener: (_t: unknown, cb: (e?: unknown) => void) => void;
+	click: () => void;
+}
+
+export interface MockBalloonElement {
+	style: MockBalloonStyle;
+	innerHTML: string;
+	textContent: string;
+	_listeners?: Record<string, (e?: unknown) => void>;
+	querySelectorAll: (sel: string) => MockInteractiveChild[];
+	addEventListener: (t: string, cb: (e?: unknown) => void) => void;
+	click: () => void;
+	mousedown: () => void;
+	mouseup: () => void;
+}
+
+const emittedEvents: MockEmittedEvent[] = [];
 const listenHandlers: Record<string, (arg: unknown) => Promise<void> | void> =
 	{};
-const elements: Record<string, unknown> = {};
+const elements: Record<string, MockBalloonElement> = {};
 
-const createMockStyle = () => {
+const createMockStyle = (): MockBalloonStyle => {
 	const storage: Record<string, string> = {};
 	return new Proxy(storage, {
 		get(target, prop: string) {
@@ -23,10 +67,10 @@ const createMockStyle = () => {
 			target[prop] = value;
 			return true;
 		},
-	});
+	}) as unknown as MockBalloonStyle;
 };
 
-const getEl = (id: string) => {
+const getEl = (id: string): MockBalloonElement => {
 	const cleanId = id.replace(/^[.#]/, "");
 	if (!elements[cleanId]) {
 		elements[cleanId] = {
@@ -40,11 +84,11 @@ const getEl = (id: string) => {
 							getAttribute: (a: string) =>
 								a === "data-choice-id" ? "choice_id_1" : null,
 							textContent: "Choice1",
-							addEventListener(_t: unknown, cb: unknown) {
-								(this as unknown)._cb = cb;
+							addEventListener(_t: unknown, cb: (e?: unknown) => void) {
+								this._cb = cb;
 							},
 							click() {
-								(this as unknown)._cb?.({ stopPropagation() {} });
+								this._cb?.({ stopPropagation() {} });
 							},
 						},
 					];
@@ -55,18 +99,18 @@ const getEl = (id: string) => {
 							getAttribute: (a: string) =>
 								a === "data-anchor-id" ? "anchor_id_1" : null,
 							textContent: "Anchor1",
-							addEventListener(_t: unknown, cb: unknown) {
-								(this as unknown)._cb = cb;
+							addEventListener(_t: unknown, cb: (e?: unknown) => void) {
+								this._cb = cb;
 							},
 							click() {
-								(this as unknown)._cb?.({ stopPropagation() {} });
+								this._cb?.({ stopPropagation() {} });
 							},
 						},
 					];
 				}
 				return [];
 			},
-			addEventListener(t: string, cb: unknown) {
+			addEventListener(t: string, cb: (e?: unknown) => void) {
 				this._listeners = this._listeners || {};
 				this._listeners[t] = cb;
 			},
@@ -84,14 +128,14 @@ const getEl = (id: string) => {
 	return elements[cleanId];
 };
 
-const docListeners: Record<string, () => void> = {};
+const docListeners: Record<string, (e?: unknown) => void> = {};
 
-globalThis.window = globalThis as unknown;
-globalThis.location = { search: "?scope=0&theme=ivory" } as unknown;
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
+globalThis.location = { search: "?scope=0&theme=ivory" } as unknown as Location;
 globalThis.localStorage = {
 	getItem: () => "ivory",
 	setItem: () => {},
-} as unknown;
+} as unknown as Storage;
 globalThis.Image = class {
 	width = 100;
 	height = 100;
@@ -111,10 +155,10 @@ globalThis.Image = class {
 	get src() {
 		return this._src;
 	}
-} as unknown;
+} as unknown as typeof Image;
 
 let callbackIdCounter = 1;
-const tauriObject = {};
+const tauriObject: Record<string, unknown> = {};
 const tauriInternals = {
 	metadata: {
 		currentWindow: { label: "balloon_window_0", startDragging: async () => {} },
@@ -138,10 +182,19 @@ const tauriInternals = {
 			argsStr.includes("emit") ||
 			argsStr.includes("selected")
 		) {
-			if (args?.event) {
-				emittedEvents.push({ event: args.event, payload: args.payload });
+			const payloadObj =
+				args && typeof args === "object"
+					? (args as MockEmittedEvent)
+					: undefined;
+			if (payloadObj?.event) {
+				emittedEvents.push({
+					event: payloadObj.event,
+					payload: payloadObj.payload,
+				});
+			} else if (payloadObj) {
+				emittedEvents.push(payloadObj);
 			} else {
-				emittedEvents.push(args);
+				emittedEvents.push({ payload: { raw: args } });
 			}
 			return;
 		}
@@ -177,16 +230,24 @@ const tauriInternals = {
 				return () => {};
 			},
 			emit: async (event: unknown, payload: unknown) => {
-				emittedEvents.push({ event, payload });
+				emittedEvents.push({
+					event,
+					payload: payload as MockEmittedEvent["payload"],
+				});
 			},
 		},
 	},
 };
 
-globalThis.__TAURI__ = tauriObject as unknown;
-globalThis.__TAURI_INTERNALS__ = tauriInternals as unknown;
-(globalThis.window as unknown).__TAURI__ = tauriObject;
-(globalThis.window as unknown).__TAURI_INTERNALS__ = tauriInternals;
+const winWithTauri = globalThis.window as unknown as {
+	__TAURI__?: unknown;
+	__TAURI_INTERNALS__?: unknown;
+};
+
+globalThis.__TAURI__ = tauriObject as unknown as TauriApi;
+globalThis.__TAURI_INTERNALS__ = tauriInternals;
+winWithTauri.__TAURI__ = tauriObject;
+winWithTauri.__TAURI_INTERNALS__ = tauriInternals;
 
 const docAttrs: Record<string, string> = {};
 globalThis.document = {
@@ -200,7 +261,7 @@ globalThis.document = {
 			return docAttrs[k] ?? null;
 		},
 	},
-	addEventListener(event: string, cb: () => void) {
+	addEventListener(event: string, cb: (e?: unknown) => void) {
 		docListeners[event] = cb;
 	},
 	getElementById: getEl,
@@ -228,7 +289,7 @@ globalThis.document = {
 		}
 		return { style: createMockStyle() };
 	},
-} as unknown;
+} as unknown as Document;
 
 export function setupBalloonMockEnvironment() {
 	emittedEvents.length = 0;
@@ -242,10 +303,10 @@ export function setupBalloonMockEnvironment() {
 		delete docListeners[key];
 	}
 
-	globalThis.__TAURI__ = tauriObject as unknown;
-	globalThis.__TAURI_INTERNALS__ = tauriInternals as unknown;
-	(globalThis.window as unknown).__TAURI__ = tauriObject;
-	(globalThis.window as unknown).__TAURI_INTERNALS__ = tauriInternals;
+	globalThis.__TAURI__ = tauriObject as unknown as TauriApi;
+	globalThis.__TAURI_INTERNALS__ = tauriInternals;
+	winWithTauri.__TAURI__ = tauriObject;
+	winWithTauri.__TAURI_INTERNALS__ = tauriInternals;
 
 	return {
 		emittedEvents,

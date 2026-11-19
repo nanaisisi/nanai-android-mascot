@@ -1,20 +1,27 @@
 import { describe, expect, it, vi } from "vitest";
 import { AndroidBridge, DockManager } from "../../ui/ts/ui/touch/index.js";
 
+type MockDomEvent = {
+	type: string;
+	stopPropagation?: () => void;
+	preventDefault?: () => void;
+};
+type MockDomEventListener = (evt: MockDomEvent) => void;
+
 function createMockDomElement() {
-	const classListSet = new Set();
-	const listeners = new Map();
+	const classListSet = new Set<string>();
+	const listeners = new Map<string, Set<MockDomEventListener>>();
 
 	return {
 		classList: {
-			add: (...classes: unknown) => {
+			add: (...classes: string[]) => {
 				for (const cls of classes) classListSet.add(cls);
 			},
-			remove: (...classes: unknown) => {
+			remove: (...classes: string[]) => {
 				for (const cls of classes) classListSet.delete(cls);
 			},
-			contains: (cls: unknown) => classListSet.has(cls),
-			toggle: (cls: unknown) => {
+			contains: (cls: string) => classListSet.has(cls),
+			toggle: (cls: string) => {
 				if (classListSet.has(cls)) {
 					classListSet.delete(cls);
 					return false;
@@ -23,19 +30,21 @@ function createMockDomElement() {
 				return true;
 			},
 		},
-		addEventListener: (event: unknown, handler: unknown) => {
-			if (!listeners.has(event)) {
-				listeners.set(event, new Set());
+		addEventListener: (event: string, handler: MockDomEventListener) => {
+			let set = listeners.get(event);
+			if (!set) {
+				set = new Set<MockDomEventListener>();
+				listeners.set(event, set);
 			}
-			listeners.get(event).add(handler);
+			set.add(handler);
 		},
-		removeEventListener: (event: unknown, handler: unknown) => {
+		removeEventListener: (event: string, handler: MockDomEventListener) => {
 			const set = listeners.get(event);
 			if (set) {
 				set.delete(handler);
 			}
 		},
-		dispatchEvent: (evt: { type: unknown }) => {
+		dispatchEvent: (evt: MockDomEvent) => {
 			const set = listeners.get(evt.type);
 			if (set) {
 				for (const handler of Array.from(set)) {

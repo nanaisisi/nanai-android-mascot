@@ -1,23 +1,35 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
+import type { ShellMenuTheme } from "../ui/ts/ui/renderers/menu-theme-renderer.js";
 
-globalThis.window = globalThis;
-const styleProps = {};
-const createdButtons = [];
+interface MockButtonEl {
+	tagName: string;
+	className: string;
+	innerHTML: string;
+	dataset: Record<string, string>;
+	_listeners?: Record<string, (e?: unknown) => void>;
+	appendChild: () => void;
+	addEventListener: (type: string, cb: (e?: unknown) => void) => void;
+	click: () => void;
+}
+
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
+const styleProps: Record<string, string> = {};
+const createdButtons: MockButtonEl[] = [];
 let returnNullContainer = false;
 
-const getEl = (_id) => {
+const getEl = (_id: string) => {
 	if (returnNullContainer) return null;
-	return {
+	const container = {
 		innerHTML: "",
-		children: [],
-		appendChild(child) {
-			if (child) this.children.push(child);
+		children: [] as unknown[],
+		appendChild(child: unknown) {
+			if (child) container.children.push(child);
 		},
-		querySelector: (sel) => {
+		querySelector: (sel: string) => {
 			if (sel === "#balloon-cycle-btn") {
 				return {
-					addEventListener(_t, cb) {
+					addEventListener(_t: string, cb: () => void) {
 						cb();
 					},
 				};
@@ -26,45 +38,50 @@ const getEl = (_id) => {
 		},
 		querySelectorAll: () => [],
 	};
+	return container as unknown as HTMLElement;
 };
 
 globalThis.document = {
-	getElementById(id) {
+	getElementById(id: string) {
 		return getEl(id);
 	},
 	documentElement: {
 		setAttribute() {},
 		style: {
-			setProperty(p, v) {
+			setProperty(p: string, v: string) {
 				styleProps[p] = v;
 			},
-			removeProperty(p) {
+			removeProperty(p: string) {
 				delete styleProps[p];
+				return "";
 			},
 		},
 	},
 	body: {
-		classList: {
-			classes: new Set(),
-			add(c) {
-				this.classes.add(c);
-			},
-			remove(...args) {
-				for (const c of args) this.classes.delete(c);
-			},
-			contains(c) {
-				return this.classes.has(c);
-			},
-		},
+		classList: (() => {
+			const classes = new Set<string>();
+			return {
+				classes,
+				add(c: string) {
+					classes.add(c);
+				},
+				remove(...args: string[]) {
+					for (const c of args) classes.delete(c);
+				},
+				contains(c: string) {
+					return classes.has(c);
+				},
+			};
+		})() as unknown as DOMTokenList,
 	},
-	createElement(tag) {
-		const btn = {
+	createElement(tag: string) {
+		const btn: MockButtonEl = {
 			tagName: tag.toUpperCase(),
 			className: "",
 			innerHTML: "",
 			dataset: {},
 			appendChild() {},
-			addEventListener(type, cb) {
+			addEventListener(type: string, cb: (e?: unknown) => void) {
 				this._listeners = this._listeners || {};
 				this._listeners[type] = cb;
 			},
@@ -73,9 +90,9 @@ globalThis.document = {
 			},
 		};
 		if (tag === "button") createdButtons.push(btn);
-		return btn;
+		return btn as unknown as HTMLElement;
 	},
-};
+} as unknown as Document;
 
 const { menuBalloonDressupRenderer } = await import(
 	"../ui/ts/ui/renderers/menu-balloon-dressup-renderer.js"
@@ -88,10 +105,10 @@ const { menuThemeRenderer } = await import(
 );
 
 test("menu renderers cover 100% of balloon, dressup, recent, shell, ghost, and theme rendering", () => {
-	const dispatched = [];
+	const dispatched: Array<{ action: string; payload: unknown }> = [];
 	const mockContext = {
 		dispatcher: {
-			dispatchAction(action, payload) {
+			async dispatchAction(action: string, payload?: unknown) {
 				dispatched.push({ action, payload });
 			},
 		},
@@ -176,15 +193,15 @@ test("menu renderers cover 100% of balloon, dressup, recent, shell, ghost, and t
 
 	// 4. menuThemeRenderer
 	// Test applyTheme with falsy theme
-	menuThemeRenderer.applyTheme(null);
+	menuThemeRenderer.applyTheme(null as unknown as string);
 	menuThemeRenderer.applyTheme("dark");
 
 	// Test convertFileSrc with globalThis.__TAURI__
 	globalThis.__TAURI__ = {
 		core: {
-			convertFileSrc: (p) => `tauri://${p}`,
+			convertFileSrc: (p: string) => `tauri://${p}`,
 		},
-	};
+	} as unknown as TauriApi;
 
 	menuThemeRenderer.applyShellTheme({
 		path: "shells/master",
@@ -285,7 +302,7 @@ test("menu renderers cover 100% of balloon, dressup, recent, shell, ghost, and t
 			background_bitmap: null,
 			foreground_bitmap: null,
 			sidebar_bitmap: null,
-		},
+		} as unknown as ShellMenuTheme,
 	});
 
 	// Shell theme removal branch

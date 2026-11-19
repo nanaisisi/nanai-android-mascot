@@ -13,12 +13,18 @@ export const setProgressCb = (cb: typeof progressCb) => {
 	progressCb = cb;
 };
 
-export const createPersistentListenersProxy = () => {
-	const map = {};
+type PersistentListenerEntry = {
+	unregisterListener: () => void;
+};
+type PersistentEventMap = Record<string | symbol, PersistentListenerEntry>;
+type PersistentListenersMap = Record<string | symbol, PersistentEventMap>;
+
+export const createPersistentListenersProxy = (): PersistentListenersMap => {
+	const map: PersistentListenersMap = {};
 	return new Proxy(map, {
 		get(target, prop) {
 			if (!(prop in target)) {
-				const eventMap = {};
+				const eventMap: PersistentEventMap = {};
 				target[prop] = new Proxy(eventMap, {
 					get(t, p) {
 						if (!(p in t)) {

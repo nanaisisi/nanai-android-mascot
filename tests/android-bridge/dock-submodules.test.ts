@@ -10,10 +10,10 @@ import {
 
 describe("AndroidBridge - Dock & Submodules", () => {
 	it("manages dockMode and coordinates with gestureRecognizer snap events", () => {
-		let snapHandler = null;
+		let snapHandler: ((event: { dockState: string }) => void) | null = null;
 		const mockRecognizer = {
 			setDockState: vi.fn(),
-			on: vi.fn((event, cb) => {
+			on: vi.fn((event: string, cb: (event: { dockState: string }) => void) => {
 				if (event === "nam:touch:snap") {
 					snapHandler = cb;
 				}
@@ -38,7 +38,12 @@ describe("AndroidBridge - Dock & Submodules", () => {
 
 		// Trigger snap event via recognizer listener
 		expect(snapHandler).toBeDefined();
-		snapHandler({ dockState: "right" });
+		if (!snapHandler) {
+			throw new Error("snapHandler was not registered");
+		}
+		(snapHandler as (event: { dockState: string }) => void)({
+			dockState: "right",
+		});
 		expect(bridge.getDockMode()).toBe("right");
 		expect(mockRecognizer.setDockState).toHaveBeenCalledWith("right");
 		expect(dockListener).toHaveBeenCalledWith(

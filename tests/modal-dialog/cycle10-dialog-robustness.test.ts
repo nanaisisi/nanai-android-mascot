@@ -24,10 +24,10 @@ describe("ModalDialogController & Inputs Robustness (Cycle 10)", () => {
 				keroBalloonText: createMockElement("div"),
 			},
 			ghostController: {
-				sendShioriEvent: async (name, args) => {
+				sendShioriEvent: async (name: string, args: unknown[] = []) => {
 					sentEvents.push({ name, args });
 				},
-				sendTeachInput: (val) => {
+				sendTeachInput: (val: string) => {
 					sentEvents.push({ name: "sendTeachInput", args: [val] });
 				},
 				clearTeachHistory: () => {
@@ -76,7 +76,7 @@ describe("ModalDialogController & Inputs Robustness (Cycle 10)", () => {
 		expect(controller.activeBoxes.has("bad-box")).toBe(false);
 		const cancelEv = sentEvents.find((e) => e.name === "OnSystemDialogCancel");
 		expect(cancelEv).toBeDefined();
-		expect(cancelEv.args[0]).toBe("BadBox");
+		expect(cancelEv?.args[0]).toBe("BadBox");
 	});
 
 	it("handles closeAll gracefully with throwing cleanups and choice timers", () => {

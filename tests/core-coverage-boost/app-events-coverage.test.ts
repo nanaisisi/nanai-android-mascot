@@ -10,15 +10,20 @@ import { GhostController } from "../../ui/ts/ghost/ghost.js";
 
 describe("core-coverage-boost: app-events edge cases", () => {
 	it("dispatches mouse down, up, wheel, drag start/end, and hover events with UKADOC coordinates", () => {
-		const sentEvents = [];
+		const sentEvents: Array<{ evt: string; args: unknown[] }> = [];
 		const app = {
 			...eventMethods,
 			ghostController: {
-				sendShioriEvent: (evt, args) => {
+				sendShioriEvent: (evt: string, args: unknown[]) => {
 					sentEvents.push({ evt, args });
 				},
 			},
-			getCollisionInfo: (_x, _y, _r, scopeId) => ({
+			getCollisionInfo: (
+				_x: number,
+				_y: number,
+				_r: unknown,
+				scopeId: number,
+			) => ({
 				name: "Head",
 				canvasX: 42,
 				canvasY: 99,
@@ -50,11 +55,11 @@ describe("core-coverage-boost: app-events edge cases", () => {
 	});
 
 	it("suppresses mouse events during timeCritical && isPlaying", () => {
-		const sentEvents = [];
+		const sentEvents: Array<{ evt: string; args: unknown[] }> = [];
 		const app = {
 			...eventMethods,
 			ghostController: {
-				sendShioriEvent: (evt, args) => {
+				sendShioriEvent: (evt: string, args: unknown[]) => {
 					sentEvents.push({ evt, args });
 				},
 			},
@@ -78,25 +83,37 @@ describe("core-coverage-boost: app-events edge cases", () => {
 	});
 
 	it("listens to request-subchar-image and emits updated subchar surface image", async () => {
-		globalThis.window = globalThis;
+		globalThis.window = globalThis as unknown as Window & typeof globalThis;
 		globalThis.addEventListener = () => {};
-		let emittedEvent = null;
-		let emittedPayload = null;
-		let subcharHandler = null;
+		let emittedEvent: string | null = null;
+		let emittedPayload: unknown = null;
+		let subcharHandler:
+			| ((ev: { event: string; payload: { scopeId: number } }) => void)
+			| null = null;
 
 		globalThis.__TAURI_INTERNALS__ = {
-			invoke: async (cmd, args) => {
+			invoke: async (
+				cmd: string,
+				args: {
+					event?: string;
+					handler?: (ev: {
+						event: string;
+						payload: { scopeId: number };
+					}) => void;
+					payload?: unknown;
+				},
+			) => {
 				if (cmd === "plugin:event|listen") {
-					if (args.event === "request-subchar-image") {
+					if (args.event === "request-subchar-image" && args.handler) {
 						subcharHandler = args.handler;
 					}
 				}
 				if (cmd === "plugin:event|emit") {
-					emittedEvent = args.event;
-					emittedPayload = args.payload;
+					emittedEvent = args.event ?? null;
+					emittedPayload = args.payload ?? null;
 				}
 			},
-			transformCallback: (cb) => cb,
+			transformCallback: (cb: unknown) => cb,
 		};
 
 		const surfacesMap = new Map();
@@ -114,8 +131,11 @@ describe("core-coverage-boost: app-events edge cases", () => {
 		await app.setupExternalMenuListeners();
 
 		// Simulate trigger of request-subchar-image
-		assert.ok(typeof subcharHandler === "function");
-		subcharHandler({
+		const handler = subcharHandler as
+			| ((ev: { event: string; payload: { scopeId: number } }) => void)
+			| null;
+		assert.ok(typeof handler === "function");
+		handler({
 			event: "request-subchar-image",
 			payload: { scopeId: 1 },
 		});

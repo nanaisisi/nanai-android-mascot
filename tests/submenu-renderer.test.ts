@@ -1,27 +1,41 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-globalThis.window = globalThis;
-const children = [];
+interface MockRendererElement {
+	tagName: string;
+	className: string;
+	innerHTML: string;
+	_listeners?: Record<string, (ev: unknown) => void>;
+	addEventListener(type: string, cb: (ev: unknown) => void): void;
+	click(): void;
+}
+
+interface DispatchedAction {
+	action: string;
+	payload?: unknown;
+}
+
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
+const children: MockRendererElement[] = [];
 globalThis.document = {
-	getElementById(id) {
+	getElementById(id: string) {
 		if (id === "submenu-content") {
 			return {
 				innerHTML: "",
 				children,
-				appendChild(child) {
+				appendChild(child: MockRendererElement) {
 					this.children.push(child);
 				},
 			};
 		}
 		return null;
 	},
-	createElement(tag) {
+	createElement(tag: string): MockRendererElement {
 		return {
 			tagName: tag.toUpperCase(),
 			className: "",
 			innerHTML: "",
-			addEventListener(type, cb) {
+			addEventListener(type: string, cb: (ev: unknown) => void) {
 				this._listeners = this._listeners || {};
 				this._listeners[type] = cb;
 			},
@@ -30,15 +44,15 @@ globalThis.document = {
 			},
 		};
 	},
-};
+} as unknown as Document;
 
 const { renderSubmenuContent } = await import(
 	"../ui/ts/ui/submenu-renderer.js"
 );
 
 test("renderSubmenuContent covers all submenu types (ghost, shell, dressup, balloon, recent)", () => {
-	const dispatched = [];
-	const dispatchSubmenuAction = (action, payload) => {
+	const dispatched: DispatchedAction[] = [];
+	const dispatchSubmenuAction = (action: string, payload?: unknown) => {
 		dispatched.push({ action, payload });
 	};
 

@@ -1,25 +1,36 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-globalThis.window = globalThis;
-const documentListeners = {};
-const elements = {};
+interface MockMenuElement {
+	textContent: string;
+	classes: Set<string>;
+	classList: {
+		add(c: string): void;
+		remove(c: string): void;
+		contains(c: string): boolean;
+	};
+	contains: () => boolean;
+}
 
-const getEl = (idOrClass: string) => {
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
+const documentListeners: Record<string, (ev: unknown) => void> = {};
+const elements: Record<string, MockMenuElement> = {};
+
+const getEl = (idOrClass: string): MockMenuElement => {
 	const key = idOrClass.replace("#", "").replace(".", "");
 	if (!elements[key]) {
-		const classes = new Set();
+		const classes = new Set<string>();
 		elements[key] = {
 			textContent: "",
 			classes,
 			classList: {
-				add(c: unknown) {
+				add(c: string) {
 					classes.add(c);
 				},
-				remove(c: unknown) {
+				remove(c: string) {
 					classes.delete(c);
 				},
-				contains(c: unknown) {
+				contains(c: string) {
 					return classes.has(c);
 				},
 			},
@@ -30,16 +41,16 @@ const getEl = (idOrClass: string) => {
 };
 
 globalThis.document = {
-	getElementById(id) {
+	getElementById(id: string) {
 		return getEl(id);
 	},
 	querySelector(sel: string) {
 		return getEl(sel);
 	},
-	addEventListener(type: string, cb: EventListener) {
+	addEventListener(type: string, cb: (ev: unknown) => void) {
 		documentListeners[type] = cb;
 	},
-};
+} as unknown as Document;
 
 const { toggleMenu, openModal, closeModal } = await import(
 	"../ui/ts/ui/test-menu.js"

@@ -1,24 +1,42 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-globalThis.window = globalThis;
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
 globalThis.document = {
-	getElementById(id) {
+	getElementById(id: string) {
 		if (id === "menu-iframe") {
 			return { contentWindow: { postMessage() {} } };
 		}
 		return null;
 	},
-};
+} as unknown as Document;
 globalThis.localStorage = {
+	length: 0,
+	clear: () => {},
+	key: () => null,
+	removeItem: () => {},
 	getItem: () => JSON.stringify(["Ghost1"]),
 	setItem: () => {},
-};
+} satisfies Storage;
 
 const { menuMethods } = await import("../ui/ts/ui/app-menu.js");
 
 test("menuMethods covers toggleMenu, toggleHtmlMenu, syncMenuGhosts, hideMenu, and quick actions", async () => {
-	const mockApp = {
+	const mockApp: typeof menuMethods & {
+		elements: {
+			menuContainer: { style: { display: string } };
+			quickActionsPanel: { style: { display: string } };
+		};
+		ghostController: {
+			ghosts: Array<{ name: string }> | null;
+			currentGhost: { name: string; shells: string[] } | null;
+			shells: string[] | null;
+			currentShell: string | null;
+		};
+		currentBalloonTheme: string;
+		availableBalloons: Array<{ name: string; dir_name: string }>;
+		cachedMenuCaptions?: Record<string, string>;
+	} = {
 		...menuMethods,
 		elements: {
 			menuContainer: { style: { display: "none" } },
@@ -62,17 +80,21 @@ test("menuMethods covers toggleMenu, toggleHtmlMenu, syncMenuGhosts, hideMenu, a
 	assert.equal(mockApp.elements.menuContainer.style.display, "none");
 
 	// 6. toggleMenu with Tauri available success
-	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (cmd) => {
+	const tauriInternals: {
+		invoke: (cmd: string, args?: unknown) => Promise<void>;
+		transformCallback: (cb: unknown) => unknown;
+	} = {
+		invoke: async (cmd: string) => {
 			if (cmd === "show_menu_window") return;
 		},
-		transformCallback: (cb) => cb,
+		transformCallback: (cb: unknown) => cb,
 	};
-	globalThis.window = globalThis;
+	globalThis.__TAURI_INTERNALS__ = tauriInternals;
+	globalThis.window = globalThis as unknown as Window & typeof globalThis;
 
 	let syncCalled = false;
 	const originalSync = mockApp.syncMenuGhosts;
-	mockApp.syncMenuGhosts = () => {
+	mockApp.syncMenuGhosts = async () => {
 		syncCalled = true;
 	};
 	mockApp.toggleMenu(10, 20, 0);
@@ -86,7 +108,7 @@ test("menuMethods covers toggleMenu, toggleHtmlMenu, syncMenuGhosts, hideMenu, a
 	mockApp.toggleHtmlMenu = () => {
 		htmlMenuToggled = true;
 	};
-	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
+	tauriInternals.invoke = async (cmd: string) => {
 		if (cmd === "show_menu_window") throw new Error("fail");
 	};
 	mockApp.toggleMenu(10, 20, 0);
@@ -97,17 +119,17 @@ test("menuMethods covers toggleMenu, toggleHtmlMenu, syncMenuGhosts, hideMenu, a
 	delete globalThis.__TAURI_INTERNALS__;
 
 	// 8. syncMenuGhosts full coverage: iframe postMessages and Tauri emits
-	const posted = [];
+	const posted: Array<{ msg: unknown; origin: string }> = [];
 	const mockIframe = {
 		contentWindow: {
-			postMessage(msg, origin) {
+			postMessage(msg: unknown, origin: string) {
 				posted.push({ msg, origin });
 			},
 		},
 	};
 	globalThis.document = {
-		getElementById: (id) => (id === "menu-iframe" ? mockIframe : null),
-	};
+		getElementById: (id: string) => (id === "menu-iframe" ? mockIframe : null),
+	} as unknown as Document;
 
 	// Test non-tauri branch with invalid JSON in localStorage to trigger catch branch
 	globalThis.localStorage.getItem = () => "INVALID_JSON{";
@@ -124,15 +146,15 @@ test("menuMethods covers toggleMenu, toggleHtmlMenu, syncMenuGhosts, hideMenu, a
 	mockApp.syncMenuGhosts(1);
 
 	// Test Tauri branch with emit
-	const emitted = [];
+	const emitted: unknown[] = [];
 	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (cmd, args) => {
+		invoke: async (cmd: string, args: unknown) => {
 			if (cmd === "plugin:event|emit") {
 				emitted.push(args);
 				return;
 			}
 		},
-		transformCallback: (cb) => cb,
+		transformCallback: (cb: unknown) => cb,
 	};
 	mockApp.cachedMenuCaptions = { "biffbutton.caption": "Check Mail" };
 	mockApp.syncMenuGhosts(0);

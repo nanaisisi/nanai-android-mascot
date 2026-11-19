@@ -16,7 +16,7 @@ import {
 test("AppConfig test", async () => {
 	assert.ok(AppConfig.paths.defaultGhostDir);
 	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (cmd) => {
+		invoke: async (cmd: string) => {
 			if (cmd === "get_app_config") {
 				return { paths: { defaultGhostDir: "test_dir" } };
 			}
@@ -29,7 +29,7 @@ test("AppConfig test", async () => {
 
 test("AppConfig loadAppConfig with shiori and state", async () => {
 	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (cmd) => {
+		invoke: async (cmd: string) => {
 			if (cmd === "get_app_config") {
 				return {
 					shiori: { path: "shiori.dll" },
@@ -40,28 +40,32 @@ test("AppConfig loadAppConfig with shiori and state", async () => {
 		},
 	};
 	await loadAppConfig();
-	assert.equal(AppConfig.shiori.path, "shiori.dll");
-	assert.equal(AppConfig.state.booted, true);
+	assert.equal(AppConfig.shiori?.path, "shiori.dll");
+	assert.equal(AppConfig.state?.booted, true);
 });
 
 test("tauri-helper test", async () => {
-	globalThis.window = globalThis;
+	globalThis.window = globalThis as unknown as Window & typeof globalThis;
 	assert.equal(typeof isTauriAvailable(), "boolean");
 	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (cmd) => `ok_${cmd}`,
-		transformCallback: (cb) => cb,
+		invoke: async (cmd: string) => `ok_${cmd}`,
+		transformCallback: (cb: unknown) => cb,
 	};
 	assert.equal(isTauriAvailable(), true);
 
 	const invRes = await invoke("test_cmd", { a: 1 });
 	assert.equal(invRes, "ok_test_cmd");
 
-	let emited = null;
-	globalThis.__TAURI_INTERNALS__.invoke = async (cmd, args) => {
+	let emited: { cmd: string; args: unknown } | null = null;
+	const tauriInternals = globalThis.__TAURI_INTERNALS__ as {
+		invoke: (cmd: string, args: unknown) => Promise<unknown>;
+	};
+	tauriInternals.invoke = async (cmd: string, args: unknown) => {
 		emited = { cmd, args };
 	};
 	await emit("test-event", { payload: 123 });
-	assert.equal(emited.cmd, "plugin:event|emit");
+	const emittedVal = emited as { cmd: string; args: unknown } | null;
+	assert.equal(emittedVal?.cmd, "plugin:event|emit");
 
 	await listen("test-event", () => {});
 });
@@ -73,18 +77,18 @@ test("AppEvents, AppSettings, AppUpdate, actionMethods test", async () => {
 		classList: { toggle() {} },
 	};
 	globalThis.document = {
-		body: { classList: { toggle() {} } },
+		body: { classList: { toggle: () => false } },
 		addEventListener() {},
 		getElementById() {
 			return mockEl;
 		},
-	};
+	} as unknown as Document;
 	globalThis.localStorage = {
 		getItem() {
 			return null;
 		},
 		setItem() {},
-	};
+	} as unknown as Storage;
 	globalThis.addEventListener = () => {};
 
 	const mockApp = {
@@ -109,7 +113,7 @@ test("AppEvents, AppSettings, AppUpdate, actionMethods test", async () => {
 			balloonDisplay: mockEl,
 			balloonText: { textContent: "" },
 		},
-		showBalloon() {},
+		showBalloon(_text?: string, _scopeId?: number) {},
 		hideBalloon() {},
 		currentBalloonTheme: "default",
 		settings: { darkMode: true, shellScale: 100, balloonScale: 100 },

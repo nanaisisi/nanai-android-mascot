@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
 import { test, vi } from "vitest";
-import { resetCreatedElements, setupMockDom } from "./helpers.js";
+import type { ModalDialogApp } from "../../ui/ts/ui/renderers/modal-dialog-ui.js";
+import {
+	type MockBalloonContainer,
+	type MockDialogElement,
+	resetCreatedElements,
+	setupMockDom,
+} from "./helpers.js";
 
 setupMockDom();
 
@@ -12,13 +18,23 @@ test("ModalDialogController covers inputbox, teachbox, communicatebox, and choic
 	vi.useFakeTimers();
 	resetCreatedElements();
 
-	const events: { ev: any; args?: any; val?: any }[] = [];
+	const events: { ev: string; args?: unknown[]; val?: string }[] = [];
+	const balloonText: MockBalloonContainer = {
+		appendChild(child: MockDialogElement) {
+			this.child = child;
+		},
+	};
+	const keroBalloonText: MockBalloonContainer = {
+		appendChild(child: MockDialogElement) {
+			this.child = child;
+		},
+	};
 	const mockApp = {
 		ghostController: {
-			sendShioriEvent: async (ev: any, args: any) => {
+			sendShioriEvent: async (ev: string, args: unknown[] = []) => {
 				events.push({ ev, args });
 			},
-			sendTeachInput: (val: any) => {
+			sendTeachInput: (val: string) => {
 				events.push({ ev: "TeachInput", val });
 			},
 			clearTeachHistory: () => {
@@ -26,18 +42,10 @@ test("ModalDialogController covers inputbox, teachbox, communicatebox, and choic
 			},
 		},
 		elements: {
-			balloonText: {
-				appendChild(child: any) {
-					this.child = child;
-				},
-			},
-			keroBalloonText: {
-				appendChild(child: any) {
-					this.child = child;
-				},
-			},
+			balloonText: balloonText as unknown as HTMLElement,
+			keroBalloonText: keroBalloonText as unknown as HTMLElement,
 		},
-	};
+	} as unknown as ModalDialogApp;
 
 	const controller = new ModalDialogController({ app: mockApp });
 
@@ -51,43 +59,45 @@ test("ModalDialogController covers inputbox, teachbox, communicatebox, and choic
 		"--reference=ref1",
 		"--option=noclose,noclear",
 	]);
-	assert.ok(mockApp.elements.balloonText.child);
-	const inputForm = mockApp.elements.balloonText.child;
+	assert.ok(balloonText.child);
+	const inputForm = balloonText.child;
 	const inputEl = inputForm.children.find(
-		(c: { tagName: string }) => c.tagName === "INPUT",
-	);
+		(c) => c.tagName === "INPUT",
+	) as MockDialogElement;
 	assert.equal(inputEl.value, "hello");
 	assert.equal(inputEl.placeholder, "type here");
 	assert.equal(inputEl.maxLength, 20);
 
 	const okBtn = inputForm.children.find(
-		(c: { tagName: string }) => c.tagName === "BUTTON",
-	);
+		(c) => c.tagName === "BUTTON",
+	) as MockDialogElement;
 	okBtn.click();
 	await vi.runAllTimersAsync();
-	assert.ok(events.some((e) => e.ev === "OnMyInput" && e.args[0] === "hello"));
+	assert.ok(
+		events.some((e) => e.ev === "OnMyInput" && e.args?.[0] === "hello"),
+	);
 
 	// 2. inputbox - Enter key with default UserInput and timeout
 	events.length = 0;
 	controller.openInputBox(["MyId", "5000", "defaultVal"]);
-	const inputForm2 = mockApp.elements.balloonText.child;
+	const inputForm2 = balloonText.child as MockDialogElement;
 	const inputEl2 = inputForm2.children.find(
-		(c: { tagName: string }) => c.tagName === "INPUT",
-	);
+		(c) => c.tagName === "INPUT",
+	) as MockDialogElement;
 	inputEl2.value = "typedVal";
 	inputEl2._listeners?.keydown?.({ key: "Enter", stopPropagation() {} });
 	await vi.runAllTimersAsync();
 	assert.ok(
-		events.some((e) => e.ev === "OnUserInput" && e.args[1] === "typedVal"),
+		events.some((e) => e.ev === "OnUserInput" && e.args?.[1] === "typedVal"),
 	);
 
 	// 3. inputbox - Escape key cancels
 	events.length = 0;
 	controller.openInputBox(["MyId2", "--timeout=1000"]);
-	const inputForm3 = mockApp.elements.balloonText.child;
+	const inputForm3 = balloonText.child as MockDialogElement;
 	const inputEl3 = inputForm3.children.find(
-		(c: { tagName: string }) => c.tagName === "INPUT",
-	);
+		(c) => c.tagName === "INPUT",
+	) as MockDialogElement;
 	inputEl3._listeners?.keydown?.({ key: "Escape", stopPropagation() {} });
 	await vi.runAllTimersAsync();
 	assert.ok(events.some((e) => e.ev === "OnUserInputCancel"));
@@ -111,12 +121,12 @@ test("ModalDialogController covers inputbox, teachbox, communicatebox, and choic
 		scope: 1,
 	});
 	assert.ok(events.some((e) => e.ev === "OnTeachStart"));
-	assert.ok(mockApp.elements.keroBalloonText.child);
+	assert.ok(keroBalloonText.child);
 
-	const teachForm = mockApp.elements.keroBalloonText.child;
+	const teachForm = keroBalloonText.child;
 	const teachBtn = teachForm.children.find(
-		(c: { tagName: string }) => c.tagName === "BUTTON",
-	);
+		(c) => c.tagName === "BUTTON",
+	) as MockDialogElement;
 	teachBtn.click();
 	await vi.runAllTimersAsync();
 	assert.ok(events.some((e) => e.ev === "TeachInput" && e.val === "learnThis"));
@@ -124,10 +134,10 @@ test("ModalDialogController covers inputbox, teachbox, communicatebox, and choic
 	// teachbox escape
 	events.length = 0;
 	controller.openTeachBox([], { notifyStart: false });
-	const teachForm2 = mockApp.elements.balloonText.child;
+	const teachForm2 = balloonText.child as MockDialogElement;
 	const teachInput2 = teachForm2.children.find(
-		(c: { tagName: string }) => c.tagName === "INPUT",
-	);
+		(c) => c.tagName === "INPUT",
+	) as MockDialogElement;
 	teachInput2._listeners?.keydown?.({ key: "Escape", stopPropagation() {} });
 	await vi.runAllTimersAsync();
 	assert.ok(events.some((e) => e.ev === "OnTeachInputCancel"));
@@ -143,14 +153,14 @@ test("ModalDialogController covers inputbox, teachbox, communicatebox, and choic
 		"--limit=50",
 		"--reference=extra",
 	]);
-	const commForm = mockApp.elements.balloonText.child;
+	const commForm = balloonText.child as MockDialogElement;
 	const commBtn = commForm.children.find(
-		(c: { tagName: string }) => c.tagName === "BUTTON",
-	);
+		(c) => c.tagName === "BUTTON",
+	) as MockDialogElement;
 	commBtn.click();
 	await vi.runAllTimersAsync();
 	assert.ok(
-		events.some((e) => e.ev === "OnCommunicate" && e.args[0] === "user"),
+		events.some((e) => e.ev === "OnCommunicate" && e.args?.[0] === "user"),
 	);
 
 	// communicatebox timeout & cancel
@@ -167,11 +177,11 @@ test("ModalDialogController covers inputbox, teachbox, communicatebox, and choic
 
 	// 8. Choices & choice timeout
 	events.length = 0;
-	let customSelected = null;
+	let customSelected: { id: string; text: string } | null = null;
 	const choiceBtn = controller.createChoiceButton({
 		id: "c1",
 		text: "Option 1",
-		onSelect: (id: any, text: any) => {
+		onSelect: (id: string, text: string) => {
 			customSelected = { id, text };
 		},
 	});
@@ -185,7 +195,7 @@ test("ModalDialogController covers inputbox, teachbox, communicatebox, and choic
 	});
 	choiceBtn2.click();
 	assert.ok(
-		events.some((e) => e.ev === "OnChoiceSelect" && e.args[0] === "c2"),
+		events.some((e) => e.ev === "OnChoiceSelect" && e.args?.[0] === "c2"),
 	);
 
 	// Choice timeout

@@ -1,22 +1,24 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-globalThis.window = globalThis;
-globalThis.location = { search: "?scope=0" };
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
+globalThis.location = { search: "?scope=0" } as unknown as Location;
 const classList = {
-	classes: new Set(),
-	add(c) {
+	classes: new Set<string>(),
+	add(c: string) {
 		this.classes.add(c);
 	},
-	remove(c) {
+	remove(c: string) {
 		this.classes.delete(c);
 	},
-	contains(c) {
+	contains(c: string) {
 		return this.classes.has(c);
 	},
 };
-globalThis.document = { body: { classList } };
-globalThis.parent = globalThis;
+globalThis.document = {
+	body: { classList: classList as unknown as DOMTokenList },
+} as unknown as Document;
+globalThis.parent = globalThis as unknown as Window;
 
 const { MenuDispatcher } = await import("../ui/ts/ui/menu-dispatcher.js");
 
@@ -41,12 +43,12 @@ test("MenuDispatcher covers constructor, setScope, and dispatchAction", async ()
 
 	// 5. dispatchAction with Tauri available (emit & invoke hide_menu_window)
 	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (cmd) => {
+		invoke: async (cmd: string) => {
 			if (cmd === "hide_menu_window") return;
 		},
-		transformCallback: (cb) => cb,
+		transformCallback: (cb: unknown) => cb,
 	};
-	globalThis.window = globalThis;
+	globalThis.window = globalThis as unknown as Window & typeof globalThis;
 
 	await dispatcher.dispatchAction("balloon");
 	await dispatcher.dispatchAction("request-sync");

@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Rust ShellManifest 由来の着せ替え (bind) メニューデータ構築 (UKADOC準拠)
  *
@@ -8,33 +7,81 @@
  * オーナードローメニュー表示用のカテゴリ階層へ変換する。
  */
 
+export interface BindGroupLike {
+	number: number;
+	category: string;
+	part: string;
+	thumbnail?: string | null;
+	default?: boolean;
+	add_ids?: number[];
+}
+
+export interface BindOptionResult {
+	category: string;
+	options: string[];
+}
+
+export interface BindMenuPart {
+	number: number;
+	part: string;
+	thumbnail: string | null;
+	on: boolean;
+}
+
+export interface BindMenuCategory {
+	category: string;
+	options: string[];
+	parts: BindMenuPart[];
+}
+
+export interface BindMenuDataResult {
+	categories: BindMenuCategory[];
+}
+
+export interface ShellManifestBindLike {
+	sakura_bind_groups?: BindGroupLike[];
+	kero_bind_groups?: BindGroupLike[];
+	descript?: {
+		properties?: Record<string, string>;
+		[key: string]: unknown;
+	};
+	[key: string]: unknown;
+}
+
+export type BindManifestInput =
+	| ShellManifestBindLike
+	| Record<string, unknown>
+	| null
+	| undefined;
+
 /** bindoption.group の descript キー（スコープ0/1） */
-export function bindOptionKey(scopeId = 0) {
+export function bindOptionKey(scopeId = 0): string {
 	return scopeId === 0 ? "sakura.bindoption.group" : "kero.bindoption.group";
 }
 
 /**
  * `bindgroup` 一覧をスコープで取得（scope 0 = さくら / それ以外 = うにゅ）
- * @param {Record<string, unknown>|null|undefined} manifest - Rust ShellManifest
- * @param {number} [scopeId]
- * @returns {Array<{ number: number, category: string, part: string, thumbnail?: string|null, default: boolean, add_ids: number[] }>}
  */
-export function bindGroupsForScope(manifest, scopeId = 0) {
+export function bindGroupsForScope(
+	manifest: BindManifestInput,
+	scopeId = 0,
+): BindGroupLike[] {
 	if (!manifest) return [];
-	const groups =
-		scopeId === 0 ? manifest.sakura_bind_groups : manifest.kero_bind_groups;
+	const m = manifest as ShellManifestBindLike;
+	const groups = scopeId === 0 ? m.sakura_bind_groups : m.kero_bind_groups;
 	return Array.isArray(groups) ? groups : [];
 }
 
 /**
  * `[target].bindoption.group,[カテゴリ名],[mustselect|multiple...]` の解析
  * 例: "服,multiple" → { category: "服", options: ["multiple"] }
- * @param {Record<string, unknown>|null|undefined} manifest
- * @param {number} [scopeId]
- * @returns {{ category: string, options: string[] }|null}
  */
-export function bindOptionForScope(manifest, scopeId = 0) {
-	const value = manifest?.descript?.properties?.[bindOptionKey(scopeId)];
+export function bindOptionForScope(
+	manifest: BindManifestInput,
+	scopeId = 0,
+): BindOptionResult | null {
+	const m = manifest as ShellManifestBindLike | null | undefined;
+	const value = m?.descript?.properties?.[bindOptionKey(scopeId)];
 	if (!value) return null;
 	const parts = String(value)
 		.split(",")
@@ -45,23 +92,24 @@ export function bindOptionForScope(manifest, scopeId = 0) {
 }
 
 /** 着せ替え状態キー（SurfaceManager.dressupState と共通フォーマット） */
-export function dressupKey(scopeId, category, part) {
+export function dressupKey(
+	scopeId: number,
+	category: string,
+	part: string,
+): string {
 	return `${scopeId}__${category}__${part}`;
 }
 
 /**
  * 着せ替えメニューデータ（bindgroup をカテゴリ順にグルーピング）
- * @param {Record<string, unknown>|null|undefined} manifest
- * @param {number} [scopeId]
- * @param {Map<string, boolean>|null} [dressupState] - 現在の装着状態
- * @returns {{
- *   categories: Array<{ category: string, options: string[], parts: Array<{ number: number, part: string, thumbnail?: string|null, on: boolean }> }>,
- * }}
  */
-export function bindMenuData(manifest, scopeId = 0, dressupState = null) {
+export function bindMenuData(
+	manifest: BindManifestInput,
+	scopeId = 0,
+	dressupState: Map<string, boolean> | null = null,
+): BindMenuDataResult {
 	const option = bindOptionForScope(manifest, scopeId);
-	/** @type {Map<string, { category: string, options: string[], parts: unknown[] }>} */
-	const byCategory = new Map();
+	const byCategory = new Map<string, BindMenuCategory>();
 
 	for (const group of bindGroupsForScope(manifest, scopeId)) {
 		const category = group.category || option?.category || "";
@@ -93,11 +141,11 @@ export function bindMenuData(manifest, scopeId = 0, dressupState = null) {
 
 /**
  * メニュー同期用ペイロード（さくら / うにゅ 両スコープ分）
- * @param {Record<string, unknown>|null|undefined} manifest
- * @param {{ dressupState?: Map<string, boolean> }|null} [surfaceManager]
- * @returns {{ sakura: ReturnType<typeof bindMenuData>, kero: ReturnType<typeof bindMenuData> }|null}
  */
-export function dressupMenuPayload(manifest, surfaceManager = null) {
+export function dressupMenuPayload(
+	manifest: BindManifestInput,
+	surfaceManager: { dressupState?: Map<string, boolean> } | null = null,
+): { sakura: BindMenuDataResult; kero: BindMenuDataResult } | null {
 	if (!manifest) return null;
 	if (
 		!bindGroupsForScope(manifest, 0).length &&
@@ -114,17 +162,19 @@ export function dressupMenuPayload(manifest, surfaceManager = null) {
 /**
  * `bindgroup[N].default,1`（初期装着）を dressupState にシードする。
  * 既存キー（セッションローカルの状態）は書き換えない。
- * @param {Record<string, unknown>|null|undefined} manifest
- * @param {Map<string, boolean>} dressupState
- * @returns {number} シードしたパーツ数
  */
-export function seedDressupDefaults(manifest, dressupState) {
+export function seedDressupDefaults(
+	manifest: BindManifestInput,
+	dressupState: Map<string, boolean>,
+): number {
 	if (!manifest || !(dressupState instanceof Map)) return 0;
+	const m = manifest as ShellManifestBindLike;
 	let seeded = 0;
-	for (const [scopeId, groups] of [
-		[0, manifest.sakura_bind_groups],
-		[1, manifest.kero_bind_groups],
-	]) {
+	const scopeGroups: Array<[number, BindGroupLike[] | undefined]> = [
+		[0, m.sakura_bind_groups],
+		[1, m.kero_bind_groups],
+	];
+	for (const [scopeId, groups] of scopeGroups) {
 		for (const group of Array.isArray(groups) ? groups : []) {
 			if (group.default !== true) continue;
 			const key = dressupKey(scopeId, group.category, group.part);
@@ -138,11 +188,11 @@ export function seedDressupDefaults(manifest, dressupState) {
 
 /**
  * 数一覧を月配列に展開して重複除去
- * @param {number} number - bindgroup 番号（= SHEIKO アニメーションID）
- * @param {number[]} [addIds]
- * @returns {number[]}
  */
-export function bindAnimationIds(number, addIds = []) {
+export function bindAnimationIds(
+	number: number,
+	addIds: number[] = [],
+): number[] {
 	const ids = [...(Array.isArray(addIds) ? addIds : [])];
 	if (Number.isFinite(number) && !ids.includes(number)) {
 		ids.push(number);
@@ -152,10 +202,10 @@ export function bindAnimationIds(number, addIds = []) {
 
 /**
  * SERIKO パターンの下地サーフィス番号 → 画像ファイル名（サーフェス定義形式）
- * @param {string|number|null|undefined} surface
- * @returns {string|null} ファイル名 ("surface100.png")。"-1" / 空は null
  */
-export function patternSurfaceFile(surface) {
+export function patternSurfaceFile(
+	surface: string | number | null | undefined,
+): string | null {
 	const s = String(surface ?? "").trim();
 	if (!s || s === "-1") return null;
 	return `surface${s}.png`;

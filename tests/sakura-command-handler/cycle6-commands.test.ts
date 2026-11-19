@@ -4,29 +4,34 @@ import {
 	SakuraCommandHandler,
 	scriptLifetimeState,
 } from "../../ui/ts/ghost/sakura-command-handler.js";
-import { createMockApp, setupMockDom } from "./helpers.js";
+import {
+	createMockApp,
+	createMockPlayer,
+	type MockCommandEvent,
+	setupMockDom,
+} from "./helpers.js";
 
 setupMockDom();
 
 describe("SakuraCommandHandler - Cycle 6 Extended Commands", () => {
 	it("handles reload commands (shell, ghost, balloon, descript, surface, shiori)", async () => {
-		const eventsSent = [];
+		const eventsSent: MockCommandEvent[] = [];
 		const mockApp = createMockApp(eventsSent);
 		mockApp.ghostController.currentGhost = {
 			name: "TestGhost",
 			path: "/ghosts/test",
 		};
 		mockApp.ghostController.currentShell = "master";
-		mockApp.ghostController.initializeGhostSHIORI = async (ghost) => {
+		mockApp.ghostController.initializeGhostSHIORI = async (ghost: unknown) => {
 			eventsSent.push({ ev: "initializeGhostSHIORI", ghost });
 		};
-		mockApp.ghostController.selectShell = async (shell) => {
+		mockApp.ghostController.selectShell = async (shell: string) => {
 			eventsSent.push({ ev: "selectShell", shell });
 		};
-		mockApp.ghostController.switchGhost = async (name) => {
+		mockApp.ghostController.switchGhost = async (name: string) => {
 			eventsSent.push({ ev: "switchGhost", name });
 		};
-		mockApp.setBalloonTheme = async (theme) => {
+		mockApp.setBalloonTheme = async (theme: string) => {
 			eventsSent.push({ ev: "setBalloonTheme", theme });
 		};
 		mockApp.balloonThemeManager = {
@@ -35,12 +40,12 @@ describe("SakuraCommandHandler - Cycle 6 Extended Commands", () => {
 			},
 		};
 		mockApp.surfaceManager = {
-			loadSurfacesTxt: async (path) => {
+			loadSurfacesTxt: async (path: string) => {
 				eventsSent.push({ ev: "loadSurfacesTxt", path });
 			},
 		};
 
-		const player = { currentScope: 0, app: mockApp };
+		const player = createMockPlayer(mockApp);
 		const handler = new SakuraCommandHandler(player);
 
 		await handler.runCommand(["reload", "shell"]);
@@ -70,21 +75,21 @@ describe("SakuraCommandHandler - Cycle 6 Extended Commands", () => {
 	});
 
 	it("handles change commands and vanishbymyself", async () => {
-		const eventsSent = [];
+		const eventsSent: MockCommandEvent[] = [];
 		const mockApp = createMockApp(eventsSent);
 		mockApp.ghostController.currentGhost = { name: "CurrentGhost" };
 		mockApp.ghostController.currentShell = "default";
-		mockApp.ghostController.selectShell = async (name) => {
+		mockApp.ghostController.selectShell = async (name: string) => {
 			eventsSent.push({ ev: "selectShell", name });
 		};
-		mockApp.setBalloonTheme = async (name) => {
+		mockApp.setBalloonTheme = async (name: string) => {
 			eventsSent.push({ ev: "setBalloonTheme", name });
 		};
 		mockApp.closeApp = async () => {
 			eventsSent.push({ ev: "closeApp" });
 		};
 
-		const player = { currentScope: 0, app: mockApp };
+		const player = createMockPlayer(mockApp);
 		const handler = new SakuraCommandHandler(player);
 
 		// change shell with --option=raise-event
@@ -98,8 +103,8 @@ describe("SakuraCommandHandler - Cycle 6 Extended Commands", () => {
 			eventsSent.some(
 				(e) =>
 					e.ev === "OnShellChanging" &&
-					e.args[0] === "winter" &&
-					e.args[1] === "default",
+					e.args?.[0] === "winter" &&
+					e.args?.[1] === "default",
 			),
 		);
 		assert.ok(
@@ -115,7 +120,7 @@ describe("SakuraCommandHandler - Cycle 6 Extended Commands", () => {
 		);
 		assert.ok(
 			eventsSent.some(
-				(e) => e.ev === "OnBalloonChange" && e.args[0] === "custom_balloon",
+				(e) => e.ev === "OnBalloonChange" && e.args?.[0] === "custom_balloon",
 			),
 		);
 
@@ -126,16 +131,27 @@ describe("SakuraCommandHandler - Cycle 6 Extended Commands", () => {
 	});
 
 	it("handles cross-ghost, timer, and embed event commands", async () => {
-		const eventsSent = [];
+		const eventsSent: MockCommandEvent[] = [];
 		const mockApp = createMockApp(eventsSent);
-		mockApp.ghostController.sendRaiseOther = async (ghost, ev, refs) => {
+		mockApp.ghostController.sendRaiseOther = async (
+			ghost: string,
+			ev: string,
+			refs: string[],
+		) => {
 			eventsSent.push({ ev: "raiseOther", ghost, event: ev, refs });
 		};
-		mockApp.ghostController.sendNotifyOther = async (ghost, ev, refs) => {
+		mockApp.ghostController.sendNotifyOther = async (
+			ghost: string,
+			ev: string,
+			refs: string[],
+		) => {
 			eventsSent.push({ ev: "notifyOther", ghost, event: ev, refs });
 		};
-		mockApp.ghostController.sendShioriEvent = async (ev, refs) => {
-			eventsSent.push({ ev, refs });
+		mockApp.ghostController.sendShioriEvent = async (
+			ev: string,
+			refs: unknown[],
+		) => {
+			eventsSent.push({ ev, refs: refs as string[] });
 			if (ev === "OnEmbedScript") {
 				return { response: { value: "\\0テスト\\e" } };
 			}
@@ -143,13 +159,11 @@ describe("SakuraCommandHandler - Cycle 6 Extended Commands", () => {
 		};
 
 		let playedScript = "";
-		const player = {
-			currentScope: 0,
-			app: mockApp,
-			playScript: async (s) => {
+		const player = createMockPlayer(mockApp, {
+			playScript: async (s: string) => {
 				playedScript = s;
 			},
-		};
+		});
 		const handler = new SakuraCommandHandler(player);
 
 		await handler.runCommand([
@@ -164,7 +178,7 @@ describe("SakuraCommandHandler - Cycle 6 Extended Commands", () => {
 					e.ev === "raiseOther" &&
 					e.ghost === "OtherGhost" &&
 					e.event === "OnGreeting" &&
-					e.refs[0] === "arg1",
+					e.refs?.[0] === "arg1",
 			),
 		);
 
@@ -175,7 +189,7 @@ describe("SakuraCommandHandler - Cycle 6 Extended Commands", () => {
 					e.ev === "notifyOther" &&
 					e.ghost === "OtherGhost" &&
 					e.event === "OnNotice" &&
-					e.refs[0] === "data",
+					e.refs?.[0] === "data",
 			),
 		);
 
@@ -201,9 +215,9 @@ describe("SakuraCommandHandler - Cycle 6 Extended Commands", () => {
 	});
 
 	it("handles mode transitions (enter, leave, entermode, leavemode)", async () => {
-		const eventsSent = [];
+		const eventsSent: MockCommandEvent[] = [];
 		const mockApp = createMockApp(eventsSent);
-		const player = { currentScope: 0, app: mockApp };
+		const player = createMockPlayer(mockApp);
 		const handler = new SakuraCommandHandler(player);
 
 		scriptLifetimeState.reset();
@@ -216,8 +230,8 @@ describe("SakuraCommandHandler - Cycle 6 Extended Commands", () => {
 			eventsSent.some(
 				(e) =>
 					e.ev === "OnModeChange" &&
-					e.args[0] === "passivemode" &&
-					e.args[1] === "enter",
+					e.args?.[0] === "passivemode" &&
+					e.args?.[1] === "enter",
 			),
 		);
 
@@ -228,8 +242,8 @@ describe("SakuraCommandHandler - Cycle 6 Extended Commands", () => {
 			eventsSent.some(
 				(e) =>
 					e.ev === "OnModeChange" &&
-					e.args[0] === "passivemode" &&
-					e.args[1] === "leave",
+					e.args?.[0] === "passivemode" &&
+					e.args?.[1] === "leave",
 			),
 		);
 

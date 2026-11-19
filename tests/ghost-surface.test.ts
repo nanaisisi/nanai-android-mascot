@@ -1,19 +1,31 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-const calls: { cmd: string; args: unknown }[] = [];
-let loadDelay = async (_args?: { surfaceId: unknown }) => {};
-globalThis.window = globalThis;
+interface SurfaceInvokeCall {
+	cmd: string;
+	args: {
+		surfaceId?: unknown;
+		payload?: { src?: unknown };
+	};
+}
+
+const calls: SurfaceInvokeCall[] = [];
+let loadDelay: (args?: { surfaceId: unknown }) => Promise<void> =
+	async () => {};
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
 globalThis.document = {
 	getElementById: () => null,
 	querySelector: () => null,
-};
+} as unknown as Document;
 globalThis.__TAURI_INTERNALS__ = {
 	transformCallback: () => 0,
-	invoke: async (cmd: string, args: { surfaceId: unknown }) => {
+	invoke: async (
+		cmd: string,
+		args: { surfaceId?: unknown; payload?: { src?: unknown } },
+	) => {
 		calls.push({ cmd, args });
 		if (cmd === "load_surface_image") {
-			await loadDelay(args);
+			await loadDelay({ surfaceId: args.surfaceId });
 			return `data:image/png;base64,${args.surfaceId}`;
 		}
 		if (cmd === "load_surface_pna") throw new Error("no pna");
@@ -44,7 +56,7 @@ function makeController() {
 				src: unknown,
 				resolve: (arg0: unknown) => unknown,
 				_scope: unknown,
-				layers: unknown[],
+				layers?: Array<{ file: string; x: number; y: number }>,
 			) => {
 				for (const layer of layers || []) {
 					await resolve(layer.file);
@@ -93,12 +105,12 @@ test("animation frame layer also runs chroma-key processing", async () => {
 test("a slower older surface update does not overwrite a newer one", async () => {
 	calls.length = 0;
 	const gc = makeController();
-	let release: ((value?: unknown) => void) | undefined;
+	let release: (value?: unknown) => void = () => {};
 	const gate = new Promise((r) => {
 		release = r;
 	});
-	loadDelay = async (args: { surfaceId: string }) => {
-		if (args.surfaceId === "5") await gate;
+	loadDelay = async (args) => {
+		if (args?.surfaceId === "5") await gate;
 	};
 	const older = gc.updateSurface(5, 0);
 	await gc.updateSurface(6, 0);

@@ -1,18 +1,38 @@
 import assert from "node:assert/strict";
 import { test, vi } from "vitest";
 
-globalThis.window = globalThis;
-globalThis.innerWidth = 800;
-globalThis.innerHeight = 600;
-globalThis.requestAnimationFrame = (cb) => cb();
-globalThis.document = {
-	getElementById(id) {
+const g = globalThis as unknown as {
+	window?: unknown;
+	innerWidth?: number;
+	innerHeight?: number;
+	requestAnimationFrame?: (cb: FrameRequestCallback) => number;
+	document?: unknown;
+	addEventListener?: (
+		type: string,
+		cb: (e?: Record<string, unknown>) => void,
+	) => void;
+	__TAURI_INTERNALS__?: {
+		metadata?: { currentWindow?: { label?: string } };
+		invoke?: (cmd: string) => Promise<unknown>;
+		transformCallback?: (cb: unknown) => unknown;
+	};
+};
+
+g.window = globalThis;
+g.innerWidth = 800;
+g.innerHeight = 600;
+g.requestAnimationFrame = (cb: FrameRequestCallback) => {
+	cb(0);
+	return 0;
+};
+g.document = {
+	getElementById(id: string) {
 		if (id === "balloon-display") {
 			return { style: {}, addEventListener() {} };
 		}
 		return null;
 	},
-	createElement(tag) {
+	createElement(tag: string) {
 		if (tag === "canvas") {
 			return {
 				width: 0,
@@ -38,9 +58,17 @@ const { InteractionManager } = await import("../ui/ts/surface/interaction.js");
 test("InteractionManager covers dragging, stroke, longpress, docking, and native window move", async () => {
 	vi.useFakeTimers();
 
-	const clicked = [];
-	const stroked = [];
-	const mouseEvents = [];
+	const clicked: Array<{ x: unknown; y: unknown; rect: unknown }> = [];
+	const stroked: Array<{ x: unknown; y: unknown; rect: unknown }> = [];
+	const mouseEvents: Array<{
+		ev: string;
+		x: number;
+		y: number;
+		button?: number;
+		dev?: string;
+		rect?: unknown;
+		delta?: number;
+	}> = [];
 	let menuToggled = false;
 	const mockApp = {
 		toggleMenu() {
@@ -49,8 +77,8 @@ test("InteractionManager covers dragging, stroke, longpress, docking, and native
 	};
 	const manager = new InteractionManager(mockApp);
 
-	const listeners = {};
-	const classes = new Set();
+	const listeners: Record<string, (e?: Record<string, unknown>) => void> = {};
+	const classes = new Set<string>();
 	const mockTarget = {
 		querySelector: () => ({
 			tagName: "IMG",
@@ -64,13 +92,13 @@ test("InteractionManager covers dragging, stroke, longpress, docking, and native
 			naturalHeight: 10,
 		}),
 		classList: {
-			add(c) {
+			add(c: string) {
 				classes.add(c);
 			},
-			remove(...args) {
+			remove(...args: string[]) {
 				for (const c of args) classes.delete(c);
 			},
-			contains(c) {
+			contains(c: string) {
 				return classes.has(c);
 			},
 		},
@@ -81,37 +109,43 @@ test("InteractionManager covers dragging, stroke, longpress, docking, and native
 			width: 100,
 			height: 100,
 		}),
-		addEventListener(type, cb) {
+		addEventListener(type: string, cb: (e?: Record<string, unknown>) => void) {
 			listeners[type] = cb;
 		},
-	};
+	} as unknown as HTMLElement;
 
-	const globalListeners = {};
-	globalThis.addEventListener = (type, cb) => {
+	const globalListeners: Record<
+		string,
+		Array<(e?: Record<string, unknown>) => void>
+	> = {};
+	g.addEventListener = (
+		type: string,
+		cb: (e?: Record<string, unknown>) => void,
+	) => {
 		globalListeners[type] = globalListeners[type] || [];
 		globalListeners[type].push(cb);
 	};
 
-	const emitGlobal = (type, e) => {
+	const emitGlobal = (type: string, e: Record<string, unknown>) => {
 		for (const cb of globalListeners[type] || []) {
 			cb(e);
 		}
 	};
 
 	// 1. Native Tauri desktop dragging
-	globalThis.__TAURI_INTERNALS__ = {
+	g.__TAURI_INTERNALS__ = {
 		metadata: { currentWindow: { label: "main" } },
-		invoke: async (cmd) => {
+		invoke: async (cmd: string) => {
 			if (cmd === "plugin:window|position") return { x: 100, y: 100 };
 			if (cmd === "plugin:window|set_position") return;
 		},
-		transformCallback: (cb) => cb,
+		transformCallback: (cb: unknown) => cb,
 	};
 
 	manager.setupDragging(
 		mockTarget,
-		(x, y, rect) => clicked.push({ x, y, rect }),
-		(x, y, rect) => stroked.push({ x, y, rect }),
+		(x: unknown, y: unknown, rect: unknown) => clicked.push({ x, y, rect }),
+		(x: unknown, y: unknown, rect: unknown) => stroked.push({ x, y, rect }),
 		{
 			onGhostMouseDown: (x, y, rect, button, dev) =>
 				mouseEvents.push({ ev: "down", x, y, button, dev, rect }),
@@ -142,7 +176,7 @@ test("InteractionManager covers dragging, stroke, longpress, docking, and native
 	emitGlobal("mousemove", { clientX: 20, clientY: 20 });
 	emitGlobal("mouseup", { clientX: 20, clientY: 20 });
 
-	// 2. Long press menu trigger
+	// 2. Long press menu trigger (touch/non-mouse only per drag-handler)
 	listeners.mousedown?.({
 		type: "mousedown",
 		button: 0,
@@ -152,12 +186,22 @@ test("InteractionManager covers dragging, stroke, longpress, docking, and native
 		clientY: 10,
 	});
 	vi.advanceTimersByTime(700);
-	assert.equal(menuToggled, true);
-	// Release longpress
+	assert.equal(menuToggled, false);
 	emitGlobal("mouseup", { clientX: 10, clientY: 10 });
 
+	listeners.touchstart?.({
+		type: "touchstart",
+		cancelable: true,
+		preventDefault() {},
+		touches: [{ clientX: 10, clientY: 10 }],
+	});
+	vi.advanceTimersByTime(700);
+	assert.equal(menuToggled, true);
+	// Release longpress
+	emitGlobal("touchend", {});
+
 	// 3. Docking left & right (non-Tauri)
-	delete globalThis.__TAURI_INTERNALS__;
+	delete g.__TAURI_INTERNALS__;
 	listeners.touchstart?.({
 		type: "touchstart",
 		cancelable: true,

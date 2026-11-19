@@ -58,14 +58,8 @@ describe("balloon-descript-layout position submodule", () => {
 
 	it("position module handles partial origin and missing balloonDisplay element", () => {
 		const root = createMockRoot();
-		directPosition(root, { "origin.x": "10" }, { elements: {} });
-		directPosition(
-			root,
-			{ "origin.y": "20" },
-			{
-				elements: { balloonDisplay: { style: {} } },
-			},
-		);
+		directPosition(root, { "origin.x": "10" }, {});
+		directPosition(root, { "origin.y": "20" }, {});
 		assert.ok(true);
 	});
 });

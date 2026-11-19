@@ -1,18 +1,64 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-globalThis.window = globalThis;
-const quickBtns = {};
-const documentListeners = {};
-const globalListeners = {};
-const tauriListeners = {};
+type MockEventCallback = (event?: Record<string, unknown>) => unknown;
+type MockTauriEventCallback = (event: { payload?: unknown }) => unknown;
+
+interface MockQuickButton {
+	_cb?: (event?: { stopPropagation: () => void }) => void;
+	addEventListener: (
+		_type: string,
+		cb: (event?: { stopPropagation: () => void }) => void,
+	) => void;
+	click: () => void;
+}
+
+interface MockGhostDragOptions {
+	onGhostMouseDown?: (
+		x: number,
+		y: number,
+		e: unknown,
+		button?: number,
+		inputType?: string,
+	) => void;
+	onGhostMouseUp?: (
+		x: number,
+		y: number,
+		e: unknown,
+		button?: number,
+		inputType?: string,
+	) => void;
+	onGhostWheel?: (x: number, y: number, e: unknown, delta: number) => void;
+	onGhostDragStart?: (x: number, y: number, e: unknown) => void;
+	onGhostDragEnd?: (x: number, y: number, e: unknown) => void;
+	onGhostHover?: (x: number, y: number, e: unknown) => void;
+}
+
+interface MockGhostDisplay {
+	_onClick?: (x: number, y: number, e: unknown) => void;
+	_onStroke?: (x: number, y: number, e: unknown) => void;
+	_options?: MockGhostDragOptions;
+	addEventListener: (type: string, cb: MockEventCallback) => void;
+	getBoundingClientRect: () => {
+		left: number;
+		top: number;
+		right: number;
+		bottom: number;
+	};
+}
+
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
+const quickBtns: Record<string, MockQuickButton> = {};
+const documentListeners: Record<string, MockEventCallback> = {};
+const globalListeners: Record<string, MockEventCallback> = {};
+const tauriListeners: Record<string, MockTauriEventCallback> = {};
 
 globalThis.document = {
-	addEventListener(type, cb) {
+	addEventListener(type: string, cb: MockEventCallback) {
 		documentListeners[type] = cb;
 	},
 	removeEventListener() {},
-	getElementById(id) {
+	getElementById(id: string) {
 		if (!quickBtns[id]) {
 			quickBtns[id] = {
 				addEventListener(_type, cb) {
@@ -27,27 +73,27 @@ globalThis.document = {
 	},
 	documentElement: { style: {} },
 	querySelector: () => null,
-};
+} as unknown as Document;
 
 globalThis.screenX = 0;
 globalThis.screenY = 0;
-globalThis.addEventListener = (type, cb) => {
+globalThis.addEventListener = ((type: string, cb: MockEventCallback) => {
 	globalListeners[type] = cb;
-};
+}) as unknown as typeof globalThis.addEventListener;
 
 globalThis.__TAURI_INTERNALS__ = {
 	metadata: { currentWindow: { label: "main" } },
-	invoke: async (cmd) => {
+	invoke: async (cmd: string) => {
 		if (cmd === "on_mouse_click") return;
 	},
-	transformCallback: (cb) => cb,
+	transformCallback: (cb: unknown) => cb,
 	plugins: {
 		event: {
-			listen: async (event, cb) => {
+			listen: async (event: string, cb: MockTauriEventCallback) => {
 				tauriListeners[event] = cb;
 				return () => {};
 			},
-			emit: async (_event, _payload) => {},
+			emit: async (_event: string, _payload: unknown) => {},
 		},
 	},
 };
@@ -55,33 +101,40 @@ globalThis.__TAURI_INTERNALS__ = {
 const { eventMethods } = await import("../ui/ts/core/app-events.js");
 
 test("eventMethods covers 100% of event listeners, buttons, external menus, and ghost click/stroke", async () => {
-	const listeners = {};
-	let shioriDoubleRes = null;
-	const eventsSent = [];
+	const listeners: Record<string, MockEventCallback> = {};
+	let shioriDoubleRes: { script: string } | null = null;
+	const eventsSent: Array<{ ev: string; args: unknown }> = [];
+
+	const ghostDisplay: MockGhostDisplay = {
+		addEventListener(type: string, cb: MockEventCallback) {
+			listeners[type] = cb;
+		},
+		getBoundingClientRect: () => ({
+			left: 0,
+			top: 0,
+			right: 100,
+			bottom: 50,
+		}),
+	};
 
 	const mockApp = {
 		...eventMethods,
 		interactionManager: {
-			setupDragging(el, onClick, onStroke, options) {
+			setupDragging(
+				el: MockGhostDisplay,
+				onClick: (x: number, y: number, e: unknown) => void,
+				onStroke: (x: number, y: number, e: unknown) => void,
+				options: MockGhostDragOptions,
+			) {
 				el._onClick = onClick;
 				el._onStroke = onStroke;
 				el._options = options;
 			},
 		},
 		elements: {
-			ghostDisplay: {
-				addEventListener(type, cb) {
-					listeners[type] = cb;
-				},
-				getBoundingClientRect: () => ({
-					left: 0,
-					top: 0,
-					right: 100,
-					bottom: 50,
-				}),
-			},
+			ghostDisplay,
 			keroDisplay: {
-				addEventListener(type, cb) {
+				addEventListener(type: string, cb: MockEventCallback) {
 					listeners[`kero_${type}`] = cb;
 				},
 			},
@@ -92,17 +145,17 @@ test("eventMethods covers 100% of event listeners, buttons, external menus, and 
 					right: 50,
 					bottom: 25,
 				}),
-				addEventListener(type, cb) {
+				addEventListener(type: string, cb: MockEventCallback) {
 					listeners[`menu_${type}`] = cb;
 				},
 			},
 			quickBubble: {
-				addEventListener(type, cb) {
+				addEventListener(type: string, cb: MockEventCallback) {
 					listeners[`quick_${type}`] = cb;
 				},
 			},
 			balloonDisplay: {
-				addEventListener(type, cb) {
+				addEventListener(type: string, cb: MockEventCallback) {
 					listeners[`balloon_${type}`] = cb;
 				},
 			},
@@ -117,7 +170,7 @@ test("eventMethods covers 100% of event listeners, buttons, external menus, and 
 		closeApp() {},
 		syncMenuGhosts() {},
 		ghostController: {
-			sendShioriEvent: async (ev, args) => {
+			sendShioriEvent: async (ev: string, args: unknown) => {
 				eventsSent.push({ ev, args });
 				if (ev === "OnMouseDoubleClick") return shioriDoubleRes;
 				return { script: "click_script" };
@@ -245,10 +298,12 @@ test("eventMethods covers 100% of event listeners, buttons, external menus, and 
 
 	// Check Reference parameters of OnMouseDown
 	const mouseDownEv = eventsSent.find((e) => e.ev === "OnMouseDown");
+	assert.ok(mouseDownEv);
 	assert.deepEqual(mouseDownEv.args, [10, 20, 0, 0, "Head", 0, "mouse"]);
 
 	// Check Reference parameters of OnMouseWheel
 	const wheelEv = eventsSent.find((e) => e.ev === "OnMouseWheel");
+	assert.ok(wheelEv);
 	assert.deepEqual(wheelEv.args, [10, 20, 120, 0, "Head"]);
 
 	// 7. Test interactionManager setup options invocation

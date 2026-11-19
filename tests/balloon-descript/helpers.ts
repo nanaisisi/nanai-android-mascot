@@ -1,7 +1,7 @@
 export const cssVars: Record<string, string> = {};
 
 export function setupBalloonDescriptMockEnvironment() {
-	globalThis.window = globalThis;
+	globalThis.window = globalThis as unknown as Window & typeof globalThis;
 	globalThis.document = {
 		documentElement: {
 			style: {

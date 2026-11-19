@@ -8,7 +8,7 @@ describe("balloon-window and balloon-window/theme edge cases", () => {
 		);
 
 		// 1. loadBalloonSkinImages for scope >= 2 with fallback to balloons0.png/pna
-		globalThis.__TAURI_INTERNALS__ = {
+		const tauriInternals = {
 			metadata: { currentWindow: { label: "balloon_window_2" } },
 			invoke: async (cmd: string, args: { file: string }) => {
 				if (cmd === "load_balloon_image") {
@@ -30,8 +30,9 @@ describe("balloon-window and balloon-window/theme edge cases", () => {
 				}
 				return null;
 			},
-			transformCallback: (cb: any) => cb,
+			transformCallback: (cb: unknown) => cb,
 		};
+		globalThis.__TAURI_INTERNALS__ = tauriInternals;
 
 		const bgScope2 = await loadBalloonSkinImages("theme_custom", 2);
 		// processChromaKey might return null or base64 without canvas DOM, but function executes without throwing
@@ -46,7 +47,7 @@ describe("balloon-window and balloon-window/theme edge cases", () => {
 		assert.strictEqual(nullPropsRes, null);
 
 		// 3. applyBalloonDescript when invoke throws
-		globalThis.__TAURI_INTERNALS__.invoke = async () => {
+		tauriInternals.invoke = async () => {
 			throw new Error("Manifest error");
 		};
 		const errRes = await applyBalloonDescript({

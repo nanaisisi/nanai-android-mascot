@@ -322,48 +322,33 @@ export function applyAssetProperties(
 				? `markerp${scopeId}def.png`
 				: "markers.png";
 
-	const resolveAndSetMarker = (
-		file: string,
-		fallbackFile: string,
-		cssVar: string,
-	) => {
-		if (typeof invoke === "function") {
-			void invoke("load_balloon_image", { name: themeName, file })
-				.then((dataUrl) => {
-					if (dataUrl) {
-						preloadBalloonAsset(dataUrl as string);
-						root.style.setProperty(cssVar, `url("${dataUrl}")`);
-					} else if (fallbackFile && fallbackFile !== file) {
-						const nextFallback =
-							cssVar === "--balloon-marker-image" &&
-							fallbackFile === "marker.png"
-								? "sstp.png"
-								: fallbackFile === "online00.png"
-									? "online.png"
-									: "marker.png";
-						resolveAndSetMarker(fallbackFile, nextFallback, cssVar);
-					}
-				})
-				.catch(() => {
-					if (fallbackFile && fallbackFile !== file) {
-						const nextFallback =
-							cssVar === "--balloon-marker-image" &&
-							fallbackFile === "marker.png"
-								? "sstp.png"
-								: fallbackFile === "online00.png"
-									? "online.png"
-									: "marker.png";
-						resolveAndSetMarker(fallbackFile, nextFallback, cssVar);
-					}
-				});
-		} else {
-			setFallbackAsset(themeName, file, cssVar);
-		}
+	const resolveAssetChain = (candidates: string[], cssVar: string) => {
+		const uniqueCandidates = [...new Set(candidates.filter(Boolean))];
+		const tryNext = (index: number) => {
+			const file = uniqueCandidates[index];
+			if (!file) return;
+			if (typeof invoke === "function") {
+				void invoke("load_balloon_image", { name: themeName, file })
+					.then((dataUrl) => {
+						if (dataUrl) {
+							preloadBalloonAsset(dataUrl as string);
+							root.style.setProperty(cssVar, `url("${dataUrl}")`);
+						} else {
+							tryNext(index + 1);
+						}
+					})
+					.catch(() => {
+						tryNext(index + 1);
+					});
+			} else {
+				setFallbackAsset(themeName, file, cssVar);
+			}
+		};
+		tryNext(0);
 	};
 
-	resolveAndSetMarker(
-		defaultMarkerFile,
-		"markers.png",
+	resolveAssetChain(
+		[defaultMarkerFile, "markers.png", "marker.png", "sstp.png"],
 		"--balloon-marker-image",
 	);
 
@@ -371,9 +356,8 @@ export function applyAssetProperties(
 	if (p["onlinemarker.filename"]) {
 		setBalloonImage("onlinemarker.filename", "--balloon-online-image");
 	} else {
-		resolveAndSetMarker(
-			"online0.png",
-			"online00.png",
+		resolveAssetChain(
+			["online0.png", "online00.png", "online.png"],
 			"--balloon-online-image",
 		);
 	}
@@ -387,34 +371,8 @@ export function applyAssetProperties(
 				? `sstp_newp${scopeId}def.png`
 				: "sstp_new.png";
 
-	const resolveAndSetSstpMarker = (
-		file: string,
-		fallbackFile: string,
-		cssVar: string,
-	) => {
-		if (typeof invoke === "function") {
-			void invoke("load_balloon_image", { name: themeName, file })
-				.then((dataUrl) => {
-					if (dataUrl) {
-						preloadBalloonAsset(dataUrl as string);
-						root.style.setProperty(cssVar, `url("${dataUrl}")`);
-					} else if (fallbackFile && fallbackFile !== file) {
-						resolveAndSetSstpMarker(fallbackFile, "sstp.png", cssVar);
-					}
-				})
-				.catch(() => {
-					if (fallbackFile && fallbackFile !== file) {
-						resolveAndSetSstpMarker(fallbackFile, "sstp.png", cssVar);
-					}
-				});
-		} else {
-			setFallbackAsset(themeName, file, cssVar);
-		}
-	};
-
-	resolveAndSetSstpMarker(
-		defaultSstpMarkerFile,
-		"sstp.png",
+	resolveAssetChain(
+		[defaultSstpMarkerFile, "sstp_new.png", "sstp.png"],
 		"--balloon-sstpmarker-image",
 	);
 

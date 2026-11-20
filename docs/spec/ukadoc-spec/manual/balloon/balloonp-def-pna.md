@@ -2,11 +2,11 @@
 
 - **規格**: [balloon.md](../../../../ukadoc-spec/manual/balloon.md) ([公式版](https://ukatech.shillest.net/ukadoc-spec/manual/balloon/))
 - **検索語**: balloonp, .pna
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-`docs/ukadoc-spec/manual/balloon.md` で定義される `balloonp*def*.png` に対応する透明度マスク `.pna` ファイル（SSP 2.5.51〜）への対応状況。`loadBalloonSkinImages` (`ui/ts/ghost/balloon-window/theme.ts:244-256`) は選択された背景画像 `usedFile` の拡張子を `.pna` に置換して `load_balloon_image` (`src-tauri/src/commands/shell/balloon.rs:304-313`) と `processChromaKey` (`ui/ts/surface/surface-compositor.ts:69`) で合成する汎用処理を持つ。しかし本体画像側のファイル名探索が `balloonp*def*.png` ではなく `balloonp${scopeId}_${id}.png` / `balloonp${scopeId}.png` であるため、標準の `balloonp*def*.pna` 自体は未解決となる。
+`docs/ukadoc-spec/manual/balloon.md` で定義される `balloonp*def*.png` に対応する透明度マスク `.pna` ファイル（SSP 2.5.51〜）に対応済み。`loadBalloonSkinImages` (`ui/ts/ghost/balloon-window/theme.ts`) で `balloonp*def*.png` を解決し、選択された背景画像 `usedFile` の拡張子を `.pna` に置換して `load_balloon_image` (`src-tauri/src/commands/shell/balloon.rs`) と `processChromaKey` (`ui/ts/surface/surface-compositor.ts`) で合成している。
 
 ## 実装箇所
 

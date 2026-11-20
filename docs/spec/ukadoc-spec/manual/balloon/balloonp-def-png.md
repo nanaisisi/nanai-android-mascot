@@ -2,11 +2,11 @@
 
 - **規格**: [balloon.md](../../../../ukadoc-spec/manual/balloon.md) ([公式版](https://ukatech.shillest.net/ukadoc-spec/manual/balloon/))
 - **検索語**: balloonp
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-`docs/ukadoc-spec/manual/balloon.md` で定義される三人目以降（`\p[2]` など）の吹き出し画像（`balloonp2def0.png` / `balloonp2def1.png`、省略時は `balloonk` → `balloons`）に対し、`scopeId >= 2` 向けの分岐自体は実装されているが命名規約およびフォールバック順が仕様と一致しない。`loadBalloonSkinImages` (`ui/ts/ghost/balloon-window/theme.ts:193-198,218-224`) は `balloonp${scopeId}_${id}.png`・`balloonp${scopeId}.png`・`balloonp${scopeId}_0.png` を探索するため、規格の `balloonp*def*.png`（`def` を含む命名）とは不一致である。また未検出時は `balloonk` を経由せず直接 `balloons0.png` へフォールバックする。
+`docs/ukadoc-spec/manual/balloon.md` で定義される三人目以降（`\p[2]` など）の吹き出し画像（`balloonp*def*.png`、省略時は `balloonk` → `balloons`）に対応済み。`loadBalloonSkinImages` (`ui/ts/ghost/balloon-window/theme.ts`) で `balloonp${scopeId}def${id}.png` / `balloonp${scopeId}def${id}.bmp` および向き別 `balloonp${scopeId}def0..3.png` / `balloonp${scopeId}def.png` を探索し、未検出時は `balloonk` → `balloons` へフォールバックする。
 
 ## 実装箇所
 

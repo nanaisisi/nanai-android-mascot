@@ -260,7 +260,11 @@ export class ModalGhostHandlers {
 
 	private async openTextDocument(
 		title: string,
-		command: "get_ghost_readme" | "get_ghost_terms" | "get_shell_readme",
+		command:
+			| "get_ghost_readme"
+			| "get_ghost_terms"
+			| "get_shell_readme"
+			| "get_balloon_readme",
 		args: Record<string, string>,
 		emptyMessage: string,
 	) {
@@ -339,19 +343,62 @@ export class ModalGhostHandlers {
 
 			const thumbHtml = b.thumbnail
 				? `<img src="${b.thumbnail}" alt="" style="width: 48px; height: 36px; object-fit: contain; margin-right: 8px; border-radius: 2px;" />`
-				: "";
+				: `<img alt="" style="width: 48px; height: 36px; object-fit: contain; margin-right: 8px; border-radius: 2px; display: none;" />`;
 
-			item.innerHTML = `<div style="display: flex; align-items: center;">${thumbHtml}<span><strong>${b.name ?? b.dir_name ?? ""}</strong> (${b.dir_name ?? ""})</span></div> <button type="button" class="primary select-balloon-btn">${isCurrent ? "使用中" : "切り替え"}</button>`;
+			const actionWrap = document.createElement("span");
+			actionWrap.style.cssText =
+				"display: flex; gap: 6px; align-items: center;";
 
-			item.addEventListener("click", async () => {
+			const readmeBtn = document.createElement("button");
+			readmeBtn.type = "button";
+			readmeBtn.className = "balloon-readme-btn";
+			readmeBtn.textContent = "README";
+			readmeBtn.addEventListener("click", async (e) => {
+				e.stopPropagation();
+				const balloonName = b.dir_name ?? b.name;
+				if (!balloonName) return;
+				await this.openTextDocument(
+					`${b.name ?? balloonName} - README`,
+					"get_balloon_readme",
+					{ name: balloonName },
+					"バルーンの readme.txt が見つかりませんでした。",
+				);
+			});
+
+			const selectBtn = document.createElement("button");
+			selectBtn.type = "button";
+			selectBtn.className = "primary select-balloon-btn";
+			selectBtn.textContent = isCurrent ? "使用中" : "切り替え";
+			selectBtn.addEventListener("click", async (e) => {
+				e.stopPropagation();
 				if (b.dir_name) {
 					await this.app?.setBalloonTheme?.(b.dir_name);
 				}
 				this.renderBalloonList();
 			});
 
-			item.querySelector("button")?.addEventListener("click", async (e) => {
-				e.stopPropagation();
+			actionWrap.append(readmeBtn, selectBtn);
+			item.innerHTML = `<div style="display: flex; align-items: center;">${thumbHtml}<span><strong>${b.name ?? b.dir_name ?? ""}</strong> (${b.dir_name ?? ""})</span></div>`;
+			item.appendChild(actionWrap);
+
+			if (!b.thumbnail && (b.dir_name || b.name) && isTauriAvailable()) {
+				const imgEl = item.querySelector("img");
+				const balloonName = b.dir_name ?? b.name;
+				if (imgEl && balloonName) {
+					void invoke<string | null>("get_balloon_thumbnail", {
+						name: balloonName,
+					})
+						.then((dataUrl) => {
+							if (dataUrl) {
+								imgEl.src = dataUrl;
+								imgEl.style.display = "";
+							}
+						})
+						.catch(() => {});
+				}
+			}
+
+			item.addEventListener("click", async () => {
 				if (b.dir_name) {
 					await this.app?.setBalloonTheme?.(b.dir_name);
 				}

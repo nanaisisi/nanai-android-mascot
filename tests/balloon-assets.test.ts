@@ -13,6 +13,7 @@ vi.mock("../ui/ts/core/tauri-helper.js", () => ({
 }));
 
 import { applyAssetProperties } from "../ui/ts/core/actions/balloon-descript/assets.js";
+import { invoke } from "../ui/ts/core/tauri-helper.js";
 
 function makeFakeRoot() {
 	const props = new Map<string, string>();
@@ -58,5 +59,72 @@ describe("applyAssetProperties", () => {
 			"data:image/png;base64,custom_online.png",
 		);
 		warnSpy.mockRestore();
+	});
+
+	it("falls back markers.png -> marker.png -> sstp.png for scopeId 0", async () => {
+		const mockedInvoke = vi.mocked(invoke);
+		mockedInvoke.mockImplementation((_cmd: string, args: unknown) => {
+			const file = (args as { file?: string })?.file;
+			if (file === "marker.png") {
+				return Promise.resolve(`data:image/png;base64,${file}`);
+			}
+			return Promise.resolve(null);
+		});
+
+		const root = makeFakeRoot();
+		applyAssetProperties(root, {}, { currentBalloonTheme: "test-balloon" });
+		await new Promise((r) => setTimeout(r, 20));
+		expect(root.props.get("--balloon-marker-image")).toContain(
+			"data:image/png;base64,marker.png",
+		);
+
+		mockedInvoke.mockImplementation((_cmd: string, args: unknown) => {
+			const file = (args as { file?: string })?.file;
+			if (file === "sstp.png") {
+				return Promise.resolve(`data:image/png;base64,${file}`);
+			}
+			return Promise.resolve(null);
+		});
+
+		const root2 = makeFakeRoot();
+		applyAssetProperties(root2, {}, { currentBalloonTheme: "test-balloon" });
+		await new Promise((r) => setTimeout(r, 20));
+		expect(root2.props.get("--balloon-marker-image")).toContain(
+			"data:image/png;base64,sstp.png",
+		);
+	});
+
+	it("resolves markerk.png / markerp*def.png and sstp_newk.png / sstp_newp*def.png with fallbacks", async () => {
+		const mockedInvoke = vi.mocked(invoke);
+		mockedInvoke.mockImplementation((_cmd: string, args: unknown) => {
+			const file = (args as { file?: string })?.file;
+			if (file === "sstp_new.png" || file === "markerp2def.png") {
+				return Promise.resolve(`data:image/png;base64,${file}`);
+			}
+			return Promise.resolve(null);
+		});
+
+		const root1 = makeFakeRoot();
+		applyAssetProperties(root1, {}, {
+			currentBalloonTheme: "test-balloon",
+			currentScopeId: 1,
+		} as never);
+		await new Promise((r) => setTimeout(r, 20));
+		expect(root1.props.get("--balloon-sstpmarker-image")).toContain(
+			"data:image/png;base64,sstp_new.png",
+		);
+
+		const root2 = makeFakeRoot();
+		applyAssetProperties(root2, {}, {
+			currentBalloonTheme: "test-balloon",
+			currentScopeId: 2,
+		} as never);
+		await new Promise((r) => setTimeout(r, 20));
+		expect(root2.props.get("--balloon-marker-image")).toContain(
+			"data:image/png;base64,markerp2def.png",
+		);
+		expect(root2.props.get("--balloon-sstpmarker-image")).toContain(
+			"data:image/png;base64,sstp_new.png",
+		);
 	});
 });

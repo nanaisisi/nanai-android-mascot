@@ -192,6 +192,8 @@ export async function loadBalloonSkinImages(
 				candidates.push(`balloonk${id}.png`, `balloonk${id}.bmp`);
 			} else {
 				candidates.push(
+					`balloonp${scopeId}def${id}.png`,
+					`balloonp${scopeId}def${id}.bmp`,
 					`balloonp${scopeId}_${id}.png`,
 					`balloonp${scopeId}_${id}.bmp`,
 				);
@@ -216,10 +218,34 @@ export async function loadBalloonSkinImages(
 					: ["balloonk0.png", "balloonk1.png", "balloonk3.png", "balloonk.png"];
 		candidates.push(...sideCands);
 	} else {
+		const sideCands =
+			side === "top"
+				? [
+						`balloonp${scopeId}def2.png`,
+						`balloonp${scopeId}def0.png`,
+						`balloonp${scopeId}def.png`,
+					]
+				: side === "left"
+					? [
+							`balloonp${scopeId}def1.png`,
+							`balloonp${scopeId}def3.png`,
+							`balloonp${scopeId}def0.png`,
+							`balloonp${scopeId}def.png`,
+						]
+					: [
+							`balloonp${scopeId}def0.png`,
+							`balloonp${scopeId}def1.png`,
+							`balloonp${scopeId}def3.png`,
+							`balloonp${scopeId}def.png`,
+						];
 		candidates.push(
+			...sideCands,
 			`balloonp${scopeId}.png`,
 			`balloonp${scopeId}_0.png`,
+			"balloonk0.png",
+			"balloonk.png",
 			"balloons0.png",
+			"balloons.png",
 		);
 	}
 
@@ -256,11 +282,11 @@ export async function loadBalloonSkinImages(
 		: null;
 
 	// オプションアセット (balloonc, arrow0/1, sstp, online) のロード試行
-	await Promise.all([
+	const [ballooncRaw] = await Promise.all([
 		invoke("load_balloon_image", {
 			name: theme,
 			file: "balloonc0.png",
-		}).catch(() => null),
+		}).catch(() => null) as Promise<string | null>,
 		invoke("load_balloon_image", { name: theme, file: "arrow0.png" }).catch(
 			() => null,
 		),
@@ -290,6 +316,36 @@ export async function loadBalloonSkinImages(
 			() => null,
 		),
 	]);
+
+	if (ballooncRaw) {
+		const isBallooncSvg = ballooncRaw.startsWith("data:image/svg+xml");
+		let ballooncPna: string | null = null;
+		if (!isBallooncSvg) {
+			ballooncPna =
+				((await invoke("load_balloon_image", {
+					name: theme,
+					file: "balloonc0.pna",
+				}).catch(() => null)) as string | null) ??
+				((await invoke("load_balloon_image", {
+					name: theme,
+					file: "balloonc.pna",
+				}).catch(() => null)) as string | null);
+		}
+		const ballooncImage = await processChromaKey(ballooncRaw, ballooncPna);
+		if (typeof document !== "undefined" && document.documentElement?.style) {
+			document.documentElement.style.setProperty(
+				"--balloon-inputbox-bg-image",
+				`url("${ballooncImage}")`,
+			);
+		}
+	} else if (
+		typeof document !== "undefined" &&
+		document.documentElement?.style
+	) {
+		document.documentElement.style.removeProperty(
+			"--balloon-inputbox-bg-image",
+		);
+	}
 
 	return bgImage;
 }

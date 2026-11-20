@@ -2,11 +2,11 @@
 
 - **規格**: [balloon.md](../../../../ukadoc-spec/manual/balloon.md) ([公式版](https://ukatech.shillest.net/ukadoc-spec/manual/balloon/))
 - **検索語**: balloonc0.png
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-`src-tauri/src/commands/shell/balloon.rs` の `load_balloon_image` にて `balloonc0` -> `balloonc` のフォールバックを含む `balloonc*.png` / `balloonc*.bmp` の画像解決に対応済み。`loadBalloonSkinImages` (`ui/ts/ghost/balloon-window/theme.ts:260-263`) で `"balloonc0.png"` のプリロード呼び出しを行っている。入力ボックス (`ui/ts/ghost/command-handler/inputbox.ts`, `communicatebox.ts`, `teachbox.ts`) への背景スキン画像適用は未実装。
+`src-tauri/src/commands/shell/balloon.rs` の `load_balloon_image` にて `balloonc0` -> `balloonc` のフォールバックを含む `balloonc*.png` / `balloonc*.bmp` の画像解決に対応済み。`loadBalloonSkinImages` (`ui/ts/ghost/balloon-window/theme.ts`) で `"balloonc0.png"` および `.pna` を読み込み、`processChromaKey` で合成したうえで `--balloon-inputbox-bg-image` CSS カスタムプロパティへ適用している。
 
 ## 実装箇所
 

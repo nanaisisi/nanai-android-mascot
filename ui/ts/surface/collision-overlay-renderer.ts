@@ -10,6 +10,13 @@ export interface CollisionOverlayRenderOptions {
 	scale?: number;
 	mode?: CollisionDisplayMode;
 	showWindowBounds?: boolean;
+	showCharacterBounds?: boolean;
+	characterBounds?: {
+		x: number;
+		y: number;
+		width: number;
+		height: number;
+	} | null;
 	iconRect?: number[] | null;
 	points?: Record<string, unknown> | null;
 	metadata?: Record<string, unknown>;
@@ -490,6 +497,39 @@ registerCollisionOverlayLayer({
 		ctx.strokeStyle = WINDOW_COLLISION_STROKE_COLOR;
 		ctx.lineWidth = 2;
 		ctx.strokeRect?.(1, 1, width - 2, height - 2);
+	},
+});
+
+const CHARACTER_COLLISION_STROKE_COLOR = "#ff9900";
+
+// 1.5. キャラクター全体単位の当たり判定レイヤー
+registerCollisionOverlayLayer({
+	id: "character-bounds",
+	order: 15,
+	strokeColor: CHARACTER_COLLISION_STROKE_COLOR,
+	isEnabled: ({ options, width, height }) =>
+		options.showCharacterBounds !== false && width > 4 && height > 4,
+	render: ({ ctx, options, width, height, scale, showLabels }) => {
+		ctx.strokeStyle = CHARACTER_COLLISION_STROKE_COLOR;
+		ctx.lineWidth = 1.5;
+		const b = options.characterBounds;
+		const rx = b ? b.x * scale : 3;
+		const ry = b ? b.y * scale : 3;
+		const rw = b ? b.width * scale : width - 6;
+		const rh = b ? b.height * scale : height - 6;
+		if (rw <= 0 || rh <= 0) return;
+		ctx.save?.();
+		ctx.setLineDash?.([4, 3]);
+		ctx.strokeRect?.(rx, ry, rw, rh);
+		ctx.restore?.();
+		if (showLabels) {
+			drawWireframeLabel(
+				ctx,
+				"character",
+				{ x: rx + 2, y: ry + 2 },
+				CHARACTER_COLLISION_STROKE_COLOR,
+			);
+		}
 	},
 });
 

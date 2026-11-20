@@ -4,7 +4,7 @@
 
 | 項目 / サブカテゴリ | 検索語 / 項目数 | 対応状況 |
 | :--- | :----- | :------: |
-| [balloon](balloon/README.md) | 22件 | ✅ 13 / ⚠️ 9 / ❌ 0 |
+| [balloon](balloon/README.md) | 22件 | ✅ 22 / ⚠️ 0 / ❌ 0 |
 | [directory](directory/README.md) | 11件 | ✅ 11 / ⚠️ 0 / ❌ 0 |
 | [ghost](ghost/README.md) | 10件 | ✅ 7 / ⚠️ 2 / ❌ 1 |
 | [install](install/README.md) | 9件 | ✅ 8 / ⚠️ 1 / ❌ 0 |

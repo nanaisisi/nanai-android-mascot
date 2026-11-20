@@ -35,6 +35,7 @@ pub fn shell_manifest(
 ) -> Result<ShellManifest, String> {
     let shell_dir = resolve_shell_dir(&ghost_name, &shell_name, &app_handle)?;
     let shell = Shell::load(&shell_dir).map_err(|e| e.to_string())?;
+    let _alias_table = crate::ghost::scan::shell::alias::read_shell_alias_txt(&shell_dir);
     Ok(shell.manifest())
 }
 

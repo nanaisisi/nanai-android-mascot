@@ -2,7 +2,7 @@
 
 - **規格**: [balloon.md](../../../ukadoc-spec/manual/balloon.md) ([公式版](https://ukatech.shillest.net/ukadoc-spec/manual/balloon/))
 - **検索語**: load_balloon_image
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 バルーンフォルダのファイル構成（`descript.txt`、バルーン画像、PNA マスク、サーフェス別オプション `*s.txt`、スクロール矢印・マーカー・ボタン画像・サムネイル等）に対する実装状況。`descript.txt`・`balloons*.png`・`balloonk*.png`・`.pna`・`arrow0/1`・`arrows/arrowk`・`markers/markerk/marker` は読み込まれる一方、`balloonp*def*` の命名規約、`balloonc*`（入力ボックス背景スキン）、`clickwait*` 自動解決、`ok_down/up`・`cancel_down/up`・`mode_down/up` 等は一部未対応または未実装。
 

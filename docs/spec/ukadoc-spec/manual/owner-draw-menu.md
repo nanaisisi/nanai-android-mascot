@@ -2,7 +2,7 @@
 
 - **規格**: [owner-draw-menu.md](../../../ukadoc-spec/manual/owner-draw-menu.md) ([公式版](https://ukatech.shillest.net/ukadoc-spec/manual/owner-draw-menu/))
 - **検索語**: menu.background.bitmap.filename, menu_background.png
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 オーナードローメニュー（右クリックメニュー）の背景・選択カーソル・サイドバー画像の読み込みとメニューテーマ適用を実装。シェル `descript.txt` 由来の画像・配色・文字色設定に対応している一方、SHIORI Resource 指定および優先順位制御、画像切れ端部の単色塗り潰しフォールバック、未指定時にダミー画像を生成せず標準ポップアップへ戻す動作には一部制約がある。
 

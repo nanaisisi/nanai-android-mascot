@@ -2,7 +2,7 @@
 
 - **規格**: [directory.md](../../../ukadoc-spec/manual/directory.md) ([公式版](https://ukatech.shillest.net/ukadoc-spec/manual/directory/))
 - **検索語**: scan_ghost_directory
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ベースウェア配下のゴースト・シェル・バルーンのフォルダ構成および各ルート直下・サブフォルダ内の構成ファイル配置仕様に対する実装状況。`ghost/master/`・`shell/master/`・`shell/(additional_shell)/`・`(myballoon)/` の走査と VFS 大文字小文字吸収は実装済である一方、`delete[数字].txt`・`.narignore`/`.updateignore`/`.narinclude`/`.updateinclude` のパターン制御・`readme.md`/`terms.md` 解釈・ゴースト側 `thumbnail.png` 等は未実装または一部対応。
 

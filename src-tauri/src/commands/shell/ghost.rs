@@ -5,7 +5,7 @@ use crate::ghost::scan::directory::manifest::parse_ghost_manifest;
 use crate::ghost::scan::directory::package_files::{
     find_ghost_readme, find_ghost_terms, find_ghost_thumbnail,
 };
-use crate::ghost::scan::shell::scan_shells_from_ghost;
+use crate::ghost::scan::shell::{load_shiori_menu_bitmap_data_url, scan_shells_from_ghost};
 use crate::ghost::scan::translator::{find_ghost_makoto, find_shell_makoto, translate_order};
 use std::path::{Path, PathBuf};
 
@@ -59,6 +59,27 @@ pub async fn get_ghost_info(
         shiori_logo_x: manifest.shiori_logo_x(),
         shiori_logo_y: manifest.shiori_logo_y(),
     })
+}
+
+#[tauri::command]
+pub async fn load_shiori_menu_bitmap(
+    ghost_name: String,
+    shell_name: Option<String>,
+    rel_path: String,
+    app_handle: tauri::AppHandle,
+) -> Result<Option<String>, String> {
+    let dir = resolve_ghost_dir_opt(&ghost_name, &app_handle)
+        .ok_or_else(|| format!("Ghost not found: {}", ghost_name))?;
+    let ghost_master_dir = dir.join("ghost").join("master");
+    let shell_dir = dir
+        .join("shell")
+        .join(shell_name.as_deref().unwrap_or("master"));
+    Ok(load_shiori_menu_bitmap_data_url(
+        &rel_path,
+        &ghost_master_dir,
+        &shell_dir,
+        &dir,
+    ))
 }
 
 #[tauri::command]

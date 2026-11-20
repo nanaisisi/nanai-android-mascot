@@ -7,7 +7,7 @@
 | [char\*.bind.menu](char-star-.bind.menu.md) | char | ✅ 実装済 |
 | [craftmanurl](craftmanurl.md) | craftmanurl | ⚠️ 一部対応 |
 | [craftmanw](craftmanw.md) | craftmanw | ⚠️ 一部対応 |
-| [githubrepo](githubrepo.md) | githubrepo | ❌ 未実装 |
+| [githubrepo](githubrepo.md) | githubrepo | ⚠️ 一部対応 |
 | [homeurl](homeurl.md) | homeurl | ⚠️ 一部対応 |
 | [index](index-item.md) | index | ✅ 実装済 |
 | [kero.bind.menu](kero.bind.menu.md) | kero.bind.menu | ⚠️ 一部対応 |
@@ -23,5 +23,5 @@
 | [update_result](update_result.md) | update_result | ⚠️ 一部対応 |
 | [update_time](update_time.md) | update_time | ⚠️ 一部対応 |
 | [username](username.md) | username | ✅ 実装済 |
-| [uuid](uuid.md) | uuid | ❌ 未実装 |
+| [uuid](uuid.md) | uuid | ⚠️ 一部対応 |
 | [uuid_base](uuid_base.md) | uuid_base | ❌ 未実装 |

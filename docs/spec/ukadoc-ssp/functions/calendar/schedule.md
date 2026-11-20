@@ -1,11 +1,17 @@
 # カレンダー：スケジュール編集
 
-- **規格**: [functions/calendar/schedule.md](https://ukatech.shillest.net/ukadoc-ssp/functions/calendar/schedule/) (ukadoc-ssp/functions/calendar/schedule.md)
+- **規格**: [calendar/schedule.md](../../../../../docs/ukadoc-ssp/functions/calendar/schedule.md) ([公式版](https://ukatech.shillest.net/ukadoc-ssp/functions/calendar/schedule/))
 - **対応状況**: ✅ 実装済
 
-## 突合結果
-
 ゴースト発話によるスケジュール通知 (`OnSchedule5MinutesToGo`, `OnScheduleTodayNotify`) および `\![execute,schedule-add,...]` のパース・登録処理の実装完了。
+
+| 仕様項目 | 対応状況 | 実装・備考 |
+| :--- | :---: | :--- |
+| [\[yyyy/mm/dd\] スケジュール](schedule/section-01.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/calendar/schedule.md の「\[yyyy/mm/dd\] スケジュール」 |
+| [必須項目](schedule/section-02.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/calendar/schedule.md の「必須項目」 |
+| [オプション項目](schedule/section-03.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/calendar/schedule.md の「オプション項目」 |
+| [ダイアログのボタン](schedule/section-04.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/calendar/schedule.md の「ダイアログのボタン」 |
+| [スケジュールを投稿](schedule/section-05.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/calendar/schedule.md の「スケジュールを投稿」 |
 
 ## 実装箇所
 

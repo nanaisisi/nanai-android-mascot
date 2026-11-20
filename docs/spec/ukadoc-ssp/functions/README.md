@@ -4,6 +4,14 @@
 
 | 項目 | 検索語 | 対応状況 |
 | :--- | :----- | :------: |
+| [archiveviewer](archiveviewer/README.md) | 14件 | - |
+| [index](index/README.md) | 23件 | - |
+| [option](option/README.md) | 8件 | - |
+| [other](other/README.md) | 6件 | - |
+| [pictureviewer](pictureviewer/README.md) | 16件 | - |
+| [speech-recognition](speech-recognition/README.md) | 7件 | - |
+| [speech-synthesis](speech-synthesis/README.md) | 5件 | - |
+| [windowmode](windowmode/README.md) | 7件 | - |
 | [アーカイブビューワ](archiveviewer.md) | archiveviewer | ⚠️ 一部対応 |
 | [機能](index.md) | index | ✅ 実装済 |
 | [起動オプション一覧](option.md) | option | ✅ 実装済 |

@@ -1,35 +1,18 @@
-# エクスプローラ：右クリック/機能メニュー (Win32 SSP 準拠)
+# エクスプローラ：右クリック/機能メニュー
 
-- **規格**: [functions/explorer/menu.md](https://ukatech.shillest.net/ukadoc-ssp/functions/explorer/menu/) (ukadoc-ssp/functions/explorer/menu.md)
+- **規格**: [explorer/menu.md](../../../../../docs/ukadoc-ssp/functions/explorer/menu.md) ([公式版](https://ukatech.shillest.net/ukadoc-ssp/functions/explorer/menu/))
 - **対応状況**: ✅ 実装済
 
-## SSP Win32 エクスプローラ右クリックメニュー仕様一覧
+docs/ukadoc-ssp/functions/explorer/menu.md の仕様項目一覧。
 
-エクスプローラ内のゴースト行で右クリック（コンテキストメニュー呼出）した際に表示される標準項目：
-
-1. **切り替え (X)** (`Ctrl+H`) - 選択中のゴーストへ切り替え
-2. **ゴーストを呼ぶ (C)** (`Ctrl+G`) - 相方・複数ゴーストとして呼び出し
-3. **削除 (D)** - ゴーストのアンインストール・削除
-4. **フォルダを開く** - エクスプローラでゴーストフォルダを開く
-5. **フォルダ(グループ)移動 (M)** (`Ctrl+O`) - グループ変更・整理
-6. **配布元URLを開く (J)** (`Ctrl+J`) - 作者ウェブサイト/配布ページを開く
-7. **サブメニュー (`>`)**:
-   - **READMEを開く (R)** - 同梱の Readme を表示
-   - **起動用ショートカットを作成 (S)**
-   - **OS起動時にこのゴーストを自動起動する**
-   - **このゴースト内のシェル** - シェル一覧サブメニュー
-   - **デフォルトゴーストに設定 (E)**
-   - **喋り優先ゴーストに設定 (P)**
-   - **ネットワーク更新 (N)** (`Ctrl+U`) - 差分更新実行
-   - **RSSの更新情報を使い一括更新**
-   - **ネットワーク更新(確認のみ)**
-   - **RSSの更新情報を使い更新確認(確認のみ)**
-   - **更新確認表示リセット**
-   - **ゴーストキャプターさくらに登録 (S)**
-   - **更新ファイル作成 (U)**
-   - **NAR作成... (A)**
-   - **更新/NAR両方作成 (B)**
-   - **Zip+Txt更新ファイル作成**
+| 仕様項目 | 対応状況 | 実装・備考 |
+| :--- | :---: | :--- |
+| [共通する項目](menu/section-01.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/explorer/menu.md の「共通する項目」 |
+| [ゴーストの項目](menu/section-02.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/explorer/menu.md の「ゴーストの項目」 |
+| [バルーンの項目](menu/section-03.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/explorer/menu.md の「バルーンの項目」 |
+| [シェルの項目](menu/section-04.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/explorer/menu.md の「シェルの項目」 |
+| [ヘッドラインの項目](menu/section-05.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/explorer/menu.md の「ヘッドラインの項目」 |
+| [プラグインの項目](menu/section-06.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/explorer/menu.md の「プラグインの項目」 |
 
 ## 実装箇所
 

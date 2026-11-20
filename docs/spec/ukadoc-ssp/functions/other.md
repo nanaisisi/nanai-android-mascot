@@ -1,11 +1,18 @@
 # その他の機能
 
-- **規格**: [functions/other.md](https://ukatech.shillest.net/ukadoc-ssp/functions/other/) (ukadoc-ssp/functions/other.md)
+- **規格**: [other.md](../../../../docs/ukadoc-ssp/functions/other.md) ([公式版](https://ukatech.shillest.net/ukadoc-ssp/functions/other/))
 - **対応状況**: ✅ 実装済
 
-## 突合結果
-
 タスクトレイ格納（Android 常駐通知・スナップ退避）
+
+| 仕様項目 | 対応状況 | 実装・備考 |
+| :--- | :---: | :--- |
+| [MCPサーバ対応機能](other/section-01.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/other.md の「MCPサーバ対応機能」 |
+| [SSP内蔵のMCPサーバ](other/section-02.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/other.md の「SSP内蔵のMCPサーバ」 |
+| [伺かの仕様をMCPで探せるようにする](other/section-03.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/other.md の「伺かの仕様をMCPで探せるようにする」 |
+| [ゴーストをMCPで探せるようにする](other/section-04.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/other.md の「ゴーストをMCPで探せるようにする」 |
+| [AIエージェントに設定してもらう](other/section-05.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/other.md の「AIエージェントに設定してもらう」 |
+| [AIエージェントでゴーストを作りたい(Vibe Coding)](other/section-06.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/other.md の「AIエージェントでゴーストを作りたい(Vibe Coding)」 |
 
 ## 実装箇所
 

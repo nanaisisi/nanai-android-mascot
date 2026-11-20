@@ -3,6 +3,7 @@ mod inspection;
 mod packaging;
 mod postprocess;
 
+pub use extraction::extract_cab_archive;
 pub use packaging::create_nar_from_directory;
 pub use postprocess::{perform_refresh_cleanup, process_delete_txt};
 

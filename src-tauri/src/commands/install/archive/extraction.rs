@@ -106,3 +106,58 @@ pub fn extract_zip_entries<R: std::io::Read + std::io::Seek>(
     }
     Ok(())
 }
+
+/// Extract a Windows `.cab` archive into `dest_dir` using `expand.exe`.
+#[cfg(target_os = "windows")]
+pub fn extract_cab_archive(cab_path: &Path, dest_dir: &Path) -> Result<(), String> {
+    if !cab_path.is_file() {
+        return Err(format!("CAB archive not found: {}", cab_path.display()));
+    }
+    std::fs::create_dir_all(dest_dir).map_err(|e| {
+        format!(
+            "Failed to create destination dir '{}': {}",
+            dest_dir.display(),
+            e
+        )
+    })?;
+
+    let output = std::process::Command::new("expand.exe")
+        .arg(cab_path)
+        .arg("-F:*")
+        .arg(dest_dir)
+        .output()
+        .map_err(|e| format!("Failed to execute expand.exe: {}", e))?;
+
+    if !output.status.success() {
+        let stderr = String::from_utf8_lossy(&output.stderr);
+        let stdout = String::from_utf8_lossy(&output.stdout);
+        return Err(format!(
+            "expand.exe failed ({}): {} {}",
+            output.status,
+            stderr.trim(),
+            stdout.trim()
+        ));
+    }
+
+    Ok(())
+}
+
+/// Extract a Windows `.cab` archive into `dest_dir` (unsupported on non-Windows).
+#[cfg(not(target_os = "windows"))]
+pub fn extract_cab_archive(_cab_path: &Path, _dest_dir: &Path) -> Result<(), String> {
+    Err("CAB archive extraction is only supported on Windows".to_string())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_extract_cab_archive_missing_file_returns_err() {
+        let temp_dir = std::env::temp_dir().join("nanai_cab_test_missing");
+        let missing_cab = temp_dir.join("nonexistent.cab");
+        let result = extract_cab_archive(&missing_cab, &temp_dir);
+        assert!(result.is_err());
+        let _ = std::fs::remove_dir_all(&temp_dir);
+    }
+}

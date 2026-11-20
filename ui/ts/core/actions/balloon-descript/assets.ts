@@ -245,7 +245,25 @@ export function applyAssetProperties(
 	setBalloonImage("balloon.image", "--balloon-bg-image");
 	setBalloonImage("arrow.filename", "--balloon-arrow-image");
 	// [clickwaitmarker.filename,ファイル名]:
-	setBalloonImage("clickwaitmarker.filename", "--balloon-clickwait-image");
+	if (p["clickwaitmarker.filename"]) {
+		setBalloonImage("clickwaitmarker.filename", "--balloon-clickwait-image");
+	} else if (typeof invoke === "function") {
+		void invoke("load_balloon_ui_asset", {
+			name: themeName,
+			stem: "clickwait",
+			scopeId,
+		})
+			.then((dataUrl) => {
+				if (dataUrl) {
+					preloadBalloonAsset(dataUrl as string);
+					root.style.setProperty(
+						"--balloon-clickwait-image",
+						`url("${dataUrl}")`,
+					);
+				}
+			})
+			.catch(() => {});
+	}
 
 	// [marker.filename,ファイル名] または UKADOC 標準マーカー (`markers.png`, `markerk.png`, `markerp*def.png`, `marker.png`)
 	const defaultMarkerFile = p["marker.filename"]

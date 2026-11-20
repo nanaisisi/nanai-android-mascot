@@ -1,5 +1,6 @@
 //! シェル（shell/ 配下）のスキャン
 
+pub mod alias;
 mod bitmap;
 mod theme;
 

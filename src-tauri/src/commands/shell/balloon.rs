@@ -379,9 +379,11 @@ pub fn load_balloon_image(
     };
 
     println!("✅ [Balloon] load_balloon_image 成功: path={:?}", path);
-    let Ok(bytes) = std::fs::read(&path) else {
-        return Ok(None);
-    };
+    Ok(encode_image_data_url(&path))
+}
+
+fn encode_image_data_url(path: &std::path::Path) -> Option<String> {
+    let bytes = std::fs::read(path).ok()?;
     let mime = match path
         .extension()
         .and_then(|e| e.to_str())
@@ -394,10 +396,26 @@ pub fn load_balloon_image(
         Some(ref e) if e == "gif" => "image/gif",
         _ => "application/octet-stream",
     };
-    Ok(Some(format!(
+    Some(format!(
         "data:{mime};base64,{}",
         base64::engine::general_purpose::STANDARD.encode(bytes)
-    )))
+    ))
+}
+
+#[tauri::command]
+pub fn load_balloon_ui_asset(
+    name: String,
+    stem: String,
+    scope_id: i32,
+    app_handle: tauri::AppHandle,
+) -> Result<Option<String>, String> {
+    let Ok(dir) = resolve_balloon_dir(&name, &app_handle) else {
+        return Ok(None);
+    };
+    let Some(path) = resolve_balloon_ui_asset(&dir, &stem, scope_id) else {
+        return Ok(None);
+    };
+    Ok(encode_image_data_url(&path))
 }
 
 fn resolve_candidate_balloon_dir(dir_name: &str, app_handle: &tauri::AppHandle) -> Option<PathBuf> {

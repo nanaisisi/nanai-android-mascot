@@ -4,7 +4,7 @@
 
 | 項目 | 検索語 | 対応状況 |
 | :--- | :----- | :------: |
-| [`alias.txt`](alias-txt.md) | alias.txt | ❌ 未実装 |
+| [`alias.txt`](alias-txt.md) | alias.txt | ✅ 実装済 |
 | [`shell/master/descript.txt`](descript-txt.md) | read_descript | ✅ 実装済 |
 | [`(element).pna`](element-pna.md) | pnaFileName | ✅ 実装済 |
 | [`(element).png`](element-png.md) | composeSurfaceElements, compute_surface_composition_plan | ✅ 実装済 |

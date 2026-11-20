@@ -24,6 +24,7 @@ pub fn get_invoke_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         commands::shell::list_balloons,
         commands::shell::balloon_manifest,
         commands::shell::load_balloon_image,
+        commands::shell::load_balloon_ui_asset,
         commands::shell::get_balloon_readme,
         commands::shell::uninstall_ghost,
         commands::shell::get_ghost_info,

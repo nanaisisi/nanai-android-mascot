@@ -262,6 +262,8 @@ export const settingsMethods = {
 				?.currentShellName ?? null;
 
 		let order: string[] = ["shiori"];
+		let ghostMakoto: string | null = null;
+		let shellMakoto: string | null = null;
 		if (ghostName) {
 			try {
 				const info = await invoke<{
@@ -269,6 +271,8 @@ export const settingsMethods = {
 					shell_makoto: string | null;
 					order: string[];
 				}>("get_makoto_translators", { ghostName, shellName });
+				ghostMakoto = info?.ghost_makoto ?? null;
+				shellMakoto = info?.shell_makoto ?? null;
 				if (Array.isArray(info?.order) && info.order.length > 0) {
 					order = info.order;
 				}
@@ -289,8 +293,31 @@ export const settingsMethods = {
 				} catch {
 					// Keep current script if OnTranslate fails or is unavailable
 				}
+			} else if (stage === "ghost" && ghostMakoto) {
+				try {
+					const res = await invoke<string>("execute_makoto_translate", {
+						dllPath: ghostMakoto,
+						script: translated,
+					});
+					if (typeof res === "string" && res.length > 0) {
+						translated = res;
+					}
+				} catch {
+					// Keep current script if ghost makoto.dll fails or is unsupported (e.g. Android)
+				}
+			} else if (stage === "shell" && shellMakoto) {
+				try {
+					const res = await invoke<string>("execute_makoto_translate", {
+						dllPath: shellMakoto,
+						script: translated,
+					});
+					if (typeof res === "string" && res.length > 0) {
+						translated = res;
+					}
+				} catch {
+					// Keep current script if shell makoto.dll fails or is unsupported (e.g. Android)
+				}
 			}
-			// "ghost" and "shell" MAKOTO DLL stages are detected in order but not executed
 		}
 
 		return app.sakuraPlayer?.play?.(translated);

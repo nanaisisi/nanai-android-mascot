@@ -8,7 +8,7 @@
 | [`shell/master/descript.txt`](descript-txt.md) | read_descript | ✅ 実装済 |
 | [`(element).pna`](element-pna.md) | pnaFileName | ✅ 実装済 |
 | [`(element).png`](element-png.md) | composeSurfaceElements, compute_surface_composition_plan | ✅ 実装済 |
-| [`shell/master/makoto.dll`](makoto-dll.md) | shell/master/makoto.dll | ❌ 未実装 |
+| [`shell/master/makoto.dll`](makoto-dll.md) | shell/master/makoto.dll | ⚠️ 一部対応 (Windows 限定 / Android 非対応) |
 | [readme-txt](readme-txt.md) | read_shell_readme, get_shell_readme | ✅ 実装済 |
 | [`surface*.pna`](surface-pna.md) | load_surface_pna | ✅ 実装済 |
 | [`surface*.png`](surface-png.md) | load_surface_image | ✅ 対応済み |

@@ -10,7 +10,7 @@
 
 ## 実装箇所
 
-- `ui/ts/ghost/balloon-window/theme.ts:192` `` candidates.push(`balloonk${id}.png`, `balloonk${id}.bmp`); ``
+- `ui/ts/ghost/balloon-window/theme.ts:192` ``candidates.push(`balloonk${id}.png`, `balloonk${id}.bmp`);``
 - `ui/ts/ghost/balloon-window/theme.ts:245` `const pnaFile = usedFile.replace(/\.(png|bmp|jpg|jpeg)$/i, ".pna");`
 - `ui/ts/ghost/balloon-window/theme.ts:255` `? await processChromaKey(bgImageRaw, pnaImage)`
 - `src-tauri/src/commands/shell/balloon.rs:304` `} else if req_ext.as_deref() == Some("pna") {`

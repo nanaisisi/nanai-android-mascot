@@ -1,5 +1,5 @@
 import { invoke } from "@tauri-apps/api/core";
-import { isTauriAvailable } from "../../platform/tauri.js";
+import { isTauriAvailable } from "../../core/tauri-helper.js";
 import type { MenuDispatcher } from "../menu-dispatcher.js";
 import type { MenuShellItem } from "./menu-theme-renderer.js";
 

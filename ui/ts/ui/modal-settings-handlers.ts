@@ -585,21 +585,22 @@ export class ModalSettingsHandlers {
 		const statusEl = document.getElementById("surface-test-status");
 		const groupsEl = document.getElementById("surface-test-groups");
 
-		const manifest = (
-			this.app?.surfaceManager as
+		const surfaceManager = (
+			this.app as
 				| {
-						shellManifest?: RawShellManifest | null;
-						setSurfaceId?: (id: number, scope?: number) => void;
+						surfaceManager?: {
+							shellManifest?: RawShellManifest | null;
+							setSurfaceId?: (id: number, scope?: number) => void;
+						};
 				  }
+				| null
 				| undefined
-		)?.shellManifest;
+		)?.surfaceManager;
+		const manifest = surfaceManager?.shellManifest;
 
 		const applySurface = (surfaceId: number) => {
 			const scopeId = Number.parseInt(scopeSelect?.value ?? "0", 10) || 0;
-			const sm = this.app?.surfaceManager as
-				| { setSurfaceId?: (id: number, scope?: number) => void }
-				| undefined;
-			sm?.setSurfaceId?.(surfaceId, scopeId);
+			surfaceManager?.setSurfaceId?.(surfaceId, scopeId);
 			if (idInput) {
 				idInput.value = String(surfaceId);
 			}
@@ -635,29 +636,25 @@ export class ModalSettingsHandlers {
 			const title = document.createElement("div");
 			title.style.cssText =
 				"font-weight: bold; margin-bottom: 4px; color: #333; border-bottom: 1px solid #e0e0e0; padding-bottom: 2px;";
-			title.textContent =
-				group.scope !== undefined
-					? `${group.name} (scope ${group.scope})`
-					: group.name;
+			title.textContent = group.name ?? "";
 			section.appendChild(title);
 
 			const list = document.createElement("div");
 			list.style.cssText = "display: flex; flex-wrap: wrap; gap: 4px;";
 			for (const entry of group.entries ?? []) {
+				if (entry.surface_id === undefined) continue;
+				const surfaceId = entry.surface_id;
 				const btn = document.createElement("button");
 				btn.type = "button";
 				btn.style.cssText =
 					"padding: 3px 8px; font-size: 11px; border: 1px solid #ccc; border-radius: 3px; background: #fff; cursor: pointer;";
 				const displayName =
-					getSurfaceDisplayName(manifest, entry.surface_id) ?? entry.name;
+					getSurfaceDisplayName(manifest, surfaceId) ?? entry.name;
 				btn.textContent = displayName
-					? `${entry.surface_id}: ${displayName}`
-					: String(entry.surface_id);
+					? `${surfaceId}: ${displayName}`
+					: String(surfaceId);
 				btn.addEventListener("click", () => {
-					if (group.scope !== undefined && scopeSelect) {
-						scopeSelect.value = String(group.scope);
-					}
-					applySurface(entry.surface_id);
+					applySurface(surfaceId);
 				});
 				list.appendChild(btn);
 			}

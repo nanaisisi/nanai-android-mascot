@@ -10,7 +10,7 @@ ghost/scan.rs で descript.txt から読込 (表示への反映は未確認)。
 
 ## 実装箇所
 
-- `crates/nanai-core/src/descript_parser/types.rs:126` `/// メニュー背景画像ファイル名 (`menu.background.bitmap.filename` または `menu.background.bitmap`
+- `crates/nanai-core/src/descript_parser/types.rs:126` `/// メニュー背景画像ファイル名 (`menu.background.bitmap.filename`または`menu.background.bitmap`
 - `src-tauri/src/ghost/scan/shell/theme.rs:43` `.get("menu.background.bitmap.filename")`
 - `ui/ts/ui/renderers/menu-theme-renderer.ts:35` `{ resource: "menu.background.bitmap.filename", field: "background_bitmap" },`
 - `tests/menu-theme-shiori.test.ts:49` `"menu.background.bitmap.filename": "master_bg.png",`

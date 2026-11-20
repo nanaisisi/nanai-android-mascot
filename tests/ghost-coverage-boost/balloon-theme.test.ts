@@ -89,7 +89,7 @@ describe("balloonp*def* and balloonc* skin loading", () => {
 			"../../ui/ts/ghost/balloon-window/theme.js"
 		);
 
-		const bg = await loadBalloonSkinImages("ivory", 2, 0, "right");
+		const bg = await loadBalloonSkinImages("ivory", 2, "right");
 		expect(bg).toBe("data:image/png;base64,p2def0");
 		expect(loadedFiles).toContain("balloonp2def0.png");
 		expect(loadedFiles).toContain("balloonp2def0.pna");
@@ -126,7 +126,7 @@ describe("balloonp*def* and balloonc* skin loading", () => {
 			"../../ui/ts/ghost/balloon-window/theme.js"
 		);
 
-		const bg = await loadBalloonSkinImages("ivory", 2, null, "auto");
+		const bg = await loadBalloonSkinImages("ivory", 2, "auto");
 		expect(bg).toBe("data:image/png;base64,k0");
 		expect(loadedFiles).toContain("balloonp2def0.png");
 		expect(loadedFiles).toContain("balloonk0.png");

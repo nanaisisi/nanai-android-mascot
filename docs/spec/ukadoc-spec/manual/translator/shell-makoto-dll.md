@@ -16,4 +16,3 @@
 ## 実装状況の更新
 
 シェル側 makoto.dll の配置検出は `find_shell_makoto`（`src-tauri/src/ghost/scan/translator.rs`）および Tauri コマンド `get_makoto_translators`（`src-tauri/src/commands/shell/ghost.rs`・`src-tauri/src/invoke.rs`）で実装済み。また Windows 環境限定（`#[cfg(target_os = "windows")]`）で `execute_makoto_dll`（`src-tauri/src/shiori/makoto.rs`）および Tauri コマンド `execute_makoto_translate`（`src-tauri/src/commands/shiori/protocol/events.rs`）による `MAKOTO/2.0` C-ABI `HGLOBAL` 実行を実装し、`playSakuraScript`（`ui/ts/core/app-settings.ts`）へ統合した。Android など非 Windows 環境では未対応スタブとなるため、対応状況: ⚠️ 一部対応（Windows 限定対応・Android 非対応）。
-

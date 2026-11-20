@@ -7,7 +7,7 @@
 ## 実装箇所
 
 - `crates/nanai-core/src/descript_parser/types.rs:220` `/// デスクトップ位置揃え設定 (`seriko.alignmenttodesktop`, `sakura.seriko.alignmenttodesktop`
-- `src-tauri/src/ghost/scan/shell/seriko.rs:18` `/// Kero 側デスクトップ位置揃え (`kero.seriko.alignmenttodesktop` / `seriko.alignmenttodesk`
+- `src-tauri/src/ghost/scan/shell/seriko.rs:18` `/// Kero 側デスクトップ位置揃え (`kero.seriko.alignmenttodesktop`/`seriko.alignmenttodesk`
 - `ui/ts/surface/shell-manifest.ts:739` `? "kero.seriko.alignmenttodesktop"`
 - `crates/nanai-core/src/descript_parser/types.rs:224` `.or_else(|| self.get("kero.seriko.alignmenttodesktop"))`
 - `src-tauri/src/ghost/scan/shell/seriko.rs:76` `.get("kero.seriko.alignmenttodesktop")`

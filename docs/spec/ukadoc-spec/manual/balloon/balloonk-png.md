@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `ui/ts/ghost/balloon-window/theme.ts:191` `} else if (scopeId === 1) {`
-- `ui/ts/ghost/balloon-window/theme.ts:192` `` candidates.push(`balloonk${id}.png`, `balloonk${id}.bmp`); ``
+- `ui/ts/ghost/balloon-window/theme.ts:192` ``candidates.push(`balloonk${id}.png`, `balloonk${id}.bmp`);``
 - `ui/ts/ghost/balloon-window/theme.ts:210` `} else if (scopeId === 1) {`
 - `ui/ts/ghost/balloon-window/theme.ts:216` `: ["balloonk0.png", "balloonk1.png", "balloonk3.png", "balloonk.png"];`
 - `src-tauri/src/commands/shell/balloon.rs:345` `let fallback_files = if stem.starts_with("balloonk") {`

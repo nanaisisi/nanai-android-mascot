@@ -199,22 +199,13 @@ export function buildInstallRerouteArgs(
 export function parseInstallErrorReasonFallback(err: unknown): string {
 	const msg = String((err as { message?: unknown })?.message ?? err ?? "");
 	const lower = msg.toLowerCase();
-	if (
-		lower.includes("password") ||
-		lower.includes("パスワード")
-	) {
+	if (lower.includes("password") || lower.includes("パスワード")) {
 		return "password";
 	}
-	if (
-		lower.includes("invalid type") ||
-		lower.includes("install.txt")
-	) {
+	if (lower.includes("invalid type") || lower.includes("install.txt")) {
 		return "invalid type";
 	}
-	if (
-		lower.includes("unsupported") ||
-		lower.includes("サポートされていない")
-	) {
+	if (lower.includes("unsupported") || lower.includes("サポートされていない")) {
 		return "unsupported";
 	}
 	if (
@@ -233,10 +224,7 @@ export function parseInstallErrorReasonFallback(err: unknown): string {
 	) {
 		return "invalid path";
 	}
-	if (
-		lower.includes("corrupt") ||
-		lower.includes("crc")
-	) {
+	if (lower.includes("corrupt") || lower.includes("crc")) {
 		return "unlha32 error";
 	}
 	if (
@@ -254,10 +242,7 @@ export function parseInstallErrorReasonFallback(err: unknown): string {
 	) {
 		return "format error";
 	}
-	if (
-		lower.includes("unlha32") ||
-		lower.includes("lha")
-	) {
+	if (lower.includes("unlha32") || lower.includes("lha")) {
 		return "unlha32";
 	}
 	return "extraction";

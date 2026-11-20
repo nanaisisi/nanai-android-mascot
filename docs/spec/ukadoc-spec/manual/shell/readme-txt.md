@@ -7,4 +7,3 @@
 ## 実装箇所
 
 - `read_shell_readme, get_shell_readme` (`src-tauri/src/commands/shell/manifest.rs`)。ファイルは外部ファイルから読み込み、単体テスト `readme_and_thumbnail_loaded_from_files` あり。
-

@@ -7,7 +7,7 @@
 ## 実装箇所
 
 - `src-tauri/src/ghost/scan/shell/seriko.rs:10` `/// クロスフェード強制無効化 (`seriko.force_disable_crossfade`)`
-- `ui/ts/surface/shell-manifest.ts:694` `* `seriko.force_disable_crossfade` が有効（`1` または `true`）か判定する`
+- `ui/ts/surface/shell-manifest.ts:694` `* `seriko.force_disable_crossfade` が有効（`1`または`true`）か判定する`
 - `src-tauri/src/ghost/scan/shell/seriko.rs:47` `.get("seriko.force_disable_crossfade")`
 - `ui/ts/surface/shell-manifest.ts:700` `manifest?.descript?.properties?.["seriko.force_disable_crossfade"];`
 - `src-tauri/src/ghost/scan/shell/seriko.rs:100` `"seriko.force_disable_crossfade".to_string(),`

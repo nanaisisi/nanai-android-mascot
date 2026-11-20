@@ -14,5 +14,5 @@
 - `ui/ts/core/actions/balloon-descript/assets.ts:211` `? "arrowk"`
 - `ui/ts/core/actions/balloon-descript/assets.ts:213` `` ? `arrowp${scopeId}` ``
 - `ui/ts/core/actions/balloon-descript/assets.ts:214` `: "arrows";`
-- `ui/ts/core/actions/balloon-descript/assets.ts:239` `` resolveAndSetArrow(`${arrowBaseName}0.png`, "--balloon-arrow0-image"); ``
-- `ui/ts/core/actions/balloon-descript/assets.ts:240` `` resolveAndSetArrow(`${arrowBaseName}1.png`, "--balloon-arrow1-image"); ``
+- `ui/ts/core/actions/balloon-descript/assets.ts:239` ``resolveAndSetArrow(`${arrowBaseName}0.png`, "--balloon-arrow0-image");``
+- `ui/ts/core/actions/balloon-descript/assets.ts:240` ``resolveAndSetArrow(`${arrowBaseName}1.png`, "--balloon-arrow1-image");``

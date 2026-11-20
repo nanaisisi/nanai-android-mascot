@@ -11,7 +11,7 @@
 ## 実装箇所
 
 - `ui/ts/ghost/balloon-window/theme.ts:189` `if (scopeId === 0) {`
-- `ui/ts/ghost/balloon-window/theme.ts:190` `` candidates.push(`balloons${id}.png`, `balloons${id}.bmp`); ``
+- `ui/ts/ghost/balloon-window/theme.ts:190` ``candidates.push(`balloons${id}.png`, `balloons${id}.bmp`);``
 - `ui/ts/ghost/balloon-window/theme.ts:208` `: ["balloons0.png", "balloons1.png", "balloons.png"];`
 - `src-tauri/src/commands/shell/balloon.rs:281` `pub fn load_balloon_image(`
 - `src-tauri/src/commands/shell/balloon.rs:354` `"balloons0.png",`

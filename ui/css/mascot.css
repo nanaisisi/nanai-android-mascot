@@ -38,8 +38,8 @@
 
 .character-slot.is-dragging {
 	transition: none;
-	opacity: 1 !important;
-	visibility: visible !important;
+	opacity: 1;
+	visibility: visible;
 }
 
 /* ゴースト表示コンテナ */
@@ -63,8 +63,8 @@
 .ghost-display.is-dragging {
 	cursor: grabbing;
 	transition: none;
-	opacity: 1 !important;
-	visibility: visible !important;
+	opacity: 1;
+	visibility: visible;
 }
 
 /* 画面端ドッキング（スナップ退避）状態 */

@@ -34,9 +34,9 @@
 | [kero.balloon.offsetx,座標](kero.balloon.offsetx.md)                                           | kero.balloon.offsetx                  |       ✅ 実装済 (shell.rs)       |
 | [kero.balloon.offsety,座標](kero.balloon.offsety.md)                                           | kero.balloon.offsety                  |       ✅ 実装済 (shell.rs)       |
 | [kero.balloon.syncscale,true](kero.balloon.syncscale_.md)                                      | kero.balloon.syncscale                |       ✅ 実装済 (shell.rs)       |
-| [kero.bindgroup\*.addid,ID](kero.bindgroup-star-.addid.md)                                     | kero.bindgroup                        |       ✅ 実装済 (queries.rs)     |
-| [kero.bindgroup\*.default,数値](kero.bindgroup-star-.default.md)                               | kero.bindgroup                        |       ✅ 実装済 (queries.rs)     |
-| [kero.bindgroup\*.name,カテゴリ名,パーツ名,サムネイル名](kero.bindgroup-star-.name.md)         | kero.bindgroup                        |       ✅ 実装済 (queries.rs)     |
+| [kero.bindgroup\*.addid,ID](kero.bindgroup-star-.addid.md)                                     | kero.bindgroup                        |      ✅ 実装済 (queries.rs)      |
+| [kero.bindgroup\*.default,数値](kero.bindgroup-star-.default.md)                               | kero.bindgroup                        |      ✅ 実装済 (queries.rs)      |
+| [kero.bindgroup\*.name,カテゴリ名,パーツ名,サムネイル名](kero.bindgroup-star-.name.md)         | kero.bindgroup                        |      ✅ 実装済 (queries.rs)      |
 | [kero.bindoption\*.group,カテゴリ名,オプション](kero.bindoption-star-.group.md)                | kero.bindoption                       |       ✅ 実装済 (shell.rs)       |
 | [kero.defaultleft,X座標](kero.defaultleft.md)                                                  | kero.defaultleft                      |       ✅ 実装済 (shell.rs)       |
 | [kero.defaulttop,Y座標](kero.defaulttop.md)                                                    | kero.defaulttop                       |       ✅ 実装済 (shell.rs)       |
@@ -49,7 +49,7 @@
 | [kero.menuitem\*,ID](kero.menuitem-star.md)                                                    | kero.menuitem                         |      ⚠️ 一部対応 (shell.rs)      |
 | [kero.menuitemex\*,メニュー名,ID](kero.menuitemex-star.md)                                     | kero.menuitemex                       |            ❌ 未実装             |
 | [kero.name,名前](kero.name.md)                                                                 | kero.name                             |      ⚠️ 一部対応 (shell.rs)      |
-| [kero.seriko.alignmenttodesktop,位置情報](kero.seriko.alignmenttodesktop.md)                   | kero.seriko.alignmenttodesktop        |   ✅ 対応済 (seriko.rs, types.rs) |
+| [kero.seriko.alignmenttodesktop,位置情報](kero.seriko.alignmenttodesktop.md)                   | kero.seriko.alignmenttodesktop        | ✅ 対応済 (seriko.rs, types.rs)  |
 | [menu,hidden](menu.md)                                                                         | menu                                  |       ✅ 実装済 (shell.rs)       |
 | [menu.background.alignment,位置](menu.background.alignment.md)                                 | menu.background.alignment             |      ⚠️ 一部対応 (shell.rs)      |
 | [menu.background.bitmap.filename,ファイル名](menu.background.bitmap.filename.md)               | menu.background.bitmap.filename       |      ⚠️ 一部対応 (shell.rs)      |
@@ -83,9 +83,9 @@
 | [sakura.balloon.offsetx,座標](sakura.balloon.offsetx.md)                                       | sakura.balloon.offsetx                |       ✅ 実装済 (shell.rs)       |
 | [sakura.balloon.offsety,座標](sakura.balloon.offsety.md)                                       | sakura.balloon.offsety                |       ✅ 実装済 (shell.rs)       |
 | [sakura.balloon.syncscale,true](sakura.balloon.syncscale_.md)                                  | sakura.balloon.syncscale              |       ✅ 実装済 (shell.rs)       |
-| [sakura.bindgroup\*.addid,ID](sakura.bindgroup-star-.addid.md)                                 | sakura.bindgroup                      |       ✅ 実装済 (queries.rs)     |
-| [sakura.bindgroup\*.default,数値](sakura.bindgroup-star-.default.md)                           | sakura.bindgroup                      |       ✅ 実装済 (queries.rs)     |
-| [sakura.bindgroup\*.name,カテゴリ名,パーツ名,サムネイル名](sakura.bindgroup-star-.name.md)     | sakura.bindgroup                      |       ✅ 実装済 (queries.rs)     |
+| [sakura.bindgroup\*.addid,ID](sakura.bindgroup-star-.addid.md)                                 | sakura.bindgroup                      |      ✅ 実装済 (queries.rs)      |
+| [sakura.bindgroup\*.default,数値](sakura.bindgroup-star-.default.md)                           | sakura.bindgroup                      |      ✅ 実装済 (queries.rs)      |
+| [sakura.bindgroup\*.name,カテゴリ名,パーツ名,サムネイル名](sakura.bindgroup-star-.name.md)     | sakura.bindgroup                      |      ✅ 実装済 (queries.rs)      |
 | [sakura.bindoption\*.group,カテゴリ名,オプション](sakura.bindoption-star-.group.md)            | sakura.bindoption                     |       ✅ 実装済 (shell.rs)       |
 | [sakura.defaultleft,X座標](sakura.defaultleft.md)                                              | sakura.defaultleft                    |      ⚠️ 一部対応 (shell.rs)      |
 | [sakura.defaulttop,Y座標](sakura.defaulttop.md)                                                | sakura.defaulttop                     |      ⚠️ 一部対応 (shell.rs)      |

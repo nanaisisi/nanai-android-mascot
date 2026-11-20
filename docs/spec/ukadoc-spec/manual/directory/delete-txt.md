@@ -7,4 +7,3 @@
 ## 突合結果
 
 `process_delete_txt`（`src-tauri/src/commands/install/archive/postprocess.rs`）が `delete.txt` と `delete[数字].txt` を数字昇順で全て読み込み、ディレクトリトラバーサル検証付きで削除する。展開後（`extract_ghost_archive_from_reader`）とネットワーク更新後（`execute_ghost_update`）から呼ばれる。
-

@@ -7,4 +7,5 @@
 ## 実装箇所
 
 - `find_shell_thumbnail, get_shell_thumbnail` (`src-tauri/src/commands/shell/manifest.rs`)。ファイルは外部ファイルから読み込み、単体テスト `readme_and_thumbnail_loaded_from_files` あり。
+- `menuGhostShellRenderer.renderShellSubmenu` (`ui/ts/ui/renderers/menu-ghost-shell-renderer.ts`)。シェル切り替えサブメニュー描画時に `get_shell_thumbnail` を呼び出して `thumbnail.png` を表示（`ui/css/context-menu.css`, `ui/css/submenu-window.css`）。
 

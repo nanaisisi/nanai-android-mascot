@@ -1,5 +1,34 @@
+import { invoke } from "@tauri-apps/api/core";
+import { isTauriAvailable } from "../../platform/tauri.js";
 import type { MenuDispatcher } from "../menu-dispatcher.js";
 import type { MenuShellItem } from "./menu-theme-renderer.js";
+
+const shellThumbnailCache = new Map<string, string | null>();
+
+async function fetchShellThumbnail(
+	ghostName: string,
+	shellName: string,
+): Promise<string | null> {
+	const key = `${ghostName}\0${shellName}`;
+	if (shellThumbnailCache.has(key)) {
+		return shellThumbnailCache.get(key) ?? null;
+	}
+	if (!isTauriAvailable()) {
+		return null;
+	}
+	try {
+		const dataUrl = await invoke<string | null>("get_shell_thumbnail", {
+			ghostName,
+			shellName,
+		});
+		const normalized = dataUrl || null;
+		shellThumbnailCache.set(key, normalized);
+		return normalized;
+	} catch {
+		shellThumbnailCache.set(key, null);
+		return null;
+	}
+}
 
 export interface MenuGhostItem {
 	name?: string;
@@ -21,11 +50,13 @@ export const menuGhostShellRenderer = {
 	/**
 	 * @param {MenuShellInput[]} shells
 	 * @param {string | null | undefined} currentShell
+	 * @param {string | null | undefined} ghostName
 	 */
 	renderShellSubmenu(
 		this: MenuRendererContext,
 		shells: MenuShellInput[],
 		currentShell?: string | null,
+		ghostName?: string | null,
 	) {
 		const container = document.getElementById("shell-submenu");
 		if (!container) return;
@@ -49,6 +80,18 @@ export const menuGhostShellRenderer = {
 				this.dispatcher.dispatchAction("switch-to-shell", shellName);
 			});
 			container.appendChild(btn);
+
+			if (ghostName) {
+				void fetchShellThumbnail(ghostName, shellName).then((dataUrl) => {
+					if (!dataUrl || !btn.isConnected) return;
+					const img = document.createElement("img");
+					img.className = "menu-shell-thumbnail";
+					img.src = dataUrl;
+					img.alt = "";
+					const labelEl = btn.querySelector(".menu-item-label");
+					btn.insertBefore(img, labelEl);
+				});
+			}
 		});
 	},
 

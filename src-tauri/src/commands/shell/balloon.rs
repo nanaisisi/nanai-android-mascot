@@ -393,7 +393,53 @@ pub fn load_balloon_image(
     Ok(encode_image_data_url(&path))
 }
 
+fn find_sibling_pna(path: &std::path::Path) -> Option<PathBuf> {
+    let ext = path
+        .extension()
+        .and_then(|e| e.to_str())
+        .map(|s| s.to_lowercase());
+    if ext.as_deref() == Some("pna") {
+        return None;
+    }
+    let stem = path.file_stem()?.to_str()?;
+    let parent = path.parent()?;
+    ["pna", "PNA"].iter().find_map(|pna_ext| {
+        let candidate = parent.join(format!("{}.{}", stem, pna_ext));
+        candidate.is_file().then_some(candidate)
+    })
+}
+
+fn composite_pna_alpha(base_path: &std::path::Path, pna_path: &std::path::Path) -> Option<Vec<u8>> {
+    let mut base_img = image::open(base_path).ok()?.to_rgba8();
+    let pna_img = image::open(pna_path).ok()?.to_luma8();
+    let width = base_img.width().min(pna_img.width());
+    let height = base_img.height().min(pna_img.height());
+
+    for y in 0..height {
+        for x in 0..width {
+            let alpha = pna_img.get_pixel(x, y).0[0];
+            base_img.get_pixel_mut(x, y).0[3] = alpha;
+        }
+    }
+
+    let mut out = Vec::new();
+    let mut cursor = std::io::Cursor::new(&mut out);
+    image::DynamicImage::ImageRgba8(base_img)
+        .write_to(&mut cursor, image::ImageFormat::Png)
+        .ok()?;
+    Some(out)
+}
+
 fn encode_image_data_url(path: &std::path::Path) -> Option<String> {
+    if let Some(pna_path) = find_sibling_pna(path)
+        && let Some(composited_png) = composite_pna_alpha(path, &pna_path)
+    {
+        return Some(format!(
+            "data:image/png;base64,{}",
+            base64::engine::general_purpose::STANDARD.encode(composited_png)
+        ));
+    }
+
     let bytes = std::fs::read(path).ok()?;
     let mime = match path
         .extension()
@@ -637,7 +683,10 @@ pub fn resolve_balloon_ui_asset(
 
 #[cfg(test)]
 mod ui_asset_tests {
-    use super::resolve_balloon_ui_asset;
+    use super::{
+        composite_pna_alpha, encode_image_data_url, find_sibling_pna, resolve_balloon_ui_asset,
+    };
+    use base64::Engine;
 
     #[test]
     fn resolves_scope_specific_then_generic() {
@@ -657,6 +706,50 @@ mod ui_asset_tests {
                 .ends_with("clickwait.png")
         );
         assert!(resolve_balloon_ui_asset(&d, "ok_up", 0).is_none());
+        let _ = std::fs::remove_dir_all(&d);
+    }
+
+    #[test]
+    fn composites_sibling_pna_alpha_into_png_data_url() {
+        let d = std::env::temp_dir().join("nam_balloon_pna_test");
+        let _ = std::fs::remove_dir_all(&d);
+        std::fs::create_dir_all(&d).unwrap();
+
+        let base_path = d.join("balloons0.png");
+        let pna_path = d.join("balloons0.pna");
+
+        let base_img = image::RgbaImage::from_pixel(2, 2, image::Rgba([255, 10, 20, 255]));
+        base_img.save(&base_path).unwrap();
+
+        let mut pna_img = image::GrayImage::new(2, 2);
+        pna_img.put_pixel(0, 0, image::Luma([128]));
+        pna_img.put_pixel(1, 0, image::Luma([0]));
+        pna_img.put_pixel(0, 1, image::Luma([64]));
+        pna_img.put_pixel(1, 1, image::Luma([255]));
+        pna_img.save(&pna_path).unwrap();
+
+        assert_eq!(
+            find_sibling_pna(&base_path).as_deref(),
+            Some(pna_path.as_path())
+        );
+        assert!(find_sibling_pna(&pna_path).is_none());
+
+        let composited = composite_pna_alpha(&base_path, &pna_path).unwrap();
+        let decoded = image::load_from_memory(&composited).unwrap().to_rgba8();
+        assert_eq!(decoded.get_pixel(0, 0).0, [255, 10, 20, 128]);
+        assert_eq!(decoded.get_pixel(1, 0).0, [255, 10, 20, 0]);
+        assert_eq!(decoded.get_pixel(0, 1).0, [255, 10, 20, 64]);
+        assert_eq!(decoded.get_pixel(1, 1).0, [255, 10, 20, 255]);
+
+        let data_url = encode_image_data_url(&base_path).unwrap();
+        assert!(data_url.starts_with("data:image/png;base64,"));
+        let b64 = data_url.trim_start_matches("data:image/png;base64,");
+        let raw = base64::engine::general_purpose::STANDARD
+            .decode(b64)
+            .unwrap();
+        let decoded_url = image::load_from_memory(&raw).unwrap().to_rgba8();
+        assert_eq!(decoded_url.get_pixel(1, 0).0[3], 0);
+
         let _ = std::fs::remove_dir_all(&d);
     }
 }

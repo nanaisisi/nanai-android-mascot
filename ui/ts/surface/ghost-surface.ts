@@ -297,4 +297,17 @@ export const ghostSurfaceMethods = {
 	updateCurrentGhostDisplay() {
 		return updateCurrentGhostDisplay(this);
 	},
+
+	applyGhostCursor() {
+		if (typeof document === "undefined") return;
+		const cursors = this.currentGhost?.assets?.cursors;
+		const cursorValue =
+			Array.isArray(cursors) && cursors.length > 0
+				? `url("${convertFileSrc(cursors[0])}"), auto`
+				: "";
+		const slots = document.querySelectorAll<HTMLElement>(".character-slot");
+		for (const slot of slots) {
+			slot.style.cursor = cursorValue;
+		}
+	},
 };

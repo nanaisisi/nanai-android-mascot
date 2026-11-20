@@ -33,8 +33,17 @@ export class MenuSubmenuRenderer {
 		this.dressupData = null;
 	}
 
-	renderShellSubmenu(shells: MenuShellInput[], currentShell?: string | null) {
-		menuGhostShellRenderer.renderShellSubmenu.call(this, shells, currentShell);
+	renderShellSubmenu(
+		shells: MenuShellInput[],
+		currentShell?: string | null,
+		ghostName?: string | null,
+	) {
+		menuGhostShellRenderer.renderShellSubmenu.call(
+			this,
+			shells,
+			currentShell,
+			ghostName,
+		);
 	}
 
 	renderBalloonSubmenu(

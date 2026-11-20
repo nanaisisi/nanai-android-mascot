@@ -216,7 +216,11 @@ export function applyAssetProperties(
 	const arrowBaseName = defaultArrowBase.replace(/\.(png|bmp|jpg|jpeg)$/i, "");
 	const themeName = (instance?.currentBalloonTheme as string) || "default";
 
-	const resolveAndSetArrow = (file: string, cssVar: string) => {
+	const resolveAndSetArrow = (
+		file: string,
+		cssVar: string,
+		fallbackFile?: string,
+	) => {
 		if (typeof invoke === "function") {
 			void invoke("load_balloon_image", { name: themeName, file })
 				.then((dataUrl) => {
@@ -224,10 +228,16 @@ export function applyAssetProperties(
 						preloadBalloonAsset(dataUrl as string);
 						root.style.setProperty(cssVar, `url("${dataUrl}")`);
 						root.style.setProperty("--balloon-arrow-display", "block");
+					} else if (fallbackFile && fallbackFile !== file) {
+						resolveAndSetArrow(fallbackFile, cssVar);
 					}
 				})
 				.catch(() => {
-					setFallbackAsset(themeName, file, cssVar);
+					if (fallbackFile && fallbackFile !== file) {
+						resolveAndSetArrow(fallbackFile, cssVar);
+					} else {
+						setFallbackAsset(themeName, file, cssVar);
+					}
 				});
 		} else {
 			setFallbackAsset(themeName, file, cssVar);
@@ -236,11 +246,27 @@ export function applyAssetProperties(
 
 	if (p["arrow.filename"]) {
 		root.style.setProperty("--balloon-arrow-display", "block");
-		resolveAndSetArrow(`${arrowBaseName}0.png`, "--balloon-arrow0-image");
-		resolveAndSetArrow(`${arrowBaseName}1.png`, "--balloon-arrow1-image");
+		resolveAndSetArrow(
+			`${arrowBaseName}0.png`,
+			"--balloon-arrow0-image",
+			"arrows0.png",
+		);
+		resolveAndSetArrow(
+			`${arrowBaseName}1.png`,
+			"--balloon-arrow1-image",
+			"arrows1.png",
+		);
 	} else {
-		resolveAndSetArrow(`${arrowBaseName}0.png`, "--balloon-arrow0-image");
-		resolveAndSetArrow(`${arrowBaseName}1.png`, "--balloon-arrow1-image");
+		resolveAndSetArrow(
+			`${arrowBaseName}0.png`,
+			"--balloon-arrow0-image",
+			"arrows0.png",
+		);
+		resolveAndSetArrow(
+			`${arrowBaseName}1.png`,
+			"--balloon-arrow1-image",
+			"arrows1.png",
+		);
 	}
 	setBalloonImage("balloon.image", "--balloon-bg-image");
 	setBalloonImage("arrow.filename", "--balloon-arrow-image");
@@ -327,8 +353,16 @@ export function applyAssetProperties(
 		"--balloon-marker-image",
 	);
 
-	// [onlinemarker.filename,ファイル名]:
-	setBalloonImage("onlinemarker.filename", "--balloon-online-image");
+	// [onlinemarker.filename,ファイル名] または UKADOC 標準オンラインマーカー (`online0.png`, `online00.png`, `online.png`):
+	if (p["onlinemarker.filename"]) {
+		setBalloonImage("onlinemarker.filename", "--balloon-online-image");
+	} else {
+		resolveAndSetMarker(
+			"online0.png",
+			"online00.png",
+			"--balloon-online-image",
+		);
+	}
 
 	// [sstpmarker.filename,ファイル名] または UKADOC 標準 SSTP マーカー (`sstp_new.png`, `sstp_newk.png`, `sstp.png`, `sstpmarker.png`)
 	const defaultSstpMarkerFile = p["sstpmarker.filename"]

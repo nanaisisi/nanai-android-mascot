@@ -60,10 +60,18 @@ export function setupContextMenuSync(
 				) {
 					dispatcher.setScope(data.scope);
 				}
+				const ghostName =
+					typeof data.currentGhost === "string"
+						? data.currentGhost
+						: data.currentGhost?.name;
 				renderer.renderGhostSubmenu(data.ghosts || [], data.currentGhost);
 				renderer.renderCallGhostSubmenu(data.ghosts || []);
 				if (data.shells) {
-					renderer.renderShellSubmenu(data.shells, data.currentShell);
+					renderer.renderShellSubmenu(
+						data.shells,
+						data.currentShell,
+						ghostName,
+					);
 				}
 				if (data.dressup) {
 					renderer.renderDressupSubmenu(
@@ -140,9 +148,14 @@ export function setupContextMenuSync(
 			}
 			renderer.renderRecentSubmenu(event.data.recentGhosts || []);
 		} else if (event.data?.type === "sync-shells") {
+			const ghostName =
+				typeof event.data.currentGhost === "string"
+					? event.data.currentGhost
+					: event.data.currentGhost?.name;
 			renderer.renderShellSubmenu(
 				event.data.shells || ["master"],
 				event.data.currentShell || "master",
+				ghostName,
 			);
 			const activeShell =
 				event.data.shells?.find(

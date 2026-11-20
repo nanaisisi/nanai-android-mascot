@@ -160,6 +160,7 @@ export const menuMethods = {
 					type: "sync-shells",
 					shells: fullShells,
 					currentShell: currentShellName,
+					currentGhost: gc.currentGhost?.name || gc.currentGhost,
 				},
 				"*",
 			);

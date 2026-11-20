@@ -76,8 +76,17 @@ export class MenuRenderer {
 	 * @param {MenuShellInput[]} shells
 	 * @param {string | null | undefined} currentShell
 	 */
-	renderShellSubmenu(shells: MenuShellInput[], currentShell?: string | null) {
-		menuGhostShellRenderer.renderShellSubmenu.call(this, shells, currentShell);
+	renderShellSubmenu(
+		shells: MenuShellInput[],
+		currentShell?: string | null,
+		ghostName?: string | null,
+	) {
+		menuGhostShellRenderer.renderShellSubmenu.call(
+			this,
+			shells,
+			currentShell,
+			ghostName,
+		);
 	}
 
 	/**

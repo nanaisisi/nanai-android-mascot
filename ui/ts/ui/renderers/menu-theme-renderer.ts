@@ -249,6 +249,7 @@ export const menuThemeRenderer = {
 			rootStyle.removeProperty("--menu-fg-repeat");
 			rootStyle.removeProperty("--menu-sidebar-image");
 			rootStyle.removeProperty("--menu-sidebar-position");
+			rootStyle.removeProperty("--menu-sidebar-width");
 			document.body.classList.remove("has-sidebar");
 		}
 	},

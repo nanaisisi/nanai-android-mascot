@@ -268,6 +268,113 @@ export interface CharacterSnapBounds {
 	height: number;
 }
 
+const CHAR_BOUNDS_STORAGE_PREFIX = "nanai_char_bounds_";
+
+export function saveCharacterBoundsForSnap(
+	windowLabel: string,
+	bounds: CharacterSnapBounds | null,
+): void {
+	if (typeof localStorage === "undefined" || !windowLabel) return;
+	try {
+		if (bounds && bounds.width > 0 && bounds.height > 0) {
+			localStorage.setItem(
+				`${CHAR_BOUNDS_STORAGE_PREFIX}${windowLabel}`,
+				JSON.stringify(bounds),
+			);
+		} else {
+			localStorage.removeItem(`${CHAR_BOUNDS_STORAGE_PREFIX}${windowLabel}`);
+		}
+	} catch {}
+}
+
+export function resolveOtherCharacterSnapRect(
+	windowLabel: string,
+	winX: number,
+	winY: number,
+	winWidth: number,
+	winHeight: number,
+): SnapWindowRect {
+	if (typeof localStorage !== "undefined" && windowLabel) {
+		try {
+			const raw = localStorage.getItem(
+				`${CHAR_BOUNDS_STORAGE_PREFIX}${windowLabel}`,
+			);
+			if (raw) {
+				const b = JSON.parse(raw) as Partial<CharacterSnapBounds>;
+				if (
+					typeof b.x === "number" &&
+					typeof b.y === "number" &&
+					typeof b.width === "number" &&
+					typeof b.height === "number" &&
+					b.width > 0 &&
+					b.height > 0
+				) {
+					return {
+						x: winX + b.x,
+						y: winY + b.y,
+						width: b.width,
+						height: b.height,
+					};
+				}
+			}
+		} catch {}
+	}
+	return { x: winX, y: winY, width: winWidth, height: winHeight };
+}
+
+/**
+ * 画像要素の非透明ピクセル領域から、物理ピクセル単位の characterBounds を算出する。
+ */
+export function computeOpaqueImageBounds(
+	img: HTMLImageElement | null,
+	physicalScale: number,
+): CharacterSnapBounds | null {
+	const imgW = img ? img.naturalWidth || img.width : 0;
+	const imgH = img ? img.naturalHeight || img.height : 0;
+	if (
+		!img?.complete ||
+		imgW <= 0 ||
+		imgH <= 0 ||
+		typeof document === "undefined" ||
+		typeof document.createElement !== "function"
+	) {
+		return null;
+	}
+	try {
+		const tmp = document.createElement("canvas");
+		tmp.width = imgW;
+		tmp.height = imgH;
+		const tctx = tmp.getContext?.("2d");
+		if (!tctx) return null;
+		tctx.drawImage(img, 0, 0, imgW, imgH);
+		const data = tctx.getImageData(0, 0, imgW, imgH).data;
+		let minX = imgW;
+		let minY = imgH;
+		let maxX = -1;
+		let maxY = -1;
+		for (let y = 0; y < imgH; y++) {
+			const row = y * imgW * 4;
+			for (let x = 0; x < imgW; x++) {
+				if (data[row + x * 4 + 3] > 0) {
+					if (x < minX) minX = x;
+					if (x > maxX) maxX = x;
+					if (y < minY) minY = y;
+					if (y > maxY) maxY = y;
+				}
+			}
+		}
+		if (maxX >= minX && maxY >= minY) {
+			return {
+				x: Math.round(minX * physicalScale),
+				y: Math.round(minY * physicalScale),
+				width: Math.round((maxX - minX + 1) * physicalScale),
+				height: Math.round((maxY - minY + 1) * physicalScale),
+			};
+		}
+	} catch {}
+	return null;
+}
+
 /**
  * キャラクターの非透明領域（characterBounds）を基準にスナップを計算し、
  * スナップ後のウィンドウ左上座標 (x, y) を返す。

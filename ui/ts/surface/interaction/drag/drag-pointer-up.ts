@@ -1,4 +1,5 @@
 import { PhysicalPosition } from "@tauri-apps/api/dpi";
+import { listen } from "@tauri-apps/api/event";
 import {
 	availableMonitors,
 	currentMonitor,
@@ -10,9 +11,12 @@ import { isTauriAvailable } from "../../../core/tauri-helper.js";
 import { applyDockingSnap, restoreFromDocking } from "./docking.js";
 import {
 	calculateCharacterSnap,
+	computeOpaqueImageBounds,
 	type MonitorLike,
 	pickMonitorWorkArea,
+	resolveOtherCharacterSnapRect,
 	type SnapWindowRect,
+	saveCharacterBoundsForSnap,
 } from "./snap.js";
 
 export interface ClickTrackerState {
@@ -232,7 +236,7 @@ export function handleGhostPointerUp(
 	}
 
 	if (state.isDragging) {
-		if (!isTauriAvailable() || opts.enableDocking) {
+		if (!isTauriAvailable()) {
 			applyDockingSnap(target, globalThis.innerWidth);
 		} else {
 			target.classList.remove("is-docked-left", "is-docked-right");
@@ -262,6 +266,25 @@ export function handleGhostPointerUp(
 }
 
 let mainInitialPos: { x: number; y: number } | null = null;
+
+export function captureMainInitialPosition(): void {
+	if (!isTauriAvailable()) return;
+	void Promise.resolve(getCurrentWindow().outerPosition())
+		.then((pos) => {
+			if (pos && Number.isFinite(pos.x) && Number.isFinite(pos.y)) {
+				mainInitialPos = { x: pos.x, y: pos.y };
+			}
+		})
+		.catch(() => {});
+}
+
+if (isTauriAvailable()) {
+	void Promise.resolve(
+		listen("character-position-reset", () => {
+			captureMainInitialPosition();
+		}),
+	).catch(() => {});
+}
 
 async function snapMainWindowOnDragEnd(
 	target: HTMLElement,
@@ -317,7 +340,13 @@ async function snapMainWindowOnDragEnd(
 							w.outerSize(),
 						]);
 						return ws.width > 0 && ws.height > 0
-							? { x: wp.x, y: wp.y, width: ws.width, height: ws.height }
+							? resolveOtherCharacterSnapRect(
+									w.label,
+									wp.x,
+									wp.y,
+									ws.width,
+									ws.height,
+								)
 							: null;
 					} catch {
 						return null;
@@ -328,51 +357,11 @@ async function snapMainWindowOnDragEnd(
 				if (r) otherWindows.push(r);
 			}
 		}
-		const img = target.querySelector("img");
-		const imgW = img ? img.naturalWidth || img.width : 0;
-		const imgH = img ? img.naturalHeight || img.height : 0;
-		let charBounds: {
-			x: number;
-			y: number;
-			width: number;
-			height: number;
-		} | null = null;
-		if (img?.complete && imgW > 0 && imgH > 0) {
-			try {
-				const tmp = document.createElement("canvas");
-				tmp.width = imgW;
-				tmp.height = imgH;
-				const tctx = tmp.getContext?.("2d");
-				if (tctx) {
-					tctx.drawImage(img, 0, 0, imgW, imgH);
-					const data = tctx.getImageData(0, 0, imgW, imgH).data;
-					let minX = imgW;
-					let minY = imgH;
-					let maxX = -1;
-					let maxY = -1;
-					for (let y = 0; y < imgH; y++) {
-						const row = y * imgW * 4;
-						for (let x = 0; x < imgW; x++) {
-							if (data[row + x * 4 + 3] > 0) {
-								if (x < minX) minX = x;
-								if (x > maxX) maxX = x;
-								if (y < minY) minY = y;
-								if (y > maxY) maxY = y;
-							}
-						}
-					}
-					if (maxX >= minX && maxY >= minY) {
-						const scale = workArea.scaleFactor;
-						charBounds = {
-							x: Math.round(minX * scale),
-							y: Math.round(minY * scale),
-							width: Math.round((maxX - minX + 1) * scale),
-							height: Math.round((maxY - minY + 1) * scale),
-						};
-					}
-				}
-			} catch {}
-		}
+		const charBounds = computeOpaqueImageBounds(
+			target.querySelector("img"),
+			workArea.scaleFactor,
+		);
+		saveCharacterBoundsForSnap(currentWin.label, charBounds);
 		const snapThreshold = Math.max(1, Math.round(12 * workArea.scaleFactor));
 		const snap = calculateCharacterSnap(
 			pos.x,

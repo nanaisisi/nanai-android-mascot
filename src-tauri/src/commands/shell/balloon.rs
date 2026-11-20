@@ -328,7 +328,7 @@ pub fn load_balloon_image(
             }
         }
         if matched.is_none()
-            && matches!(stem, "balloons0" | "balloonk0")
+            && matches!(stem, "balloons0" | "balloonk0" | "balloonc0")
             && let Some(stripped_stem) = stem.strip_suffix('0')
         {
             for ext in &extensions {
@@ -340,7 +340,11 @@ pub fn load_balloon_image(
                 }
             }
         }
-        if matched.is_none() && matches!(stem, "balloons" | "balloons0" | "balloonk" | "balloonk0")
+        if matched.is_none()
+            && matches!(
+                stem,
+                "balloons" | "balloons0" | "balloonk" | "balloonk0" | "balloonc" | "balloonc0"
+            )
         {
             let fallback_files = if stem.starts_with("balloonk") {
                 vec![
@@ -348,6 +352,13 @@ pub fn load_balloon_image(
                     "balloonk0.bmp",
                     "balloonk.png",
                     "balloonk.bmp",
+                ]
+            } else if stem.starts_with("balloonc") {
+                vec![
+                    "balloonc0.png",
+                    "balloonc0.bmp",
+                    "balloonc.png",
+                    "balloonc.bmp",
                 ]
             } else {
                 vec![

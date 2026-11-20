@@ -15,5 +15,5 @@
 
 ## 実装状況の更新
 
-シェル側 makoto.dll の配置検出は `find_shell_makoto`（`src-tauri/src/ghost/scan/translator.rs`）で実装済み。DLL ロード実行は Windows 専用 DLL のため Android では不可。対応状況: ⚠️ 一部対応（検出のみ）。
+シェル側 makoto.dll の配置検出は `find_shell_makoto`（`src-tauri/src/ghost/scan/translator.rs`）および Tauri コマンド `get_makoto_translators`（`src-tauri/src/commands/shell/ghost.rs`・`src-tauri/src/invoke.rs`）で実装済み。DLL ロード実行は Windows 専用 DLL のため Android では不可。対応状況: ⚠️ 一部対応（検出のみ）。
 

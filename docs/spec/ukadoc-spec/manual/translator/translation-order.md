@@ -20,4 +20,4 @@ SHIORI へ `OnTranslate` イベントを送信し翻訳済みスクリプトを�
 
 ## 実装状況の更新
 
-適用順序（SHIORI → ゴースト側 → シェル側）は `translate_order`（`src-tauri/src/ghost/scan/translator.rs`）で定義。MAKOTO 段の実行は DLL 不可のため、UI 自動パイプライン接続と併せて ⚠️ 一部対応のまま据え置く。
+適用順序（SHIORI → ゴースト側 → シェル側）は `translate_order`（`src-tauri/src/ghost/scan/translator.rs`）および Tauri コマンド `get_makoto_translators`（`src-tauri/src/commands/shell/ghost.rs`・`src-tauri/src/invoke.rs`）で公開済み。MAKOTO 段の実行は DLL 不可のため、UI 自動パイプライン接続と併せて ⚠️ 一部対応のまま据え置く。

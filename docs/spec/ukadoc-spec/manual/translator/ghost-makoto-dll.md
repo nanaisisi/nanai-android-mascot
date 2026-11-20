@@ -20,4 +20,4 @@
 
 ## 実装状況の更新
 
-ゴースト側 makoto.dll の配置検出は `find_ghost_makoto`（`src-tauri/src/ghost/scan/translator.rs`）で実装済み。DLL の動的ロード・`request` 呼び出しは Windows 専用 DLL（C-ABI）のため Android では不可であり、⚠️ 一部対応のまま据え置く。
+ゴースト側 makoto.dll の配置検出は `find_ghost_makoto`（`src-tauri/src/ghost/scan/translator.rs`）および Tauri コマンド `get_makoto_translators`（`src-tauri/src/commands/shell/ghost.rs`・`src-tauri/src/invoke.rs`）で実装済み。DLL の動的ロード・`request` 呼び出しは Windows 専用 DLL（C-ABI）のため Android では不可であり、⚠️ 一部対応のまま据え置く。

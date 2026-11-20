@@ -6,6 +6,7 @@ use crate::ghost::scan::directory::package_files::{
     find_ghost_readme, find_ghost_terms, find_ghost_thumbnail,
 };
 use crate::ghost::scan::shell::scan_shells_from_ghost;
+use crate::ghost::scan::translator::{find_ghost_makoto, find_shell_makoto, translate_order};
 use std::path::{Path, PathBuf};
 
 pub fn resolve_ghost_dir_opt(ghost_name: &str, app_handle: &tauri::AppHandle) -> Option<PathBuf> {
@@ -150,6 +151,52 @@ pub async fn get_ghost_thumbnail(
     Ok(resolve_ghost_thumbnail_from_dir(&dir))
 }
 
+#[derive(Debug, Clone, serde::Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct MakotoTranslatorsInfo {
+    pub ghost_makoto: Option<String>,
+    pub shell_makoto: Option<String>,
+    pub order: Vec<String>,
+}
+
+/// ゴーストディレクトリとシェル名から makoto.dll の配置と適用順序を検出する。
+pub fn detect_makoto_translators(
+    ghost_dir: &Path,
+    descript_makoto: Option<&str>,
+    shell_name: Option<&str>,
+) -> MakotoTranslatorsInfo {
+    let shell = shell_name.filter(|s| !s.is_empty()).unwrap_or("master");
+    let shell_dir = ghost_dir.join("shell").join(shell);
+    let ghost_makoto =
+        find_ghost_makoto(ghost_dir, descript_makoto).map(|p| p.to_string_lossy().to_string());
+    let shell_makoto = find_shell_makoto(&shell_dir).map(|p| p.to_string_lossy().to_string());
+    let order = translate_order(ghost_makoto.is_some(), shell_makoto.is_some())
+        .into_iter()
+        .map(ToString::to_string)
+        .collect();
+    MakotoTranslatorsInfo {
+        ghost_makoto,
+        shell_makoto,
+        order,
+    }
+}
+
+#[tauri::command]
+pub async fn get_makoto_translators(
+    ghost_name: String,
+    shell_name: Option<String>,
+    app_handle: tauri::AppHandle,
+) -> Result<MakotoTranslatorsInfo, String> {
+    let dir = resolve_ghost_dir_opt(&ghost_name, &app_handle)
+        .ok_or_else(|| format!("Ghost not found: {}", ghost_name))?;
+    let manifest = parse_ghost_manifest(&dir, &ghost_name);
+    Ok(detect_makoto_translators(
+        &dir,
+        manifest.makoto(),
+        shell_name.as_deref(),
+    ))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -187,5 +234,42 @@ mod tests {
         );
 
         std::fs::remove_dir_all(&dir).ok();
+    }
+
+    #[test]
+    fn detects_makoto_translators_and_order() {
+        let dir = std::env::temp_dir().join(format!("nam_makoto_cmd_{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        let master = dir.join("ghost").join("master");
+        let shell_master = dir.join("shell").join("master");
+        let shell_alt = dir.join("shell").join("alt");
+        std::fs::create_dir_all(&master).unwrap();
+        std::fs::create_dir_all(&shell_master).unwrap();
+        std::fs::create_dir_all(&shell_alt).unwrap();
+
+        let empty = detect_makoto_translators(&dir, None, None);
+        assert_eq!(empty.ghost_makoto, None);
+        assert_eq!(empty.shell_makoto, None);
+        assert_eq!(empty.order, vec!["shiori"]);
+
+        std::fs::write(master.join("makoto.dll"), b"g").unwrap();
+        std::fs::write(shell_master.join("makoto.dll"), b"s").unwrap();
+        let both = detect_makoto_translators(&dir, None, None);
+        assert!(both.ghost_makoto.is_some());
+        assert!(both.shell_makoto.is_some());
+        assert_eq!(both.order, vec!["shiori", "ghost", "shell"]);
+
+        std::fs::write(master.join("custom_makoto.dll"), b"cg").unwrap();
+        let custom = detect_makoto_translators(&dir, Some("custom_makoto.dll"), Some("alt"));
+        assert!(
+            custom
+                .ghost_makoto
+                .as_deref()
+                .is_some_and(|p| p.ends_with("custom_makoto.dll"))
+        );
+        assert_eq!(custom.shell_makoto, None);
+        assert_eq!(custom.order, vec!["shiori", "ghost"]);
+
+        let _ = std::fs::remove_dir_all(&dir);
     }
 }

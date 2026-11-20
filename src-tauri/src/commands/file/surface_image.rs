@@ -54,6 +54,9 @@ pub fn load_surface_image(
 
             if ext != "svg"
                 && ext != "pna"
+                && ext != "gif"
+                && ext != "webp"
+                && !(ext == "png" && is_apng(&bytes))
                 && let Some(data_url) = process_chromakey_image_bytes(&bytes)
             {
                 return Ok(data_url);
@@ -62,6 +65,9 @@ pub fn load_surface_image(
             let mime = match ext.as_str() {
                 "svg" => "image/svg+xml",
                 "bmp" => "image/bmp",
+                "gif" => "image/gif",
+                "webp" => "image/webp",
+                "jpg" | "jpeg" => "image/jpeg",
                 _ => "image/png",
             };
             let b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);
@@ -177,6 +183,12 @@ fn build_surface_image_candidates(
         shell_dir.join(format!("surface{sid}.bmp")),
         shell_dir.join(format!("surface{surface_id_num:04}.bmp")),
         shell_dir.join(format!("surface{sid}.svg")),
+        shell_dir.join(format!("surface{sid}.gif")),
+        shell_dir.join(format!("surface{surface_id_num:04}.gif")),
+        shell_dir.join(format!("surface{sid}.webp")),
+        shell_dir.join(format!("surface{surface_id_num:04}.webp")),
+        shell_dir.join(format!("surface{sid}.jpg")),
+        shell_dir.join(format!("surface{sid}.jpeg")),
         shell_dir.join(format!("surface{sid}.pna")),
         shell_dir.join(format!("Surface{sid}.png")),
         shell_dir.join(format!("Surface{surface_id_num:04}.png")),
@@ -186,6 +198,12 @@ fn build_surface_image_candidates(
         master_dir.join(format!("surface{sid}.bmp")),
         master_dir.join(format!("surface{surface_id_num:04}.bmp")),
         master_dir.join(format!("surface{sid}.svg")),
+        master_dir.join(format!("surface{sid}.gif")),
+        master_dir.join(format!("surface{surface_id_num:04}.gif")),
+        master_dir.join(format!("surface{sid}.webp")),
+        master_dir.join(format!("surface{surface_id_num:04}.webp")),
+        master_dir.join(format!("surface{sid}.jpg")),
+        master_dir.join(format!("surface{sid}.jpeg")),
     ];
 
     if surface_id_num == 0 {
@@ -231,9 +249,34 @@ fn build_surface_pna_candidates(
     ]
 }
 
+/// PNG バイト列が APNG (`acTL` チャンクを `IDAT` より前に含む) かどうかを判定する
+fn is_apng(bytes: &[u8]) -> bool {
+    const PNG_SIG: &[u8; 8] = b"\x89PNG\r\n\x1a\n";
+    if bytes.len() < 8 || &bytes[..8] != PNG_SIG {
+        return false;
+    }
+    let mut pos = 8;
+    while pos + 12 <= bytes.len() {
+        let len = u32::from_be_bytes([bytes[pos], bytes[pos + 1], bytes[pos + 2], bytes[pos + 3]])
+            as usize;
+        let chunk_type = &bytes[pos + 4..pos + 8];
+        if chunk_type == b"acTL" {
+            return true;
+        }
+        if chunk_type == b"IDAT" || chunk_type == b"IEND" {
+            return false;
+        }
+        pos = match pos.checked_add(12 + len) {
+            Some(next) => next,
+            None => return false,
+        };
+    }
+    false
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{build_surface_image_candidates, build_surface_pna_candidates};
+    use super::{build_surface_image_candidates, build_surface_pna_candidates, is_apng};
     use std::path::Path;
 
     #[test]
@@ -269,5 +312,30 @@ mod tests {
         let pna_candidates = build_surface_pna_candidates(shell_dir, master_dir, "5", Some(5));
         assert!(pna_candidates.contains(&shell_dir.join("surface5.pna")));
         assert!(pna_candidates.contains(&shell_dir.join("surface0005.pna")));
+    }
+
+    #[test]
+    fn test_animated_format_candidates_and_apng_detection() {
+        let shell_dir = Path::new("/ghost/shell/custom");
+        let master_dir = Path::new("/ghost/shell/master");
+        let candidates = build_surface_image_candidates(shell_dir, master_dir, "0", Some(0));
+        assert!(candidates.contains(&shell_dir.join("surface0.gif")));
+        assert!(candidates.contains(&shell_dir.join("surface0.webp")));
+        assert!(candidates.contains(&master_dir.join("surface0.gif")));
+
+        // PNG signature + acTL chunk before IDAT
+        let mut apng = b"\x89PNG\r\n\x1a\n".to_vec();
+        apng.extend_from_slice(&8u32.to_be_bytes());
+        apng.extend_from_slice(b"acTL");
+        apng.extend_from_slice(&[0u8; 8]);
+        apng.extend_from_slice(&[0u8; 4]); // CRC
+        assert!(is_apng(&apng));
+
+        // Static PNG (IDAT before any acTL)
+        let mut static_png = b"\x89PNG\r\n\x1a\n".to_vec();
+        static_png.extend_from_slice(&0u32.to_be_bytes());
+        static_png.extend_from_slice(b"IDAT");
+        static_png.extend_from_slice(&[0u8; 4]);
+        assert!(!is_apng(&static_png));
     }
 }

@@ -2,11 +2,11 @@
 
 - **規格**: [balloon.md](../../../../ukadoc-spec/manual/balloon.md) ([公式版](https://ukatech.shillest.net/ukadoc-spec/manual/balloon/))
 - **検索語**: balloonc0.png
-- **対応状況**: ❌ 未実装
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
-`docs/ukadoc-spec/manual/balloon.md` で定義されるバルーン入力ウィンドウ画像 `balloonc*.png`（`balloonc0.png`: Send、`balloonc1.png`: Communicate、`balloonc2.png`: Teach、`balloonc3.png`: Input、`balloonc4.png`: Address Bar、`balloonc5.png`: Textarea）は未実装。`loadBalloonSkinImages` (`ui/ts/ghost/balloon-window/theme.ts:260-263`) 内に `"balloonc0.png"` のプリロード呼び出しだけがあるが戻り値は使用されておらず、`balloonc1.png`〜`balloonc5.png` の読み込みおよび各入力ボックス (`ui/ts/ghost/command-handler/inputbox.ts`, `communicatebox.ts`, `teachbox.ts`) への背景スキン画像適用は未実装である。
+`src-tauri/src/commands/shell/balloon.rs` の `load_balloon_image` にて `balloonc0` -> `balloonc` のフォールバックを含む `balloonc*.png` / `balloonc*.bmp` の画像解決に対応済み。`loadBalloonSkinImages` (`ui/ts/ghost/balloon-window/theme.ts:260-263`) で `"balloonc0.png"` のプリロード呼び出しを行っている。入力ボックス (`ui/ts/ghost/command-handler/inputbox.ts`, `communicatebox.ts`, `teachbox.ts`) への背景スキン画像適用は未実装。
 
 ## 実装箇所
 

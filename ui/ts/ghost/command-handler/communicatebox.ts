@@ -64,7 +64,7 @@ export function openCommunicateBox(
 
 	const submitBtn = document.createElement("button");
 	submitBtn.textContent = "送信";
-	submitBtn.className = "balloon-choice-btn";
+	submitBtn.className = "balloon-choice-btn balloon-ok-btn";
 	submitBtn.style.marginTop = "0";
 
 	let timer: number | ReturnType<typeof setTimeout> | null = null;

@@ -188,16 +188,130 @@ export class ModalGhostHandlers {
 			const thumbHtml = assetPath
 				? `<img src="${convertFileSrc(assetPath)}" alt="" style="width: 36px; height: 36px; object-fit: contain; margin-right: 8px; border-radius: 2px;" />`
 				: "";
-			item.innerHTML = `<span style="display: flex; align-items: center;">${thumbHtml}<span><strong>${ghost.name ?? ""}</strong> (${ghost.craftman || "不明"})</span></span> <button type="button" class="primary select-ghost-btn">切り替え</button>`;
-			item.querySelector("button")?.addEventListener("click", async (e) => {
+			const actionWrap = document.createElement("span");
+			actionWrap.style.cssText =
+				"display: flex; gap: 6px; align-items: center;";
+
+			const readmeBtn = document.createElement("button");
+			readmeBtn.type = "button";
+			readmeBtn.className = "ghost-readme-btn";
+			readmeBtn.textContent = "README";
+			readmeBtn.addEventListener("click", async (e) => {
+				e.stopPropagation();
+				if (!ghost.name) return;
+				await this.openTextDocument(
+					`${ghost.name} - README`,
+					"get_ghost_readme",
+					{ ghostName: ghost.name },
+					"readme.txt / readme.md が見つかりませんでした。",
+				);
+			});
+
+			const termsBtn = document.createElement("button");
+			termsBtn.type = "button";
+			termsBtn.className = "ghost-terms-btn";
+			termsBtn.textContent = "利用規約";
+			termsBtn.addEventListener("click", async (e) => {
+				e.stopPropagation();
+				if (!ghost.name) return;
+				await this.openTextDocument(
+					`${ghost.name} - 利用規約`,
+					"get_ghost_terms",
+					{ ghostName: ghost.name },
+					"terms.txt / terms.md が見つかりませんでした。",
+				);
+			});
+
+			const shellReadmeBtn = document.createElement("button");
+			shellReadmeBtn.type = "button";
+			shellReadmeBtn.className = "shell-readme-btn";
+			shellReadmeBtn.textContent = "シェルREADME";
+			shellReadmeBtn.addEventListener("click", async (e) => {
+				e.stopPropagation();
+				if (!ghost.name) return;
+				const shellName =
+					(ghost as { currentShell?: string }).currentShell || "master";
+				await this.openTextDocument(
+					`${ghost.name} (${shellName}) - シェルREADME`,
+					"get_shell_readme",
+					{ ghostName: ghost.name, shellName },
+					"シェルの readme.txt が見つかりませんでした。",
+				);
+			});
+
+			const selectBtn = document.createElement("button");
+			selectBtn.type = "button";
+			selectBtn.className = "primary select-ghost-btn";
+			selectBtn.textContent = "切り替え";
+			selectBtn.addEventListener("click", async (e) => {
 				e.stopPropagation();
 				if (ghost.name) {
 					await gc?.selectGhost?.(ghost.name);
 				}
 				this.renderGhostList();
 			});
+
+			actionWrap.append(readmeBtn, termsBtn, shellReadmeBtn, selectBtn);
+			item.innerHTML = `<span style="display: flex; align-items: center;">${thumbHtml}<span><strong>${ghost.name ?? ""}</strong> (${ghost.craftman || "不明"})</span></span>`;
+			item.appendChild(actionWrap);
 			listEl.appendChild(item);
 		});
+	}
+
+	private async openTextDocument(
+		title: string,
+		command: "get_ghost_readme" | "get_ghost_terms" | "get_shell_readme",
+		args: Record<string, string>,
+		emptyMessage: string,
+	) {
+		if (!isTauriAvailable()) {
+			this.showDocumentModal(title, emptyMessage);
+			return;
+		}
+		try {
+			const content = await invoke<string | null>(command, args);
+			this.showDocumentModal(title, content ?? emptyMessage);
+		} catch (err) {
+			this.showDocumentModal(title, `読み込みに失敗しました: ${err}`);
+		}
+	}
+
+	private showDocumentModal(title: string, body: string) {
+		const existing = document.getElementById("ghost-doc-viewer-modal");
+		existing?.remove();
+
+		const overlay = document.createElement("div");
+		overlay.id = "ghost-doc-viewer-modal";
+		overlay.style.cssText =
+			"position: fixed; inset: 0; background: rgba(0, 0, 0, 0.55); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 16px;";
+
+		const dialog = document.createElement("div");
+		dialog.style.cssText =
+			"background: #fff; color: #222; border-radius: 8px; max-width: 680px; width: 100%; max-height: 80vh; display: flex; flex-direction: column; box-shadow: 0 8px 24px rgba(0,0,0,0.25); overflow: hidden;";
+
+		const header = document.createElement("div");
+		header.style.cssText =
+			"display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid #ddd; font-weight: bold;";
+		const titleEl = document.createElement("span");
+		titleEl.textContent = title;
+		const closeBtn = document.createElement("button");
+		closeBtn.type = "button";
+		closeBtn.textContent = "閉じる";
+		closeBtn.addEventListener("click", () => overlay.remove());
+		header.append(titleEl, closeBtn);
+
+		const pre = document.createElement("pre");
+		pre.style.cssText =
+			"margin: 0; padding: 16px; overflow: auto; white-space: pre-wrap; word-break: break-word; font-family: inherit; font-size: 13px; line-height: 1.5;";
+		pre.textContent = body;
+
+		overlay.addEventListener("click", (e) => {
+			if (e.target === overlay) overlay.remove();
+		});
+
+		dialog.append(header, pre);
+		overlay.appendChild(dialog);
+		document.body.appendChild(overlay);
 	}
 
 	renderBalloonList() {

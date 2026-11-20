@@ -6,8 +6,8 @@
 | :--- | :----- | :------: |
 | [`arrow0.png / arrow1.png`](arrow-png.md) | arrow0.png, arrow1.png | ✅ 実装済 |
 | [`arrows*.png / arrowk*.png / arrowp*def*.png`](arrows-png.md) | arrowk, arrows, arrowp | ⚠️ 一部対応 |
-| [`balloonc*.pna`](balloonc-pna.md) | balloonc0.pna | ❌ 未実装 |
-| [`balloonc*.png`](balloonc-png.md) | balloonc0.png | ❌ 未実装 |
+| [`balloonc*.pna`](balloonc-pna.md) | balloonc0.pna | ⚠️ 一部対応 |
+| [`balloonc*.png`](balloonc-png.md) | balloonc0.png | ⚠️ 一部対応 |
 | [`balloonk*.pna`](balloonk-pna.md) | balloonk0.png, processChromaKey | ✅ 実装済 |
 | [`balloonk*.png`](balloonk-png.md) | balloonk0.png, balloonk1.png | ✅ 実装済 |
 | [`balloonp*def*.pna`](balloonp-def-pna.md) | balloonp, .pna | ⚠️ 一部対応 |

@@ -362,6 +362,28 @@ body {
 	margin: 0 2px;
 }
 
+/* バルーンボタン画像 (ok_button, cancel_button, mode_button) */
+.balloon-ok-btn {
+	background-image: var(--balloon-ok-button-image, none);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+.balloon-cancel-btn {
+	background-image: var(--balloon-cancel-button-image, none);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+.balloon-mode-btn {
+	background-image: var(--balloon-mode-button-image, none);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
 /* SSTPマーカー (sstpmarker.filename) */
 .sstp-marker {
 	display: inline-block;
@@ -372,6 +394,28 @@ body {
 	background-size: contain;
 	vertical-align: middle;
 	margin: 0 2px;
+}
+
+/* バルーンボタン画像 (ok_button, cancel_button, mode_button) */
+.balloon-ok-btn {
+	background-image: var(--balloon-ok-button-image, none);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+.balloon-cancel-btn {
+	background-image: var(--balloon-cancel-button-image, none);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+.balloon-mode-btn {
+	background-image: var(--balloon-mode-button-image, none);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
 }
 
 /* コミュニケートボックス (communicatebox.*) */

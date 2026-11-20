@@ -6,5 +6,5 @@
 
 ## 突合結果
 
-`find_ghost_terms` / `read_ghost_terms`（`package_files.rs`）が `terms.txt` / `terms.md` を外部ファイルから読み込み、Tauri コマンド `get_ghost_terms`（`commands/shell/ghost.rs`）で本文を取得できる（テスト `reads_readme_terms_and_thumbnail_from_ghost_dir`）。未対応: インストール前の同意ダイアログ接続と、拒否時のインストール中断（`modal-dialog-system.ts` の `terms` 枠との配線が未実装）。
+`find_ghost_terms` / `read_ghost_terms`（`package_files.rs`）が `terms.txt` / `terms.md` を外部ファイルから読み込み、Tauri コマンド `get_ghost_terms`（`commands/shell/ghost.rs`）で本文を取得でき、ゴースト一覧 UI（`ui/ts/ui/modal-ghost-handlers.ts`）の「利用規約」ボタンからモーダルビューアで閲覧できる（テスト `reads_readme_terms_and_thumbnail_from_ghost_dir`）。未対応: インストール前の同意ダイアログ接続と、拒否時のインストール中断（`modal-dialog-system.ts` の `terms` 枠との配線が未実装）。
 

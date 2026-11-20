@@ -11,7 +11,7 @@
 | [`shell/master/makoto.dll`](makoto-dll.md) | shell/master/makoto.dll | ❌ 未実装 |
 | [readme-txt](readme-txt.md) | read_shell_readme, get_shell_readme | ✅ 実装済 |
 | [`surface*.pna`](surface-pna.md) | load_surface_pna | ✅ 実装済 |
-| [`surface*.png`](surface-png.md) | load_surface_image | ⚠️ 一部対応 |
+| [`surface*.png`](surface-png.md) | load_surface_image | ✅ 対応済み |
 | [`surfaces**.txt`](surfaces-ext-txt.md) | surfaces2.txt | ✅ 実装済 |
 | [`surfaces.txt`](surfaces-txt.md) | parse_surfaces_txt | ✅ 実装済 |
 | [`surfacetable.txt`](surfacetable-txt.md) | surfacetable.txt | ⚠️ 一部対応 |

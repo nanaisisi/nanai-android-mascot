@@ -163,6 +163,30 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
             .or_else(|| m.get("accept").cloned())
     });
 
+    let dont_need_onmousemove = meta_map
+        .as_ref()
+        .and_then(|m| m.get("don't need onmousemove"))
+        .map(|v| v.trim() == "1")
+        .unwrap_or(false);
+
+    let dont_need_bind = meta_map
+        .as_ref()
+        .and_then(|m| m.get("don't need bind"))
+        .map(|v| v.trim() == "1")
+        .unwrap_or(false);
+
+    let dont_need_seriko_talk = meta_map
+        .as_ref()
+        .and_then(|m| m.get("don't need seriko talk"))
+        .map(|v| v.trim() == "1")
+        .unwrap_or(false);
+
+    let name_allowoverride = meta_map
+        .as_ref()
+        .and_then(|m| m.get("name.allowoverride"))
+        .map(|v| v.trim() != "0")
+        .unwrap_or(true);
+
     GhostManifest {
         display_name,
         version,
@@ -194,5 +218,9 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
         sstp_allow_unspecified_send,
         sstp_always_translate,
         install_accept,
+        dont_need_onmousemove,
+        dont_need_bind,
+        dont_need_seriko_talk,
+        name_allowoverride,
     }
 }

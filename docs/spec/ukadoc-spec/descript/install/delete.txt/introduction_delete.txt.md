@@ -14,5 +14,5 @@
 - `src-tauri/src/commands/install/archive/postprocess.rs:56` `let mut names = vec!["delete.txt".to_string()];`
 - `ui/ts/core/wasm/pkg/nanai_core.d.ts:26` `* delete.txt のパース結果（削除対象ファイルパターン一覧）`
 - `crates/nanai-core/src/update_protocol/types.rs:54` `/// delete.txt のパース結果（削除対象ファイルパターン一覧）`
-- `src-tauri/src/commands/update/network/commands/execute.rs:146` `// 更新後に delete.txt / delete1.txt が存在する場合、旧ファイルのクリーンアップ処理を実行`
+- `src-tauri/src/commands/update/network/commands/execute.rs:147` `// 更新後に delete.txt / delete1.txt が存在する場合、旧ファイルのクリーンアップ処理を実行`
 - `crates/nanai-core/ui/ts/core/wasm/pkg/nanai_core.d.ts:26` `* delete.txt のパース結果（削除対象ファイルパターン一覧）`

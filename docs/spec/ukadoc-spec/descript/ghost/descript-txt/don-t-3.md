@@ -11,3 +11,5 @@
 ## 実装箇所
 
 - `crates/nanai-core/src/descript_parser/types.rs:298` `self.get("don't need seriko talk")`
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs` `dont_need_seriko_talk`
+- `src-tauri/src/common/models/ghost.rs` `GhostInfo::dont_need_seriko_talk`

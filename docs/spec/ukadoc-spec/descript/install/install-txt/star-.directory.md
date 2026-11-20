@@ -11,8 +11,8 @@
 ## 実装箇所
 
 - `crates/ui/src/manifest/shell_manifest.rs:57` `&self.directory`
-- `src-tauri/src/commands/install/archive/inspection/tests.rs:9` `map.insert("balloon.directory".to_string(), "balloon_main".to_string());`
+- `src-tauri/src/commands/install/archive/inspection/tests.rs:11` `map.insert("balloon.directory".to_string(), "balloon_main".to_string());`
 - `ui/ts/surface/surface-manager.ts:855` `if (this.shellManifest.directory) {`
 - `ui/ts/ui/app-menu.ts:78` `shellPath = sm.shellManifest.directory;`
 - `crates/ui/src/manifest/shell_manifest.rs:115` `directory: self.directory.to_string_lossy().into_owned(),`
-- `src-tauri/src/commands/install/archive/inspection/tests.rs:15` `map.insert("balloon0.directory".to_string(), "balloon_zero".to_string());`
+- `src-tauri/src/commands/install/archive/inspection/tests.rs:17` `map.insert("balloon0.directory".to_string(), "balloon_zero".to_string());`

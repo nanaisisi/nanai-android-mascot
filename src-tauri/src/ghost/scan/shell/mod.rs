@@ -2,6 +2,7 @@
 
 pub mod alias;
 mod bitmap;
+pub mod seriko;
 mod theme;
 
 pub use bitmap::load_shiori_menu_bitmap_data_url;

@@ -11,3 +11,5 @@
 ## 実装箇所
 
 - `crates/nanai-core/src/descript_parser/types.rs:284` `self.get("don't need onmousemove")`
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs:168` `.and_then(|m| m.get("don't need onmousemove"))`
+- `src-tauri/src/ghost/scan/directory/manifest/tests.rs:71` `don't need onmousemove,1\r\n\`

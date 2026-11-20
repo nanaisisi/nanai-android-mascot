@@ -87,8 +87,11 @@ export function onGhostClick(
 	scopeId: number = 0,
 	clickType: "single" | "double" = "single",
 ) {
-	const app = this as MouseApp;
+	const app = this as MouseApp & {
+		currentGhost?: { dont_need_onmousemove?: boolean } | null;
+	};
 	if (isTimeCriticalPlaying(app)) return;
+	if (app.currentGhost?.dont_need_onmousemove) return;
 	const col = app.getCollisionInfo(clientX, clientY, rect, scopeId);
 	console.log(
 		`🖱️ ゴーストタップ: スコープ=${scopeId}, 部位=${col.name || "なし"} (X:${col.canvasX}, Y:${col.canvasY})`,
@@ -121,8 +124,11 @@ export function onGhostStroke(
 	rect?: unknown,
 	scopeId: number = 0,
 ) {
-	const app = this as MouseApp;
+	const app = this as MouseApp & {
+		currentGhost?: { dont_need_onmousemove?: boolean } | null;
+	};
 	if (isTimeCriticalPlaying(app)) return;
+	if (app.currentGhost?.dont_need_onmousemove) return;
 	const col = app.getCollisionInfo(clientX, clientY, rect, scopeId);
 	console.log(
 		`🖐️ ゴースト撫で（Stroke）: スコープ=${scopeId}, 部位=${col.name || "なし"}`,

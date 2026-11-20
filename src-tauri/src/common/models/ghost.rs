@@ -38,6 +38,18 @@ pub struct GhostInfo {
     pub(crate) shiori_logo_align: Option<String>,
     pub(crate) shiori_logo_x: Option<i32>,
     pub(crate) shiori_logo_y: Option<i32>,
+    #[serde(default)]
+    pub(crate) dont_need_onmousemove: bool,
+    #[serde(default)]
+    pub(crate) dont_need_bind: bool,
+    #[serde(default)]
+    pub(crate) dont_need_seriko_talk: bool,
+    #[serde(default = "default_true")]
+    pub(crate) name_allowoverride: bool,
+}
+
+fn default_true() -> bool {
+    true
 }
 
 #[allow(dead_code)]

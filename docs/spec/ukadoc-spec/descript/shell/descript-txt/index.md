@@ -49,7 +49,7 @@
 | [kero.menuitem\*,ID](kero.menuitem-star.md)                                                    | kero.menuitem                         |      ⚠️ 一部対応 (shell.rs)      |
 | [kero.menuitemex\*,メニュー名,ID](kero.menuitemex-star.md)                                     | kero.menuitemex                       |            ❌ 未実装             |
 | [kero.name,名前](kero.name.md)                                                                 | kero.name                             |      ⚠️ 一部対応 (shell.rs)      |
-| [kero.seriko.alignmenttodesktop,位置情報](kero.seriko.alignmenttodesktop.md)                   | kero.seriko.alignmenttodesktop        |            ❌ 未実装             |
+| [kero.seriko.alignmenttodesktop,位置情報](kero.seriko.alignmenttodesktop.md)                   | kero.seriko.alignmenttodesktop        |   ✅ 対応済 (seriko.rs, types.rs) |
 | [menu,hidden](menu.md)                                                                         | menu                                  |       ✅ 実装済 (shell.rs)       |
 | [menu.background.alignment,位置](menu.background.alignment.md)                                 | menu.background.alignment             |      ⚠️ 一部対応 (shell.rs)      |
 | [menu.background.bitmap.filename,ファイル名](menu.background.bitmap.filename.md)               | menu.background.bitmap.filename       |      ⚠️ 一部対応 (shell.rs)      |

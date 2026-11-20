@@ -11,3 +11,5 @@
 ## 実装箇所
 
 - `crates/nanai-core/src/descript_parser/types.rs:291` `self.get("don't need bind")`
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs` `dont_need_bind`
+- `src-tauri/src/common/models/ghost.rs` `GhostInfo::dont_need_bind`

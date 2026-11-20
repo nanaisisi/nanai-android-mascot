@@ -11,8 +11,8 @@
 ## 実装箇所
 
 - `crates/nanai-core/src/balloon_descript.rs:115` `/// クリック待ちマーカー画像ファイル名 (`marker.filename`)`
-- `ui/ts/core/actions/balloon-descript/assets.ts:268` `// [marker.filename,ファイル名] または UKADOC 標準マーカー (`markers.png`, `markerk.png`, `mar`
+- `ui/ts/core/actions/balloon-descript/assets.ts:316` `// [marker.filename,ファイル名] または UKADOC 標準マーカー (`markers.png`, `markerk.png`, `mar`
 - `ui/css/balloon-window.css:353` `/* バルーンマーカー (marker.filename) */`
 - `crates/nanai-core/src/balloon_descript.rs:117` `self.get("marker.filename")`
-- `ui/ts/core/actions/balloon-descript/assets.ts:269` `const defaultMarkerFile = p["marker.filename"]`
-- `ui/ts/core/actions/balloon-descript/assets.ts:270` `? p["marker.filename"]`
+- `ui/ts/core/actions/balloon-descript/assets.ts:317` `const defaultMarkerFile = p["marker.filename"]`
+- `ui/ts/core/actions/balloon-descript/assets.ts:318` `? p["marker.filename"]`

@@ -652,3 +652,93 @@ export function getSurfaceDisplayName(
 	}
 	return null;
 }
+
+export const DEFAULT_SERIKO_DPI = 96;
+
+function parseScopeIdList(raw: string | undefined): number[] {
+	if (!raw) return [];
+	const ids: number[] = [];
+	for (const part of raw.split(",")) {
+		const trimmed = part.trim();
+		if (!trimmed) continue;
+		const parsed = Number.parseInt(trimmed, 10);
+		if (Number.isInteger(parsed) && parsed >= 0 && !ids.includes(parsed)) {
+			ids.push(parsed);
+		}
+	}
+	return ids;
+}
+
+/**
+ * `seriko.dpi` を取得する（未設定・不正値の場合は 96）
+ */
+export function getSerikoDpi(
+	manifest: RawShellManifest | null | undefined,
+): number {
+	const raw = manifest?.descript?.properties?.["seriko.dpi"];
+	if (!raw) return DEFAULT_SERIKO_DPI;
+	const parsed = Number.parseInt(raw.trim(), 10);
+	return Number.isFinite(parsed) && parsed > 0 ? parsed : DEFAULT_SERIKO_DPI;
+}
+
+/**
+ * `seriko.dpi` に基づく描画スケール倍率（`96 / dpi`）を返す
+ */
+export function getSerikoDpiScale(
+	manifest: RawShellManifest | null | undefined,
+): number {
+	return DEFAULT_SERIKO_DPI / getSerikoDpi(manifest);
+}
+
+/**
+ * `seriko.force_disable_crossfade` が有効（`1` または `true`）か判定する
+ */
+export function isSerikoCrossfadeDisabled(
+	manifest: RawShellManifest | null | undefined,
+): boolean {
+	const raw =
+		manifest?.descript?.properties?.["seriko.force_disable_crossfade"];
+	if (!raw) return false;
+	const trimmed = raw.trim().toLowerCase();
+	return trimmed === "1" || trimmed === "true";
+}
+
+/**
+ * `seriko.zorder` のスコープ ID 列を返す
+ */
+export function getSerikoZOrder(
+	manifest: RawShellManifest | null | undefined,
+): number[] {
+	return parseScopeIdList(manifest?.descript?.properties?.["seriko.zorder"]);
+}
+
+/**
+ * `seriko.sticky-window` のスコープ ID 列を返す
+ */
+export function getSerikoStickyWindows(
+	manifest: RawShellManifest | null | undefined,
+): number[] {
+	return parseScopeIdList(
+		manifest?.descript?.properties?.["seriko.sticky-window"],
+	);
+}
+
+/**
+ * スコープ別の `alignmenttodesktop` 設定を取得する
+ */
+export function getAlignmentToDesktop(
+	manifest: RawShellManifest | null | undefined,
+	scopeId: number,
+): string | undefined {
+	const props = manifest?.descript?.properties;
+	if (!props) return undefined;
+	const scopeKey =
+		scopeId === 0
+			? "sakura.seriko.alignmenttodesktop"
+			: scopeId === 1
+				? "kero.seriko.alignmenttodesktop"
+				: `char${scopeId}.seriko.alignmenttodesktop`;
+	const raw = props[scopeKey] ?? props["seriko.alignmenttodesktop"];
+	const trimmed = raw?.trim();
+	return trimmed ? trimmed : undefined;
+}

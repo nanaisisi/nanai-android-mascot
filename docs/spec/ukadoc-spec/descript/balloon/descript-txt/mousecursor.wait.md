@@ -11,5 +11,5 @@
 ## 実装箇所
 
 - `src-tauri/src/shiori/property/evaluator/static_rules.rs:16` `"currentghost.balloon.mousecursor.wait" => "",`
-- `ui/ts/core/actions/balloon-descript/assets.ts:377` `// [mousecursor.wait,ファイル名]:`
-- `ui/ts/core/actions/balloon-descript/assets.ts:378` `setMouseCursor("mousecursor.wait", "--balloon-cursor-wait");`
+- `ui/ts/core/actions/balloon-descript/assets.ts:405` `// [mousecursor.wait,ファイル名]:`
+- `ui/ts/core/actions/balloon-descript/assets.ts:406` `setMouseCursor("mousecursor.wait", "--balloon-cursor-wait");`

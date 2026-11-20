@@ -11,4 +11,4 @@
 ## 実装箇所
 
 - `crates/ui/src/update/tests/installer_manifest.rs:35` `shell0.source.directory,custom_shell\r\n";`
-- `src-tauri/src/commands/install/archive/inspection/tests.rs:17` `"balloon0.source.directory".to_string(),`
+- `src-tauri/src/commands/install/archive/inspection/tests.rs:19` `"balloon0.source.directory".to_string(),`

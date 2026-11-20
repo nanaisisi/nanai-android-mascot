@@ -110,6 +110,10 @@ pub async fn scan_ghost_directory(
                 shiori_logo_align: manifest.shiori_logo_align().map(ToString::to_string),
                 shiori_logo_x: manifest.shiori_logo_x(),
                 shiori_logo_y: manifest.shiori_logo_y(),
+                dont_need_onmousemove: manifest.dont_need_onmousemove(),
+                dont_need_bind: manifest.dont_need_bind(),
+                dont_need_seriko_talk: manifest.dont_need_seriko_talk(),
+                name_allowoverride: manifest.name_allowoverride(),
             })
         });
     }
@@ -174,6 +178,10 @@ pub async fn scan_ghost_directory(
                 shiori_logo_align: None,
                 shiori_logo_x: None,
                 shiori_logo_y: None,
+                dont_need_onmousemove: false,
+                dont_need_bind: false,
+                dont_need_seriko_talk: false,
+                name_allowoverride: true,
             });
         }
     }

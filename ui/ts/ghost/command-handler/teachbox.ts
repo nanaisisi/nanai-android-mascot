@@ -52,8 +52,13 @@ export function openTeachBox(
 
 	const submitBtn = document.createElement("button");
 	submitBtn.textContent = "OK";
-	submitBtn.className = "balloon-choice-btn";
+	submitBtn.className = "balloon-choice-btn balloon-ok-btn";
 	submitBtn.style.marginTop = "0";
+
+	const cancelBtn = document.createElement("button");
+	cancelBtn.textContent = "キャンセル";
+	cancelBtn.className = "balloon-choice-btn balloon-cancel-btn";
+	cancelBtn.style.marginTop = "0";
 
 	handler.teachForm = form;
 
@@ -82,6 +87,11 @@ export function openTeachBox(
 		submit();
 	});
 
+	cancelBtn.addEventListener("click", (e: MouseEvent) => {
+		e.stopPropagation();
+		cancel();
+	});
+
 	input.addEventListener("keydown", (e: KeyboardEvent) => {
 		if (e.key === "Enter") {
 			e.stopPropagation();
@@ -94,6 +104,7 @@ export function openTeachBox(
 
 	form.appendChild(input);
 	form.appendChild(submitBtn);
+	form.appendChild(cancelBtn);
 	balloon.appendChild(form);
 	setTimeout(() => input.focus(), 50);
 }

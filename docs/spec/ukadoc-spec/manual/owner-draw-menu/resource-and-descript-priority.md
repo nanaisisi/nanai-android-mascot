@@ -2,7 +2,7 @@
 
 - **規格**: [owner-draw-menu.md](../../../../ukadoc-spec/manual/owner-draw-menu.md) ([公式版](https://ukatech.shillest.net/ukadoc-spec/manual/owner-draw-menu/))
 - **検索語**: extract_shell_menu_theme, menu.background.bitmap.filename
-- **対応状況**: ✅ 対応済み
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 

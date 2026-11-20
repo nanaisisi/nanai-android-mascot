@@ -69,7 +69,13 @@ export function openInputBox(
 
 	const submitBtn = document.createElement("button");
 	submitBtn.textContent = "OK";
+	submitBtn.className = "balloon-choice-btn balloon-ok-btn";
 	submitBtn.style.padding = "2px 8px";
+
+	const cancelBtn = document.createElement("button");
+	cancelBtn.textContent = "キャンセル";
+	cancelBtn.className = "balloon-choice-btn balloon-cancel-btn";
+	cancelBtn.style.padding = "2px 8px";
 
 	let timer: ReturnType<typeof setTimeout> | null = null;
 
@@ -97,6 +103,7 @@ export function openInputBox(
 	};
 
 	submitBtn.addEventListener("click", () => submit());
+	cancelBtn.addEventListener("click", () => cancel());
 	input.addEventListener("keydown", (e: KeyboardEvent) => {
 		if (e.key === "Enter") {
 			submit();
@@ -107,6 +114,7 @@ export function openInputBox(
 
 	form.appendChild(input);
 	form.appendChild(submitBtn);
+	form.appendChild(cancelBtn);
 	balloon.appendChild(form);
 	setTimeout(() => input.focus?.(), 50);
 

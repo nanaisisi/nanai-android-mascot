@@ -12,5 +12,5 @@
 | [ghost/master/(saori).dll](saori-dll.md) | execute_saori | ⚠️ 一部対応 |
 | [ghost/master/shiori.dll および外部辞書リソース](shiori-dll.md) | ShioriDynamicEngine | ⚠️ 一部対応 |
 | [thumbnail-png](thumbnail-png.md) | ghost/master/thumbnail.png | ✅ 実装済 |
-| [ghost/master/updates.txt (旧仕様)](updates-txt.md) | updates.txt | ⚠️ 一部対応 |
-| [ghost/master/updates2.dau (旧仕様)](updates2-dau.md) | updates2.dau | ⚠️ 一部対応 |
+| [ghost/master/updates.txt (旧仕様)](updates-txt.md) | updates.txt | ✅ 実装済 |
+| [ghost/master/updates2.dau (旧仕様)](updates2-dau.md) | updates2.dau | ✅ 実装済 |

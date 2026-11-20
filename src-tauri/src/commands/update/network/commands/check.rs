@@ -5,6 +5,17 @@ use super::super::helpers::{
 };
 use crate::commands::update::dau::*;
 
+/// 更新定義ファイルの候補 URL を優先順（ゴーストルート優先、旧仕様 `ghost/master/` フォールバック）に生成する
+fn build_update_candidate_urls(homeurl: &str) -> Vec<String> {
+    let base = homeurl.trim_end_matches('/');
+    vec![
+        format!("{}/updates2.dau", base),
+        format!("{}/updates.txt", base),
+        format!("{}/ghost/master/updates2.dau", base),
+        format!("{}/ghost/master/updates.txt", base),
+    ]
+}
+
 pub(super) async fn check_dir_update(
     target_dir: &std::path::Path,
     target_name: &str,
@@ -31,25 +42,16 @@ pub(super) async fn check_dir_update(
         .build()
         .map_err(|e| e.to_string())?;
 
-    // updates2.dau を試行、無ければ updates.txt を試行
+    // ゴーストルート直下 (updates2.dau / updates.txt) を優先し、無ければ旧仕様 ghost/master/ へフォールバック
     let mut update_content = None;
-    let url_dau = format!("{}updates2.dau", homeurl);
-    if let Ok(resp) = client.get(&url_dau).send().await
-        && resp.status().is_success()
-        && let Ok(bytes) = resp.bytes().await
-    {
-        let (decoded, _, _) = encoding_rs::SHIFT_JIS.decode(&bytes);
-        update_content = Some(decoded.to_string());
-    }
-
-    if update_content.is_none() {
-        let url_txt = format!("{}updates.txt", homeurl);
-        if let Ok(resp) = client.get(&url_txt).send().await
+    for url in build_update_candidate_urls(&homeurl) {
+        if let Ok(resp) = client.get(&url).send().await
             && resp.status().is_success()
             && let Ok(bytes) = resp.bytes().await
         {
             let (decoded, _, _) = encoding_rs::SHIFT_JIS.decode(&bytes);
             update_content = Some(decoded.to_string());
+            break;
         }
     }
 
@@ -150,4 +152,37 @@ pub async fn check_ghost_update(
     );
 
     check_dir_update(&ghost_dir, &target_ghost, homeurl, missing_msg).await
+}
+
+#[cfg(test)]
+mod tests {
+    use super::build_update_candidate_urls;
+
+    #[test]
+    fn test_build_update_candidate_urls_with_trailing_slash() {
+        let urls = build_update_candidate_urls("https://example.com/ghost/");
+        assert_eq!(
+            urls,
+            vec![
+                "https://example.com/ghost/updates2.dau",
+                "https://example.com/ghost/updates.txt",
+                "https://example.com/ghost/ghost/master/updates2.dau",
+                "https://example.com/ghost/ghost/master/updates.txt",
+            ]
+        );
+    }
+
+    #[test]
+    fn test_build_update_candidate_urls_without_trailing_slash() {
+        let urls = build_update_candidate_urls("https://example.com/ghost");
+        assert_eq!(
+            urls,
+            vec![
+                "https://example.com/ghost/updates2.dau",
+                "https://example.com/ghost/updates.txt",
+                "https://example.com/ghost/ghost/master/updates2.dau",
+                "https://example.com/ghost/ghost/master/updates.txt",
+            ]
+        );
+    }
 }

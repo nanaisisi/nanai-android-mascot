@@ -1,4 +1,9 @@
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import {
+	getSurfaceDisplayName,
+	getVisibleSurfaceTableGroups,
+	type RawShellManifest,
+} from "../surface/shell-manifest.js";
 import type { AppModalTarget, ModalManager } from "./modal.js";
 import {
 	escapeHtml,
@@ -559,5 +564,103 @@ export class ModalSettingsHandlers {
 					resultsEl.innerHTML = `<div class="info">✅ パス解決結果: <code>${escapeHtml(rawPath)}</code> ➔ <code>${escapeHtml(resolved)}</code></div>`;
 				}
 			});
+	}
+
+	setupSurfaceTestListeners() {
+		document
+			.getElementById("close-surface-test-btn")
+			?.addEventListener("click", () => {
+				this.manager.hide();
+			});
+
+		const scopeSelect = document.getElementById(
+			"surface-test-scope",
+		) as HTMLSelectElement | null;
+		const idInput = document.getElementById(
+			"surface-test-id-input",
+		) as HTMLInputElement | null;
+		const applyBtn = document.getElementById("surface-test-apply-btn");
+		const statusEl = document.getElementById("surface-test-status");
+		const groupsEl = document.getElementById("surface-test-groups");
+
+		const manifest = (
+			this.app?.surfaceManager as
+				| {
+						shellManifest?: RawShellManifest | null;
+						setSurfaceId?: (id: number, scope?: number) => void;
+				  }
+				| undefined
+		)?.shellManifest;
+
+		const applySurface = (surfaceId: number) => {
+			const scopeId = Number.parseInt(scopeSelect?.value ?? "0", 10) || 0;
+			const sm = this.app?.surfaceManager as
+				| { setSurfaceId?: (id: number, scope?: number) => void }
+				| undefined;
+			sm?.setSurfaceId?.(surfaceId, scopeId);
+			if (idInput) {
+				idInput.value = String(surfaceId);
+			}
+			if (statusEl) {
+				const name = getSurfaceDisplayName(manifest, surfaceId);
+				statusEl.textContent = name
+					? `表示中: ${surfaceId} (${name})`
+					: `表示中: ${surfaceId}`;
+			}
+		};
+
+		applyBtn?.addEventListener("click", () => {
+			const parsed = Number.parseInt(idInput?.value ?? "0", 10);
+			if (!Number.isNaN(parsed) && parsed >= 0) {
+				applySurface(parsed);
+			}
+		});
+
+		if (!groupsEl) return;
+
+		const groups = getVisibleSurfaceTableGroups(manifest?.surface_table);
+		if (groups.length === 0) {
+			groupsEl.innerHTML =
+				'<div style="color: #666;">surfacetable.txt のグループ定義がありません。上のID直接指定からテストできます。</div>';
+			return;
+		}
+
+		groupsEl.innerHTML = "";
+		for (const group of groups) {
+			const section = document.createElement("div");
+			section.style.marginBottom = "10px";
+
+			const title = document.createElement("div");
+			title.style.cssText =
+				"font-weight: bold; margin-bottom: 4px; color: #333; border-bottom: 1px solid #e0e0e0; padding-bottom: 2px;";
+			title.textContent =
+				group.scope !== undefined
+					? `${group.name} (scope ${group.scope})`
+					: group.name;
+			section.appendChild(title);
+
+			const list = document.createElement("div");
+			list.style.cssText = "display: flex; flex-wrap: wrap; gap: 4px;";
+			for (const entry of group.entries ?? []) {
+				const btn = document.createElement("button");
+				btn.type = "button";
+				btn.style.cssText =
+					"padding: 3px 8px; font-size: 11px; border: 1px solid #ccc; border-radius: 3px; background: #fff; cursor: pointer;";
+				const displayName =
+					getSurfaceDisplayName(manifest, entry.surface_id) ?? entry.name;
+				btn.textContent = displayName
+					? `${entry.surface_id}: ${displayName}`
+					: String(entry.surface_id);
+				btn.addEventListener("click", () => {
+					if (group.scope !== undefined && scopeSelect) {
+						scopeSelect.value = String(group.scope);
+					}
+					applySurface(entry.surface_id);
+				});
+				list.appendChild(btn);
+			}
+			section.appendChild(list);
+			groupsEl.appendChild(section);
+		}
 	}
 }

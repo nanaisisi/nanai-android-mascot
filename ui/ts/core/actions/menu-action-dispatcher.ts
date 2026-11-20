@@ -329,7 +329,7 @@ export function handleMenuActionImpl(
 		return;
 	}
 	if (action === "open-surface-test" || action === "surface-test") {
-		context.modalManager?.show?.("settings-modal-content");
+		context.modalManager?.show?.("surface-test-modal-content");
 		return;
 	}
 	if (action === "show-error-log" || action === "error-log") {

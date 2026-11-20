@@ -110,6 +110,8 @@ export class ModalManager {
 			this.settingsHandlers.setupTestListeners();
 		} else if (contentId === "scan-modal-content") {
 			this.settingsHandlers.setupScanListeners();
+		} else if (contentId === "surface-test-modal-content") {
+			this.settingsHandlers.setupSurfaceTestListeners();
 		}
 	}
 

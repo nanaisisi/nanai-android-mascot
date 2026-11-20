@@ -1,6 +1,6 @@
 use super::{open_text_file, resolve_ghost_directory};
 use crate::common::models::GhostInfo;
-use crate::ghost::scan::assets::discover_ghost_assets;
+use crate::ghost::scan::assets::{discover_ghost_assets, load_ghost_thumbnail_data_url};
 use crate::ghost::scan::directory::manifest::parse_ghost_manifest;
 use crate::ghost::scan::directory::package_files::{
     find_ghost_readme, find_ghost_terms, find_ghost_thumbnail,
@@ -121,6 +121,10 @@ pub fn resolve_ghost_thumbnail_from_dir(dir: &Path) -> Option<String> {
         .or_else(|| discover_ghost_assets(dir).thumbnail)
 }
 
+pub fn resolve_ghost_thumbnail_data_url_from_dir(dir: &Path) -> Option<String> {
+    resolve_ghost_thumbnail_from_dir(dir).and_then(|p| load_ghost_thumbnail_data_url(Path::new(&p)))
+}
+
 #[tauri::command]
 pub async fn get_ghost_readme(
     ghost_name: String,
@@ -148,7 +152,7 @@ pub async fn get_ghost_thumbnail(
 ) -> Result<Option<String>, String> {
     let dir = resolve_ghost_dir_opt(&ghost_name, &app_handle)
         .ok_or_else(|| format!("Ghost not found: {ghost_name}"))?;
-    Ok(resolve_ghost_thumbnail_from_dir(&dir))
+    Ok(resolve_ghost_thumbnail_data_url_from_dir(&dir))
 }
 
 #[derive(Debug, Clone, serde::Serialize, PartialEq, Eq)]
@@ -269,6 +273,41 @@ mod tests {
         );
         assert_eq!(custom.shell_makoto, None);
         assert_eq!(custom.order, vec!["shiori", "ghost"]);
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn resolves_pnr_thumbnail_data_url_with_top_left_transparency() {
+        use base64::Engine;
+
+        let dir = std::env::temp_dir().join(format!("nam_ghost_pnr_cmd_{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(&dir).unwrap();
+
+        let img = image::RgbaImage::from_fn(2, 2, |x, _y| {
+            if x == 0 {
+                image::Rgba([10, 20, 30, 255])
+            } else {
+                image::Rgba([200, 100, 50, 255])
+            }
+        });
+        let pnr_path = dir.join("thumbnail.pnr");
+        let mut raw_png = Vec::new();
+        let mut cursor = std::io::Cursor::new(&mut raw_png);
+        img.write_to(&mut cursor, image::ImageFormat::Png).unwrap();
+        std::fs::write(&pnr_path, &raw_png).unwrap();
+
+        let data_url = resolve_ghost_thumbnail_data_url_from_dir(&dir).unwrap();
+        let b64 = data_url
+            .strip_prefix("data:image/png;base64,")
+            .expect("expected PNG data URL");
+        let decoded = base64::engine::general_purpose::STANDARD
+            .decode(b64)
+            .unwrap();
+        let out_img = image::load_from_memory(&decoded).unwrap().to_rgba8();
+        assert_eq!(out_img.get_pixel(0, 0)[3], 0);
+        assert_eq!(out_img.get_pixel(1, 0)[3], 255);
 
         let _ = std::fs::remove_dir_all(&dir);
     }

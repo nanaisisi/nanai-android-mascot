@@ -6,7 +6,7 @@
 
 ## 突合結果
 
-`parse_surface_table` と `Shell::load` により `surfacetable.txt`（`charset`・`version`・`scope`・`option`・`group`・`__parts` 除外・`__disabled` グループ・名前解決）をパースし、`ShellManifest::surface_table` へ格納するバックエンド処理と単体テストを実装済み。フロントエンド側も `ui/ts/surface/shell-manifest.ts` に `RawSurfaceTable` 型および `getVisibleSurfaceTableGroups` / `getSurfaceDisplayName` ヘルパーを実装済み（サーフィステスト専用 UI モーダルでの表示は未接続）。
+`parse_surface_table` と `Shell::load` により `surfacetable.txt`（`charset`・`version`・`scope`・`option`・`group`・`__parts` 除外・`__disabled` グループ・名前解決）をパースし、`ShellManifest::surface_table` へ格納するバックエンド処理と単体テストを実装済み。フロントエンド側も `ui/ts/surface/shell-manifest.ts` に `RawSurfaceTable` 型および `getVisibleSurfaceTableGroups` / `getSurfaceDisplayName` ヘルパーを実装し、サーフィステストモーダル（`surface-test-modal-content` / `open-surface-test`）へ接続済み。
 
 ## 実装箇所
 
@@ -17,4 +17,7 @@
 - `crates/ui/src/shell/tests.rs:39` `let table = shell.surface_table.as_ref().unwrap();`
 - `crates/ui/src/surfacetable/tests.rs:98` `fn test_parse_mock_nanai_file() {`
 - `ui/ts/surface/shell-manifest.ts` `RawSurfaceTable`, `getVisibleSurfaceTableGroups`, `getSurfaceDisplayName`
+- `ui/ts/ui/templates/system-templates.ts` `surface-test-modal-content`
+- `ui/ts/ui/modal-settings-handlers.ts` `setupSurfaceTestListeners`
+- `ui/ts/core/actions/menu-action-dispatcher.ts` `open-surface-test`
 - `tests/surfacetable-helper.test.ts` `surfacetable helpers` 単体テスト

@@ -109,4 +109,26 @@ export const systemTemplates = {
       </div>
     </div>
   `,
+	"surface-test-modal-content": `
+    <div class="ssp-settings-dialog">
+      <div class="ssp-settings-header" style="display: flex; justify-content: space-between; align-items: center; background: #0078d7; color: white; padding: 4px 8px;">
+        <h2 style="font-size: 14px; margin: 0; font-weight: bold;">サーフィステスト</h2>
+        <button type="button" id="close-surface-test-btn" style="background: transparent; border: none; color: white; cursor: pointer; font-size: 13px;">✖</button>
+      </div>
+      <div class="form-section" style="padding: 10px; font-size: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
+          <label for="surface-test-scope">スコープ:</label>
+          <select id="surface-test-scope">
+            <option value="0">0 (本体)</option>
+            <option value="1">1 (うにゅう)</option>
+          </select>
+          <label for="surface-test-id-input">ID直接指定:</label>
+          <input type="number" id="surface-test-id-input" min="0" value="0" style="width: 72px;" />
+          <button type="button" id="surface-test-apply-btn" class="primary">表示</button>
+          <span id="surface-test-status" style="color: #555; font-size: 11px;"></span>
+        </div>
+        <div id="surface-test-groups" style="max-height: 340px; overflow-y: auto; border: 1px solid #ddd; padding: 8px; background: #fafafa;"></div>
+      </div>
+    </div>
+  `,
 };

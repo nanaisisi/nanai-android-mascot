@@ -150,6 +150,13 @@ impl SakuraPlayerEngine {
                     keep_settings,
                 }
             }
+            SakuraToken::ClearArg { .. } => {
+                self.display_texts.insert(self.current_scope, String::new());
+                StepOutput::Clear {
+                    scope: self.current_scope,
+                    keep_settings: false,
+                }
+            }
             SakuraToken::Voice { path } => StepOutput::Voice {
                 scope: self.current_scope,
                 path,

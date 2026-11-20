@@ -14,3 +14,4 @@
 - `ui/ts/ghost/shiori-protocol.ts:150` `CHOICE_ENTER: "OnChoiceEnter",`
 - `crates/nanai-core/src/shiori_protocol_helpers/events/input.rs:84` `event_id: "OnChoiceEnter",`
 - `crates/nanai-core/src/shiori_protocol_helpers/tests/events.rs:28` `assert!(choice_enter.contains("ID: OnChoiceEnter"));`
+- `ui/ts/ghost/sakura-script.ts` `addChoiceToBalloon` (`mouseenter` / `mouseleave` で `OnChoiceEnter` を送信)

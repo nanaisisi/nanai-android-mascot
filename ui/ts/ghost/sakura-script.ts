@@ -576,6 +576,19 @@ export class SakuraScriptPlayer {
 					this.scheduleNextStep(0);
 				}
 			});
+			btn.addEventListener("mouseenter", () => {
+				if (app?.ghostController?.sendShioriEvent) {
+					void app.ghostController.sendShioriEvent("OnChoiceEnter", [
+						id,
+						title,
+					]);
+				}
+			});
+			btn.addEventListener("mouseleave", () => {
+				if (app?.ghostController?.sendShioriEvent) {
+					void app.ghostController.sendShioriEvent("OnChoiceEnter", ["", ""]);
+				}
+			});
 			textEl.appendChild(btn);
 		}
 
@@ -669,6 +682,19 @@ export class SakuraScriptPlayer {
 						id,
 						title,
 					]);
+				}
+			});
+			a.addEventListener("mouseenter", () => {
+				if (app?.ghostController?.sendShioriEvent) {
+					void app.ghostController.sendShioriEvent("OnAnchorEnter", [
+						id,
+						title,
+					]);
+				}
+			});
+			a.addEventListener("mouseleave", () => {
+				if (app?.ghostController?.sendShioriEvent) {
+					void app.ghostController.sendShioriEvent("OnAnchorEnter", ["", ""]);
 				}
 			});
 			textEl.appendChild(a);

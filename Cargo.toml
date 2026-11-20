@@ -37,9 +37,9 @@ thiserror = "2.0.21"
 anyhow = "1.0.104"
 libc = "0.2.191"
 walkdir = "2.5.0"
-zip = { version = "9.7.3", default-features = false, features = ["deflate"] }
+zip = { version = "9.8.1", default-features = false, features = ["deflate"] }
 image = "0.25.10"
-cc = "1.11.2"
+cc = "1.11.3"
 libloading = "0.9.1"
 rust-i18n = "4.2.4"
 sys-locale = "0.3.2"

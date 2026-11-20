@@ -49,16 +49,26 @@ pub async fn install_ghost_archive(
 ) -> Result<GhostInfo, String> {
     println!("📦 Installing ghost archive from path: {}", archive_path);
     let clean = clean_verbatim_path(&archive_path);
-    let file = std::fs::File::open(&clean)
-        .map_err(|e| format!("Failed to open archive '{}': {}", clean, e))?;
-
-    let zip = zip::ZipArchive::new(file).map_err(|e| format!("Invalid zip/nar archive: {}", e))?;
-
     let p = Path::new(&clean);
     let fallback = p
         .file_stem()
         .map(|s| s.to_string_lossy().to_string())
         .unwrap_or_else(|| "imported_ghost".to_string());
+
+    if p.extension()
+        .and_then(|e| e.to_str())
+        .is_some_and(|e| e.eq_ignore_ascii_case("cab"))
+    {
+        let ghosts_base = resolve_asset_path("ghost", &app_handle)?;
+        let target_dir = ghosts_base.join(&fallback);
+        archive::extract_cab_archive(p, &target_dir)?;
+        return Ok(archive::build_extracted_ghost_info(&target_dir, &fallback));
+    }
+
+    let file = std::fs::File::open(&clean)
+        .map_err(|e| format!("Failed to open archive '{}': {}", clean, e))?;
+
+    let zip = zip::ZipArchive::new(file).map_err(|e| format!("Invalid zip/nar archive: {}", e))?;
 
     extract_ghost_archive_from_reader(zip, &fallback, &app_handle, password.as_deref())
 }

@@ -17,3 +17,4 @@
 - `ui/ts/ghost/shiori-protocol.ts:155` `ANCHOR_ENTER: "OnAnchorEnter",`
 - `crates/nanai-core/src/shiori_protocol_helpers/events/input.rs:106` `event_id: "OnAnchorEnter",`
 - `crates/nanai-core/src/shiori_protocol_helpers/tests/events.rs:34` `assert!(anchor_enter.contains("ID: OnAnchorEnter"));`
+- `ui/ts/ghost/sakura-script.ts` `addAnchorToBalloon` (`mouseenter` / `mouseleave` で `OnAnchorEnter` を送信)

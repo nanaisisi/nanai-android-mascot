@@ -2,22 +2,7 @@
 
 use std::collections::HashMap;
 
-/// シェル `descript.txt` から抽出される SERIKO 関連設定
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
-pub struct ShellSerikoConfig {
-    /// 推奨 DPI (`seriko.dpi`)
-    pub dpi: Option<u32>,
-    /// クロスフェード強制無効化 (`seriko.force_disable_crossfade`)
-    pub force_disable_crossfade: bool,
-    /// スコープ Z オーダー (`seriko.zorder`)
-    pub zorder: Vec<u32>,
-    /// 連動移動スコープ群 (`seriko.sticky-window`)
-    pub sticky_window: Vec<u32>,
-    /// Sakura 側デスクトップ位置揃え (`sakura.seriko.alignmenttodesktop` / `seriko.alignmenttodesktop`)
-    pub sakura_alignment_to_desktop: Option<String>,
-    /// Kero 側デスクトップ位置揃え (`kero.seriko.alignmenttodesktop` / `seriko.alignmenttodesktop`)
-    pub kero_alignment_to_desktop: Option<String>,
-}
+pub use nanai_android_mascot_ui::manifest::ShellSerikoConfig;
 
 /// カンマ区切りのスコープ ID 列をパースする（重複排除・順序維持）
 pub fn parse_scope_id_list(raw: &str) -> Vec<u32> {

@@ -6,7 +6,7 @@
 
 ## 突合結果
 
-さくらスクリプト環境変数展開処理にて `%\*` (`%*`) の展開処理を実装 (`crates/nanai-core/src/sakura_script/env.rs` / `crates/ui/src/script/env.rs`)。
+さくらスクリプト環境変数展開処理にて `%\*` (`%*`) の展開処理を実装 (`crates/nanai-core/src/sakura_script/env.rs`)。
 
 
 ## 実装箇所

@@ -190,6 +190,8 @@ pub enum SakuraToken {
     Newline,
     /// 画面クリア (\c: reset, \C: keep settings)
     Clear { keep_settings: bool },
+    /// 引数付き画面クリア (\c[line,N], \c[char,N])
+    ClearArg { arg: String },
     /// 音声再生指定 (\__v[path])
     Voice { path: String },
     /// ウエイト (\w1 ~ \w9, \_w[ms])

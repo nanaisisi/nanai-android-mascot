@@ -4,14 +4,14 @@
 
 | 項目                                                          | 検索語                      |           対応状況            |
 | :------------------------------------------------------------ | :-------------------------- | :---------------------------: |
-| [add](add.md)                                                 | add                         |           ❌ 未実装           |
+| [add](add.md)                                                 | add                         | ✅ 実装済み (surface-compositor.ts) |
 | [alternativestart,(ID1,ID2...)](alternativestart.md)          | alternativestart            |  ✅ 実装済 (surface-load.ts)  |
 | [alternativestop,(ID1,ID2...)](alternativestop.md)            | alternativestop             |  ✅ 実装済 (surface-load.ts)  |
 | [asis](asis.md)                                               | asis                        |  ✅ 実装済 (surface-load.ts)  |
 | [auto](auto.md)                                               | auto                        |  ✅ 実装済 (surface-load.ts)  |
 | [base](base.md)                                               | base                        |  ✅ 実装済 (surface-load.ts)  |
 | [bind](bind.md)                                               | bind                        |  ✅ 実装済 (surface-load.ts)  |
-| [blend-add-fast](blend-add-fast.md)                           | blend-add-fast              |           ❌ 未実装           |
+| [blend-add-fast](blend-add-fast.md)                           | blend-add-fast              | ✅ 実装済み (surface-compositor.ts) |
 | [blend-add-glow-fast](blend-add-glow-fast.md)                 | blend-add-glow-fast         | ⚠️ 一部対応 (surface-load.ts) |
 | [blend-add-glow](blend-add-glow.md)                           | blend-add-glow              | ⚠️ 一部対応 (surface-load.ts) |
 | [blend-add](blend-add.md)                                     | blend-add                   |  ✅ 実装済 (surface-load.ts)  |

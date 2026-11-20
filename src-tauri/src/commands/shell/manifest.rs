@@ -36,7 +36,11 @@ pub fn shell_manifest(
     let shell_dir = resolve_shell_dir(&ghost_name, &shell_name, &app_handle)?;
     let shell = Shell::load(&shell_dir).map_err(|e| e.to_string())?;
     let _alias_table = crate::ghost::scan::shell::alias::read_shell_alias_txt(&shell_dir);
-    Ok(shell.manifest())
+    let seriko = crate::ghost::scan::read_descript_file(&shell_dir.join("descript.txt"))
+        .map(|props| crate::ghost::scan::shell::seriko::extract_shell_seriko_config(&props));
+    let mut manifest = shell.manifest();
+    manifest.set_seriko(seriko);
+    Ok(manifest)
 }
 
 #[derive(serde::Serialize)]

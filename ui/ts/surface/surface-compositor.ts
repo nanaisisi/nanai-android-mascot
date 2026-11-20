@@ -34,6 +34,58 @@ export function loadLayerImage(src: string): Promise<HTMLImageElement | null> {
 	});
 }
 
+const COMPOSITE_METHOD_MAP: Record<string, GlobalCompositeOperation> = {
+	add: "lighter",
+	addition: "lighter",
+	"blend-add": "lighter",
+	"blend-add-fast": "lighter",
+	multiply: "multiply",
+	"blend-multiply": "multiply",
+	"blend-multiply-fast": "multiply",
+	screen: "screen",
+	"blend-screen": "screen",
+	"blend-screen-fast": "screen",
+	"blend-overlay": "overlay",
+	"blend-overlay-fast": "overlay",
+	"blend-darken": "darken",
+	"blend-darken-fast": "darken",
+	"blend-lighten": "lighten",
+	"blend-lighten-fast": "lighten",
+	"blend-color-dodge": "color-dodge",
+	"blend-color-dodge-fast": "color-dodge",
+	"blend-color-burn": "color-burn",
+	"blend-color-burn-fast": "color-burn",
+	"blend-hard-light": "hard-light",
+	"blend-hard-light-fast": "hard-light",
+	"blend-soft-light": "soft-light",
+	"blend-soft-light-fast": "soft-light",
+	"blend-difference": "difference",
+	"blend-difference-fast": "difference",
+	"blend-exclusion": "exclusion",
+	"blend-exclusion-fast": "exclusion",
+	"blend-hue": "hue",
+	"blend-hue-fast": "hue",
+	"blend-saturation": "saturation",
+	"blend-saturation-fast": "saturation",
+	"blend-color": "color",
+	"blend-color-fast": "color",
+	"blend-luminosity": "luminosity",
+	"blend-luminosity-fast": "luminosity",
+	reduce: "destination-in",
+};
+
+/**
+ * Resolve a SERIKO draw method name to a Canvas2D `globalCompositeOperation`.
+ */
+export function resolveCompositeOperation(
+	method: string | undefined,
+): GlobalCompositeOperation {
+	const normalized = String(method ?? "overlay")
+		.trim()
+		.toLowerCase();
+	return COMPOSITE_METHOD_MAP[normalized] ?? "source-over";
+}
+
 export function drawComposedLayer(
 	ctx: CanvasRenderingContext2D,
 	img: HTMLImageElement,
@@ -41,7 +93,9 @@ export function drawComposedLayer(
 ): void {
 	const x = Number(layer.x ?? 0);
 	const y = Number(layer.y ?? 0);
-	const method = String(layer.type ?? "overlay").toLowerCase();
+	const method = String(layer.type ?? "overlay")
+		.trim()
+		.toLowerCase();
 
 	if (method === "replace") {
 		const w = img.naturalWidth || img.width || 0;
@@ -50,16 +104,8 @@ export function drawComposedLayer(
 			ctx.clearRect(x, y, w, h);
 		}
 		ctx.globalCompositeOperation = "source-over";
-	} else if (method === "add" || method === "addition") {
-		ctx.globalCompositeOperation = "lighter";
-	} else if (method === "multiply" || method === "blend-multiply") {
-		ctx.globalCompositeOperation = "multiply";
-	} else if (method === "screen" || method === "blend-screen") {
-		ctx.globalCompositeOperation = "screen";
-	} else if (method === "reduce") {
-		ctx.globalCompositeOperation = "destination-in";
 	} else {
-		ctx.globalCompositeOperation = "source-over";
+		ctx.globalCompositeOperation = resolveCompositeOperation(method);
 	}
 
 	ctx.drawImage(img, x, y);

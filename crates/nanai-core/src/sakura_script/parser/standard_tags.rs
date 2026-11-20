@@ -93,17 +93,18 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
                 chars.next();
                 tokens.push(SakuraToken::Newline);
             }
-            'c' => {
+            c @ ('c' | 'C') => {
+                let keep_settings = c == 'C';
                 chars.next();
-                tokens.push(SakuraToken::Clear {
-                    keep_settings: false,
-                });
-            }
-            'C' => {
-                chars.next();
-                tokens.push(SakuraToken::Clear {
-                    keep_settings: true,
-                });
+                if chars.peek() == Some(&'[') {
+                    if let Some(arg) = parse_bracket_arg(chars) {
+                        tokens.push(SakuraToken::ClearArg { arg });
+                    } else {
+                        tokens.push(SakuraToken::Clear { keep_settings });
+                    }
+                } else {
+                    tokens.push(SakuraToken::Clear { keep_settings });
+                }
             }
             '*' => {
                 chars.next();

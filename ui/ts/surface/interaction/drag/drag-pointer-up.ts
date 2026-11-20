@@ -1,5 +1,19 @@
+import { PhysicalPosition } from "@tauri-apps/api/dpi";
+import {
+	availableMonitors,
+	currentMonitor,
+	getAllWindows,
+	getCurrentWindow,
+	primaryMonitor,
+} from "@tauri-apps/api/window";
 import { isTauriAvailable } from "../../../core/tauri-helper.js";
 import { applyDockingSnap, restoreFromDocking } from "./docking.js";
+import {
+	calculateCharacterSnap,
+	type MonitorLike,
+	pickMonitorWorkArea,
+	type SnapWindowRect,
+} from "./snap.js";
 
 export interface ClickTrackerState {
 	registerClick: (x: number, y: number, buttonKey?: string | number) => number;
@@ -222,6 +236,10 @@ export function handleGhostPointerUp(
 			applyDockingSnap(target, globalThis.innerWidth);
 		} else {
 			target.classList.remove("is-docked-left", "is-docked-right");
+			void snapMainWindowOnDragEnd(
+				target,
+				Boolean((e as { ctrlKey?: boolean }).ctrlKey),
+			);
 		}
 	} else {
 		if (restoreFromDocking(target, globalThis.innerWidth)) {
@@ -241,4 +259,137 @@ export function handleGhostPointerUp(
 		}
 	}
 	return true;
+}
+
+let mainInitialPos: { x: number; y: number } | null = null;
+
+async function snapMainWindowOnDragEnd(
+	target: HTMLElement,
+	isCtrlPressed: boolean,
+): Promise<void> {
+	if (isCtrlPressed) return;
+	try {
+		const currentWin = getCurrentWindow();
+		const [pos, size, availRes, allWindowsRes] = await Promise.all([
+			currentWin.outerPosition(),
+			currentWin.outerSize(),
+			availableMonitors().catch(() => null),
+			getAllWindows().catch(() => null),
+		]);
+		if (mainInitialPos === null) {
+			mainInitialPos = { x: pos.x, y: pos.y };
+		}
+		const monitors: MonitorLike[] = Array.isArray(availRes)
+			? availRes.filter((m): m is NonNullable<typeof m> => Boolean(m))
+			: [];
+		if (monitors.length === 0) {
+			const mon = (await currentMonitor()) ?? (await primaryMonitor());
+			if (mon) monitors.push(mon);
+		}
+		const workArea = pickMonitorWorkArea(
+			monitors,
+			pos.x,
+			pos.y,
+			size.width,
+			size.height,
+			{
+				x: 0,
+				y: 0,
+				width: globalThis.screen?.availWidth ?? 1920,
+				height: globalThis.screen?.availHeight ?? 1080,
+				scaleFactor: globalThis.devicePixelRatio || 1,
+			},
+		);
+		const otherWindows: SnapWindowRect[] = [];
+		if (Array.isArray(allWindowsRes)) {
+			const candidates = allWindowsRes.filter(
+				(w) =>
+					w &&
+					w.label !== currentWin.label &&
+					w.label.startsWith("subchar_window_"),
+			);
+			const rects = await Promise.all(
+				candidates.map(async (w) => {
+					try {
+						if (!(await w.isVisible())) return null;
+						const [wp, ws] = await Promise.all([
+							w.outerPosition(),
+							w.outerSize(),
+						]);
+						return ws.width > 0 && ws.height > 0
+							? { x: wp.x, y: wp.y, width: ws.width, height: ws.height }
+							: null;
+					} catch {
+						return null;
+					}
+				}),
+			);
+			for (const r of rects) {
+				if (r) otherWindows.push(r);
+			}
+		}
+		const img = target.querySelector("img");
+		const imgW = img ? img.naturalWidth || img.width : 0;
+		const imgH = img ? img.naturalHeight || img.height : 0;
+		let charBounds: {
+			x: number;
+			y: number;
+			width: number;
+			height: number;
+		} | null = null;
+		if (img?.complete && imgW > 0 && imgH > 0) {
+			try {
+				const tmp = document.createElement("canvas");
+				tmp.width = imgW;
+				tmp.height = imgH;
+				const tctx = tmp.getContext?.("2d");
+				if (tctx) {
+					tctx.drawImage(img, 0, 0, imgW, imgH);
+					const data = tctx.getImageData(0, 0, imgW, imgH).data;
+					let minX = imgW;
+					let minY = imgH;
+					let maxX = -1;
+					let maxY = -1;
+					for (let y = 0; y < imgH; y++) {
+						const row = y * imgW * 4;
+						for (let x = 0; x < imgW; x++) {
+							if (data[row + x * 4 + 3] > 0) {
+								if (x < minX) minX = x;
+								if (x > maxX) maxX = x;
+								if (y < minY) minY = y;
+								if (y > maxY) maxY = y;
+							}
+						}
+					}
+					if (maxX >= minX && maxY >= minY) {
+						const scale = workArea.scaleFactor;
+						charBounds = {
+							x: Math.round(minX * scale),
+							y: Math.round(minY * scale),
+							width: Math.round((maxX - minX + 1) * scale),
+							height: Math.round((maxY - minY + 1) * scale),
+						};
+					}
+				}
+			} catch {}
+		}
+		const snapThreshold = Math.max(1, Math.round(12 * workArea.scaleFactor));
+		const snap = calculateCharacterSnap(
+			pos.x,
+			pos.y,
+			size.width,
+			size.height,
+			charBounds,
+			otherWindows,
+			workArea,
+			mainInitialPos,
+			isCtrlPressed,
+			snapThreshold,
+		);
+		if (snap.snapXType !== "None" || snap.snapYType !== "None") {
+			await currentWin.setPosition(
+				new PhysicalPosition(Math.round(snap.x), Math.round(snap.y)),
+			);
+		}
+	} catch {}
 }

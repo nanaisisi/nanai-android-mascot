@@ -7,6 +7,7 @@ Verifies specification implementation against audit markdown files.
 import datetime
 import os
 import sys
+from pathlib import Path
 
 # Add project root to sys.path when script is run directly
 _root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -127,6 +128,58 @@ def main():
         print(f"UI Connected      : {report.layer_summary.get('ui_connected', 0)} items")
         print(f"Full Pipeline     : {report.layer_summary.get('full_pipeline', 0)} items")
         print("By Layer          : " + ", ".join(f"{layer}={by_layer.get(layer, 0)}" for layer in KNOWN_LAYERS))
+        tested = by_layer.get("tests", 0)
+        total_items = report.total_files or 0
+        test_pct = round((tested / total_items) * 100, 2) if total_items else 0.0
+        print(f"Test Traceability : {tested}/{total_items} items ({test_pct}%)")
+
+        # Windows / Android プラットフォーム別対応マトリクス集計
+        win_only_count = 0
+        android_unsupported_count = 0
+        for md_path in Path(args.docs_dir).rglob("*.md"):
+            try:
+                text = md_path.read_text(encoding="utf-8", errors="ignore")
+            except OSError:
+                continue
+            if "Windows" in text and ("専用" in text or "cfg(target_os" in text):
+                win_only_count += 1
+            if "Android 非対応" in text or "Android非対応" in text:
+                android_unsupported_count += 1
+        print(f"Platform Matrix   : Windows-only-notes={win_only_count}, Android-unsupported={android_unsupported_count}")
+
+        # docs/ukadoc-spec と docs/ukadoc-ssp との差分検出 (正規化相対パス + カテゴリ別集計)
+        spec_root = Path(args.docs_dir, "ukadoc-spec")
+        spec_rel_keys = set()
+        for p in spec_root.rglob("*.md"):
+            rel = p.relative_to(spec_root).with_suffix("").as_posix().lower()
+            spec_rel_keys.add(rel)
+            if rel.endswith("/index"):
+                spec_rel_keys.add(rel[:-6])
+
+        for src_name in ("ukadoc-spec", "ukadoc-ssp"):
+            src_root = Path("docs", src_name)
+            if not src_root.is_dir():
+                continue
+            src_pages = [
+                p for p in src_root.rglob("*")
+                if p.is_file()
+                and p.suffix.lower() in {".html", ".htm", ".md"}
+                and p.stem.lower() not in {"index", "readme", "claude"}
+                and not {"about", "i18n", "oldstyle"} & {part.lower() for part in p.relative_to(src_root).parts}
+            ]
+            missing_by_cat = {}
+            for p in src_pages:
+                rel = p.relative_to(src_root).with_suffix("").as_posix().lower()
+                if rel not in spec_rel_keys and f"{rel}/index" not in spec_rel_keys:
+                    cat = rel.split("/")[0] if "/" in rel else "(root)"
+                    missing_by_cat.setdefault(cat, []).append(p.relative_to(src_root).as_posix())
+            total_missing = sum(len(v) for v in missing_by_cat.values())
+            print(f"{src_name} Diff : {total_missing} uncreated spec(s) (source: {src_root})")
+            for cat in sorted(missing_by_cat):
+                items = missing_by_cat[cat]
+                print(f"  [{cat}] {len(items)} missing:")
+                for item in items:
+                    print(f"    - {item}")
         print("----------------------------------\n")
 
     if (args.check_lists or args.check_layers) and report.list_audit:
@@ -144,6 +197,8 @@ def main():
                 print(f"  [Broken Link] {bl['file']}:{bl['line']} -> {bl['target']}")
             for ul in la.get("unlisted_leaf_specs", []):
                 print(f"  [Unlisted Leaf] {ul}")
+                stem = Path(ul).stem
+                print(f"    [Scaffold] | [{stem}]({Path(ul).name}) | {stem} | ❌ 未実装 |")
             for mp in la.get("missing_impl_paths", []):
                 print(f"  [Missing Impl Path] {mp['file']} -> {mp['path']}")
         print("--------------------------------------\n")

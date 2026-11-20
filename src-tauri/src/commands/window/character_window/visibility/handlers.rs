@@ -1,115 +1,5 @@
-//! キャラクター（メイン / サブキャラ）ウィンドウ表示・非表示コマンド
-
-#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
-#[serde(default)]
-pub struct ShowCharacterWindowParams {
-    #[serde(alias = "scopeId")]
-    scope_id: Option<i32>,
-    x: Option<f64>,
-    y: Option<f64>,
-    width: Option<f64>,
-    height: Option<f64>,
-}
-
-impl ShowCharacterWindowParams {
-    pub fn new(
-        scope_id: i32,
-        x: Option<f64>,
-        y: Option<f64>,
-        width: Option<f64>,
-        height: Option<f64>,
-    ) -> Self {
-        Self {
-            scope_id: Some(scope_id),
-            x,
-            y,
-            width,
-            height,
-        }
-    }
-
-    pub fn scope_id(&self) -> i32 {
-        self.scope_id.unwrap_or(0)
-    }
-
-    pub fn x(&self) -> Option<f64> {
-        self.x
-    }
-
-    pub fn y(&self) -> Option<f64> {
-        self.y
-    }
-
-    pub fn width(&self) -> Option<f64> {
-        self.width
-    }
-
-    pub fn height(&self) -> Option<f64> {
-        self.height
-    }
-}
-
-#[cfg(any(desktop, test))]
-fn sanitize_scale(scale: f64) -> f64 {
-    if scale > 0.0 && scale.is_finite() {
-        scale
-    } else {
-        1.0
-    }
-}
-
-#[cfg(any(desktop, test))]
-fn work_area_to_logical(
-    pos_x: i32,
-    pos_y: i32,
-    width: u32,
-    height: u32,
-    scale: f64,
-) -> (f64, f64, f64, f64, f64) {
-    let safe_scale = sanitize_scale(scale);
-    let work_x = (pos_x as f64) / safe_scale;
-    let work_y = (pos_y as f64) / safe_scale;
-    let work_w = (width as f64) / safe_scale;
-    let work_h = (height as f64) / safe_scale;
-    (safe_scale, work_x, work_y, work_w, work_h)
-}
-
-#[cfg(desktop)]
-fn monitor_logical_work_area(monitor: &tauri::Monitor) -> (f64, f64, f64, f64, f64) {
-    let work = monitor.work_area();
-    work_area_to_logical(
-        work.position.x,
-        work.position.y,
-        work.size.width,
-        work.size.height,
-        monitor.scale_factor(),
-    )
-}
-
-#[cfg(any(desktop, test))]
-fn compute_default_character_position(
-    scope_id: i32,
-    eff_w: f64,
-    eff_h: f64,
-    work_x: f64,
-    work_y: f64,
-    work_w: f64,
-    work_h: f64,
-) -> (f64, f64) {
-    // スコープ0 (メイン): 右下 (タスクバー抜きワークスペース底面)
-    // スコープ1以降 (サブ): メインの左側等に並べる
-    let raw_x = if scope_id == 0 {
-        work_x + work_w - eff_w - 80.0
-    } else {
-        work_x + work_w - eff_w - 320.0 - (scope_id as f64 * 220.0)
-    };
-    let raw_y = work_y + work_h - eff_h;
-
-    // 初期未指定配置・リセット時のみワークスペース内に収める
-    let max_x = (work_x + work_w - eff_w).max(work_x);
-    let max_y = (work_y + work_h - eff_h).max(work_y);
-    (raw_x.clamp(work_x, max_x), raw_y.clamp(work_y, max_y))
-}
+use super::geometry::{compute_default_character_position, monitor_logical_work_area};
+use super::types::{ShowCharacterWindowParams, ShowSubcharWindowParams};
 
 /// キャラクター（スコープ N）ウィンドウ表示コマンド (0=メイン, 1=サブ/うにゅ, 2以降=追加キャラ)
 #[tauri::command]
@@ -185,7 +75,6 @@ pub async fn show_character_window(
         let _ = sub_win.set_decorations(false);
         let _ = sub_win.set_shadow(false);
 
-        // 既存ウィンドウが存在し、明示的なサイズ指定がない場合はサイズを維持してリロード時のチラつき・縮小を防ぐ
         let should_resize = width.is_some() || height.is_some() || is_new;
         let mut moved_or_resized = should_resize;
         if should_resize {
@@ -197,7 +86,6 @@ pub async fn show_character_window(
 
         if x.is_some() || y.is_some() {
             moved_or_resized = true;
-            // シェルの位置指定は画面外・タスクバー上を含め上下左右とも制限しない
             let cur_pos = sub_win.outer_position().ok();
             let target_px = x
                 .map(|v| v.round() as i32)
@@ -213,7 +101,6 @@ pub async fn show_character_window(
             }));
         } else if is_new || !is_visible {
             moved_or_resized = true;
-            // モニターのタスクバー抜きワークスペース (work_area) を取得して初回のみ右下基準に標準配置
             let mut target_x = 200.0;
             let mut target_y = 200.0;
 
@@ -266,7 +153,7 @@ pub async fn show_character_window(
         if moved_or_resized
             && let Some(state) = app_handle.try_state::<crate::common::state::AppState>()
         {
-            let _ = super::super::balloon_window::sync_balloon_position_impl(
+            let _ = super::super::super::balloon_window::sync_balloon_position_impl(
                 &app_handle,
                 &state,
                 scope_id,
@@ -294,56 +181,6 @@ pub async fn hide_character_window(
         }
     }
     Ok(())
-}
-
-#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
-#[serde(default)]
-pub struct ShowSubcharWindowParams {
-    #[serde(alias = "scopeId")]
-    scope_id: Option<i32>,
-    x: Option<f64>,
-    y: Option<f64>,
-    width: Option<f64>,
-    height: Option<f64>,
-}
-
-impl ShowSubcharWindowParams {
-    #[allow(dead_code)]
-    pub fn new(
-        scope_id: i32,
-        x: Option<f64>,
-        y: Option<f64>,
-        width: Option<f64>,
-        height: Option<f64>,
-    ) -> Self {
-        Self {
-            scope_id: Some(scope_id),
-            x,
-            y,
-            width,
-            height,
-        }
-    }
-
-    pub fn scope_id(&self) -> i32 {
-        self.scope_id.unwrap_or(0)
-    }
-
-    pub fn x(&self) -> Option<f64> {
-        self.x
-    }
-
-    pub fn y(&self) -> Option<f64> {
-        self.y
-    }
-
-    pub fn width(&self) -> Option<f64> {
-        self.width
-    }
-
-    pub fn height(&self) -> Option<f64> {
-        self.height
-    }
 }
 
 /// 互換用: サブキャラクターウィンドウ表示コマンド
@@ -463,7 +300,7 @@ pub async fn reset_character_positions(
                         "y": phys_y,
                     }),
                 );
-                let _ = super::super::balloon_window::sync_balloon_position_impl(
+                let _ = super::super::super::balloon_window::sync_balloon_position_impl(
                     &app_handle,
                     &state,
                     scope_id,
@@ -477,71 +314,4 @@ pub async fn reset_character_positions(
         let _ = (&app_handle, &state);
     }
     Ok(())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn work_area_to_logical_handles_taskbar_and_hidpi_scale() {
-        assert_eq!(
-            work_area_to_logical(0, 0, 1920, 1032, 1.0),
-            (1.0, 0.0, 0.0, 1920.0, 1032.0)
-        );
-        assert_eq!(
-            work_area_to_logical(90, 60, 2790, 1560, 1.5),
-            (1.5, 60.0, 40.0, 1860.0, 1040.0)
-        );
-        assert_eq!(
-            work_area_to_logical(0, 0, 1280, 720, 0.0),
-            (1.0, 0.0, 0.0, 1280.0, 720.0)
-        );
-        assert_eq!(
-            work_area_to_logical(0, 0, 1280, 720, f64::NAN),
-            (1.0, 0.0, 0.0, 1280.0, 720.0)
-        );
-    }
-
-    #[test]
-    fn default_character_position_uses_work_area_bottom_right() {
-        // 1920x1080 with 48px bottom taskbar -> work_area height = 1032
-        assert_eq!(
-            compute_default_character_position(0, 200.0, 360.0, 0.0, 0.0, 1920.0, 1032.0),
-            (1640.0, 672.0)
-        );
-        // Subchar (scope 1) placed to the left of main character
-        assert_eq!(
-            compute_default_character_position(1, 200.0, 360.0, 0.0, 0.0, 1920.0, 1032.0),
-            (1180.0, 672.0)
-        );
-        // Top/left taskbar work_area offset (60, 40) with HiDPI logical size
-        assert_eq!(
-            compute_default_character_position(0, 200.0, 360.0, 60.0, 40.0, 1860.0, 1040.0),
-            (1640.0, 720.0)
-        );
-        // Oversized window stays anchored to work_area origin for initial unset default
-        assert_eq!(
-            compute_default_character_position(2, 500.0, 800.0, 60.0, 40.0, 400.0, 600.0),
-            (60.0, 40.0)
-        );
-    }
-
-    #[test]
-    fn params_preserve_unclamped_offscreen_coordinates() {
-        let p = ShowCharacterWindowParams::new(0, Some(-450.0), Some(-220.0), Some(200.0), None);
-        assert_eq!(p.scope_id(), 0);
-        assert_eq!(p.x(), Some(-450.0));
-        assert_eq!(p.y(), Some(-220.0));
-        assert_eq!(p.width(), Some(200.0));
-        assert_eq!(p.height(), None);
-
-        let parsed: ShowSubcharWindowParams = serde_json::from_str(
-            r#"{"scopeId": 2, "x": 3840.0, "y": 2160.0, "width": 160.0, "height": 300.0}"#,
-        )
-        .expect("deserialize ShowSubcharWindowParams");
-        assert_eq!(parsed.scope_id(), 2);
-        assert_eq!(parsed.x(), Some(3840.0));
-        assert_eq!(parsed.y(), Some(2160.0));
-    }
 }

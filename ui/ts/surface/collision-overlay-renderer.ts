@@ -493,10 +493,18 @@ registerCollisionOverlayLayer({
 	strokeColor: WINDOW_COLLISION_STROKE_COLOR,
 	isEnabled: ({ options, width, height }) =>
 		options.showWindowBounds !== false && width > 2 && height > 2,
-	render: ({ ctx, width, height }) => {
+	render: ({ ctx, width, height, showLabels }) => {
 		ctx.strokeStyle = WINDOW_COLLISION_STROKE_COLOR;
 		ctx.lineWidth = 2;
 		ctx.strokeRect?.(1, 1, width - 2, height - 2);
+		if (showLabels) {
+			drawWireframeLabel(
+				ctx,
+				"initial",
+				{ x: 4, y: 13 },
+				WINDOW_COLLISION_STROKE_COLOR,
+			);
+		}
 	},
 });
 

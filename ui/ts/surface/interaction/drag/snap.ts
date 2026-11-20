@@ -303,25 +303,57 @@ export function calculateCharacterSnap(
 	}
 	const offsetX = characterBounds.x;
 	const offsetY = characterBounds.y;
-	const charInitial = initialPos
-		? { x: initialPos.x + offsetX, y: initialPos.y + offsetY }
-		: initialPos;
-	const res = calculateWindowSnap(
-		windowX + offsetX,
-		windowY + offsetY,
-		characterBounds.width,
-		characterBounds.height,
-		otherWindows,
-		screenSize,
-		charInitial,
-		isCtrlPressed,
-		snapThreshold,
-	);
+	// 1. Initial スナップは initial 枠 (windowX, windowY) 基準で判定
+	let snappedX = windowX;
+	let snappedY = windowY;
+	let snapXType: SnapTargetType = "None";
+	let snapYType: SnapTargetType = "None";
+
+	if (
+		!isCtrlPressed &&
+		snapThreshold > 0 &&
+		initialPos &&
+		Number.isFinite(initialPos.x) &&
+		Number.isFinite(initialPos.y)
+	) {
+		if (Math.abs(windowX - initialPos.x) < snapThreshold) {
+			snappedX = initialPos.x;
+			snapXType = "Initial";
+		}
+		if (Math.abs(windowY - initialPos.y) < snapThreshold) {
+			snappedY = initialPos.y;
+			snapYType = "Initial";
+		}
+	}
+
+	// 2. Monitor / Character スナップは character 枠基準で判定し、window 座標へ戻す
+	if (snapXType === "None" || snapYType === "None") {
+		const res = calculateWindowSnap(
+			windowX + offsetX,
+			windowY + offsetY,
+			characterBounds.width,
+			characterBounds.height,
+			otherWindows,
+			screenSize,
+			null,
+			isCtrlPressed,
+			snapThreshold,
+		);
+		if (snapXType === "None" && res.snapXType !== "None") {
+			snappedX = res.x - offsetX;
+			snapXType = res.snapXType;
+		}
+		if (snapYType === "None" && res.snapYType !== "None") {
+			snappedY = res.y - offsetY;
+			snapYType = res.snapYType;
+		}
+	}
+
 	return {
-		x: res.x - offsetX,
-		y: res.y - offsetY,
-		snapXType: res.snapXType,
-		snapYType: res.snapYType,
+		x: snappedX,
+		y: snappedY,
+		snapXType,
+		snapYType,
 	};
 }
 

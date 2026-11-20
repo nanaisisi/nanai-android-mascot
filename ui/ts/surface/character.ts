@@ -22,7 +22,7 @@ import {
 	renderCollisionOverlay,
 } from "./collision-overlay-renderer.js";
 import {
-	calculateWindowSnap,
+	calculateCharacterSnap,
 	formatSnapTooltipText,
 	type MonitorLike,
 	pickMonitorWorkArea,
@@ -259,6 +259,7 @@ function initCharacterWindow() {
 	let lastSyncedWidth = 0;
 	let lastSyncedHeight = 0;
 	let initialPos: { x: number; y: number } | null = null;
+	let hasInitialPosFromResize = false;
 	let showCollisions = false;
 	let currentCollisionMode: CollisionDisplayMode = "full";
 	let currentCollisions: Array<Record<string, unknown>> = [];
@@ -421,7 +422,8 @@ function initCharacterWindow() {
 				height: targetH,
 			})
 				.then(() => {
-					if (initialPos === null) {
+					if (!hasInitialPosFromResize || initialPos === null) {
+						hasInitialPosFromResize = true;
 						void refreshInitialPositionFromWindow();
 					}
 				})
@@ -947,11 +949,67 @@ function initCharacterWindow() {
 			1,
 			Math.round(SNAP_THRESHOLD_LOGICAL_PX * workArea.scaleFactor),
 		);
-		return calculateWindowSnap(
+		const imgW =
+			img && (img.naturalWidth || img.width) > 0
+				? img.naturalWidth || img.width
+				: context.winWidth;
+		const imgH =
+			img && (img.naturalHeight || img.height) > 0
+				? img.naturalHeight || img.height
+				: context.winHeight;
+		let charBounds: {
+			x: number;
+			y: number;
+			width: number;
+			height: number;
+		} | null = null;
+		if (
+			img?.complete &&
+			imgW > 0 &&
+			imgH > 0 &&
+			typeof document.createElement === "function"
+		) {
+			try {
+				const tmp = document.createElement("canvas");
+				tmp.width = imgW;
+				tmp.height = imgH;
+				const tctx = tmp.getContext?.("2d");
+				if (tctx) {
+					tctx.drawImage(img, 0, 0, imgW, imgH);
+					const data = tctx.getImageData(0, 0, imgW, imgH).data;
+					let minX = imgW;
+					let minY = imgH;
+					let maxX = -1;
+					let maxY = -1;
+					for (let y = 0; y < imgH; y++) {
+						const row = y * imgW * 4;
+						for (let x = 0; x < imgW; x++) {
+							if (data[row + x * 4 + 3] > 0) {
+								if (x < minX) minX = x;
+								if (x > maxX) maxX = x;
+								if (y < minY) minY = y;
+								if (y > maxY) maxY = y;
+							}
+						}
+					}
+					if (maxX >= minX && maxY >= minY) {
+						const physicalScale = currentScale * workArea.scaleFactor;
+						charBounds = {
+							x: Math.round(minX * physicalScale),
+							y: Math.round(minY * physicalScale),
+							width: Math.round((maxX - minX + 1) * physicalScale),
+							height: Math.round((maxY - minY + 1) * physicalScale),
+						};
+					}
+				}
+			} catch (_e) {}
+		}
+		return calculateCharacterSnap(
 			rawX,
 			rawY,
 			context.winWidth,
 			context.winHeight,
+			charBounds,
 			context.otherWindows,
 			workArea,
 			initialPos,

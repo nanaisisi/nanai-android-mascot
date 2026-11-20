@@ -93,3 +93,44 @@ fn test_shell_hit_test_results_and_surfaces2() {
 
     let _ = std::fs::remove_dir_all(&empty_dir);
 }
+
+#[test]
+fn test_shell_loads_sorted_surfaces_split_files() {
+    let dir = std::env::temp_dir().join("nanai_shell_surfaces_split_dir");
+    let _ = std::fs::remove_dir_all(&dir);
+    std::fs::create_dir_all(&dir).unwrap();
+
+    std::fs::write(
+        dir.join("surfaces.txt"),
+        "surface0\n{\ncollision0,0,0,50,50,Head\n}\n",
+    )
+    .unwrap();
+    std::fs::write(
+        dir.join("surfaces2.txt"),
+        "surface1\n{\ncollision0,0,0,30,30,Body\n}\n",
+    )
+    .unwrap();
+    std::fs::write(
+        dir.join("surfaces_extra.txt"),
+        "surface2\n{\ncollision0,0,0,40,40,Hand\n}\n",
+    )
+    .unwrap();
+    // 対象外ファイルは無視される
+    std::fs::write(dir.join("other_surfaces.txt"), "surface99\n{\n}\n").unwrap();
+
+    let shell = Shell::load(&dir).unwrap();
+    assert!(shell.surface(0).is_some());
+    assert!(shell.surface(1).is_some());
+    assert!(shell.surface(2).is_some());
+    assert!(shell.surface(99).is_none());
+    assert_eq!(
+        shell.hit_test(1, 10, 10).map(|c| c.name.as_str()),
+        Some("Body")
+    );
+    assert_eq!(
+        shell.hit_test(2, 10, 10).map(|c| c.name.as_str()),
+        Some("Hand")
+    );
+
+    let _ = std::fs::remove_dir_all(&dir);
+}

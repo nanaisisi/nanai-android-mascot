@@ -59,12 +59,35 @@ impl Shell {
             .map(|c| SurfacesTxt::parse(&c))
             .unwrap_or_default();
 
-        // surfaces2.txt（SSP拡張オーバーライド）があればマージ
-        if let Some(s2_path) = resolve_vfs_path(directory, "surfaces2.txt").filter(|p| p.is_file())
-            && let Ok(s2_content) = open_text_file(&s2_path)
-        {
-            let s2_parsed = SurfacesTxt::parse(&s2_content);
-            surfaces_txt.merge(s2_parsed);
+        // surfaces*.txt（surfaces2.txt 等の SSP 拡張・分割ファイル）をファイル名順でマージ
+        if let Ok(entries) = std::fs::read_dir(directory) {
+            let mut extra_files: Vec<(String, std::path::PathBuf)> = entries
+                .flatten()
+                .filter_map(|entry| {
+                    let path = entry.path();
+                    if !path.is_file() {
+                        return None;
+                    }
+                    let name = entry.file_name().to_string_lossy().into_owned();
+                    let lower = name.to_ascii_lowercase();
+                    if lower.starts_with("surfaces")
+                        && lower.ends_with(".txt")
+                        && lower != "surfaces.txt"
+                    {
+                        Some((lower, path))
+                    } else {
+                        None
+                    }
+                })
+                .collect();
+            extra_files.sort_by(|a, b| a.0.cmp(&b.0));
+
+            for (_, extra_path) in extra_files {
+                if let Ok(extra_content) = open_text_file(&extra_path) {
+                    let extra_parsed = SurfacesTxt::parse(&extra_content);
+                    surfaces_txt.merge(extra_parsed);
+                }
+            }
         }
 
         let surface_table = resolve_vfs_path(directory, "surfacetable.txt")

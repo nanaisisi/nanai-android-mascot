@@ -6,5 +6,5 @@
 
 ## 突合結果
 
-`find_ghost_thumbnail`（`package_files.rs`）が `thumbnail.png` / `thumbnail.jpg` / `thumbnail.pnr` を解決する。未対応: `GhostInfo` への項目追加と `renderGhostList` での表示、`.pnr` の左上 1px 透過処理。
+`find_ghost_thumbnail`（`package_files.rs`）および `discover_ghost_assets`（`assets.rs`）が `thumbnail.png` / `thumbnail.jpg` / `thumbnail.jpeg` / `thumbnail.pnr` を解決し、Tauri コマンド `get_ghost_thumbnail`（`commands/shell/ghost.rs`）でパスを取得できる（テスト `reads_readme_terms_and_thumbnail_from_ghost_dir`）。未対応: `GhostInfo` への項目追加と `renderGhostList` での表示、`.pnr` の左上 1px 透過処理。
 

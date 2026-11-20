@@ -1,8 +1,12 @@
-use super::resolve_ghost_directory;
+use super::{open_text_file, resolve_ghost_directory};
 use crate::common::models::GhostInfo;
+use crate::ghost::scan::assets::discover_ghost_assets;
 use crate::ghost::scan::directory::manifest::parse_ghost_manifest;
+use crate::ghost::scan::directory::package_files::{
+    find_ghost_readme, find_ghost_terms, find_ghost_thumbnail,
+};
 use crate::ghost::scan::shell::scan_shells_from_ghost;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 pub fn resolve_ghost_dir_opt(ghost_name: &str, app_handle: &tauri::AppHandle) -> Option<PathBuf> {
     resolve_ghost_directory(ghost_name, app_handle).ok()
@@ -98,4 +102,90 @@ pub async fn uninstall_ghost(
     std::fs::remove_dir_all(&dir)
         .map(|_| true)
         .map_err(|e| format!("ゴーストの削除に失敗しました: {e}"))
+}
+
+pub fn read_ghost_readme_from_dir(dir: &Path) -> Option<String> {
+    let path = find_ghost_readme(dir)?;
+    open_text_file(&path).ok()
+}
+
+pub fn read_ghost_terms_from_dir(dir: &Path) -> Option<String> {
+    let path = find_ghost_terms(dir)?;
+    open_text_file(&path).ok()
+}
+
+pub fn resolve_ghost_thumbnail_from_dir(dir: &Path) -> Option<String> {
+    find_ghost_thumbnail(dir)
+        .map(|p| p.to_string_lossy().to_string())
+        .or_else(|| discover_ghost_assets(dir).thumbnail)
+}
+
+#[tauri::command]
+pub async fn get_ghost_readme(
+    ghost_name: String,
+    app_handle: tauri::AppHandle,
+) -> Result<Option<String>, String> {
+    let dir = resolve_ghost_dir_opt(&ghost_name, &app_handle)
+        .ok_or_else(|| format!("Ghost not found: {ghost_name}"))?;
+    Ok(read_ghost_readme_from_dir(&dir))
+}
+
+#[tauri::command]
+pub async fn get_ghost_terms(
+    ghost_name: String,
+    app_handle: tauri::AppHandle,
+) -> Result<Option<String>, String> {
+    let dir = resolve_ghost_dir_opt(&ghost_name, &app_handle)
+        .ok_or_else(|| format!("Ghost not found: {ghost_name}"))?;
+    Ok(read_ghost_terms_from_dir(&dir))
+}
+
+#[tauri::command]
+pub async fn get_ghost_thumbnail(
+    ghost_name: String,
+    app_handle: tauri::AppHandle,
+) -> Result<Option<String>, String> {
+    let dir = resolve_ghost_dir_opt(&ghost_name, &app_handle)
+        .ok_or_else(|| format!("Ghost not found: {ghost_name}"))?;
+    Ok(resolve_ghost_thumbnail_from_dir(&dir))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn reads_readme_terms_and_thumbnail_from_ghost_dir() {
+        let dir = std::env::temp_dir().join(format!("nam_ghost_cmd_{}", std::process::id()));
+        let master = dir.join("ghost").join("master");
+        std::fs::create_dir_all(&master).unwrap();
+
+        assert_eq!(read_ghost_readme_from_dir(&dir), None);
+        assert_eq!(read_ghost_terms_from_dir(&dir), None);
+        assert_eq!(resolve_ghost_thumbnail_from_dir(&dir), None);
+
+        std::fs::write(dir.join("readme.txt"), "hello readme").unwrap();
+        std::fs::write(dir.join("terms.md"), "hello terms").unwrap();
+        std::fs::write(master.join("thumbnail.png"), b"png").unwrap();
+
+        assert_eq!(
+            read_ghost_readme_from_dir(&dir).as_deref(),
+            Some("hello readme")
+        );
+        assert_eq!(
+            read_ghost_terms_from_dir(&dir).as_deref(),
+            Some("hello terms")
+        );
+        assert!(
+            resolve_ghost_thumbnail_from_dir(&dir).is_some_and(|p| p.ends_with("thumbnail.png"))
+        );
+
+        // ルート直下の thumbnail.pnr が ghost/master/ より優先される
+        std::fs::write(dir.join("thumbnail.pnr"), b"pnr").unwrap();
+        assert!(
+            resolve_ghost_thumbnail_from_dir(&dir).is_some_and(|p| p.ends_with("thumbnail.pnr"))
+        );
+
+        std::fs::remove_dir_all(&dir).ok();
+    }
 }

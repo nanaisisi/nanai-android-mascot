@@ -279,6 +279,17 @@ export function captureMainInitialPosition(): void {
 }
 
 if (isTauriAvailable()) {
+	if (typeof document !== "undefined") {
+		document.addEventListener(
+			"pointerdown",
+			() => {
+				if (mainInitialPos === null) {
+					captureMainInitialPosition();
+				}
+			},
+			{ once: true, capture: true },
+		);
+	}
 	void Promise.resolve(
 		listen("character-position-reset", () => {
 			captureMainInitialPosition();

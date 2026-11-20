@@ -1,63 +1,7 @@
-use super::geometry::*;
-use std::sync::{LazyLock, Mutex};
+use super::super::geometry::*;
+use super::lock::{BALLOON_CREATION_LOCKS, BalloonLockGuard};
+use super::params::{ShowBalloonWindowParams, resolve_show_balloon_args};
 use tauri::Emitter;
-
-static BALLOON_CREATION_LOCKS: LazyLock<Mutex<std::collections::HashSet<i32>>> =
-    LazyLock::new(|| Mutex::new(std::collections::HashSet::new()));
-
-struct BalloonLockGuard(i32);
-impl Drop for BalloonLockGuard {
-    fn drop(&mut self) {
-        if let Ok(mut locks) = BALLOON_CREATION_LOCKS.lock() {
-            locks.remove(&self.0);
-        }
-    }
-}
-
-#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
-#[serde(default)]
-pub struct ShowBalloonWindowParams {
-    #[serde(alias = "scopeId")]
-    pub scope_id: Option<i32>,
-    pub theme: Option<String>,
-    pub x: Option<f64>,
-    pub y: Option<f64>,
-    pub width: Option<f64>,
-    pub height: Option<f64>,
-}
-
-#[cfg(any(desktop, test))]
-#[allow(clippy::too_many_arguments)]
-pub fn resolve_show_balloon_args(
-    params: Option<ShowBalloonWindowParams>,
-    scope_id: Option<i32>,
-    scope_id_camel: Option<i32>,
-    theme: Option<String>,
-    x: Option<f64>,
-    y: Option<f64>,
-    width: Option<f64>,
-    height: Option<f64>,
-) -> (
-    i32,
-    Option<String>,
-    Option<f64>,
-    Option<f64>,
-    Option<f64>,
-    Option<f64>,
-) {
-    let resolved_params = params.unwrap_or_default();
-    let s_id = resolved_params
-        .scope_id
-        .or(scope_id)
-        .or(scope_id_camel)
-        .unwrap_or(0);
-    let t_val = resolved_params.theme.or(theme);
-    let p_x = resolved_params.x.or(x);
-    let p_y = resolved_params.y.or(y);
-    let w_val = resolved_params.width.or(width);
-    let h_val = resolved_params.height.or(height);
-    (s_id, t_val, p_x, p_y, w_val, h_val)
-}
 
 #[cfg(desktop)]
 fn restore_menu_focus_if_visible(app_handle: &tauri::AppHandle) {
@@ -69,12 +13,10 @@ fn restore_menu_focus_if_visible(app_handle: &tauri::AppHandle) {
     }
 }
 
-/// 独立バルーン（スコープ N）ウィンドウ表示コマンド
-#[tauri::command(rename_all = "snake_case")]
 #[allow(non_snake_case)]
 #[cfg_attr(not(desktop), allow(unused_variables))]
 #[allow(clippy::too_many_arguments)]
-pub async fn show_balloon_window(
+pub async fn execute_show_balloon_window(
     app_handle: tauri::AppHandle,
     params: Option<ShowBalloonWindowParams>,
     scope_id: Option<i32>,
@@ -375,165 +317,6 @@ pub async fn show_balloon_window(
                     serde_json::json!({ "theme": theme }),
                 );
             }
-        }
-    }
-    Ok(())
-}
-
-#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
-#[serde(default)]
-pub struct ResizeBalloonWindowParams {
-    #[serde(alias = "scopeId")]
-    scope_id: Option<i32>,
-    width: Option<f64>,
-    height: Option<f64>,
-}
-
-impl ResizeBalloonWindowParams {
-    #[allow(dead_code)]
-    pub fn scope_id(&self) -> i32 {
-        self.scope_id.unwrap_or(0)
-    }
-
-    #[allow(dead_code)]
-    pub fn width(&self) -> f64 {
-        self.width.unwrap_or(280.0)
-    }
-
-    #[allow(dead_code)]
-    pub fn height(&self) -> f64 {
-        self.height.unwrap_or(200.0)
-    }
-}
-
-#[cfg(any(desktop, test))]
-pub fn resolve_resize_balloon_args(
-    params: Option<ResizeBalloonWindowParams>,
-    scope_id: Option<i32>,
-    scope_id_camel: Option<i32>,
-    width: Option<f64>,
-    height: Option<f64>,
-) -> (i32, f64, f64) {
-    let resolved_params = params.unwrap_or_default();
-    let target_scope = resolved_params
-        .scope_id
-        .or(scope_id)
-        .or(scope_id_camel)
-        .unwrap_or(0);
-    let target_width = resolved_params.width.or(width).unwrap_or(0.0);
-    let target_height = resolved_params.height.or(height).unwrap_or(0.0);
-    (target_scope, target_width, target_height)
-}
-
-/// バルーンウィンドウのサイズを画像実寸法に合せてリサイズするコマンド
-#[tauri::command(rename_all = "snake_case")]
-#[allow(non_snake_case)]
-#[cfg_attr(not(desktop), allow(unused_variables))]
-pub async fn resize_balloon_window(
-    app_handle: tauri::AppHandle,
-    params: Option<ResizeBalloonWindowParams>,
-    scope_id: Option<i32>,
-    scopeId: Option<i32>,
-    width: Option<f64>,
-    height: Option<f64>,
-) -> Result<(), String> {
-    #[cfg(desktop)]
-    {
-        let (target_scope, target_width, target_height) =
-            resolve_resize_balloon_args(params, scope_id, scopeId, width, height);
-        if target_width.is_finite()
-            && target_height.is_finite()
-            && target_width > 0.0
-            && target_height > 0.0
-        {
-            use tauri::Manager;
-            let label = format!("balloon_window_{}", target_scope);
-            if let Some(balloon_win) = app_handle.get_webview_window(&label) {
-                let _ = balloon_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
-                    width: target_width,
-                    height: target_height,
-                }));
-                let char_label = format!("subchar_window_{}", target_scope);
-                let monitor_opt = monitor_from_window_center(&app_handle, &balloon_win)
-                    .or_else(|| {
-                        app_handle
-                            .get_webview_window(&char_label)
-                            .and_then(|cw| monitor_from_window_center(&app_handle, &cw))
-                    })
-                    .or_else(|| app_handle.primary_monitor().ok().flatten());
-                if let (Ok(pos), Some(monitor)) = (balloon_win.outer_position(), monitor_opt) {
-                    let work = monitor_logical_work_area(&monitor);
-                    let pos_y = pos.y as f64 / work.scale_factor;
-                    if needs_vertical_clamp(pos_y, target_height, work.y, work.height) {
-                        let (_, clamped_y) = clamp_logical_position_y_only(
-                            pos.x as f64 / work.scale_factor,
-                            pos_y,
-                            target_height,
-                            work.y,
-                            work.height,
-                        );
-                        let clamped_phys_y = (clamped_y * work.scale_factor).round() as i32;
-                        let _ = balloon_win.set_position(tauri::Position::Physical(
-                            tauri::PhysicalPosition {
-                                x: pos.x,
-                                y: clamped_phys_y,
-                            },
-                        ));
-                    }
-                }
-            }
-        }
-    }
-    Ok(())
-}
-
-#[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
-#[serde(default)]
-pub struct HideBalloonWindowParams {
-    #[serde(alias = "scopeId")]
-    scope_id: Option<i32>,
-}
-
-impl HideBalloonWindowParams {
-    #[allow(dead_code)]
-    pub fn scope_id(&self) -> i32 {
-        self.scope_id.unwrap_or(0)
-    }
-}
-
-#[cfg(any(desktop, test))]
-pub fn resolve_hide_balloon_scope(
-    params: Option<HideBalloonWindowParams>,
-    scope_id: Option<i32>,
-    scope_id_camel: Option<i32>,
-    scope_id_legacy: Option<i32>,
-) -> i32 {
-    params
-        .and_then(|p| p.scope_id)
-        .or(scope_id)
-        .or(scope_id_camel)
-        .or(scope_id_legacy)
-        .unwrap_or(0)
-}
-
-/// 独立バルーン（スコープ N）ウィンドウ非表示コマンド (\b[-1])
-#[tauri::command(rename_all = "snake_case")]
-#[allow(non_snake_case)]
-#[cfg_attr(not(desktop), allow(unused_variables))]
-pub async fn hide_balloon_window(
-    app_handle: tauri::AppHandle,
-    params: Option<HideBalloonWindowParams>,
-    scope_id: Option<i32>,
-    scopeId: Option<i32>,
-    _scope_id: Option<i32>,
-) -> Result<(), String> {
-    #[cfg(desktop)]
-    {
-        let target_scope = resolve_hide_balloon_scope(params, scope_id, scopeId, _scope_id);
-        use tauri::Manager;
-        let label = format!("balloon_window_{}", target_scope);
-        if let Some(balloon_win) = app_handle.get_webview_window(&label) {
-            let _ = balloon_win.hide();
         }
     }
     Ok(())

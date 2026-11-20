@@ -232,10 +232,12 @@ export class ModalSettingsHandlers {
 
 			if (alwaysUtf8Charset && alwaysUtf8I18n) {
 				alwaysUtf8Charset.addEventListener("change", () => {
-					if (alwaysUtf8I18n) alwaysUtf8I18n.checked = alwaysUtf8Charset.checked;
+					if (alwaysUtf8I18n)
+						alwaysUtf8I18n.checked = alwaysUtf8Charset.checked;
 				});
 				alwaysUtf8I18n.addEventListener("change", () => {
-					if (alwaysUtf8Charset) alwaysUtf8Charset.checked = alwaysUtf8I18n.checked;
+					if (alwaysUtf8Charset)
+						alwaysUtf8Charset.checked = alwaysUtf8I18n.checked;
 				});
 			}
 

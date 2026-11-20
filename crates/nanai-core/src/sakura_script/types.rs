@@ -196,6 +196,8 @@ pub enum SakuraToken {
     Wait(u32),
     /// 選択肢入力待ち (\*)
     Star,
+    /// クリック待ち (\x)
+    ClickWait,
     /// 選択肢 (\q[title,id])
     Choice {
         title: String,

@@ -2,11 +2,11 @@
 
 - **規格**: [owner-draw-menu.md](../../../../ukadoc-spec/manual/owner-draw-menu.md) ([公式版](https://ukatech.shillest.net/ukadoc-spec/manual/owner-draw-menu/))
 - **検索語**: extract_shell_menu_theme, menu.background.bitmap.filename
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 対応済み
 
 ## 突合結果
 
-`scan_shells_from_ghost` と `extract_shell_menu_theme` が `ghost/master/descript.txt` とシェル `descript.txt` をマージし、`load_menu_bitmap_data_url` が `shell_dir`・`ghost_master_dir`・`ghost_dir` 順で任意ファイル名・サブフォルダ配置を解決する。フロントエンドはテーマ `null` 時に CSS 変数を除去して標準表示へ戻る。一方、`SHIORI Resource` からの `menu.*` 動的取得およびシェル設定への優先上書き、`ghost/master` 相対解決、ならびに画像切れ端部の端色単色塗り潰し処理は未実装（`static_rules.rs` は固定値応答、`menu-caption-renderer.ts` は項目キャプション取得のみ）。
+`scan_shells_from_ghost` と `extract_shell_menu_theme` が `ghost/master/descript.txt` とシェル `descript.txt` をマージし、`load_menu_bitmap_data_url` が `shell_dir`・`ghost_master_dir`・`ghost_dir` 順、`load_shiori_menu_bitmap_data_url` が `ghost_master_dir` 優先で任意ファイル名・サブフォルダ配置を解決する。フロントエンドでは `menuThemeRenderer.fetchShioriMenuTheme` / `mergeShioriMenuTheme` が `SHIORI Resource` の `menu.*` を動的取得してシェル設定へ優先上書きし、`ghost/master` 相対解決および非タイル時の端色抽出（`extractEdgeColorFromImage`）による `--balloon-bg` 単色塗り潰しフォールバックを行う。テーマ `null` 時は CSS 変数を除去して標準表示へ戻る。
 
 ## 実装箇所
 

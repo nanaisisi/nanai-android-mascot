@@ -16,7 +16,7 @@
 | [`balloons*.png`](balloons-png.md) | balloons0.png, balloons1.png | ✅ 実装済 |
 | [`balloons*s.txt / balloonk*s.txt / balloonp*def*s.txt / balloonc*s.txt`](balloons-s-txt.md) | balloons0s.txt, balloonk0s.txt, parse_balloon_options_text | ⚠️ 一部対応 |
 | [`cancel_down.png / cancel_up.png`](cancel-button-png.md) | cancel_down.png, cancel_up.png | ⚠️ 一部対応 |
-| [`clickwait.png / clickwaits*.png / clickwaitk*.png / clickwaitp*def.png`](clickwait-png.md) | clickwaits, clickwaitk, clickwaitp | ❌ 未実装 |
+| [`clickwait.png / clickwaits*.png / clickwaitk*.png / clickwaitp*def.png`](clickwait-png.md) | clickwaits, clickwaitk, clickwaitp | ✅ 実装済 |
 | [`descript.txt` (バルーン)](descript-txt.md) | balloon_descript_map | ✅ 実装済 |
 | [`marker.png / markers.png / markerk.png / markerp*def.png`](marker-png.md) | markers.png, markerk.png, balloon-marker | ⚠️ 一部対応 |
 | [`mode_down.png / mode_up.png`](mode-button-png.md) | mode_down.png, mode_up.png | ⚠️ 一部対応 |

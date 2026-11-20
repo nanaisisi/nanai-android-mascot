@@ -8,6 +8,20 @@ pub fn load_menu_bitmap_data_url(
     ghost_master_dir: &Path,
     ghost_dir: &Path,
 ) -> Option<String> {
+    load_menu_bitmap_from_bases(rel_path, &[shell_dir, ghost_master_dir, ghost_dir])
+}
+
+/// SHIORI Resource 経由のメニュー画像を `ghost/master` 相対優先で読み込んで Data URL (base64) に変換する
+pub fn load_shiori_menu_bitmap_data_url(
+    rel_path: &str,
+    ghost_master_dir: &Path,
+    shell_dir: &Path,
+    ghost_dir: &Path,
+) -> Option<String> {
+    load_menu_bitmap_from_bases(rel_path, &[ghost_master_dir, shell_dir, ghost_dir])
+}
+
+fn load_menu_bitmap_from_bases(rel_path: &str, search_bases: &[&Path]) -> Option<String> {
     let normalized = rel_path.trim().replace('\\', "/");
     if normalized.is_empty() {
         return None;
@@ -19,7 +33,6 @@ pub fn load_menu_bitmap_data_url(
         return Some(normalized);
     }
 
-    let search_bases = [shell_dir, ghost_master_dir, ghost_dir];
     for base in search_bases {
         let direct = base.join(&normalized);
         let resolved = if direct.is_file() {
@@ -117,6 +130,34 @@ mod tests {
         );
         assert!(res.is_some());
         assert!(res.unwrap().starts_with("data:image/png;base64,"));
+
+        let _ = fs::remove_dir_all(&temp_root);
+    }
+
+    #[test]
+    fn test_load_shiori_menu_bitmap_prioritizes_ghost_master() {
+        let temp_root = std::env::temp_dir().join("nanai_test_shiori_menu_bitmap");
+        let _ = fs::remove_dir_all(&temp_root);
+        let shell_dir = temp_root.join("shell").join("master");
+        let ghost_master_dir = temp_root.join("ghost").join("master");
+        fs::create_dir_all(&shell_dir).unwrap();
+        fs::create_dir_all(&ghost_master_dir).unwrap();
+
+        fs::write(shell_dir.join("menu_bg.png"), b"SHELL").unwrap();
+        fs::write(ghost_master_dir.join("menu_bg.png"), b"MASTER").unwrap();
+
+        let res = load_shiori_menu_bitmap_data_url(
+            "menu_bg.png",
+            &ghost_master_dir,
+            &shell_dir,
+            &temp_root,
+        )
+        .unwrap();
+        let expected_master = format!(
+            "data:image/png;base64,{}",
+            base64::engine::general_purpose::STANDARD.encode(b"MASTER")
+        );
+        assert_eq!(res, expected_master);
 
         let _ = fs::remove_dir_all(&temp_root);
     }

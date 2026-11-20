@@ -25,6 +25,8 @@ pub enum StepOutput {
     ScopeChange { scope: u32 },
     /// 選択肢入力待ち (\*)
     ChoiceWait { scope: u32 },
+    /// クリック待ち (\x)
+    ClickWait { scope: u32 },
     /// 選択肢 (\q[title,id])
     Choice {
         scope: u32,
@@ -153,6 +155,9 @@ impl SakuraPlayerEngine {
                 path,
             },
             SakuraToken::Star => StepOutput::ChoiceWait {
+                scope: self.current_scope,
+            },
+            SakuraToken::ClickWait => StepOutput::ClickWait {
                 scope: self.current_scope,
             },
             SakuraToken::Wait(ms) => StepOutput::Wait { duration_ms: ms },

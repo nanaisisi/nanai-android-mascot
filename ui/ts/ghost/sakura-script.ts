@@ -106,6 +106,8 @@ export class SakuraScriptPlayer {
 	public currentScope = 0;
 	private timerId: ReturnType<typeof setTimeout> | null = null;
 	private isLoopRunning = false;
+	private isWaitingForClick = false;
+	private clickWaitScope = 0;
 	private scopeBalloonIds = new Map<number, number>();
 	public app: CommandHandlerApp | null = null;
 	public choiceTimeout?: number;
@@ -270,6 +272,13 @@ export class SakuraScriptPlayer {
 			case "ChoiceWait": {
 				// Pause auto-stepping until user choice input
 				this.isLoopRunning = false;
+				return;
+			}
+			case "ClickWait": {
+				this.isLoopRunning = false;
+				this.isWaitingForClick = true;
+				this.clickWaitScope = scope;
+				this.appendClickWaitMarker(app, scope);
 				return;
 			}
 			case "Anchor": {
@@ -583,6 +592,58 @@ export class SakuraScriptPlayer {
 		});
 	}
 
+	private appendClickWaitMarker(
+		app: CommandHandlerApp | null,
+		scope: number,
+	): void {
+		const { textEl, dispEl } = this.getBalloonElements(app, scope);
+
+		if (
+			textEl &&
+			typeof document !== "undefined" &&
+			typeof document.createElement === "function"
+		) {
+			for (const el of textEl.querySelectorAll(".clickwait-marker")) {
+				el.remove();
+			}
+			const markerSpan = document.createElement("span");
+			markerSpan.className = "clickwait-marker";
+			textEl.appendChild(markerSpan);
+		}
+
+		if (dispEl?.style && isSinglePageUi()) {
+			dispEl.style.display = "block";
+		}
+
+		const theme = app?.currentBalloonTheme || "default";
+		void emit(`update-balloon-content-${scope}`, {
+			html: textEl ? textEl.innerHTML : "",
+			theme,
+			balloonId: this.scopeBalloonIds.get(scope) ?? null,
+		});
+	}
+
+	private clearClickWaitMarker(
+		app: CommandHandlerApp | null,
+		scope: number,
+	): void {
+		const { textEl } = this.getBalloonElements(app, scope);
+		if (!textEl) return;
+
+		const markers = textEl.querySelectorAll(".clickwait-marker");
+		if (markers.length === 0) return;
+
+		for (const el of markers) {
+			el.remove();
+		}
+		const theme = app?.currentBalloonTheme || "default";
+		void emit(`update-balloon-content-${scope}`, {
+			html: textEl.innerHTML,
+			theme,
+			balloonId: this.scopeBalloonIds.get(scope) ?? null,
+		});
+	}
+
 	private addAnchorToBalloon(
 		app: CommandHandlerApp | null,
 		scope: number,
@@ -661,6 +722,12 @@ export class SakuraScriptPlayer {
 	}
 
 	public skip(): void {
+		if (this.isWaitingForClick) {
+			this.clearClickWaitMarker(this.getApp(), this.clickWaitScope);
+			this.isWaitingForClick = false;
+			this.resume();
+			return;
+		}
 		while (this.isLoopRunning && this.playerInstance) {
 			const stepRes = stepSakuraPlayerWasm(
 				this.playerInstance,
@@ -707,6 +774,12 @@ export class SakuraScriptPlayer {
 					stepRes.data?.text || "",
 					stepRes.data?.id || "",
 				);
+			} else if (stepRes.action === "ClickWait") {
+				this.isLoopRunning = false;
+				this.isWaitingForClick = true;
+				this.clickWaitScope = scope;
+				this.appendClickWaitMarker(app, scope);
+				return;
 			}
 		}
 		this.stop();
@@ -714,6 +787,10 @@ export class SakuraScriptPlayer {
 
 	public stop(): void {
 		this.isLoopRunning = false;
+		if (this.isWaitingForClick) {
+			this.clearClickWaitMarker(this.getApp(), this.clickWaitScope);
+			this.isWaitingForClick = false;
+		}
 		if (this.timerId) {
 			clearTimeout(this.timerId);
 			this.timerId = null;
@@ -733,6 +810,10 @@ export class SakuraScriptPlayer {
 	}
 
 	public resume(): void {
+		if (this.isWaitingForClick) {
+			this.clearClickWaitMarker(this.getApp(), this.clickWaitScope);
+			this.isWaitingForClick = false;
+		}
 		if (this.playerInstance && !this.isLoopRunning) {
 			this.startLoop();
 		}

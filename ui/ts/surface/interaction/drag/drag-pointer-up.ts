@@ -267,6 +267,10 @@ export function handleGhostPointerUp(
 
 let mainInitialPos: { x: number; y: number } | null = null;
 
+export function getMainInitialPosition(): { x: number; y: number } | null {
+	return mainInitialPos;
+}
+
 export function captureMainInitialPosition(): void {
 	if (!isTauriAvailable()) return;
 	void Promise.resolve(getCurrentWindow().outerPosition())
@@ -279,17 +283,6 @@ export function captureMainInitialPosition(): void {
 }
 
 if (isTauriAvailable()) {
-	if (typeof document !== "undefined") {
-		document.addEventListener(
-			"pointerdown",
-			() => {
-				if (mainInitialPos === null) {
-					captureMainInitialPosition();
-				}
-			},
-			{ once: true, capture: true },
-		);
-	}
 	void Promise.resolve(
 		listen("character-position-reset", () => {
 			captureMainInitialPosition();
@@ -310,9 +303,6 @@ async function snapMainWindowOnDragEnd(
 			availableMonitors().catch(() => null),
 			getAllWindows().catch(() => null),
 		]);
-		if (mainInitialPos === null) {
-			mainInitialPos = { x: pos.x, y: pos.y };
-		}
 		const monitors: MonitorLike[] = Array.isArray(availRes)
 			? availRes.filter((m): m is NonNullable<typeof m> => Boolean(m))
 			: [];

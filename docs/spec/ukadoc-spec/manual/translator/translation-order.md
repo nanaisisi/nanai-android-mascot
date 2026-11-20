@@ -13,11 +13,11 @@ SHIORI へ `OnTranslate` イベントを送信し翻訳済みスクリプトを�
 - `src-tauri/src/commands/shiori/protocol/events.rs:24` `pub async fn send_on_translate(`
 - `src-tauri/src/invoke.rs:112` `commands::shiori::send_on_translate,`
 - `ui/ts/ghost/shiori-protocol.ts:201` `TRANSLATE: "OnTranslate",`
-- `ui/ts/core/app-settings.ts:255` `playSakuraScript(script: string) {`
+- `ui/ts/core/app-settings.ts:255` `async playSakuraScript(script: string) {`
 - `crates/ui/src/sstp/config/ghost_config.rs:18` `/// sstp.alwaystranslate: 1 で SSTP オプションにかかわらず常時 OnTranslate を実行。デフォルトは 0`
 - `crates/ui/src/shiori/engine/tests/multistage_loader/fallback_reload/full_coverage.rs:175` `fn test_multistage_shiori_loader_with_translator_module_state() {`
 
 
 ## 実装状況の更新
 
-適用順序（SHIORI → ゴースト側 → シェル側）は `translate_order`（`src-tauri/src/ghost/scan/translator.rs`）および Tauri コマンド `get_makoto_translators`（`src-tauri/src/commands/shell/ghost.rs`・`src-tauri/src/invoke.rs`）で公開済み。MAKOTO 段の実行は DLL 不可のため、UI 自動パイプライン接続と併せて ⚠️ 一部対応のまま据え置く。
+適用順序（SHIORI → ゴースト側 → シェル側）は `translate_order`（`src-tauri/src/ghost/scan/translator.rs`）および Tauri コマンド `get_makoto_translators`（`src-tauri/src/commands/shell/ghost.rs`・`src-tauri/src/invoke.rs`）で公開済み。`ui/ts/core/app-settings.ts` の `playSakuraScript` から再生前に `get_makoto_translators` で適用順序を取得し、`shiori` 段で `send_on_translate`（`OnTranslate`）を実行するよう接続済み。MAKOTO 段（`ghost` / `shell`）の実行は DLL 不可のため、⚠️ 一部対応のまま据え置く。

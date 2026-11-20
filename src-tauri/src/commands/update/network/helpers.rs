@@ -30,25 +30,22 @@ pub(super) fn resolve_update_ghost_dir(
     PathBuf::from(format!("assets/ghost/{}", ghost_name))
 }
 
-pub(super) fn resolve_update_balloon_dir(
-    balloon_name: Option<&str>,
-    balloon_path: Option<&str>,
+pub(super) fn resolve_update_asset_dir(
+    kind: &str,
+    name: &str,
+    explicit_path: Option<&str>,
     app_handle: &tauri::AppHandle,
 ) -> PathBuf {
-    if let Some(path) = balloon_path.map(str::trim).filter(|path| !path.is_empty()) {
+    if let Some(path) = explicit_path.map(str::trim).filter(|path| !path.is_empty()) {
         let candidate = PathBuf::from(path);
         if candidate.is_dir() {
             return candidate;
         }
     }
 
-    let name = balloon_name
-        .map(str::trim)
-        .filter(|n| !n.is_empty())
-        .unwrap_or("default");
     let candidates = [
-        format!("assets/balloon/{}", name),
-        format!("balloon/{}", name),
+        format!("assets/{}/{}", kind, name),
+        format!("{}/{}", kind, name),
     ];
     for relative in candidates {
         if let Ok(resolved) = crate::commands::update::resolve_asset_path(&relative, app_handle)
@@ -58,7 +55,35 @@ pub(super) fn resolve_update_balloon_dir(
         }
     }
 
-    PathBuf::from(format!("assets/balloon/{}", name))
+    PathBuf::from(format!("assets/{}/{}", kind, name))
+}
+
+pub(super) fn resolve_update_balloon_dir(
+    balloon_name: Option<&str>,
+    balloon_path: Option<&str>,
+    app_handle: &tauri::AppHandle,
+) -> PathBuf {
+    let name = balloon_name
+        .map(str::trim)
+        .filter(|n| !n.is_empty())
+        .unwrap_or("default");
+    resolve_update_asset_dir("balloon", name, balloon_path, app_handle)
+}
+
+pub(super) fn resolve_update_plugin_dir(
+    plugin_name: &str,
+    plugin_path: Option<&str>,
+    app_handle: &tauri::AppHandle,
+) -> PathBuf {
+    resolve_update_asset_dir("plugin", plugin_name.trim(), plugin_path, app_handle)
+}
+
+pub(super) fn resolve_update_headline_dir(
+    headline_name: &str,
+    headline_path: Option<&str>,
+    app_handle: &tauri::AppHandle,
+) -> PathBuf {
+    resolve_update_asset_dir("headline", headline_name.trim(), headline_path, app_handle)
 }
 
 pub(super) fn read_dir_homeurl(dir: &Path) -> Option<String> {

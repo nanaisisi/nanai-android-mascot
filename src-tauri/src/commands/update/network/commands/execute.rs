@@ -2,7 +2,8 @@
 
 use super::super::helpers::{
     ReportProgressParams, read_dir_homeurl, report_progress, resolve_update_balloon_dir,
-    resolve_update_ghost_dir, validate_update_path,
+    resolve_update_ghost_dir, resolve_update_headline_dir, resolve_update_plugin_dir,
+    validate_update_path,
 };
 use super::check::{check_dir_update, check_ghost_update};
 use crate::commands::update::dau::*;
@@ -231,4 +232,103 @@ pub async fn update_balloon(
 
     let check_result = check_dir_update(&balloon_dir, &target_name, homeurl, missing_msg).await?;
     execute_dir_update(&app_handle, &balloon_dir, check_result).await
+}
+
+async fn update_named_dir(
+    app_handle: &tauri::AppHandle,
+    target_dir: &Path,
+    target_name: &str,
+    missing_msg: String,
+) -> Result<UpdateExecutionResult, String> {
+    let homeurl = read_dir_homeurl(target_dir);
+    let check_result = check_dir_update(target_dir, target_name, homeurl, missing_msg).await?;
+    execute_dir_update(app_handle, target_dir, check_result).await
+}
+
+/// プラグインのネットワーク更新を実行
+#[tauri::command]
+pub async fn update_plugin(
+    app_handle: tauri::AppHandle,
+    plugin_name: String,
+    plugin_path: Option<String>,
+) -> Result<UpdateExecutionResult, String> {
+    let target_name = plugin_name.trim().to_string();
+    let plugin_dir = resolve_update_plugin_dir(&target_name, plugin_path.as_deref(), &app_handle);
+    let missing_msg = format!(
+        "プラグイン「{}」に homeurl が設定されていません",
+        target_name
+    );
+    update_named_dir(&app_handle, &plugin_dir, &target_name, missing_msg).await
+}
+
+/// ヘッドラインのネットワーク更新を実行
+#[tauri::command]
+pub async fn update_headline(
+    app_handle: tauri::AppHandle,
+    headline_name: String,
+    headline_path: Option<String>,
+) -> Result<UpdateExecutionResult, String> {
+    let target_name = headline_name.trim().to_string();
+    let headline_dir =
+        resolve_update_headline_dir(&target_name, headline_path.as_deref(), &app_handle);
+    let missing_msg = format!(
+        "ヘッドライン「{}」に homeurl が設定されていません",
+        target_name
+    );
+    update_named_dir(&app_handle, &headline_dir, &target_name, missing_msg).await
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::time::{SystemTime, UNIX_EPOCH};
+
+    fn make_temp_dir(prefix: &str) -> std::path::PathBuf {
+        let nanos = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let dir = std::env::temp_dir().join(format!("{}_{}", prefix, nanos));
+        fs::create_dir_all(&dir).unwrap();
+        dir
+    }
+
+    #[test]
+    fn read_dir_homeurl_returns_none_when_descript_missing() {
+        let dir = make_temp_dir("update_no_descript");
+        assert_eq!(read_dir_homeurl(&dir), None);
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn read_dir_homeurl_appends_trailing_slash() {
+        let dir = make_temp_dir("update_with_descript");
+        fs::write(
+            dir.join("descript.txt"),
+            "charset,UTF-8\nhomeurl,https://example.com/plugin\n",
+        )
+        .unwrap();
+        assert_eq!(
+            read_dir_homeurl(&dir),
+            Some("https://example.com/plugin/".to_string())
+        );
+        let _ = fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn check_dir_update_reports_missing_homeurl() {
+        let dir = make_temp_dir("update_missing_homeurl");
+        let rt = tokio::runtime::Runtime::new().unwrap();
+        let err = rt
+            .block_on(check_dir_update(
+                &dir,
+                "my_plugin",
+                None,
+                "プラグイン「my_plugin」に homeurl が設定されていません".to_string(),
+            ))
+            .unwrap_err();
+        assert!(err.contains("my_plugin"));
+        assert!(err.contains("homeurl"));
+        let _ = fs::remove_dir_all(&dir);
+    }
 }

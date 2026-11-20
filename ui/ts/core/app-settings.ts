@@ -252,10 +252,48 @@ export const settingsMethods = {
 		}
 	},
 
-	playSakuraScript(script: string) {
+	async playSakuraScript(script: string) {
 		const app =
 			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
-		return app.sakuraPlayer?.play?.(script);
+		let translated = script;
+		const ghostName = app.ghostController?.currentGhost?.name;
+		const shellName =
+			(app.ghostController as { currentShellName?: string } | undefined)
+				?.currentShellName ?? null;
+
+		let order: string[] = ["shiori"];
+		if (ghostName) {
+			try {
+				const info = await invoke<{
+					ghost_makoto: string | null;
+					shell_makoto: string | null;
+					order: string[];
+				}>("get_makoto_translators", { ghostName, shellName });
+				if (Array.isArray(info?.order) && info.order.length > 0) {
+					order = info.order;
+				}
+			} catch {
+				// Fallback to default shiori-only order when command is unavailable
+			}
+		}
+
+		for (const stage of order) {
+			if (stage === "shiori") {
+				try {
+					const res = await invoke<string>("send_on_translate", {
+						script: translated,
+					});
+					if (typeof res === "string" && res.length > 0) {
+						translated = res;
+					}
+				} catch {
+					// Keep current script if OnTranslate fails or is unavailable
+				}
+			}
+			// "ghost" and "shell" MAKOTO DLL stages are detected in order but not executed
+		}
+
+		return app.sakuraPlayer?.play?.(translated);
 	},
 
 	startSecondTimer() {

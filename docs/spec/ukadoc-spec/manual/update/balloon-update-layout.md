@@ -6,7 +6,9 @@
 
 ## 突合結果
 
-バルーン単位のネットワーク更新コマンド `update_balloon`（`src-tauri/src/commands/update/network/commands/execute.rs:212`）を実装し、`src-tauri/src/invoke.rs:92` に登録している。`<balloon_dir>` を解決し、`descript.txt` の `homeurl` から `check_dir_update` / `execute_dir_update` を通じて `updates2.dau` / `updates.txt` / `developer_options.txt`（`noupdate`）/ MD5 検証 / `delete.txt`・`delete1.txt` の更新パイプラインを実行する。一方で、プラグインおよびヘッドライン向けの個別ネットワーク更新コマンドは未実装（`UPDATE_TARGET_TYPES` と `OnUpdateOther*` 引数生成ヘルパーのみ定義済み）。
+バルーン単位のネットワーク更新コマンド `update_balloon`、プラグイン単位の `update_plugin`、ヘッドライン単位の `update_headline`（いずれも `src-tauri/src/commands/update/network/commands/execute.rs`）を実装し、`src-tauri/src/invoke.rs` に登録している。各対象ディレクトリを解決し、`descript.txt` の `homeurl` から `check_dir_update` / `execute_dir_update` を通じて `updates2.dau` / `updates.txt` / `developer_options.txt`（`noupdate`）/ MD5 検証 / `delete.txt`・`delete1.txt` の更新パイプラインを実行する。
+
+**実装状況**: ✅ 実装済
 
 ## 実装箇所
 

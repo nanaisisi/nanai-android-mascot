@@ -19,4 +19,4 @@
 | [オーナードローメニュー (manual/owner-draw-menu.md)](owner-draw-menu.md) | menu.background.bitmap.filename, menu_background.png | ⚠️ 一部対応 |
 | [シェル (manual/shell.md)](shell.md) | surfaces.txt, load_surface_image, load_surface_pna, surfacetable.txt | ⚠️ 一部対応 |
 | [トランスレータ (manual/translator.md)](translator.md) | send_on_translate, OnTranslate, loadMakoto, handleLoadMakoto | ⚠️ 一部対応 |
-| [ネットワーク更新 (manual/update.md)](update.md) | updates2.dau, updates.txt, delete.txt, developer_options.txt | ⚠️ 一部対応 |
+| [ネットワーク更新 (manual/update.md)](update.md) | updates2.dau, updates.txt, delete.txt, developer_options.txt | ✅ 実装済 |

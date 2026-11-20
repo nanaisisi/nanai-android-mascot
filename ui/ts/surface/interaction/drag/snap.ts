@@ -261,6 +261,70 @@ export function calculateWindowSnap(
 	};
 }
 
+export interface CharacterSnapBounds {
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+}
+
+/**
+ * キャラクターの非透明領域（characterBounds）を基準にスナップを計算し、
+ * スナップ後のウィンドウ左上座標 (x, y) を返す。
+ */
+export function calculateCharacterSnap(
+	windowX: number,
+	windowY: number,
+	windowWidth: number,
+	windowHeight: number,
+	characterBounds: CharacterSnapBounds | null | undefined,
+	otherWindows: SnapWindowRect[],
+	screenSize: SnapScreenBounds,
+	initialPos?: { x: number; y: number } | null,
+	isCtrlPressed: boolean = false,
+	snapThreshold: number = 12,
+): SnapResult {
+	if (
+		!characterBounds ||
+		characterBounds.width <= 0 ||
+		characterBounds.height <= 0
+	) {
+		return calculateWindowSnap(
+			windowX,
+			windowY,
+			windowWidth,
+			windowHeight,
+			otherWindows,
+			screenSize,
+			initialPos,
+			isCtrlPressed,
+			snapThreshold,
+		);
+	}
+	const offsetX = characterBounds.x;
+	const offsetY = characterBounds.y;
+	const charInitial = initialPos
+		? { x: initialPos.x + offsetX, y: initialPos.y + offsetY }
+		: initialPos;
+	const res = calculateWindowSnap(
+		windowX + offsetX,
+		windowY + offsetY,
+		characterBounds.width,
+		characterBounds.height,
+		otherWindows,
+		screenSize,
+		charInitial,
+		isCtrlPressed,
+		snapThreshold,
+	);
+	return {
+		x: res.x - offsetX,
+		y: res.y - offsetY,
+		snapXType: res.snapXType,
+		snapYType: res.snapYType,
+	};
+}
+
 /**
  * SSP 準拠のスナップツールチップ 2行プレーンテキスト生成
  * @param x X座標

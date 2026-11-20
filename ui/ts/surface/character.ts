@@ -324,11 +324,61 @@ function initCharacterWindow() {
 		collisionCanvas.style.height = `${scaledH}px`;
 		collisionCanvas.style.display = "block";
 
+		const computeCharacterBounds = (): {
+			x: number;
+			y: number;
+			width: number;
+			height: number;
+		} => {
+			if (
+				img?.complete &&
+				(img.naturalWidth || img.width) > 0 &&
+				typeof document.createElement === "function"
+			) {
+				try {
+					const tmp = document.createElement("canvas");
+					tmp.width = baseW;
+					tmp.height = baseH;
+					const tctx = tmp.getContext?.("2d");
+					if (tctx) {
+						tctx.drawImage(img, 0, 0, baseW, baseH);
+						const data = tctx.getImageData(0, 0, baseW, baseH).data;
+						let minX = baseW;
+						let minY = baseH;
+						let maxX = -1;
+						let maxY = -1;
+						for (let y = 0; y < baseH; y++) {
+							const row = y * baseW * 4;
+							for (let x = 0; x < baseW; x++) {
+								if (data[row + x * 4 + 3] > 0) {
+									if (x < minX) minX = x;
+									if (x > maxX) maxX = x;
+									if (y < minY) minY = y;
+									if (y > maxY) maxY = y;
+								}
+							}
+						}
+						if (maxX >= minX && maxY >= minY) {
+							return {
+								x: minX,
+								y: minY,
+								width: maxX - minX + 1,
+								height: maxY - minY + 1,
+							};
+						}
+					}
+				} catch (_e) {
+					// fallback to full surface bounds
+				}
+			}
+			return { x: 0, y: 0, width: baseW, height: baseH };
+		};
+
 		renderCollisionOverlay(collisionCanvas, {
 			collisions: currentCollisions,
 			scale: currentScale,
 			mode: currentCollisionMode,
-			characterBounds: { x: 0, y: 0, width: baseW, height: baseH },
+			characterBounds: computeCharacterBounds(),
 			iconRect: currentIconRect,
 			points: currentPoints,
 		});
@@ -786,13 +836,24 @@ function initCharacterWindow() {
 		})();
 		if (currentWin?.label) selfLabel = currentWin.label;
 
-		const [sizeRes, availRes, allWindowsRes] = await Promise.all([
+		const [sizeRes, availRes, allWindowsRes, selfPosRes] = await Promise.all([
 			currentWin
 				? currentWin.outerSize().catch(() => null)
 				: Promise.resolve(null),
 			availableMonitors().catch(() => null),
 			getAllWindows().catch(() => null),
+			initialPos === null && currentWin
+				? currentWin.outerPosition().catch(() => null)
+				: Promise.resolve(null),
 		]);
+		if (
+			initialPos === null &&
+			selfPosRes &&
+			Number.isFinite(selfPosRes.x) &&
+			Number.isFinite(selfPosRes.y)
+		) {
+			initialPos = { x: selfPosRes.x, y: selfPosRes.y };
+		}
 
 		if (
 			sizeRes &&
@@ -824,7 +885,7 @@ function initCharacterWindow() {
 					w &&
 					w.label !== selfLabel &&
 					w.label !== expectedSelfLabel &&
-					w.label.startsWith("subchar_window_"),
+					(w.label === "main" || w.label.startsWith("subchar_window_")),
 			);
 			const rects = await Promise.all(
 				candidates.map(async (w) => {

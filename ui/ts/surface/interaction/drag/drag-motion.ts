@@ -11,7 +11,10 @@ import {
 	moveCurrentWindowBy,
 } from "../../../core/tauri-helper.js";
 import { DRAG_PADDING } from "./constants.js";
-import { getMainInitialPosition } from "./drag-pointer-up.js";
+import {
+	getMainInitialPosition,
+	setMainInitialPositionIfUnset,
+} from "./drag-pointer-up.js";
 import {
 	type CharacterSnapBounds,
 	calculateCharacterSnap,
@@ -99,11 +102,15 @@ export function createNativeDragSession() {
 	const loadMainSnapContext = async () => {
 		try {
 			const currentWin = getCurrentWindow();
-			const [size, availRes, allWindowsRes] = await Promise.all([
+			const [posRes, size, availRes, allWindowsRes] = await Promise.all([
+				currentWin.outerPosition().catch(() => null),
 				currentWin.outerSize().catch(() => null),
 				availableMonitors().catch(() => null),
 				getAllWindows().catch(() => null),
 			]);
+			if (posRes) {
+				setMainInitialPositionIfUnset({ x: posRes.x, y: posRes.y });
+			}
 			const monitors: MonitorLike[] = Array.isArray(availRes)
 				? availRes.filter((m): m is NonNullable<typeof m> => Boolean(m))
 				: [];
@@ -198,6 +205,10 @@ export function createNativeDragSession() {
 					},
 				);
 				const threshold = Math.max(1, Math.round(12 * workArea.scaleFactor));
+				const initialTarget = getMainInitialPosition() ?? {
+					x: workArea.x + workArea.width - snapCtx.winWidth,
+					y: workArea.y + workArea.height - snapCtx.winHeight,
+				};
 				const snap = calculateCharacterSnap(
 					rawX,
 					rawY,
@@ -206,7 +217,7 @@ export function createNativeDragSession() {
 					snapCtx.charBounds,
 					snapCtx.otherWindows,
 					workArea,
-					getMainInitialPosition(),
+					initialTarget,
 					false,
 					threshold,
 				);

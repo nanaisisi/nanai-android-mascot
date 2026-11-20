@@ -271,6 +271,22 @@ export function getMainInitialPosition(): { x: number; y: number } | null {
 	return mainInitialPos;
 }
 
+export function setMainInitialPositionIfUnset(
+	pos: {
+		x: number;
+		y: number;
+	} | null,
+): void {
+	if (
+		mainInitialPos === null &&
+		pos &&
+		Number.isFinite(pos.x) &&
+		Number.isFinite(pos.y)
+	) {
+		mainInitialPos = { x: pos.x, y: pos.y };
+	}
+}
+
 export function captureMainInitialPosition(): void {
 	if (!isTauriAvailable()) return;
 	void Promise.resolve(getCurrentWindow().outerPosition())
@@ -364,6 +380,10 @@ async function snapMainWindowOnDragEnd(
 		);
 		saveCharacterBoundsForSnap(currentWin.label, charBounds);
 		const snapThreshold = Math.max(1, Math.round(12 * workArea.scaleFactor));
+		const initialTarget = mainInitialPos ?? {
+			x: workArea.x + workArea.width - size.width,
+			y: workArea.y + workArea.height - size.height,
+		};
 		const snap = calculateCharacterSnap(
 			pos.x,
 			pos.y,
@@ -372,7 +392,7 @@ async function snapMainWindowOnDragEnd(
 			charBounds,
 			otherWindows,
 			workArea,
-			mainInitialPos,
+			initialTarget,
 			isCtrlPressed,
 			snapThreshold,
 		);

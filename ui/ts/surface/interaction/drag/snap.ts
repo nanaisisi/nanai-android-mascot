@@ -410,30 +410,35 @@ export function calculateCharacterSnap(
 	}
 	const offsetX = characterBounds.x;
 	const offsetY = characterBounds.y;
-	// 1. Initial スナップは initial 枠 (windowX, windowY) 基準で判定
+	// 1. Initial スナップ: initial 枠 (windowX, windowY, windowWidth, windowHeight) のモニター端へのスナップ（最優先）
 	let snappedX = windowX;
 	let snappedY = windowY;
 	let snapXType: SnapTargetType = "None";
 	let snapYType: SnapTargetType = "None";
 
-	if (
-		!isCtrlPressed &&
-		snapThreshold > 0 &&
-		initialPos &&
-		Number.isFinite(initialPos.x) &&
-		Number.isFinite(initialPos.y)
-	) {
-		if (Math.abs(windowX - initialPos.x) < snapThreshold) {
-			snappedX = initialPos.x;
+	if (!isCtrlPressed && snapThreshold > 0 && Number.isFinite(screenSize.width)) {
+		const winMonRes = calculateWindowSnap(
+			windowX,
+			windowY,
+			windowWidth,
+			windowHeight,
+			[],
+			screenSize,
+			initialPos,
+			isCtrlPressed,
+			snapThreshold,
+		);
+		if (winMonRes.snapXType !== "None") {
+			snappedX = winMonRes.x;
 			snapXType = "Initial";
 		}
-		if (Math.abs(windowY - initialPos.y) < snapThreshold) {
-			snappedY = initialPos.y;
+		if (winMonRes.snapYType !== "None") {
+			snappedY = winMonRes.y;
 			snapYType = "Initial";
 		}
 	}
 
-	// 2. Monitor / Character スナップは character 枠基準で判定し、window 座標へ戻す
+	// 2. Monitor / Character スナップ: character 枠基準で判定し、window 座標へ戻す
 	if (snapXType === "None" || snapYType === "None") {
 		const res = calculateWindowSnap(
 			windowX + offsetX,

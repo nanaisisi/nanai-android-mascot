@@ -387,9 +387,10 @@ export function calculateCharacterSnap(
 	characterBounds: CharacterSnapBounds | null | undefined,
 	otherWindows: SnapWindowRect[],
 	screenSize: SnapScreenBounds,
-	initialPos?: { x: number; y: number } | null,
+	_initialPos?: { x: number; y: number } | null,
 	isCtrlPressed: boolean = false,
 	snapThreshold: number = 12,
+	prevInitialLeftX?: number | null,
 ): SnapResult {
 	if (
 		!characterBounds ||
@@ -403,7 +404,7 @@ export function calculateCharacterSnap(
 			windowHeight,
 			otherWindows,
 			screenSize,
-			initialPos,
+			_initialPos,
 			isCtrlPressed,
 			snapThreshold,
 		);
@@ -421,23 +422,19 @@ export function calculateCharacterSnap(
 		snapThreshold > 0 &&
 		Number.isFinite(screenSize.width)
 	) {
-		const winMonRes = calculateWindowSnap(
-			windowX,
-			windowY,
-			windowWidth,
-			windowHeight,
-			[],
-			screenSize,
-			null,
-			isCtrlPressed,
-			snapThreshold,
-		);
-		if (winMonRes.snapXType !== "None") {
-			snappedX = winMonRes.x;
+		const targetInitialRightX =
+			typeof prevInitialLeftX === "number" && Number.isFinite(prevInitialLeftX)
+				? prevInitialLeftX
+				: (screenSize.x ?? 0) + screenSize.width;
+		if (Math.abs(windowX + windowWidth - targetInitialRightX) < snapThreshold) {
+			snappedX = targetInitialRightX - windowWidth;
 			snapXType = "Initial";
 		}
-		if (winMonRes.snapYType !== "None") {
-			snappedY = winMonRes.y;
+		const targetInitialBottomY = (screenSize.y ?? 0) + screenSize.height;
+		if (
+			Math.abs(windowY + windowHeight - targetInitialBottomY) < snapThreshold
+		) {
+			snappedY = targetInitialBottomY - windowHeight;
 			snapYType = "Initial";
 		}
 	}

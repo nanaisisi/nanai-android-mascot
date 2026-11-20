@@ -14,5 +14,5 @@
 | [`surface*.png`](surface-png.md) | load_surface_image | ✅ 対応済み |
 | [`surfaces**.txt`](surfaces-ext-txt.md) | surfaces2.txt | ✅ 実装済 |
 | [`surfaces.txt`](surfaces-txt.md) | parse_surfaces_txt | ✅ 実装済 |
-| [`surfacetable.txt`](surfacetable-txt.md) | surfacetable.txt | ⚠️ 一部対応 |
+| [`surfacetable.txt`](surfacetable-txt.md) | surfacetable.txt | ✅ 実装済 |
 | [thumbnail-png](thumbnail-png.md) | find_shell_thumbnail, get_shell_thumbnail | ✅ 実装済 |

@@ -5,7 +5,7 @@
 | 項目 | 検索語 | 対応状況 |
 | :--- | :----- | :------: |
 | [`arrow0.png / arrow1.png`](arrow-png.md) | arrow0.png, arrow1.png | ✅ 実装済 |
-| [`arrows*.png / arrowk*.png / arrowp*def*.png`](arrows-png.md) | arrowk, arrows, arrowp | ⚠️ 一部対応 |
+| [`arrows*.png / arrowk*.png / arrowp*def*.png`](arrows-png.md) | arrowk, arrows, arrowp | ✅ 実装済 |
 | [`balloonc*.pna`](balloonc-pna.md) | balloonc0.pna | ⚠️ 一部対応 |
 | [`balloonc*.png`](balloonc-png.md) | balloonc0.png | ⚠️ 一部対応 |
 | [`balloonk*.pna`](balloonk-pna.md) | balloonk0.png, processChromaKey | ✅ 実装済 |
@@ -21,8 +21,8 @@
 | [`marker.png / markers.png / markerk.png / markerp*def.png`](marker-png.md) | markers.png, markerk.png, balloon-marker | ⚠️ 一部対応 |
 | [`mode_down.png / mode_up.png`](mode-button-png.md) | mode_down.png, mode_up.png | ✅ 対応済み |
 | [`ok_down.png / ok_up.png`](ok-button-png.md) | ok_down.png, ok_up.png | ✅ 対応済み |
-| [`online*.png`](online-png.md) | online0.png, onlinemarker | ⚠️ 一部対応 |
+| [`online*.png`](online-png.md) | online0.png, onlinemarker | ✅ 実装済 |
 | [`readme.txt` (バルーン)](readme-txt.md) | get_balloon_readme | ⚠️ 一部対応 |
 | [`sstp_new.png / sstp_newk.png / sstp_newp*def.png`](sstp-new-png.md) | sstp_new.png, sstp_newk.png, sstp_newp | ⚠️ 一部対応 |
-| [`sstp.png`](sstp-png.md) | sstp.png | ⚠️ 一部対応 |
+| [`sstp.png`](sstp-png.md) | sstp.png | ✅ 実装済 |
 | [`thumbnail.png` (バルーン)](thumbnail-png.md) | thumbnail.png | ⚠️ 一部対応 |

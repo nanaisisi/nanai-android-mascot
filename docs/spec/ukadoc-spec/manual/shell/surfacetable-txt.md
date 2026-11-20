@@ -17,3 +17,4 @@
 - `crates/ui/src/shell/tests.rs:39` `let table = shell.surface_table.as_ref().unwrap();`
 - `crates/ui/src/surfacetable/tests.rs:98` `fn test_parse_mock_nanai_file() {`
 - `ui/ts/surface/shell-manifest.ts` `RawSurfaceTable`, `getVisibleSurfaceTableGroups`, `getSurfaceDisplayName`
+- `tests/surfacetable-helper.test.ts` `surfacetable helpers` 単体テスト

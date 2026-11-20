@@ -6,7 +6,7 @@
 
 ## 突合結果
 
-`docs/ukadoc-spec/manual/balloon.md` において `sstp.png` は「SSTP 受信時の送信者情報表示」と「`\![*]`（`%\*`）実行時のマーカー表示」の双方で用いられる共通画像として定義されている。コードでは `applyAssetProperties` (`ui/ts/core/actions/balloon-descript/assets.ts:327-331`) が `sstp_new*` 未検出時のフォールバックとして `sstp.png` を読み込み `--balloon-sstpmarker-image` を設定し、`ui/css/balloon-window.css:366-375` に `.sstp-marker` スタイルも定義されているが、SSTP 受信時に `.sstp-marker` を DOM 生成する処理は未実装である。また `\![*]` マーカー解決 (`assets.ts:250-288`) は `marker.png` で終了し、`sstp.png` へフォールバックしない。
+`docs/ukadoc-spec/manual/balloon.md` において `sstp.png` は「SSTP 受信時の送信者情報表示」と「`\![*]`（`%\*`）実行時のマーカー表示」の双方で用いられる共通画像として定義されている。コードでは `applyAssetProperties` (`ui/ts/core/actions/balloon-descript/assets.ts:367-405`) が `sstp_new*` 未検出時のフォールバックとして `sstp.png` を読み込み `--balloon-sstpmarker-image` を設定し、`ui/css/balloon-window.css:388-397` に `.sstp-marker` スタイルも定義されている。また `\![*]` マーカー解決 (`assets.ts:325-355`) でも `markers.png` / `marker.png` 未検出時に `sstp.png` へフォールバックする。SSTP 受信時に `.sstp-marker` を DOM 生成する処理は未実装である。
 
 ## 実装箇所
 

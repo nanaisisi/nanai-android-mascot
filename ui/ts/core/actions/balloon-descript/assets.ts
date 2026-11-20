@@ -210,7 +210,7 @@ export function applyAssetProperties(
 		: scopeId === 1
 			? "arrowk"
 			: scopeId >= 2
-				? `arrowp${scopeId}`
+				? `arrowp${scopeId}def`
 				: "arrows";
 
 	const arrowBaseName = defaultArrowBase.replace(/\.(png|bmp|jpg|jpeg)$/i, "");
@@ -334,12 +334,26 @@ export function applyAssetProperties(
 						preloadBalloonAsset(dataUrl as string);
 						root.style.setProperty(cssVar, `url("${dataUrl}")`);
 					} else if (fallbackFile && fallbackFile !== file) {
-						resolveAndSetMarker(fallbackFile, "marker.png", cssVar);
+						const nextFallback =
+							cssVar === "--balloon-marker-image" &&
+							fallbackFile === "marker.png"
+								? "sstp.png"
+								: fallbackFile === "online00.png"
+									? "online.png"
+									: "marker.png";
+						resolveAndSetMarker(fallbackFile, nextFallback, cssVar);
 					}
 				})
 				.catch(() => {
 					if (fallbackFile && fallbackFile !== file) {
-						resolveAndSetMarker(fallbackFile, "marker.png", cssVar);
+						const nextFallback =
+							cssVar === "--balloon-marker-image" &&
+							fallbackFile === "marker.png"
+								? "sstp.png"
+								: fallbackFile === "online00.png"
+									? "online.png"
+									: "marker.png";
+						resolveAndSetMarker(fallbackFile, nextFallback, cssVar);
 					}
 				});
 		} else {

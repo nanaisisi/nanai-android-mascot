@@ -396,6 +396,21 @@ body {
 	margin: 0 2px;
 }
 
+/* オンラインマーカー (onlinemarker.filename) */
+.online-marker {
+	display: inline-block;
+	position: absolute;
+	left: var(--balloon-online-x, 8px);
+	top: var(--balloon-online-y, 8px);
+	width: var(--balloon-online-width, 16px);
+	height: var(--balloon-online-height, 16px);
+	background-image: var(--balloon-online-image, none);
+	background-repeat: no-repeat;
+	background-size: contain;
+	pointer-events: none;
+	z-index: 95;
+}
+
 /* バルーンボタン画像 (ok_button, cancel_button, mode_button) */
 .balloon-ok-btn {
 	background-image: var(--balloon-ok-button-image, none);

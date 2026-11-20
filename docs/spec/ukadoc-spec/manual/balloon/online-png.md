@@ -6,7 +6,7 @@
 
 ## 突合結果
 
-`docs/ukadoc-spec/manual/balloon.md` で定義されるネットワーク情報受信中の連番アニメーション画像 `online*.png` に対し、設定パースと単一ファイルのプリロードのみ存在し、描画およびアニメーション再生は未実装。`applyAssetProperties` (`ui/ts/core/actions/balloon-descript/assets.ts:291,438-447`) で `onlinemarker.filename`（`--balloon-online-image`）、`onlinemarker.interval`、`onlinemarker.x` / `y`（`--balloon-online-x` / `y`）を設定し、`BalloonOptionsManifest::online_marker_filename` (`crates/nanai-core/src/balloon_descript.rs:126`) も定義済み。また `loadBalloonSkinImages` (`ui/ts/ghost/balloon-window/theme.ts:279-282`) で `"online0.png"` をプリロードするが、DOM 要素・CSS ルールでの描画と番号順アニメーションループは実装されていない。
+`docs/ukadoc-spec/manual/balloon.md` で定義されるネットワーク情報受信中の連番アニメーション画像 `online*.png` に対し、設定パース・単一ファイルプリロード（`online0.png` / `online00.png` / `online.png` フォールバック）・CSS ルール（`ui/css/balloon-window.css` の `.online-marker`）が実装されている。`applyAssetProperties` (`ui/ts/core/actions/balloon-descript/assets.ts:357-365,512-521`) で `onlinemarker.filename`（`--balloon-online-image`）、`onlinemarker.interval`、`onlinemarker.x` / `y`（`--balloon-online-x` / `y`）を設定し、`BalloonOptionsManifest::online_marker_filename` (`crates/nanai-core/src/balloon_descript.rs:126`) も定義済み。DOM 要素の動的生成と番号順アニメーションループは未実装。
 
 ## 実装箇所
 

@@ -1,33 +1,33 @@
-# SHIORI/3.0 項目別突合
+# ukadoc-spec/spec/shiori3 項目別突合
 
-規格 (ukadoc-spec/spec/shiori3) の項目ごとの突合結果です。
+実装コードの文字列検索による一次調査です。
 
-| 項目                                                       | 区分       | 対応状況  | 備考                                                              |
-| :--------------------------------------------------------- | :--------- | :-------: | :---------------------------------------------------------------- |
-| [capability](capability.md)                                | capability | ❌ 未実装 | Capability 系ヘッダ・イベント処理は未実装                         |
-| [request: メソッド (GET / NOTIFY)](request-method.md)      | request    | ✅ 対応済 | `crates/nanai-core/src/shiori_protocol.rs` にて GET / NOTIFY 対応 |
-| [request: ID](request-id.md)                               | request    | ✅ 対応済 | イベント名・ID ヘッダ                                             |
-| [request: Charset](request-charset.md)                     | request    | ✅ 対応済 | 文字エンコーディング指定 (UTF-8 / Shift_JIS)                      |
-| [request: Sender](request-sender.md)                       | request    | ✅ 対応済 | 送信元クライアント識別名                                          |
-| [request: Reference*](request-reference.md)                | request    | ✅ 対応済 | 引数配列 Reference0〜ReferenceN                                   |
-| [request: Status](request-status.md)                       | request    | ✅ 対応済 | 状態フラグ (talking, choosing 等)                                 |
-| [request: SecurityLevel](request-securitylevel.md)         | request    | ✅ 対応済 | セキュリティレベル (local / external)                             |
-| [request: SecurityOrigin](request-securityorigin.md)       | request    | ✅ 対応済 | 送信元オリジン識別                                                |
-| [request: BaseID](request-baseid.md)                       | request    | ✅ 対応済 | SSP 拡張 BaseID                                                   |
-| [request: SenderType](request-sendertype.md)               | request    | ✅ 対応済 | 送信元種別                                                        |
-| [request: X-SSTP-PassThru-*](request-passthru.md)          | request    | ✅ 対応済 | パススルーヘッダ透過                                              |
-| [response: ステータスコード](response-statuscode.md)       | response   | ✅ 対応済 | 200 OK, 204 No Content, 311/312 Teach, 4xx/5xx                    |
-| [response: Charset](response-charset.md)                   | response   | ✅ 対応済 | 文字エンコーディング指定                                          |
-| [response: Sender](response-sender.md)                     | response   | ✅ 対応済 | 応答元識別                                                        |
-| [response: Value](response-value.md)                       | response   | ✅ 対応済 | さくらスクリプト / 返答本文                                       |
-| [response: ValueNotify](response-valuenotify.md)           | response   | ✅ 対応済 | ValueNotify 通知                                                  |
-| [response: Reference0](response-reference0.md)             | response   | ✅ 対応済 | 応答参照引数 Reference0                                           |
-| [response: Reference1](response-reference1.md)             | response   | ✅ 対応済 | 応答参照引数 Reference1                                           |
-| [response: SecurityLevel](response-securitylevel.md)       | response   | ✅ 対応済 | 応答セキュリティレベル                                            |
-| [response: BalloonOffset](response-balloonoffset.md)       | response   | ✅ 対応済 | バルーン表示オフセット                                            |
-| [response: Marker](response-marker.md)                     | response   | ✅ 対応済 | マーカー                                                          |
-| [response: MarkerSend](response-markersend.md)             | response   | ✅ 対応済 | マーカー送信指示                                                  |
-| [response: Age](response-age.md)                           | response   | ✅ 対応済 | キャッシュ有効期限                                                |
-| [response: ErrorLevel](response-errorlevel.md)             | response   | ✅ 対応済 | エラー重大度 (warning / error / critical)                         |
-| [response: ErrorDescription](response-errordescription.md) | response   | ✅ 対応済 | エラー詳細メッセージ                                              |
-| [response: X-SSTP-PassThru-*](response-passthru.md)        | response   | ✅ 対応済 | 応答パススルーヘッダ                                              |
+| 項目 | 検索語 | 対応状況 |
+| :--- | :----- | :------: |
+| [SHIORI/3.0 capability: 実装対応状況の検知](capability.md) | capability | ✅ 実装済 |
+| [request-baseid](request-baseid.md) | BaseID | ⚠️ 一部対応 |
+| [request-charset](request-charset.md) | Charset | ✅ 実装済 |
+| [request-id](request-id.md) | ID: | ✅ 実装済 |
+| [request-method](request-method.md) | SHIORI/3.0 | ✅ 実装済 |
+| [request-passthru](request-passthru.md) | X-SSTP-PassThru | ⚠️ 一部対応 |
+| [request-reference](request-reference.md) | Reference | ⚠️ 一部対応 |
+| [request-securitylevel](request-securitylevel.md) | SecurityLevel | ⚠️ 一部対応 |
+| [request-securityorigin](request-securityorigin.md) | SecurityOrigin | ⚠️ 一部対応 |
+| [request-sender](request-sender.md) | Sender | ✅ 実装済 |
+| [request-sendertype](request-sendertype.md) | SenderType | ⚠️ 一部対応 |
+| [request-status](request-status.md) | Status | ✅ 実装済 |
+| [response-age](response-age.md) | age | ⚠️ 一部対応 |
+| [response-balloonoffset](response-balloonoffset.md) | balloon_offset | ⚠️ 一部対応 |
+| [response-charset](response-charset.md) | Charset | ✅ 実装済 |
+| [response-errordescription](response-errordescription.md) | error_description | ✅ 実装済 |
+| [response-errorlevel](response-errorlevel.md) | error_level | ⚠️ 一部対応 |
+| [response-marker](response-marker.md) | marker | ✅ 実装済 |
+| [response-markersend](response-markersend.md) | marker_send | ⚠️ 一部対応 |
+| [response-passthru](response-passthru.md) | X-SSTP-PassThru | ⚠️ 一部対応 |
+| [response-reference0](response-reference0.md) | reference0 | ✅ 実装済 |
+| [response-reference1](response-reference1.md) | references | ✅ 実装済 |
+| [response-securitylevel](response-securitylevel.md) | security_level | ⚠️ 一部対応 |
+| [response-sender](response-sender.md) | sender | ✅ 実装済 |
+| [response-statuscode](response-statuscode.md) | StatusCode | ⚠️ 一部対応 |
+| [response-value](response-value.md) | value | ✅ 実装済 |
+| [response-valuenotify](response-valuenotify.md) | value_notify | ⚠️ 一部対応 |

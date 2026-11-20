@@ -2,7 +2,8 @@
 
 実装コードの文字列検索による一次調査です。
 
-| 項目                                              | 検索語        | 対応状況  |
-| :------------------------------------------------ | :------------ | :-------: |
+| 項目 | 検索語 | 対応状況 |
+| :--- | :----- | :------: |
+| [Describe](internal_system.Describe.md) | internal_system.Describe | ❌ 未実装 |
 | [ListFunctions](internal_system.ListFunctions.md) | ListFunctions | ❌ 未実装 |
-| [ListModules](internal_system.ListModules.md)     | ListModules   | ❌ 未実装 |
+| [ListModules](internal_system.ListModules.md) | ListModules | ❌ 未実装 |

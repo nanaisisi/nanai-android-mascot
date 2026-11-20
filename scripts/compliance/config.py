@@ -12,7 +12,8 @@ GENERIC_KEYWORDS = {
     "data", "mode", "scope", "time", "open", "close", "save", "load", "clear", "reset",
     "set", "get", "item", "list", "count", "string", "bool", "boolean", "int", "integer",
     "float", "array", "map", "object", "null", "none", "true", "false", "default", "initial",
-    "final", "temp", "line", "row", "col", "column", "size", "len", "length"
+    "final", "temp", "line", "row", "col", "column", "size", "len", "length",
+    "char", "animation", "element", "collision"
 }
 
 LAYER_ORDER = ("core", "backend", "ui_logic", "ui_view", "tests", "other")

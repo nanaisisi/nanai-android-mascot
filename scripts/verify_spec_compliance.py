@@ -147,29 +147,40 @@ def main():
                 android_unsupported_count += 1
         print(f"Platform Matrix   : Windows-only-notes={win_only_count}, Android-unsupported={android_unsupported_count}")
 
-        # docs/ukadoc-spec と docs/ukadoc-ssp との差分検出 (正規化相対パス + カテゴリ別集計)
-        spec_root = Path(args.docs_dir, "ukadoc-spec")
-        spec_rel_keys = set()
-        for p in spec_root.rglob("*.md"):
-            rel = p.relative_to(spec_root).with_suffix("").as_posix().lower()
-            spec_rel_keys.add(rel)
-            if rel.endswith("/index"):
-                spec_rel_keys.add(rel[:-6])
-
+        # docs/ukadoc-spec と docs/ukadoc-ssp との差分検出 (各ターゲット正規化相対パス + カテゴリ別集計)
         for src_name in ("ukadoc-spec", "ukadoc-ssp"):
             src_root = Path("docs", src_name)
-            if not src_root.is_dir():
+            dst_root = Path(args.docs_dir, src_name)
+            if not src_root.is_dir() or not dst_root.is_dir():
                 continue
+            spec_rel_keys = set()
+            for p in dst_root.rglob("*.md"):
+                rel = p.relative_to(dst_root).with_suffix("").as_posix().lower()
+                spec_rel_keys.add(rel)
+                if rel.endswith("/index") or rel.endswith("/readme"):
+                    spec_rel_keys.add(rel.rsplit("/", 1)[0])
+                if "-" in p.stem:
+                    parent_rel = p.parent.relative_to(dst_root).as_posix().lower()
+                    prefix = p.stem.split("-", 1)[0].lower()
+                    spec_rel_keys.add(
+                        f"{parent_rel}/{prefix}" if parent_rel != "." else prefix
+                    )
+
             src_pages = [
                 p for p in src_root.rglob("*")
                 if p.is_file()
                 and p.suffix.lower() in {".html", ".htm", ".md"}
                 and p.stem.lower() not in {"index", "readme", "claude"}
+                and ".note" not in p.stem.lower()
                 and not {"about", "i18n", "oldstyle"} & {part.lower() for part in p.relative_to(src_root).parts}
             ]
             missing_by_cat = {}
             for p in src_pages:
                 rel = p.relative_to(src_root).with_suffix("").as_posix().lower()
+                if p.stem.lower() == "chapter0":
+                    parent_rel = p.parent.relative_to(src_root).as_posix().lower()
+                    if parent_rel in spec_rel_keys:
+                        continue
                 if rel not in spec_rel_keys and f"{rel}/index" not in spec_rel_keys:
                     cat = rel.split("/")[0] if "/" in rel else "(root)"
                     missing_by_cat.setdefault(cat, []).append(p.relative_to(src_root).as_posix())

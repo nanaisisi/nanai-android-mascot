@@ -1,7 +1,7 @@
 # サイズを変更・トリミング
 
 - **規格**: [pictureviewer.md](../../../../../docs/ukadoc-ssp/functions/pictureviewer.md) ([公式版](https://ukatech.shillest.net/ukadoc-ssp/functions/pictureviewer/))
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -9,5 +9,4 @@ docs/ukadoc-ssp/functions/pictureviewer.md の「サイズを変更・トリミ�
 
 ## 実装箇所
 
-- `ui/ts/core/actions/menu-action-system.ts:29` `if (action === "pictureviewer" || action === "archiveviewer") {`
-- `ui/ts/ui/submenu-renderer.ts:183` `{ action: "pictureviewer", label: "画像ビューワ", shortcut: "" },`
+実装コード内に「section-13」は検出されませんでした。

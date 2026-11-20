@@ -2,7 +2,7 @@
 
 - **規格**: [nar.md](../../../../ukadoc-spec/dev/nar.md) ([公式版](https://ukatech.shillest.net/ukadoc-spec/dev/nar/))
 - **検索語**: initial_install.nar
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/web.rs:41`
+実装コード内に「initial_install.nar」は検出されませんでした。

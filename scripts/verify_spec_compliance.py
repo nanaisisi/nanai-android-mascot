@@ -191,6 +191,37 @@ def main():
                 print(f"  [{cat}] {len(items)} missing:")
                 for item in items:
                     print(f"    - {item}")
+
+            # 分割ディレクトリ内の見出しレベル差分検出 (## / ### vs 小ファイル # タイトル)
+            heading_diffs = []
+            for p in src_pages:
+                rel_no_ext = p.relative_to(src_root).with_suffix("")
+                split_dir = dst_root / rel_no_ext
+                if not split_dir.is_dir():
+                    continue
+                src_headings = []
+                for line in p.read_text(encoding="utf-8", errors="ignore").splitlines():
+                    if line.startswith("## ") or line.startswith("### "):
+                        h = line.lstrip("# ").strip()
+                        if h and h not in {"一覧", "補足"}:
+                            src_headings.append(h)
+                if not src_headings:
+                    continue
+                dst_titles = set()
+                for sp in split_dir.glob("*.md"):
+                    if sp.name.lower() in {"readme.md", "index.md"}:
+                        continue
+                    for line in sp.read_text(encoding="utf-8", errors="ignore").splitlines():
+                        if line.startswith("# "):
+                            dst_titles.add(line[2:].strip().lower())
+                            break
+                missing_h = [h for h in src_headings if not any(h.lower() in dt for dt in dst_titles)]
+                if missing_h and len(list(split_dir.glob("*.md"))) > 1:
+                    heading_diffs.append((rel_no_ext.as_posix(), missing_h))
+            if heading_diffs:
+                print(f"{src_name} Heading Diff : {len(heading_diffs)} split dir(s) with unmapped headings")
+                for rel_dir, mh in heading_diffs[:10]:
+                    print(f"  [{rel_dir}] {len(mh)} unmapped (e.g. {', '.join(mh[:3])})")
         print("----------------------------------\n")
 
     if (args.check_lists or args.check_layers) and report.list_audit:

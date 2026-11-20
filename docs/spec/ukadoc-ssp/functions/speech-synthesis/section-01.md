@@ -1,7 +1,7 @@
 # 使い始める
 
 - **規格**: [speech-synthesis.md](../../../../../docs/ukadoc-ssp/functions/speech-synthesis.md) ([公式版](https://ukatech.shillest.net/ukadoc-ssp/functions/speech-synthesis/))
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -9,5 +9,4 @@ docs/ukadoc-ssp/functions/speech-synthesis.md の「使い始める」に関す�
 
 ## 実装箇所
 
-- `ui/ts/core/actions/menu-action-system.ts:63` `if (action === "speech-synthesis") {`
-- `ui/ts/ui/submenu-renderer.ts:188` `{ action: "speech-synthesis", label: "音声合成 (V)", shortcut: "" },`
+実装コード内に「section-01」は検出されませんでした。

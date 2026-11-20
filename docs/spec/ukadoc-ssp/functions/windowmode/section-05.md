@@ -1,7 +1,7 @@
 # バックログの統合
 
 - **規格**: [windowmode.md](../../../../../docs/ukadoc-ssp/functions/windowmode.md) ([公式版](https://ukatech.shillest.net/ukadoc-ssp/functions/windowmode/))
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -9,4 +9,4 @@ docs/ukadoc-ssp/functions/windowmode.md の「バックログの統合」に関�
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property/evaluator/static_rules.rs:24` `"baseware.windowmode" => "normal",`
+実装コード内に「section-05」は検出されませんでした。

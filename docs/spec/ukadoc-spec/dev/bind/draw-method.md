@@ -2,7 +2,7 @@
 
 - **規格**: [bind.md](../../../../ukadoc-spec/dev/bind.md) ([公式版](https://ukatech.shillest.net/ukadoc-spec/dev/bind/))
 - **検索語**: draw_method / bind
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `crates/nanai-surface/src/types/draw/interval.rs:79`
+実装コード内に「draw_method / bind」は検出されませんでした。

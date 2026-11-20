@@ -328,6 +328,7 @@ function initCharacterWindow() {
 			collisions: currentCollisions,
 			scale: currentScale,
 			mode: currentCollisionMode,
+			characterBounds: { x: 0, y: 0, width: baseW, height: baseH },
 			iconRect: currentIconRect,
 			points: currentPoints,
 		});

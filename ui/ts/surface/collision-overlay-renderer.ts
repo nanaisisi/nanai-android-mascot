@@ -507,16 +507,20 @@ registerCollisionOverlayLayer({
 	id: "character-bounds",
 	order: 15,
 	strokeColor: CHARACTER_COLLISION_STROKE_COLOR,
-	isEnabled: ({ options, width, height }) =>
-		options.showCharacterBounds !== false && width > 4 && height > 4,
-	render: ({ ctx, options, width, height, scale, showLabels }) => {
+	isEnabled: ({ options }) =>
+		options.showCharacterBounds !== false &&
+		options.characterBounds != null &&
+		options.characterBounds.width > 0 &&
+		options.characterBounds.height > 0,
+	render: ({ ctx, options, scale, showLabels }) => {
+		const b = options.characterBounds;
+		if (!b) return;
 		ctx.strokeStyle = CHARACTER_COLLISION_STROKE_COLOR;
 		ctx.lineWidth = 1.5;
-		const b = options.characterBounds;
-		const rx = b ? b.x * scale : 3;
-		const ry = b ? b.y * scale : 3;
-		const rw = b ? b.width * scale : width - 6;
-		const rh = b ? b.height * scale : height - 6;
+		const rx = b.x * scale;
+		const ry = b.y * scale;
+		const rw = b.width * scale;
+		const rh = b.height * scale;
 		if (rw <= 0 || rh <= 0) return;
 		ctx.save?.();
 		ctx.setLineDash?.([4, 3]);
@@ -526,7 +530,7 @@ registerCollisionOverlayLayer({
 			drawWireframeLabel(
 				ctx,
 				"character",
-				{ x: rx + 2, y: ry + 2 },
+				{ x: rx + 4, y: ry + 13 },
 				CHARACTER_COLLISION_STROKE_COLOR,
 			);
 		}

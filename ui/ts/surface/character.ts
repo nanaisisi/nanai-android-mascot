@@ -1,6 +1,7 @@
 /**
  * Nanai Android Mascot - キャラクターウィンドウ制御スクリプト
  */
+import { PhysicalPosition } from "@tauri-apps/api/dpi";
 import {
 	availableMonitors,
 	currentMonitor,
@@ -424,9 +425,25 @@ function initCharacterWindow() {
 				width: targetW,
 				height: targetH,
 			})
-				.then(() => {
+				.then(async () => {
 					if (!hasInitialPosFromResize || initialPos === null) {
 						hasInitialPosFromResize = true;
+						try {
+							const win = getCurrentWindow();
+							const [pos, size, mon] = await Promise.all([
+								win.outerPosition(),
+								win.outerSize(),
+								currentMonitor(),
+							]);
+							if (pos && size && mon) {
+								const wa = mon.workArea;
+								const bottom = wa.position.y + wa.size.height;
+								if (pos.y + size.height > bottom) {
+									const newY = Math.max(wa.position.y, bottom - size.height);
+									await win.setPosition(new PhysicalPosition(pos.x, newY));
+								}
+							}
+						} catch {}
 						void refreshInitialPositionFromWindow();
 					}
 				})

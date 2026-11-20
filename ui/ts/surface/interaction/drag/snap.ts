@@ -416,7 +416,11 @@ export function calculateCharacterSnap(
 	let snapXType: SnapTargetType = "None";
 	let snapYType: SnapTargetType = "None";
 
-	if (!isCtrlPressed && snapThreshold > 0 && Number.isFinite(screenSize.width)) {
+	if (
+		!isCtrlPressed &&
+		snapThreshold > 0 &&
+		Number.isFinite(screenSize.width)
+	) {
 		const winMonRes = calculateWindowSnap(
 			windowX,
 			windowY,
@@ -424,7 +428,7 @@ export function calculateCharacterSnap(
 			windowHeight,
 			[],
 			screenSize,
-			initialPos,
+			null,
 			isCtrlPressed,
 			snapThreshold,
 		);

@@ -22,7 +22,10 @@ export const actionMethods = {
 	...ghostActions,
 	...networkActions,
 
-	async scanBalloons(this: any) {
+	async scanBalloons(this: {
+		availableBalloons?: unknown[];
+		balloonThemeManager?: { availableBalloons?: unknown[] };
+	}) {
 		if (isTauriAvailable()) {
 			try {
 				let res = await invoke("scan_balloons").catch(() => null);

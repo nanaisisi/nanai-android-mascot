@@ -119,8 +119,16 @@ export const ghostShioriMethods = {
 					);
 					const appInst =
 						this.app ||
-						(globalThis as any).mascotApp ||
-						(window as any).app ||
+						(
+							globalThis as {
+								mascotApp?: GhostShioriContext;
+							}
+						).mascotApp ||
+						(
+							window as {
+								app?: GhostShioriContext;
+							}
+						).app ||
 						this;
 					if (typeof appInst?.playSakuraScript === "function") {
 						appInst.playSakuraScript(scriptText);

@@ -8,6 +8,22 @@ import {
 	computeValidRectLayoutWasm,
 } from "./wasm/wasm-layout.js";
 import { wasmMemory } from "./wasm/wasm-memory.js";
+
+export interface MascotEngineHandle {
+	select_ghost: (name: string) => void;
+	select_shell: (name: string) => void;
+	set_surface: (scope: number, id: number) => void;
+	enqueue_script: (script: string) => void;
+	tick: (dtMs: number) => void;
+	get_state_json: () => string;
+	get_surface: (scope: number) => number;
+	handleEvent?: (event: string, ...args: unknown[]) => unknown;
+	isPlaying: () => boolean;
+	toggleBind?: (group: string | number) => boolean;
+	setBalloonTheme?: (theme: string) => void;
+	clearScriptQueue?: () => void;
+}
+
 import {
 	buildSaoriRequestWasm,
 	calculateUpdateProgressWasm,
@@ -222,8 +238,10 @@ class WasmBridgeFacade {
 		wasmMemory.free(ptr, size);
 	}
 
-	public createMascotEngine(): any | null {
-		const core = wasmMemory.getWasmCore() as any;
+	public createMascotEngine(): MascotEngineHandle | null {
+		const core = wasmMemory.getWasmCore() as {
+			MascotEngine?: new () => MascotEngineHandle;
+		} | null;
 		if (!core?.MascotEngine) return null;
 		try {
 			return new core.MascotEngine();

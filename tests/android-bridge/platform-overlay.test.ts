@@ -261,6 +261,6 @@ describe("AndroidBridge - Platform & Overlay", () => {
 		});
 		expect(isAndroidPlatform()).toBe(true);
 
-		delete (globalThis as any).location;
+		delete (globalThis as { location?: unknown }).location;
 	});
 });

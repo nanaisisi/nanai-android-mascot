@@ -4,7 +4,7 @@ import { processChromaKey } from "../ui/ts/surface/surface-compositor";
 describe("processChromaKey chroma-key transparency unit tests", () => {
 	it("returns empty string or original image if imageSrc is invalid or empty", async () => {
 		expect(await processChromaKey("")).toBe("");
-		expect(await processChromaKey(null as any)).toBe("");
+		expect(await processChromaKey(null as unknown as string)).toBe("");
 	});
 
 	it("returns original image in non-DOM environment without throwing", async () => {

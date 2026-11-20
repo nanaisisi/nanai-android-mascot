@@ -8,7 +8,11 @@ export function createMockCanvas(width: number, height: number) {
 		width,
 		height,
 		drawImage(
-			img: { _mockData: any; naturalHeight: number; naturalWidth: number },
+			img: {
+				_mockData: ArrayBufferView;
+				naturalHeight: number;
+				naturalWidth: number;
+			},
 			dx = 0,
 			dy = 0,
 		) {
@@ -28,21 +32,25 @@ export function createMockCanvas(width: number, height: number) {
 				}
 			}
 		},
-		clearRect(x: any, y: any, w: any, h: any) {
+		clearRect(x: number, y: number, w: number, h: number) {
 			for (let cy = y; cy < y + h && cy < height; cy++) {
 				for (let cx = x; cx < x + w && cx < width; cx++) {
 					data32[cy * width + cx] = 0;
 				}
 			}
 		},
-		getImageData(_sx: any, _sy: any, sw: any, sh: any) {
+		getImageData(_sx: number, _sy: number, sw: number, sh: number) {
 			return {
 				data: pixelBuffer,
 				width: sw,
 				height: sh,
 			};
 		},
-		putImageData(imgData: { data: ArrayLike<number> }, _dx: any, _dy: any) {
+		putImageData(
+			imgData: { data: ArrayLike<number> },
+			_dx: number,
+			_dy: number,
+		) {
 			pixelBuffer.set(imgData.data);
 		},
 	};
@@ -51,7 +59,7 @@ export function createMockCanvas(width: number, height: number) {
 		width,
 		height,
 		getContext: (_p0?: string) => context,
-		toDataURL: (type: any) => `data:${type};base64,mockCanvasData`,
+		toDataURL: (type?: string) => `data:${type};base64,mockCanvasData`,
 		_pixelBuffer: pixelBuffer,
 		_data32: data32,
 	};

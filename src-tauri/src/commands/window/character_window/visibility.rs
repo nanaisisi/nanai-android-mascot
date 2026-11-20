@@ -263,15 +263,15 @@ pub async fn show_character_window(
             let _ = sub_win.set_focus();
         }
 
-        if moved_or_resized {
-            if let Some(state) = app_handle.try_state::<crate::common::state::AppState>() {
-                let _ = super::super::balloon_window::sync_balloon_position_impl(
-                    &app_handle,
-                    &state,
-                    scope_id,
-                )
-                .await;
-            }
+        if moved_or_resized
+            && let Some(state) = app_handle.try_state::<crate::common::state::AppState>()
+        {
+            let _ = super::super::balloon_window::sync_balloon_position_impl(
+                &app_handle,
+                &state,
+                scope_id,
+            )
+            .await;
         }
     }
     Ok(())

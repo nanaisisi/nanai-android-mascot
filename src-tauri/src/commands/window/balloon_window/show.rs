@@ -397,33 +397,28 @@ pub async fn show_balloon_window(
                 None
             };
 
-            if let (Some((ox, oy)), Some(cw)) = (saved_offset, char_win.as_ref()) {
-                if let Ok(char_pos) = cw.outer_position() {
-                    let raw_phys_x = char_pos.x + ox;
-                    let raw_phys_y = char_pos.y + oy;
-                    let char_scale = window_scale_factor(cw, fallback_work_area.scale_factor);
-                    let target_mon = select_monitor_for_physical_point(
-                        &app_handle,
-                        raw_phys_x as f64 + (actual_w * char_scale) / 2.0,
-                        raw_phys_y as f64 + (actual_h * char_scale) / 2.0,
-                    )
-                    .or_else(|| monitor_from_window_center(&app_handle, cw))
-                    .or_else(|| fallback_monitor.clone());
-                    let work = target_mon
-                        .as_ref()
-                        .map(monitor_logical_work_area)
-                        .unwrap_or(fallback_work_area);
-                    let raw_lx = raw_phys_x as f64 / work.scale_factor;
-                    let raw_ly = raw_phys_y as f64 / work.scale_factor;
-                    let (cx, cy) = clamp_logical_position_y_only(
-                        raw_lx,
-                        raw_ly,
-                        actual_h,
-                        work.y,
-                        work.height,
-                    );
-                    return (cx, cy, work.scale_factor);
-                }
+            if let (Some((ox, oy)), Some(cw)) = (saved_offset, char_win.as_ref())
+                && let Ok(char_pos) = cw.outer_position()
+            {
+                let raw_phys_x = char_pos.x + ox;
+                let raw_phys_y = char_pos.y + oy;
+                let char_scale = window_scale_factor(cw, fallback_work_area.scale_factor);
+                let target_mon = select_monitor_for_physical_point(
+                    &app_handle,
+                    raw_phys_x as f64 + (actual_w * char_scale) / 2.0,
+                    raw_phys_y as f64 + (actual_h * char_scale) / 2.0,
+                )
+                .or_else(|| monitor_from_window_center(&app_handle, cw))
+                .or_else(|| fallback_monitor.clone());
+                let work = target_mon
+                    .as_ref()
+                    .map(monitor_logical_work_area)
+                    .unwrap_or(fallback_work_area);
+                let raw_lx = raw_phys_x as f64 / work.scale_factor;
+                let raw_ly = raw_phys_y as f64 / work.scale_factor;
+                let (cx, cy) =
+                    clamp_logical_position_y_only(raw_lx, raw_ly, actual_h, work.y, work.height);
+                return (cx, cy, work.scale_factor);
             }
 
             let (raw_x, raw_y) = if let (Some(px), Some(py)) = (p_x, p_y) {

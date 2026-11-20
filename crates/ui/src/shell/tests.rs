@@ -123,14 +123,8 @@ fn test_shell_loads_sorted_surfaces_split_files() {
     assert!(shell.surface(1).is_some());
     assert!(shell.surface(2).is_some());
     assert!(shell.surface(99).is_none());
-    assert_eq!(
-        shell.hit_test(1, 10, 10).map(|c| c.name.as_str()),
-        Some("Body")
-    );
-    assert_eq!(
-        shell.hit_test(2, 10, 10).map(|c| c.name.as_str()),
-        Some("Hand")
-    );
+    assert_eq!(shell.hit_test(1, 10, 10).map(|c| c.name()), Some("Body"));
+    assert_eq!(shell.hit_test(2, 10, 10).map(|c| c.name()), Some("Hand"));
 
     let _ = std::fs::remove_dir_all(&dir);
 }

@@ -2,7 +2,7 @@
 
 - **規格**: [pct-day.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/environment-variable/pct-day/) (ukadoc-spec/list/sakura-script/environment-variable/pct-day.md)
 - **検索語**: %day
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,6 +11,6 @@
 
 ## 実装箇所
 
-- `crates/nanai-core/src/sakura_script/env.rs` `result = result.replace("%day", ...)`
-- `crates/ui/src/script/env.rs:37` `result = result.replace("%day", "30");`
-- `ui/ts/ghost/command-handler/env.ts:211` `"%day": String(now.getDate()),`
+- `crates/nanai-core/src/sakura_script/env.rs:219` `result = result.replace("%day", &ctx.day().to_string());`
+- `ui/ts/ghost/command-handler/env.ts:280` `"%day": String(now.getDate()),`
+- `crates/ui/src/script/env.rs:111` `result = result.replace("%day", &now.day().to_string());`

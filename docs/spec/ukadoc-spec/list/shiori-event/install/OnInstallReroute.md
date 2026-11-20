@@ -2,7 +2,7 @@
 
 - **規格**: [OnInstallReroute.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/install/OnInstallReroute/) (ukadoc-spec/list/shiori-event/install/OnInstallReroute.md)
 - **検索語**: OnInstallReroute
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,5 +11,5 @@ UKADOC 規格準拠の「OnInstallReroute」イベント引数構築 (`build_ins
 
 ## 実装箇所
 
-- `crates/nanai-core/src/install_protocol/events.rs` (`build_install_reroute_args`)
-- `ui/ts/core/actions/install-protocol.ts` (`buildInstallRerouteArgs`)
+- `crates/nanai-core/src/install_protocol/events.rs:128` `/// OnInstallReroute SHIORI 引数生成 (別ゴーストへの転送指定時)`
+- `ui/ts/core/actions/install-protocol.ts:177` `* OnInstallReroute SHIORI 引数生成 (別ゴーストへの転送指定時)`

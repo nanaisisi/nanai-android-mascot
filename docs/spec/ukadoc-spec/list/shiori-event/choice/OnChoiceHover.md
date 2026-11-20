@@ -2,7 +2,7 @@
 
 - **規格**: [OnChoiceHover.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/choice/OnChoiceHover/) (ukadoc-spec/list/shiori-event/choice/OnChoiceHover.md)
 - **検索語**: OnChoiceHover
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,7 @@ OnChoiceHover 選択肢/アンカー関連SHIORIイベント処理を実装 (ui/
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:24` `* - OnChoiceEnter, OnChoiceHover, OnChoiceSelect, OnChoiceSelectEx, OnChoiceTime`
+- `crates/nanai-core/src/shiori_protocol_helpers/events/input.rs:90` `/// OnChoiceHover イベントリクエスト構築 (ukadoc-spec/list/shiori-event/choice/OnChoiceHove`
+- `ui/ts/ghost/shiori-protocol.ts:151` `CHOICE_HOVER: "OnChoiceHover",`
+- `crates/nanai-core/src/shiori_protocol_helpers/events/input.rs:95` `event_id: "OnChoiceHover",`
+- `crates/nanai-core/src/shiori_protocol_helpers/tests/events.rs:31` `assert!(choice_hover.contains("ID: OnChoiceHover"));`

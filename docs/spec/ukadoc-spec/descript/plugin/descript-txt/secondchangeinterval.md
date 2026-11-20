@@ -2,7 +2,7 @@
 
 - **規格**: [secondchangeinterval.md](https://ukatech.shillest.net/ukadoc-spec/descript/plugin/descript-txt/) (ukadoc-spec/descript/plugin/descript-txt/secondchangeinterval.md)
 - **検索語**: secondchangeinterval
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/ext.rs` (`secondchangeinterval`)
+- `src-tauri/src/commands/ext.rs:51` `let _sec_interval = map.get("secondchangeinterval");`

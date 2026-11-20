@@ -2,8 +2,13 @@
 
 - **規格**: [currentghost.shelllist.count.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/currentghost.shelllist.count/) (ukadoc-spec/list/propertysystem/property-system/currentghost.shelllist.count.md)
 - **検索語**: currentghost.shelllist.count
-- **対応状況**: ❌ 未実装
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
 実装コードに「currentghost.shelllist.count」が見つからない。
+
+
+## 実装箇所
+
+- `src-tauri/src/shiori/property/evaluator/mod.rs:80` `"currentghost.shelllist.count" => {`

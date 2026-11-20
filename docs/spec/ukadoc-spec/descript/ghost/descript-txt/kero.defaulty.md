@@ -2,7 +2,7 @@
 
 - **規格**: [kero.defaulty.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/kero.defaulty.md)
 - **検索語**: kero.defaulty
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,5 +10,6 @@
 
 ## 実装箇所
 
-- `crates/nanai-core/src/descript_parser/types.rs` (`kero_default_pos`)
-- `src-tauri/src/shiori/property/evaluator/static_rules.rs` (`kero.defaulty`)
+- `crates/nanai-core/src/descript_parser/types.rs:112` `/// Kero側のデフォルト座標 (`kero.defaultx`, `kero.defaulty`)`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:48` `"kero.defaultleft" | "kero.defaulttop" | "kero.defaultx" | "kero.defaulty" => "0`
+- `crates/nanai-core/src/descript_parser/types.rs:118` `.get("kero.defaulty")`

@@ -2,7 +2,7 @@
 
 - **規格**: [sakura.bindgroup-star-.name.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell/descript-txt/sakura.bindgroup-star-.name/) (ukadoc-spec/descript/shell/descript-txt/sakura.bindgroup-star-.name.md)
 - **検索語**: sakura.bindgroup
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `crates/ui/src/descript/parser/queries.rs:129` `sakura.bindgroup`
-- `crates/ui/src/manifest/shell_manifest.rs` (`sakura_bind_groups`)
+- `crates/ui/src/descript/parser/queries.rs:129` `/// `[target].bindgroup[N].name/default/addid`（着せ替えパーツ定義: sakura.bindgroup, kero`

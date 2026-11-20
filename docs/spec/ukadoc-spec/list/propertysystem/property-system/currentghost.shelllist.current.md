@@ -2,8 +2,13 @@
 
 - **規格**: [currentghost.shelllist.current.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/currentghost.shelllist.current/) (ukadoc-spec/list/propertysystem/property-system/currentghost.shelllist.current.md)
 - **検索語**: currentghost.shelllist.current.
-- **対応状況**: ❌ 未実装
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
 実装コードに「currentghost.shelllist.current.」が見つからない。
+
+
+## 実装箇所
+
+- `src-tauri/src/shiori/property/evaluator/mod.rs:83` `"currentghost.shelllist.current.name" | "currentghost.shelllist.current" => {`

@@ -2,7 +2,7 @@
 
 - **規格**: [marker.filename.md](https://ukatech.shillest.net/ukadoc-spec/descript/balloon/) (ukadoc-spec/descript/balloon/balloonsoption/marker.filename.md)
 - **検索語**: marker.filename
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,6 +10,9 @@
 
 ## 実装箇所
 
-- `ui/css/balloon-window.css` `/* バルーンマーカー (marker.filename) */`
-- `ui/ts/core/actions/balloon-descript/assets.ts` `resolveAndSetMarker`
-- `ui/ts/ghost/balloon-window/theme.ts` マーカー画像プリロード処理
+- `crates/nanai-core/src/balloon_descript.rs:115` `/// クリック待ちマーカー画像ファイル名 (`marker.filename`)`
+- `ui/ts/core/actions/balloon-descript/assets.ts:268` `// [marker.filename,ファイル名] または UKADOC 標準マーカー (`markers.png`, `markerk.png`, `mar`
+- `ui/css/balloon-window.css:353` `/* バルーンマーカー (marker.filename) */`
+- `crates/nanai-core/src/balloon_descript.rs:117` `self.get("marker.filename")`
+- `ui/ts/core/actions/balloon-descript/assets.ts:269` `const defaultMarkerFile = p["marker.filename"]`
+- `ui/ts/core/actions/balloon-descript/assets.ts:270` `? p["marker.filename"]`

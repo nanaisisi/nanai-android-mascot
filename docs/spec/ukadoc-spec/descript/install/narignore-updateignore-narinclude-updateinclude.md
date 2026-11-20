@@ -2,7 +2,7 @@
 
 - **規格**: [narignore-updateignore-narinclude-updateinclude.md](https://ukatech.shillest.net/ukadoc-spec/descript/install/narignore-updateignore-narinclude-updateinclude/) (ukadoc-spec/descript/install/narignore-updateignore-narinclude-updateinclude.md)
 - **検索語**: .narignore
-- **対応状況**: ✅ 実装済
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory/filter.rs:6` `path.join(".narignore").exists()`
+実装コード内に「.narignore」は検出されませんでした。

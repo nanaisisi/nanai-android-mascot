@@ -2,7 +2,7 @@
 
 - **規格**: [bang-unlock-repaint.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/surface/bang-unlock-repaint/) (ukadoc-spec/list/sakura-script/surface/bang-unlock-repaint.md)
 - **検索語**: LockBalloonRepaint
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,5 +10,9 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/command.rs:61` `LockBalloonRepaint(bool),`
-- `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:188` `callback(SakuraCommand::LockBalloonRepaint(parts[0] == "lock"));`
+- `crates/ui/src/script/command.rs:71` `LockBalloonRepaint(bool),`
+- `ui/ts/ghost/sakura-rust-bridge.ts:115` `| { type: "LockBalloonRepaint"; payload?: boolean }`
+- `crates/ui/src/script/command.rs:198` `| SakuraCommand::LockBalloonRepaint(_)`
+- `ui/ts/ghost/sakura-rust-bridge.ts:424` `case "LockBalloonRepaint":`
+- `crates/ui/src/script/ast/tests/ast_inspection/walk_collect.rs:84` `SakuraCommand::LockBalloonRepaint(true),`
+- `crates/ui/src/script/parser/brackets/handlers/raiselike/settings/handlers.rs:113` `callback(SakuraCommand::LockBalloonRepaint(parts[0] == "lock"));`

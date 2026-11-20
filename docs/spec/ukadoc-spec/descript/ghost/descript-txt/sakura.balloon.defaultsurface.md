@@ -2,7 +2,7 @@
 
 - **規格**: [sakura.balloon.defaultsurface.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/sakura.balloon.defaultsurface.md)
 - **検索語**: sakura.balloon.defaultsurface
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `src-tauri/src/common/models/ghost.rs` (`sakura_balloon_defaultsurface`)
-- `src-tauri/src/ghost/scan/directory/manifest/parser.rs` (`sakura.balloon.defaultsurface`)
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs:87` `m.get("sakura.balloon.defaultsurface")`
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs:96` `// [balloon.defaultsurface,数値], [sakura.balloon.defaultsurface,数値], [kero.balloo`

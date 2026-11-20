@@ -2,7 +2,7 @@
 
 - **規格**: [recommended.balloon.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/recommended-balloon/) (ukadoc-spec/descript/ghost/recommended-balloon/recommended.balloon.md)
 - **検索語**: recommended.balloon
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,6 +10,8 @@
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive/postprocess.rs` (`recommended.balloon`)
-- `src-tauri/src/common/models.rs` (`recommended_balloon`)
-- `src-tauri/src/ghost/scan/directory/manifest.rs` (`recommended.balloon`)
+- `src-tauri/src/commands/install/archive/postprocess.rs:127` `m.get("recommended.balloon")`
+- `src-tauri/src/commands/install/archive/postprocess.rs:133` `.and_then(|m| m.get("recommended.balloon.path").cloned());`
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs:68` `m.get("recommended.balloon")`
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs:75` `.and_then(|m| m.get("recommended.balloon.path").cloned());`
+- `src-tauri/src/shiori/property/evaluator/mod.rs:64` `"recommended.balloon" | "recommended_balloon" => {`

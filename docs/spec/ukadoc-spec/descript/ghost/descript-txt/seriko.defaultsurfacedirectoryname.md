@@ -2,7 +2,7 @@
 
 - **規格**: [seriko.defaultsurfacedirectoryname.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/seriko.defaultsurfacedirectoryname.md)
 - **検索語**: seriko.defaultsurfacedirectoryname
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,5 @@
 
 ## 実装箇所
 
-- `crates/nanai-core/src/descript_parser/types.rs` (`default_surface_directory_name`)
+- `crates/nanai-core/src/descript_parser/types.rs:232` `/// [seriko.defaultsurfacedirectoryname,ディレクトリ名]: デフォルトサーフィスディレクトリ名`
+- `crates/nanai-core/src/descript_parser/types.rs:234` `self.get("seriko.defaultsurfacedirectoryname")`

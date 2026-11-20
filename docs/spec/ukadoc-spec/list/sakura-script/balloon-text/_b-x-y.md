@@ -2,7 +2,7 @@
 
 - **規格**: [_b-x-y.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/balloon-text/_b-x-y/)
 - **検索語**: \_b
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -12,4 +12,5 @@
 ## 実装箇所
 
 - `crates/ui/src/script/command.rs:23` `}, // \_b[...]`
-- `crates/ui/src/script/parser/brackets/mod.rs:182` `"a[id]text\\_b\\_a",`
+- `crates/ui/src/script/parser/tests.rs:94` `\\_b[surface0.png,inline,10,20,opaque]\`
+- `crates/ui/src/script/parser/brackets/mod.rs:227` `"a[id]text\\_b\\_a",`

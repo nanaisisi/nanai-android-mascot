@@ -2,7 +2,7 @@
 
 - **規格**: [OnChoiceEnter.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/choice/OnChoiceEnter/) (ukadoc-spec/list/shiori-event/choice/OnChoiceEnter.md)
 - **検索語**: OnChoiceEnter
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,6 +10,7 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:24` `* - OnChoiceEnter, OnChoiceHover, OnChoiceSelect, OnChoiceSelectEx, OnChoiceTime`
-- `ui/js/ghost/sakura-play/handlers.js:180` `app.ghostController?.sendShioriEvent("OnChoiceEnter", [`
-- `ui/js/ghost/sakura-play/handlers.js:187` `app.ghostController?.sendShioriEvent("OnChoiceEnter", []);`
+- `crates/nanai-core/src/shiori_protocol_helpers/events/input.rs:79` `/// OnChoiceEnter イベントリクエスト構築 (ukadoc-spec/list/shiori-event/choice/OnChoiceEnte`
+- `ui/ts/ghost/shiori-protocol.ts:150` `CHOICE_ENTER: "OnChoiceEnter",`
+- `crates/nanai-core/src/shiori_protocol_helpers/events/input.rs:84` `event_id: "OnChoiceEnter",`
+- `crates/nanai-core/src/shiori_protocol_helpers/tests/events.rs:28` `assert!(choice_enter.contains("ID: OnChoiceEnter"));`

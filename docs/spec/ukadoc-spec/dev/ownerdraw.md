@@ -1,7 +1,7 @@
 # dev/ownerdraw.md 規格対応文書
 
 - **参照規格**: [ukadoc-spec/dev/ownerdraw.md](../../../../ukadoc-spec/dev/ownerdraw.md) (オーナードローメニュー)
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -9,4 +9,4 @@
 
 ## 実装箇所
 
-- `tests/e2e/cycle6-lifecycle.test.ts:18` `test("E2E dialogue lifecycle Cycle 6: system dialogs, SERIKO move displacement, `
+実装コード内に「ownerdraw」は検出されませんでした。

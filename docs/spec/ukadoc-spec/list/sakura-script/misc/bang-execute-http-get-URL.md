@@ -2,7 +2,7 @@
 
 - **規格**: [bang-execute-http-get-URL.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/misc/bang-execute-http-get-URL/) (ukadoc-spec/list/sakura-script/misc/bang-execute-http-get-URL.md)
 - **検索語**: DownloadExec
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,6 +10,5 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/command.rs:127` `DownloadExec {`
-- `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:70` `callback(SakuraCommand::DownloadExec { url, save_path });`
-- `ui/js/ghost/sakura-rust-bridge.js:177` `case "DownloadExec":`
+- `crates/ui/src/script/command.rs:141` `DownloadExec {`
+- `crates/ui/src/script/parser/brackets/handlers/raiselike/execution.rs:38` `callback(SakuraCommand::DownloadExec { url, save_path });`

@@ -2,7 +2,7 @@
 
 - **規格**: [star.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/choice/star/) (ukadoc-spec/list/sakura-script/choice/star.md)
 - **検索語**: \*
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,7 +10,9 @@
 
 ## 実装箇所
 
-- `crates/nanai-core/src/sakura_script/types.rs` `SakuraToken::Star`
-- `crates/nanai-core/src/sakura_player.rs` `StepOutput::ChoiceWait { scope }`
+- `crates/nanai-core/src/sakura_player.rs:26` `/// 選択肢入力待ち (\*)`
+- `ui/ts/ui/renderers/modal-dialog-system.ts:190` `const clean = p.trim().replace(/^\*/, "");`
+- `crates/nanai-core/src/sakura_script/types.rs:197` `/// 選択肢入力待ち (\*)`
 - `crates/ui/src/script/command.rs:43` `Star,         // \*`
-- `ui/ts/ghost/sakura-script.ts` `case "ChoiceWait": ...`
+- `crates/ui/src/script/env.rs:203` `// %* (%\*) 環境変数展開 [pct-star.md]`
+- `crates/ui/src/script/parser/executor.rs:115` `Some('*') => callback(SakuraCommand::Star), // \*`

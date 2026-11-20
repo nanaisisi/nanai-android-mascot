@@ -2,7 +2,7 @@
 
 - **規格**: [sakura.defaultleft.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/sakura.defaultleft.md)
 - **検索語**: sakura.defaultleft
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,5 +10,5 @@
 
 ## 実装箇所
 
-- `crates/nanai-core/src/descript_parser/types.rs` (`sakura_default_pos`)
-- `src-tauri/src/shiori/property/evaluator/static_rules.rs` (`sakura.defaultleft`)
+- `crates/ui/src/descript/tests.rs:101` `sakura.defaultleft,10\n\`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:40` `"sakura.defaultleft" | "sakura.defaulttop" | "sakura.defaultx" | "sakura.default`

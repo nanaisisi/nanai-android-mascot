@@ -265,6 +265,28 @@ export function applyAssetProperties(
 			.catch(() => {});
 	}
 
+	if (typeof invoke === "function") {
+		const uiButtonAssets: ReadonlyArray<readonly [string, string]> = [
+			["ok_button", "--balloon-ok-button-image"],
+			["cancel_button", "--balloon-cancel-button-image"],
+			["mode_button", "--balloon-mode-button-image"],
+		];
+		for (const [stem, cssVar] of uiButtonAssets) {
+			void invoke("load_balloon_ui_asset", {
+				name: themeName,
+				stem,
+				scopeId,
+			})
+				.then((dataUrl) => {
+					if (dataUrl) {
+						preloadBalloonAsset(dataUrl as string);
+						root.style.setProperty(cssVar, `url("${dataUrl}")`);
+					}
+				})
+				.catch(() => {});
+		}
+	}
+
 	// [marker.filename,ファイル名] または UKADOC 標準マーカー (`markers.png`, `markerk.png`, `markerp*def.png`, `marker.png`)
 	const defaultMarkerFile = p["marker.filename"]
 		? p["marker.filename"]

@@ -16,5 +16,5 @@
 
 - `discover_ghost_assets` / `GhostAssets`（`src-tauri/src/ghost/scan/assets.rs`）が `ghost/master/` から thumbnail.png/jpg・ai0.png・ai0_dark.png・*.cur・*.ico を大文字小文字無視で探索し、`GhostInfo.assets` として `scan_ghost_directory` が返す。
 - 実在ファイルのみ列挙し、組み込みダミーは持たない。単体テスト: `discovers_assets_from_files`。
-- UI 描画（サムネイル表示・カーソル適用）は未着手で、パス提供までを実装済みとする。
+- UI 側では `GhostInfo.assets`（`ui/ts/ghost/ghost.ts`）として型定義され、`renderGhostList`（`ui/ts/ui/modal-ghost-handlers.ts`）で `thumbnail`（フォールバックとして `ai0` / `icons[0]`）を `convertFileSrc` 経由でサムネイル表示する。
 

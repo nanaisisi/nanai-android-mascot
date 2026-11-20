@@ -15,12 +15,12 @@
 | [`balloons*.pna`](balloons-pna.md) | balloons0.pna, processChromaKey | ✅ 実装済 |
 | [`balloons*.png`](balloons-png.md) | balloons0.png, balloons1.png | ✅ 実装済 |
 | [`balloons*s.txt / balloonk*s.txt / balloonp*def*s.txt / balloonc*s.txt`](balloons-s-txt.md) | balloons0s.txt, balloonk0s.txt, parse_balloon_options_text | ⚠️ 一部対応 |
-| [`cancel_down.png / cancel_up.png`](cancel-button-png.md) | cancel_down.png, cancel_up.png | ❌ 未実装 |
+| [`cancel_down.png / cancel_up.png`](cancel-button-png.md) | cancel_down.png, cancel_up.png | ⚠️ 一部対応 |
 | [`clickwait.png / clickwaits*.png / clickwaitk*.png / clickwaitp*def.png`](clickwait-png.md) | clickwaits, clickwaitk, clickwaitp | ❌ 未実装 |
 | [`descript.txt` (バルーン)](descript-txt.md) | balloon_descript_map | ✅ 実装済 |
 | [`marker.png / markers.png / markerk.png / markerp*def.png`](marker-png.md) | markers.png, markerk.png, balloon-marker | ⚠️ 一部対応 |
-| [`mode_down.png / mode_up.png`](mode-button-png.md) | mode_down.png, mode_up.png | ❌ 未実装 |
-| [`ok_down.png / ok_up.png`](ok-button-png.md) | ok_down.png, ok_up.png | ❌ 未実装 |
+| [`mode_down.png / mode_up.png`](mode-button-png.md) | mode_down.png, mode_up.png | ⚠️ 一部対応 |
+| [`ok_down.png / ok_up.png`](ok-button-png.md) | ok_down.png, ok_up.png | ⚠️ 一部対応 |
 | [`online*.png`](online-png.md) | online0.png, onlinemarker | ⚠️ 一部対応 |
 | [`readme.txt` (バルーン)](readme-txt.md) | get_balloon_readme | ⚠️ 一部対応 |
 | [`sstp_new.png / sstp_newk.png / sstp_newp*def.png`](sstp-new-png.md) | sstp_new.png, sstp_newk.png, sstp_newp | ⚠️ 一部対応 |

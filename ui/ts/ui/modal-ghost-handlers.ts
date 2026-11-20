@@ -2,13 +2,19 @@
  * @file modal-ghost-handlers.ts
  * @brief ゴースト・バルーン・導入関連のモーダルハンドラ管理クラス（ファイル選択・アーカイブインポート対応）
  */
-import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import {
+	convertFileSrc,
+	invoke,
+	isTauriAvailable,
+} from "../core/tauri-helper.js";
+import type { GhostAssets } from "../ghost/ghost.js";
 import type { AppModalTarget, ModalManager } from "./modal.js";
 import { setupExplorerListeners } from "./modal-explorer.js";
 
 interface InstalledGhostInfo {
 	name?: string;
 	craftman?: string;
+	assets?: GhostAssets;
 	[key: string]: unknown;
 }
 
@@ -175,7 +181,14 @@ export class ModalGhostHandlers {
 			item.className = `ghost-item${isCurrent ? " active" : ""}`;
 			item.style.cssText =
 				"padding: 8px; margin: 4px 0; border: 1px solid #ccc; border-radius: 4px; display: flex; justify-content: space-between; align-items: center; cursor: pointer;";
-			item.innerHTML = `<span><strong>${ghost.name ?? ""}</strong> (${ghost.craftman || "不明"})</span> <button type="button" class="primary select-ghost-btn">切り替え</button>`;
+			const assetPath =
+				ghost.assets?.thumbnail ||
+				ghost.assets?.ai0 ||
+				ghost.assets?.icons?.[0];
+			const thumbHtml = assetPath
+				? `<img src="${convertFileSrc(assetPath)}" alt="" style="width: 36px; height: 36px; object-fit: contain; margin-right: 8px; border-radius: 2px;" />`
+				: "";
+			item.innerHTML = `<span style="display: flex; align-items: center;">${thumbHtml}<span><strong>${ghost.name ?? ""}</strong> (${ghost.craftman || "不明"})</span></span> <button type="button" class="primary select-ghost-btn">切り替え</button>`;
 			item.querySelector("button")?.addEventListener("click", async (e) => {
 				e.stopPropagation();
 				if (ghost.name) {

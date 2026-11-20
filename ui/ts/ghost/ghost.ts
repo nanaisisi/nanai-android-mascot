@@ -3,10 +3,19 @@ import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 import { ghostSurfaceMethods } from "../surface/ghost-surface.js";
 import { ghostShioriMethods } from "./ghost-shiori.js";
 
+export interface GhostAssets {
+	thumbnail?: string | null;
+	ai0?: string | null;
+	ai0_dark?: string | null;
+	cursors?: string[];
+	icons?: string[];
+}
+
 export interface GhostInfo {
 	name: string;
 	path?: string;
 	shells?: string[];
+	assets?: GhostAssets;
 	[key: string]: unknown;
 }
 

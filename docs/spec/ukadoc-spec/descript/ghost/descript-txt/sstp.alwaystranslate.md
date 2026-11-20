@@ -6,12 +6,13 @@
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `sstp.alwaystranslate` キーをパース・参照する実装が行われている。
+`crates/ui/src/sstp/config.rs` および `src-tauri/src/ghost/scan/directory/manifest/parser.rs` において `sstp.alwaystranslate` ディレクティブのパースおよび OnTranslate 強制適用判定が完全実装済み。
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory/manifest.rs:186` `.and_then(|m| m.get("sstp.alwaystranslate"))`
-- `crates/ui/src/sstp/config.rs:7` `/// [sstp.allowcommunicate], [sstp.allowunspecifiedsend], [sstp.alwaystranslate]`
-- `crates/ui/src/sstp/config.rs:16` `/// sstp.alwaystranslate: 1 で SSTP オプションにかかわらず常時 OnTranslate を実行。デフォルトは 0`
-- `crates/ui/src/sstp/config.rs:57` `.get("sstp.alwaystranslate")`
-- `crates/ui/src/sstp/config.rs:92` `/// [sstp.alwaystranslate]: notranslate オプション指定を上書きして翻訳を強制するか判定`
+- `crates/ui/src/sstp/config/ghost_config.rs:9` `/// [sstp.allowcommunicate], [sstp.allowunspecifiedsend], [sstp.alwaystranslate]`
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs:156` `.and_then(|m| m.get("sstp.alwaystranslate"))`
+- `crates/ui/src/sstp/config/ghost_config.rs:18` `/// sstp.alwaystranslate: 1 で SSTP オプションにかかわらず常時 OnTranslate を実行。デフォルトは 0`
+- `crates/ui/src/sstp/config/ghost_config.rs:72` `.get("sstp.alwaystranslate")`
+- `crates/ui/src/sstp/config/ghost_config.rs:107` `/// [sstp.alwaystranslate]: notranslate オプション指定を上書きして翻訳を強制するか判定`
+- `crates/ui/src/sstp/tests/execution/command_context/ghost_config.rs:12` `map.insert("sstp.alwaystranslate".to_string(), "1".to_string());`

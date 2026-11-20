@@ -1,16 +1,16 @@
-# ゴースト仕様の項目別突合
+# ukadoc-spec/manual/ghost 項目別突合
 
-- **規格**: [ukadoc-spec/manual/ghost.md](https://github.com/ukatech/ukadoc-spec/blob/main/manual/ghost.md)
-- **判定基準**: このリポジトリで確認できるゴーストの構造、SHIORI 連携、除外設定、FMO 状態管理
+実装コードの文字列検索による一次調査です。
 
-| 項目                                                  | 対応状況  |
-| ----------------------------------------------------- | --------- |
-| [ゴースト構造 (`ghost/master/`)](ghost-structure.md)  | ✅ 実装済 |
-| [SHIORI 連携 (`shiori.dll`)](shiori-loading.md)       | ✅ 実装済 |
-| [除外ファイル・設定 (`.dev_ignore`)](ignore-rules.md) | ✅ 実装済 |
-| [FMO 状態管理](fmo-status.md)                         | ✅ 実装済 |
-
-## 対応範囲の共通事項
-
-- ゴーストは `assets/ghost/<name>/` または `userData/ghost/<name>/` から検出・走査する。
-- SHIORI 動的ローダーを介して対話処理を実行し、FMO（FMO/1.0）へ状態を通知。
+| 項目                                                            | 検索語                                   |  対応状況   |
+| :-------------------------------------------------------------- | :--------------------------------------- | :---------: |
+| [ai0-png](ai0-png.md)                                           | ai0.png, ai0_dark.png                    |  ✅ 実装済  |
+| [cursor-cur](cursor-cur.md)                                     | ghost/master/*.cur                       |  ✅ 実装済  |
+| [ghost/master/descript.txt](descript-txt.md)                    | parse_ghost_manifest, read_descript_file |  ✅ 実装済  |
+| [icon-ico](icon-ico.md)                                         | update_tray_for_ghost                    |  ✅ 実装済  |
+| [ghost/master/makoto.dll](makoto-dll.md)                        | makoto.dll                               | ⚠️ 一部対応 |
+| [ghost/master/(saori).dll](saori-dll.md)                        | execute_saori                            | ⚠️ 一部対応 |
+| [ghost/master/shiori.dll および外部辞書リソース](shiori-dll.md) | ShioriDynamicEngine                      | ⚠️ 一部対応 |
+| [thumbnail-png](thumbnail-png.md)                               | ghost/master/thumbnail.png               |  ✅ 実装済  |
+| [ghost/master/updates.txt (旧仕様)](updates-txt.md)             | updates.txt                              |  ✅ 実装済  |
+| [ghost/master/updates2.dau (旧仕様)](updates2-dau.md)           | updates2.dau                             |  ✅ 実装済  |

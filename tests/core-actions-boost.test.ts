@@ -11,10 +11,11 @@ describe("Ghost Actions and Balloon Theme Coverage Boost", () => {
 		let scannedBalloons = false;
 
 		const app = {
+			...ghostActions,
 			elements: {
 				ghostDisplay: { style: {} },
 			},
-			showBalloon: (msg) => {
+			showBalloon: (msg: string) => {
 				_shownBalloon = msg;
 			},
 			hideBalloon: () => {},
@@ -25,7 +26,7 @@ describe("Ghost Actions and Balloon Theme Coverage Boost", () => {
 			ghostController: {
 				currentGhost: { name: "CurrentGhost" },
 				ghosts: [{ name: "NextGhost" }],
-				selectGhost: async (name) => {
+				selectGhost: async (name: string) => {
 					selectedGhost = name;
 				},
 				scanGhosts: async () => {
@@ -49,10 +50,8 @@ describe("Ghost Actions and Balloon Theme Coverage Boost", () => {
 			},
 		};
 
-		Object.assign(app, ghostActions);
-
 		// uninstallCurrentGhost success with next ghost
-		globalThis.window = globalThis;
+		globalThis.window = globalThis as unknown as Window & typeof globalThis;
 		globalThis.document = {
 			documentElement: {
 				style: {
@@ -62,9 +61,9 @@ describe("Ghost Actions and Balloon Theme Coverage Boost", () => {
 				setAttribute: () => {},
 			},
 			querySelector: () => ({ style: {} }),
-		};
+		} as unknown as Document;
 		globalThis.__TAURI_INTERNALS__ = {
-			invoke: async (cmd, _args) => {
+			invoke: async (cmd: string, _args: unknown) => {
 				if (cmd === "uninstall_ghost") return true;
 				if (cmd === "pick_and_install_ghost_archive")
 					return { name: "ImportedBalloon" };
@@ -78,7 +77,9 @@ describe("Ghost Actions and Balloon Theme Coverage Boost", () => {
 		assert.equal(selectedGhost, "NextGhost");
 
 		// installGhostFromMenu success
-		await app.installGhostFromMenu();
+		await app.installGhostFromMenu.call(
+			app as unknown as import("../ui/main.js").NanaiAndroidMascotApp,
+		);
 		assert.equal(scannedBalloons, true);
 
 		// applyShellScaleAction and minimize
@@ -87,9 +88,9 @@ describe("Ghost Actions and Balloon Theme Coverage Boost", () => {
 	});
 
 	it("BalloonThemeManager covers scanBalloons and manifest apply", async () => {
-		let appliedProps = null;
+		let appliedProps: unknown = null;
 		const app = {
-			applyBalloonDescript: (props) => {
+			applyBalloonDescript: (props: unknown) => {
 				appliedProps = props;
 			},
 			hideBalloon: () => {},
@@ -104,17 +105,17 @@ describe("Ghost Actions and Balloon Theme Coverage Boost", () => {
 				setAttribute: () => {},
 			},
 			querySelector: () => ({ style: {} }),
-		};
-		globalThis.window = globalThis;
+		} as unknown as Document;
+		globalThis.window = globalThis as unknown as Window & typeof globalThis;
 		globalThis.document = docMock;
 
 		globalThis.__TAURI_INTERNALS__ = {
-			invoke: async (cmd, _args) => {
+			invoke: async (cmd: string, _args: unknown) => {
 				if (cmd === "balloon_manifest") return { "origin.x": 10 };
 				if (cmd === "scan_balloons") return [{ name: "B1", dir_name: "b1" }];
 				return null;
 			},
-			transformCallback: (cb) => cb,
+			transformCallback: (cb: unknown) => cb,
 		};
 
 		const btm = new BalloonThemeManager(app);

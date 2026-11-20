@@ -6,13 +6,11 @@
 
 ## 突合結果
 
-実装コードに「OnCommunicateInputCancel」が見つからない。
-
+コミュニケートボックスのキャンセル/消去時に `OnCommunicateInputCancel` SHIORIイベントを送信する処理を実装 (`ui/ts/ghost/command-handler/communicatebox.ts` -> `OnCommunicateInputCancel`)。
 
 ## 実装箇所
 
-- `ui/js/ghost/command-handler/communicatebox.js:92` `"OnCommunicateInputCancel",`
-- `ui/js/ghost/command-handler/communicatebox.js:130` `?.sendShioriEvent("OnCommunicateInputCancel", ["", "cancel"])`
-- `ui/js/ui/renderers/modal-dialog-controller.js:373` `"OnCommunicateInputCancel",`
-- `ui/js/ui/renderers/modal-dialog-controller.js:413` `* ※スクリプトからの close では OnCommunicateInputCancel は発生しない (UKADOC準拠)`
-- `ui/js/ui/renderers/modal-dialog-controller.js:421` `this.app.ghostController?.sendShioriEvent("OnCommunicateInputCancel", [`
+- `crates/nanai-core/src/shiori_protocol_helpers/events/input.rs:199` `pub fn build_on_communicate_input_cancel_request`
+- `ui/ts/ghost/command-handler/communicatebox.ts:92` `await handler.app.ghostController?.sendShioriEvent("OnCommunicateInputCancel",`
+- `ui/ts/ghost/command-handler/communicatebox.ts:133` `handler.app.ghostController?.sendShioriEvent("OnCommunicateInputCancel",`
+- `ui/ts/ui/renderers/modal-dialog-communication.ts:297` `this.app?.ghostController?.sendShioriEvent?.("OnCommunicateInputCancel",`

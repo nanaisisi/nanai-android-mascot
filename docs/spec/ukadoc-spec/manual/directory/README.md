@@ -1,16 +1,17 @@
-# ディレクトリ構成仕様の項目別突合
+# ukadoc-spec/manual/directory 項目別突合
 
-- **規格**: [ukadoc-spec/manual/directory.md](https://github.com/ukatech/ukadoc-spec/blob/main/manual/directory.md)
-- **判定基準**: このリポジトリで確認できるゴースト・シェル・バルーン・インストーラのフォルダ階層ハンドリング
+実装コードの文字列検索による一次調査です。
 
-| 項目                                                     | 対応状況  |
-| -------------------------------------------------------- | --------- |
-| [ゴーストフォルダ (`ghost/`)](ghost-folder.md)           | ✅ 実装済 |
-| [シェルフォルダ (`shell/`)](shell-folder.md)             | ✅ 実装済 |
-| [バルーンフォルダ (`balloon/`)](balloon-folder.md)       | ✅ 実装済 |
-| [インストールファイル (`install.txt`)](install-files.md) | ✅ 実装済 |
-| [更新・管理ファイル (`updates2.plist`)](update-files.md) | ✅ 実装済 |
-
-## 対応範囲の共通事項
-
-- 伺か標準仕様のディレクトリ構造に準拠し、`userData/ghost` と `local/ghost` の優先順位付きスキャン、大文字小文字を吸収する VFS 解決 (`resolve_vfs_path`) を実装。
+| 項目                                                       | 検索語                                                 |  対応状況   |
+| :--------------------------------------------------------- | :----------------------------------------------------- | :---------: |
+| [(myghost)/shell/(additional_shell)/](additional-shell.md) | resolve_shell_dir                                      |  ✅ 実装済  |
+| [(myballoon)/ バルーンホームディレクトリ](balloon-root.md) | scan_balloons, resolve_balloon_dir                     |  ✅ 実装済  |
+| [delete-txt](delete-txt.md)                                | process_delete_txt                                     |  ✅ 実装済  |
+| [developer-options-txt](developer-options-txt.md)          | developer_options.txt                                  |  ✅ 実装済  |
+| [(myghost)/ghost/master/](ghost-master.md)                 | ghost/master                                           |  ✅ 実装済  |
+| [(myghost)/ ゴーストホームディレクトリ](ghost-root.md)     | scan_ghost_directory, resolve_ghost_directory          |  ✅ 実装済  |
+| [narignore-updateignore](narignore-updateignore.md)        | .narignore, .updateignore, .narinclude, .updateinclude |  ✅ 実装済  |
+| [readme-txt-md](readme-txt-md.md)                          | readme.txt                                             | ⚠️ 一部対応 |
+| [(myghost)/shell/master/](shell-master.md)                 | scan_shells_from_ghost                                 |  ✅ 実装済  |
+| [terms-txt-md](terms-txt-md.md)                            | terms.txt, terms.md                                    | ⚠️ 一部対応 |
+| [thumbnail-png](thumbnail-png.md)                          | thumbnail.pnr                                          | ⚠️ 一部対応 |

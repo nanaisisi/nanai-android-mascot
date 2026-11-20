@@ -2,6 +2,11 @@ import assert from "node:assert/strict";
 import { test } from "vitest";
 import { getProgressCb, updateMethods } from "./mock-environment.js";
 
+interface MockUpdateTauriInternals {
+	invoke: (cmd: string) => Promise<unknown>;
+	[key: string]: unknown;
+}
+
 test("updateMethods.startNetworkUpdate covers 100% of network update flows, progress events, and summaries", async () => {
 	const eventsSent: Array<{ ev: string; args: unknown }> = [];
 	let scriptReturn: string | null = null;
@@ -38,6 +43,8 @@ test("updateMethods.startNetworkUpdate covers 100% of network update flows, prog
 
 	// 3. Tauri available via __TAURI_INTERNALS__
 	globalThis.__TAURI_INTERNALS__ = savedInternals;
+	const tauriInternals =
+		globalThis.__TAURI_INTERNALS__ as MockUpdateTauriInternals;
 
 	const origInvoke = async (cmd: string) => {
 		if (cmd === "check_ghost_update") {
@@ -61,14 +68,14 @@ test("updateMethods.startNetworkUpdate covers 100% of network update flows, prog
 		return null;
 	};
 
-	globalThis.__TAURI_INTERNALS__.invoke = origInvoke;
+	tauriInternals.invoke = origInvoke;
 
 	// 3a. checkOnly = true (success with update)
 	eventsSent.length = 0;
 	await mockApp.startNetworkUpdate(null, { checkOnly: true });
 
 	// 3b. checkOnly = true (no update)
-	globalThis.__TAURI_INTERNALS__.invoke = async (cmd: string) => {
+	tauriInternals.invoke = async (cmd: string) => {
 		if (cmd === "check_ghost_update") {
 			return {
 				has_update: false,
@@ -83,7 +90,7 @@ test("updateMethods.startNetworkUpdate covers 100% of network update flows, prog
 	await mockApp.startNetworkUpdate(null, { checkOnly: true });
 
 	// 4. checkOnly = true (error 404 in check)
-	globalThis.__TAURI_INTERNALS__.invoke = async (cmd: string) => {
+	tauriInternals.invoke = async (cmd: string) => {
 		if (cmd === "check_ghost_update") throw new Error("404 not found");
 		return null;
 	};
@@ -91,7 +98,7 @@ test("updateMethods.startNetworkUpdate covers 100% of network update flows, prog
 	await mockApp.startNetworkUpdate(null, { checkOnly: true });
 
 	// 5. Full update, no update files
-	globalThis.__TAURI_INTERNALS__.invoke = async (cmd: string) => {
+	tauriInternals.invoke = async (cmd: string) => {
 		if (cmd === "check_ghost_update") {
 			return { has_update: false, total_count: 0, update_files: [] };
 		}
@@ -101,12 +108,12 @@ test("updateMethods.startNetworkUpdate covers 100% of network update flows, prog
 	await mockApp.startNetworkUpdate();
 
 	// 6. Full update with success and progress events
-	globalThis.__TAURI_INTERNALS__.invoke = origInvoke;
+	tauriInternals.invoke = origInvoke;
 	eventsSent.length = 0;
 	await mockApp.startNetworkUpdate();
 
 	// 7. Full update with execute_ghost_update failure
-	globalThis.__TAURI_INTERNALS__.invoke = async (cmd: string) => {
+	tauriInternals.invoke = async (cmd: string) => {
 		if (cmd === "check_ghost_update") {
 			return {
 				has_update: true,
@@ -123,7 +130,7 @@ test("updateMethods.startNetworkUpdate covers 100% of network update flows, prog
 	await mockApp.startNetworkUpdate();
 
 	// 8. Full update with timeout error in catch
-	globalThis.__TAURI_INTERNALS__.invoke = async (cmd: string) => {
+	tauriInternals.invoke = async (cmd: string) => {
 		if (cmd === "check_ghost_update") throw new Error("timeout error");
 		return null;
 	};

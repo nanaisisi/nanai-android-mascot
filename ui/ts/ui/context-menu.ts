@@ -21,17 +21,40 @@ const renderer = new MenuSubmenuRenderer(dispatcher);
  * 誤ってウィンドウドラッグ機能（startDraggingWindow）を追加しないよう注意してください。
  */
 
-// Tauri / iframe 同期リスナー初期化
-setupContextMenuSync(dispatcher, renderer);
+const BLUR_GRACE_MS = 350;
+const BLUR_DEBOUNCE_MS = 80;
 
 let hasActiveSubmenu = false;
+let menuOpenedAt = Date.now();
+let blurCloseTimer: ReturnType<typeof setTimeout> | null = null;
+let lastSubmenuRequest: { type: string; time: number } | null = null;
+
+function clearBlurCloseTimer() {
+	if (blurCloseTimer !== null) {
+		clearTimeout(blurCloseTimer);
+		blurCloseTimer = null;
+	}
+}
+
+export function resetMenuFocusState() {
+	hasActiveSubmenu = false;
+	menuOpenedAt = Date.now();
+	clearBlurCloseTimer();
+}
+
+// Tauri / iframe 同期リスナー初期化
+setupContextMenuSync(dispatcher, renderer, resetMenuFocusState);
 
 // 独立サブメニューウィンドウ（デスクトップ）またはインラインサブメニュー（モバイル/Android/Web）を開く補助関数
 function _triggerSubmenuWindow(menuType: string, buttonEl: Element) {
 	const now = Date.now();
-	const last = _triggerSubmenuWindow.lastRequest;
-	if (last?.type === menuType && now - last.time < 180) return;
-	_triggerSubmenuWindow.lastRequest = { type: menuType, time: now };
+	if (
+		lastSubmenuRequest?.type === menuType &&
+		now - lastSubmenuRequest.time < 180
+	) {
+		return;
+	}
+	lastSubmenuRequest = { type: menuType, time: now };
 
 	hasActiveSubmenu = true;
 	const wrapper = buttonEl.closest(".menu-item-wrapper");
@@ -42,13 +65,19 @@ function _triggerSubmenuWindow(menuType: string, buttonEl: Element) {
 		const sY = globalThis.screenY ?? 0;
 		const posX = sX + 260 + 2;
 		const posY = sY + rect.top;
+		const winHeight =
+			menuType === "utility" ||
+			menuType === "utility-root" ||
+			menuType === "tools"
+				? 460
+				: 320;
 		invoke("show_submenu_window", {
 			params: {
 				menuType: menuType,
 				x: posX,
 				y: posY,
-				width: 220,
-				height: 300,
+				width: 240,
+				height: winHeight,
 			},
 		}).catch((e) => {
 			console.error("Failed to show submenu window:", e);
@@ -71,16 +100,27 @@ function _triggerSubmenuWindow(menuType: string, buttonEl: Element) {
 	}
 }
 
+function getMenuTypeFromButton(btn: Element): string {
+	let type = btn.id
+		.replace("-menu-btn", "")
+		.replace("-switch-btn", "")
+		.replace("-btn", "");
+	if (type === "config") {
+		type = "settings";
+	}
+	if (type === "utility-root" || type === "tools") {
+		type = "utility";
+	}
+	return type;
+}
+
 document.addEventListener("click", (e) => {
 	const menuItem = (e.target as Element).closest(".menu-item");
 	if (!menuItem) return;
 
 	// サブメニュー展開用の親ボタン
 	if (menuItem.classList.contains("has-submenu")) {
-		const menuType = menuItem.id
-			.replace("-menu-btn", "")
-			.replace("-switch-btn", "")
-			.replace("-btn", "");
+		const menuType = getMenuTypeFromButton(menuItem);
 		if (isNativeMultiWindow()) {
 			_triggerSubmenuWindow(menuType, menuItem);
 			return;
@@ -102,7 +142,9 @@ document.addEventListener("click", (e) => {
 		return;
 	}
 
-	const action = menuItem.dataset.action || menuItem.id.replace("-btn", "");
+	const action =
+		(menuItem as HTMLElement).dataset?.action ||
+		menuItem.id.replace("-btn", "");
 	dispatcher.dispatchAction(action);
 });
 
@@ -123,19 +165,30 @@ function checkSubmenuFlip(wrapper: Element) {
 }
 
 // ホバー時にも右/左展開を判定 & サブメニュー呼び出し
-document.addEventListener("mouseover", (e: unknown) => {
-	const btn = (e.target as Element)?.closest?.(".menu-item.has-submenu");
-	if (!btn) return;
-	const wrapper = btn.closest(".menu-item-wrapper") || btn.parentElement;
+document.addEventListener("mouseover", (e: MouseEvent) => {
+	const item = (e.target as Element | null)?.closest?.(".menu-item");
+	if (!item) return;
+	if (!item.classList.contains("has-submenu")) {
+		if (hasActiveSubmenu) {
+			hasActiveSubmenu = false;
+			if (isNativeMultiWindow()) {
+				void invoke("hide_submenu_window").catch(() => {});
+				globalThis.window?.focus?.();
+			} else {
+				document.querySelectorAll(".menu-item-wrapper.open").forEach((el) => {
+					el.classList.remove("open");
+				});
+			}
+		}
+		return;
+	}
+	const wrapper = item.closest(".menu-item-wrapper") || item.parentElement;
 	if (wrapper) {
 		checkSubmenuFlip(wrapper);
 	}
-	const menuType = btn.id
-		.replace("-menu-btn", "")
-		.replace("-switch-btn", "")
-		.replace("-btn", "");
+	const menuType = getMenuTypeFromButton(item);
 	if (isNativeMultiWindow()) {
-		_triggerSubmenuWindow(menuType, btn);
+		_triggerSubmenuWindow(menuType, item);
 	} else if (wrapper) {
 		document.querySelectorAll(".menu-item-wrapper.open").forEach((el) => {
 			if (el !== wrapper) el.classList.remove("open");
@@ -152,10 +205,7 @@ document.querySelectorAll(".menu-item-wrapper").forEach((wrapper) => {
 		if (isNativeMultiWindow()) {
 			const btn = wrapper.querySelector(".menu-item.has-submenu");
 			if (btn) {
-				const menuType = btn.id
-					.replace("-menu-btn", "")
-					.replace("-switch-btn", "")
-					.replace("-btn", "");
+				const menuType = getMenuTypeFromButton(btn);
 				_triggerSubmenuWindow(menuType, btn);
 			}
 		} else {
@@ -189,10 +239,32 @@ document.addEventListener("keydown", (e) => {
 	handleMenuKeydown(e, dispatcher);
 });
 
-// メニューからフォーカスが外れた（blur）際、自然にメニューウィンドウを閉じる
+globalThis.addEventListener("focus", () => {
+	clearBlurCloseTimer();
+});
+
+// メニューからフォーカスが外れた（blur）際、過渡的blurを除外して自然にメニューウィンドウを閉じる
 globalThis.addEventListener("blur", () => {
 	if (hasActiveSubmenu) return;
-	void dispatcher.dispatchAction("close-menu");
+	if (!isTauriAvailable()) {
+		void dispatcher.dispatchAction("close-menu");
+		return;
+	}
+	if (Date.now() - menuOpenedAt < BLUR_GRACE_MS) {
+		return;
+	}
+	clearBlurCloseTimer();
+	blurCloseTimer = setTimeout(() => {
+		blurCloseTimer = null;
+		if (hasActiveSubmenu || Date.now() - menuOpenedAt < BLUR_GRACE_MS) {
+			return;
+		}
+		const hasDocFocus =
+			typeof document.hasFocus === "function" ? document.hasFocus() : false;
+		if (!hasDocFocus) {
+			void dispatcher.dispatchAction("close-menu");
+		}
+	}, BLUR_DEBOUNCE_MS);
 });
 
 async function adjustMenuWindowSize() {
@@ -200,6 +272,8 @@ async function adjustMenuWindowSize() {
 	try {
 		const modName = "@tauri-apps/api/window";
 		const { getCurrentWindow } = await import(/* @vite-ignore */ modName);
+		const dpiModName = "@tauri-apps/api/dpi";
+		const { LogicalSize } = await import(/* @vite-ignore */ dpiModName);
 		const win = getCurrentWindow();
 		const container = document.querySelector(".menu-container");
 		const containerHeight = container
@@ -214,17 +288,7 @@ async function adjustMenuWindowSize() {
 				650,
 				Math.max(140, Math.ceil(bodyHeight + 20)),
 			);
-			await win.setSize({
-				type: "Logical",
-				width: 260,
-				height: targetHeight,
-				toJSON: (): { width: number; height: number } => {
-					throw new Error("Function not implemented.");
-				},
-				__TAURI_TO_IPC_KEY__: (): { width: number; height: number } => {
-					throw new Error("Function not implemented.");
-				},
-			});
+			await win.setSize(new LogicalSize(260, targetHeight));
 		}
 	} catch (_e) {
 		// Non-Tauri environment

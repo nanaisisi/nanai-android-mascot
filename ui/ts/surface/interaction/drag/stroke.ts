@@ -1,5 +1,10 @@
 import { STROKE_THRESHOLD } from "./constants.js";
 
+export interface StrokeTrackerOptions {
+	threshold?: number;
+	onStroke?: (clientX: number, clientY: number) => void;
+}
+
 /**
  * 撫で（Stroke）判定の状態管理トラッカー
  *
@@ -13,18 +18,14 @@ import { STROKE_THRESHOLD } from "./constants.js";
  *   reset: () => void
  * }}
  */
-export function createStrokeTracker(options = {}) {
+export function createStrokeTracker(options: StrokeTrackerOptions = {}) {
 	const threshold = options.threshold ?? STROKE_THRESHOLD;
 	const onStroke = options.onStroke;
 
 	let strokeDistance = 0;
 	let strokeTriggered = false;
 
-	const addDistance = (
-		stepDist: number,
-		clientX: unknown,
-		clientY: unknown,
-	) => {
+	const addDistance = (stepDist: number, clientX: number, clientY: number) => {
 		if (strokeTriggered) return true;
 		strokeDistance += stepDist;
 		if (strokeDistance >= threshold) {

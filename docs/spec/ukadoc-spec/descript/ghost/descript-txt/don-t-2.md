@@ -2,12 +2,14 @@
 
 - **規格**: [don-t-2.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/don-t-2.md)
 - **検索語**: don't need bind
-- **対応状況**: ❌ 未実装
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `don't need bind` キーをパース・参照する実装が行われている。
+`crates/nanai-core/src/descript_parser/types.rs` の `dont_need_bind()` において `don't need bind` ディレクティブのパースおよび評価が完全実装済み。
 
 ## 実装箇所
 
-実装コード内に「don't need bind」は検出されませんでした。
+- `crates/nanai-core/src/descript_parser/types.rs:291` `self.get("don't need bind")`
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs` `dont_need_bind`
+- `src-tauri/src/common/models/ghost.rs` `GhostInfo::dont_need_bind`

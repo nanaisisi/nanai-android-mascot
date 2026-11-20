@@ -7,6 +7,6 @@
 
 ## 実装箇所
 
-- `ui/js/surface/surface-load.js:85` `// [blend-hue-fast]`
-- `ui/js/surface/surface-load.js:86` `// [blend-hue]`
-- `ui/js/surface/compositor/layer.js:65` `} else if (method === "blend-hue" || method === "hue") {`
+- `ui/ts/surface/surface-compositor.ts:66` `"blend-hue": "hue",`
+- `tests/surface-compositor.test.ts:38` `expect(resolveCompositeOperation("blend-hue-fast")).toBe("hue");`
+- `ui/ts/surface/surface-compositor.ts:67` `"blend-hue-fast": "hue",`

@@ -22,47 +22,65 @@ export const TOUCH_GESTURE_TYPES = {
 	SNAP: "nam:touch:snap",
 };
 
+export interface TouchPointLike {
+	clientX: number;
+	clientY: number;
+}
+
+export interface TouchEventLike {
+	type?: string;
+	touches?: ArrayLike<TouchPointLike>;
+	changedTouches?: ArrayLike<TouchPointLike>;
+	preventDefault?: () => void;
+	stopPropagation?: () => void;
+}
+
+export interface TouchGestureEventDetail {
+	scale?: number;
+	deltaX?: number;
+	deltaY?: number;
+	centerX?: number;
+	centerY?: number;
+	rotation?: number;
+	strokeDistance?: number;
+	tapCount?: number;
+	direction?: string;
+	distance?: number;
+	velocity?: number;
+	velocityX?: number;
+	velocityY?: number;
+	dockState?: string;
+	originalEvent?: Event | TouchEventLike | null;
+}
+
 /**
  * タッチジェスチャーイベントクラス
  * カスタムイベントとしてディスパッチ可能
  */
 export class TouchGestureEvent {
-	type: unknown;
-	scale: unknown;
-	deltaX: unknown;
-	deltaY: unknown;
-	centerX: unknown;
-	centerY: unknown;
-	rotation: unknown;
-	strokeDistance: unknown;
-	tapCount: unknown;
-	direction: unknown;
-	distance: unknown;
-	velocity: unknown;
-	velocityX: unknown;
-	velocityY: unknown;
-	dockState: unknown;
-	originalEvent: unknown;
+	type: string;
+	scale: number;
+	deltaX: number;
+	deltaY: number;
+	centerX: number;
+	centerY: number;
+	rotation: number;
+	strokeDistance: number;
+	tapCount: number;
+	direction: string;
+	distance: number;
+	velocity: number;
+	velocityX: number;
+	velocityY: number;
+	dockState: string;
+	originalEvent: Event | TouchEventLike | null;
 	timestamp: number;
 	defaultPrevented: boolean;
 	/**
 	 * @param {string} type イベント種別 (nam:touch:*)
-	 * @param {object} detail イベント詳細データ
-	 * @param {number} [detail.scale=1.0] ピンチ操作の拡大縮小率
-	 * @param {number} [detail.deltaX=0] X軸移動量
-	 * @param {number} [detail.deltaY=0] Y軸移動量
-	 * @param {number} [detail.centerX=0] 操作中心点X
-	 * @param {number} [detail.centerY=0] 操作中心点Y
-	 * @param {number} [detail.rotation=0] 回転角 (度数法)
-	 * @param {number} [detail.strokeDistance=0] 撫で操作の積算距離
-	 * @param {number} [detail.tapCount=1] タップ回数 (1=シングルタップ, 2=ダブルタップ)
-	 * @param {string} [detail.direction=""] スワイプ方向 ("left" | "right" | "up" | "down")
-	 * @param {number} [detail.velocity=0] スワイプ速度 (px/ms)
-	 * @param {number} [detail.velocityX=0] X軸速度 (px/ms)
-	 * @param {number} [detail.velocityY=0] Y軸速度 (px/ms)
-	 * @param {Event} [detail.originalEvent=null] 元のDOMイベント (TouchEvent/PointerEvent)
+	 * @param {TouchGestureEventDetail} detail イベント詳細データ
 	 */
-	constructor(type: unknown, detail = {}) {
+	constructor(type: string, detail: TouchGestureEventDetail = {}) {
 		this.type = type;
 		this.scale = detail.scale ?? 1.0;
 		this.deltaX = detail.deltaX ?? 0;

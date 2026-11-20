@@ -1,11 +1,19 @@
 import assert from "node:assert/strict";
+import type { balloonDescriptActions as BalloonDescriptActions } from "../../../ui/ts/core/actions/balloon-descript.js";
 
 export function testApplyBalloonDescript(
-	balloonDescriptActions: unknown,
-	mockProps: unknown,
-	cssVars: unknown,
+	balloonDescriptActions: typeof BalloonDescriptActions,
+	mockProps: Record<string, string>,
+	cssVars: Record<string, string>,
 ) {
-	const mockInstance = {
+	const mockInstance: {
+		currentBalloonTheme: string;
+		balloonUserScale: number;
+		elements: { balloonDisplay: { style: Record<string, string> } };
+		balloonDontMove?: boolean;
+		balloonSyncScale?: boolean;
+		balloonAlignment?: string;
+	} = {
 		currentBalloonTheme: "ivory",
 		balloonUserScale: 1.2,
 		elements: { balloonDisplay: { style: {} } },

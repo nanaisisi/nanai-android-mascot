@@ -1,24 +1,35 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
+import type { InteractionManager } from "../ui/ts/surface/interaction.js";
 
-globalThis.window = globalThis;
-globalThis.requestAnimationFrame = (cb) => {
-	cb();
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
+globalThis.requestAnimationFrame = ((cb: FrameRequestCallback) => {
+	cb(0);
 	return 1;
-};
+}) as typeof globalThis.requestAnimationFrame;
 
-let savedStorage = null;
+let savedStorage: string | null = null;
 globalThis.localStorage = {
-	getItem: (_k) => savedStorage,
-	setItem: (_k, v) => {
+	getItem: (_k: string) => savedStorage,
+	setItem: (_k: string, v: string) => {
 		savedStorage = v;
 	},
-};
+} as unknown as Storage;
 
-const documentListeners = {};
-const globalListeners = {};
+const documentListeners: Record<string, (e?: unknown) => void> = {};
+const globalListeners: Record<string, (e?: unknown) => void> = {};
 
-const balloonEl = {
+const balloonEl: {
+	style: Record<string, string>;
+	_listeners?: Record<string, (e?: unknown) => void>;
+	getBoundingClientRect: () => {
+		left: number;
+		top: number;
+		width: number;
+		height: number;
+	};
+	addEventListener: (type: string, cb: (e?: unknown) => void) => void;
+} = {
 	style: {},
 	getBoundingClientRect: () => ({
 		left: 100,
@@ -26,31 +37,31 @@ const balloonEl = {
 		width: 200,
 		height: 100,
 	}),
-	addEventListener(type, cb) {
+	addEventListener(type: string, cb: (e?: unknown) => void) {
 		this._listeners = this._listeners || {};
 		this._listeners[type] = cb;
 	},
 };
 
 globalThis.document = {
-	getElementById(id) {
+	getElementById(id: string) {
 		if (id === "balloon-display") return balloonEl;
 		return null;
 	},
-	addEventListener(type, cb) {
+	addEventListener(type: string, cb: (e?: unknown) => void) {
 		documentListeners[type] = cb;
 	},
-};
+} as unknown as Document;
 
-globalThis.addEventListener = (type, cb) => {
+globalThis.addEventListener = ((type: string, cb: (e?: unknown) => void) => {
 	globalListeners[type] = cb;
-};
+}) as unknown as typeof globalThis.addEventListener;
 
 const { BalloonDragManager } = await import("../ui/ts/surface/balloon-drag.js");
 
 test("BalloonDragManager covers restore, follow, dragging, and persistence", () => {
 	savedStorage = JSON.stringify({ x: 50, y: -100 });
-	const mockInteraction = {};
+	const mockInteraction = {} as unknown as InteractionManager;
 	const manager = new BalloonDragManager(mockInteraction);
 
 	assert.equal(manager.balloonOffsetX, 50);
@@ -69,7 +80,7 @@ test("BalloonDragManager covers restore, follow, dragging, and persistence", () 
 			width: 100,
 			height: 200,
 		}),
-	};
+	} as unknown as HTMLElement;
 	manager.setupBalloonDragging(ghostTarget);
 
 	// Mousedown on button or A link (should be ignored)

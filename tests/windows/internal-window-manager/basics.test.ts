@@ -115,10 +115,11 @@ describe("InternalWindowManager & VirtualWindow - Basics", () => {
 			width: 200,
 			height: 150,
 		});
-		win.element.offsetLeft = 750;
-		win.element.offsetTop = 550;
-		win.element.offsetWidth = 200;
-		win.element.offsetHeight = 150;
+		const el = win.element as unknown as MockDomElement;
+		el.offsetLeft = 750;
+		el.offsetTop = 550;
+		el.offsetWidth = 200;
+		el.offsetHeight = 150;
 
 		win.clampToViewport(800, 600);
 		assert.equal(win.element.style.left, "600px"); // 800 - 200

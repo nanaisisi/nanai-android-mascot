@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
 import { test, vi } from "vitest";
-import { resetCreatedElements, setupMockDom } from "./helpers.js";
+import type { ModalDialogApp } from "../../ui/ts/ui/renderers/modal-dialog-ui.js";
+import {
+	type MockBalloonContainer,
+	type MockDialogElement,
+	resetCreatedElements,
+	setupMockDom,
+} from "./helpers.js";
 
 setupMockDom();
 
@@ -12,10 +18,20 @@ test("ModalDialogController Cycle 3: inputbox.autocomplete, datalist creation, a
 	vi.useFakeTimers();
 	resetCreatedElements();
 
-	const events: { ev: any; args: any }[] = [];
+	const events: { ev: string; args: unknown[] }[] = [];
+	const balloonText: MockBalloonContainer = {
+		appendChild(child: MockDialogElement) {
+			this.child = child;
+		},
+	};
+	const keroBalloonText: MockBalloonContainer = {
+		appendChild(child: MockDialogElement) {
+			this.child = child;
+		},
+	};
 	const mockApp = {
 		ghostController: {
-			sendShioriEvent: async (ev: string, args: any[]) => {
+			sendShioriEvent: async (ev: string, args: unknown[] = []) => {
 				events.push({ ev, args });
 				if (ev === "inputbox.autocomplete") {
 					const boxType = args[0];
@@ -33,18 +49,10 @@ test("ModalDialogController Cycle 3: inputbox.autocomplete, datalist creation, a
 			},
 		},
 		elements: {
-			balloonText: {
-				appendChild(child: any) {
-					this.child = child;
-				},
-			},
-			keroBalloonText: {
-				appendChild(child: any) {
-					this.child = child;
-				},
-			},
+			balloonText: balloonText as unknown as HTMLElement,
+			keroBalloonText: keroBalloonText as unknown as HTMLElement,
 		},
-	};
+	} as unknown as ModalDialogApp;
 
 	const controller = new ModalDialogController({ app: mockApp });
 
@@ -63,16 +71,16 @@ test("ModalDialogController Cycle 3: inputbox.autocomplete, datalist creation, a
 		),
 	);
 
-	const form = mockApp.elements.balloonText.child;
+	const form = balloonText.child as MockDialogElement;
 	const inputEl = form.children.find(
-		(c: { tagName: string }) => c.tagName === "INPUT",
-	);
+		(c) => c.tagName === "INPUT",
+	) as MockDialogElement;
 	const listId = inputEl.getAttribute("list");
 	assert.ok(listId?.startsWith("dl-inputbox-"));
 
 	const dataListEl = form.children.find(
-		(c: { tagName: string }) => c.tagName === "DATALIST",
-	);
+		(c) => c.tagName === "DATALIST",
+	) as MockDialogElement;
 	assert.ok(dataListEl);
 	assert.equal(dataListEl.children.length, 3);
 	assert.equal(dataListEl.children[0].value, "apple");
@@ -102,15 +110,13 @@ test("ModalDialogController Cycle 3: inputbox.autocomplete, datalist creation, a
 		),
 	);
 
-	const teachForm = mockApp.elements.balloonText.child;
+	const teachForm = balloonText.child as MockDialogElement;
 	const teachInput = teachForm.children.find(
-		(c: { tagName: string }) => c.tagName === "INPUT",
-	);
+		(c) => c.tagName === "INPUT",
+	) as MockDialogElement;
 	assert.ok(teachInput.getAttribute("list")?.startsWith("dl-teachbox-"));
 
-	const teachDl = teachForm.children.find(
-		(c: { tagName: string }) => c.tagName === "DATALIST",
-	);
+	const teachDl = teachForm.children.find((c) => c.tagName === "DATALIST");
 	assert.ok(teachDl);
 	assert.equal(teachDl.children.length, 2);
 	assert.equal(teachDl.children[0].value, "wordA");
@@ -129,10 +135,10 @@ test("ModalDialogController Cycle 3: inputbox.autocomplete, datalist creation, a
 		),
 	);
 
-	const commForm = mockApp.elements.balloonText.child;
+	const commForm = balloonText.child as MockDialogElement;
 	const commInput = commForm.children.find(
-		(c: { tagName: string }) => c.tagName === "INPUT",
-	);
+		(c) => c.tagName === "INPUT",
+	) as MockDialogElement;
 	assert.ok(commInput.getAttribute("list")?.startsWith("dl-communicatebox-"));
 
 	controller.closeCommunicateBox();

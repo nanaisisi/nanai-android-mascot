@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
+import type { SakuraScriptToken } from "../ui/ts/ghost/sakura-rust-bridge.js";
 
 const { rustCommandsToTokens, parseSakuraScriptAsync } = await import(
 	"../ui/ts/ghost/sakura-rust-bridge.js"
@@ -50,11 +51,17 @@ test("rustCommandsToTokens converts all Rust commands to SakuraScriptToken list"
 	assert.equal(tokens.find((t) => t.type === "wait")?.value, 200);
 	assert.equal(tokens.find((t) => t.type === "pause") !== undefined, true);
 	assert.equal(
-		tokens.find((t) => t.type === "clear" && t.mode === "char")?.count,
+		tokens.find(
+			(t): t is Extract<SakuraScriptToken, { type: "clear" }> =>
+				t.type === "clear" && t.mode === "char",
+		)?.count,
 		3,
 	);
 	assert.equal(
-		tokens.find((t) => t.type === "clear" && t.mode === "line")?.count,
+		tokens.find(
+			(t): t is Extract<SakuraScriptToken, { type: "clear" }> =>
+				t.type === "clear" && t.mode === "line",
+		)?.count,
 		1,
 	);
 	assert.equal(tokens.find((t) => t.type === "quick_toggle")?.value, true);
@@ -66,33 +73,42 @@ test("rustCommandsToTokens converts all Rust commands to SakuraScriptToken list"
 });
 
 test("parseSakuraScriptAsync covers non-Tauri, Tauri success, and Tauri error branches", async () => {
+	const tauriGlobal = globalThis as unknown as {
+		__TAURI__?: unknown;
+		__TAURI_INTERNALS__?: {
+			invoke: (cmd: string, args?: unknown) => Promise<unknown>;
+			transformCallback?: (cb: unknown) => unknown;
+		};
+	};
+
 	// 1. Non-Tauri environment
-	delete globalThis.__TAURI__;
-	delete globalThis.__TAURI_INTERNALS__;
+	delete tauriGlobal.__TAURI__;
+	delete tauriGlobal.__TAURI_INTERNALS__;
 	const nonTauriRes = await parseSakuraScriptAsync("\\0Hello\\e");
 	assert.equal(nonTauriRes, undefined);
 
 	// 2. Tauri environment success
-	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (cmd, _args) => {
+	const mockInternals = {
+		invoke: async (cmd: string, _args?: unknown) => {
 			if (cmd === "parse_sakura_script") {
 				return [{ type: "Text", payload: "Hi" }, { type: "End" }];
 			}
 		},
-		transformCallback: (cb) => cb,
+		transformCallback: (cb: unknown) => cb,
 	};
-	globalThis.window = globalThis;
+	tauriGlobal.__TAURI_INTERNALS__ = mockInternals;
+	globalThis.window = globalThis as unknown as Window & typeof globalThis;
 
 	const tauriRes = await parseSakuraScriptAsync("\\0Hi\\e");
 	assert.ok(Array.isArray(tauriRes));
 	assert.equal(tauriRes[0].type, "char");
 
 	// 3. Tauri environment error
-	globalThis.__TAURI_INTERNALS__.invoke = async () => {
+	mockInternals.invoke = async () => {
 		throw new Error("parse fail");
 	};
 	const errRes = await parseSakuraScriptAsync("\\0Fail\\e");
 	assert.equal(errRes, undefined);
 
-	delete globalThis.__TAURI_INTERNALS__;
+	delete tauriGlobal.__TAURI_INTERNALS__;
 });

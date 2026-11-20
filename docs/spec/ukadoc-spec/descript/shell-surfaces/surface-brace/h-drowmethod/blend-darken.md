@@ -7,6 +7,6 @@
 
 ## 実装箇所
 
-- `ui/js/surface/surface-load.js:70` `// [blend-darken-fast]`
-- `ui/js/surface/surface-load.js:71` `// [blend-darken]`
-- `ui/js/surface/compositor/layer.js:49` `} else if (method === "blend-darken" || method === "darken") {`
+- `ui/ts/surface/surface-compositor.ts:50` `"blend-darken": "darken",`
+- `tests/surface-compositor.test.ts:20` `expect(resolveCompositeOperation("blend-darken-fast")).toBe("darken");`
+- `ui/ts/surface/surface-compositor.ts:51` `"blend-darken-fast": "darken",`

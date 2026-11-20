@@ -6,8 +6,8 @@
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `shiori.logo.y` キーをパース・参照する実装が行われている。
+`src-tauri/src/ghost/scan/directory/manifest/parser.rs` において `shiori.logo.y` 座標キーのパース処理が完全実装済み。
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory/manifest.rs:169` `m.get("shiori.logo.y")`
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs:139` `m.get("shiori.logo.y")`

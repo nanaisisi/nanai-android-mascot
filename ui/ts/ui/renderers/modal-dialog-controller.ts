@@ -29,11 +29,23 @@ import {
 	parseBoxOptions,
 } from "./modal-dialog-inputs.js";
 import { openSystemDialog } from "./modal-dialog-system.js";
+import type {
+	ActiveDialogBox,
+	ModalDialogApp,
+	ModalDialogControllerContext,
+	ModalDialogPlayer,
+} from "./modal-dialog-ui.js";
 
-export class ModalDialogController {
-	app: unknown;
-	player: unknown;
-	activeBoxes: Map<string, unknown>;
+export interface ModalDialogControllerOptions {
+	app?: ModalDialogApp | null;
+	player?: ModalDialogPlayer | null;
+}
+
+export class ModalDialogController implements ModalDialogControllerContext {
+	[key: string]: unknown;
+	app: ModalDialogApp | null;
+	player: ModalDialogPlayer | null;
+	activeBoxes: Map<string, ActiveDialogBox>;
 	choiceTimeoutTimer: ReturnType<typeof setTimeout> | null;
 	autocompleteCounter: number;
 
@@ -59,13 +71,19 @@ export class ModalDialogController {
 	declare openSystemDialog: typeof openSystemDialog;
 
 	/**
-	 * @param {object|unknown} options - アプリケーションインスタンス、または { app, player } オブジェクト
+	 * @param {ModalDialogControllerOptions | ModalDialogApp} [options] - アプリケーションインスタンス、または { app, player } オブジェクト
 	 */
-	constructor(options: unknown = {}) {
+	constructor(
+		options:
+			| ModalDialogControllerOptions
+			| (ModalDialogApp & { player?: ModalDialogPlayer | null }) = {},
+	) {
 		const isDirectApp =
 			options && typeof options === "object" && "elements" in options;
-		this.app = isDirectApp ? options : (options?.app ?? null);
-		this.player = options?.player ?? null;
+		this.app = isDirectApp
+			? (options as ModalDialogApp)
+			: ((options as ModalDialogControllerOptions)?.app ?? null);
+		this.player = (options as ModalDialogControllerOptions)?.player ?? null;
 		this.activeBoxes = new Map();
 		this.choiceTimeoutTimer = null;
 		this.autocompleteCounter = 0;
@@ -74,14 +92,16 @@ export class ModalDialogController {
 	/**
 	 * 対象のバルーンテキスト要素を取得
 	 * @param {number} [scope]
-	 * @returns {HTMLElement|null}
+	 * @returns {HTMLElement | null}
 	 */
-	getBalloonContainer(scope = 0) {
+	getBalloonContainer(scope?: number): HTMLElement | null {
 		const targetScope =
 			typeof scope === "number" ? scope : (this.player?.currentScope ?? 0);
-		return targetScope === 1
-			? this.app?.elements?.keroBalloonText
-			: this.app?.elements?.balloonText;
+		return (
+			(targetScope === 1
+				? this.app?.elements?.keroBalloonText
+				: this.app?.elements?.balloonText) ?? null
+		);
 	}
 }
 

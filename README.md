@@ -24,7 +24,7 @@
 - 🛡️ **SHIORI 実行環境 & 動的モジュール戦略**:
   - **同梱版（標準方針: 静的同梱 Static Linking）**: 定番 SHIORI（`cpp/satoriya-shiori`, `cpp/yaya-shiori`, `cpp/kawari`）の C++ ソースを Cargo `cc` / NDK で直接バイナリへ静的リンク（`dlopen()` 不要で確実・LTO により最速）。Windows 環境では既存 DLL 互換検証用の動的ロード（`libloading` / 32bit ホスト `shiori-host32`）も提供。
   - **配信ルート別の動的拡張 & WebView (V8) WASM**: Google Play 版の **Dynamic Feature Modules (DFM)** オンデマンド配信や、GitHub / 野良 APK 版の外部 `.so` サイドローディングに対応。また Rust 側の重い `wasmi` インタープリタ依存を通常ビルドから削除・オプショナル化し、WASM 実行は WebView (Chromium V8) の JIT 付き標準 `WebAssembly.instantiate` に一本化することでバイナリ軽量化と省メモリ化（800MB メモリ膨張対策・二重保持/二重ランタイム排除）を実現。
-- 👻 **SSP風ゴースト情報**: メニューの「情報」から、現在のゴーストの名前・バージョン・作者・SHIORI・キャラクター名・インストール先を確認できます。処理中バナーにも対象ゴーストの `descript.txt` に記載された `version` を表示します。
+- 👻 **SSP風ゴースト情報**: メニューの「情報」から、現在のゴーストの名前・バージョン・作者・SHIORI・キャラクター名・インストール先を確認できます。処理中バナーにも対象ゴーストの `descript.txt` に記載された `version` を表示します。ゴースト一覧からは各ゴーストの `readme.txt` / `terms.txt` およびシェルの `readme.txt` をモーダルビューアで閲覧できます。
 
 ---
 

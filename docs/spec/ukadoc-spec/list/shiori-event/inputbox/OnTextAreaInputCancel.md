@@ -6,9 +6,9 @@
 
 ## 突合結果
 
-実装コードに「OnTextAreaInputCancel」が見つからない。
-
+複数行テキストエリア入力ボックスキャンセル時に `OnTextAreaInputCancel` SHIORIイベントを送信する処理を実装 (`ui/ts/ui/renderers/inputs/text-inputs.ts` -> `OnTextAreaInputCancel`)。
 
 ## 実装箇所
 
-- `ui/js/ui/renderers/modal-dialog-controller.js:337` `await this.app.ghostController?.sendShioriEvent("OnTextAreaInputCancel", [`
+- `crates/nanai-core/src/shiori_protocol_helpers/events/input.rs:209` `pub fn build_on_text_area_input_cancel_request`
+- `ui/ts/ui/renderers/inputs/text-inputs.ts:284` `await this.app?.ghostController?.sendShioriEvent?.("OnTextAreaInputCancel", [`

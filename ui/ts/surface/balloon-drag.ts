@@ -1,14 +1,19 @@
+export interface BalloonDragInteractionHost {
+	balloonOffsetX?: number;
+	balloonOffsetY?: number;
+}
+
 /**
  * バルーンのドラッグ移動およびキャラクター追従・オフセット永続化管理
  */
 export class BalloonDragManager {
-	balloonOffsetX: number;
-	balloonOffsetY: number;
-	interaction: unknown;
+	balloonOffsetX: number | undefined;
+	balloonOffsetY: number | undefined;
+	interaction: BalloonDragInteractionHost;
 	/**
 	 * @param {import('./interaction.js').InteractionManager} interaction
 	 */
-	constructor(interaction: this) {
+	constructor(interaction: BalloonDragInteractionHost) {
 		this.interaction = interaction;
 		this.balloonOffsetX = undefined;
 		this.balloonOffsetY = undefined;
@@ -79,11 +84,11 @@ export class BalloonDragManager {
 			clientY: number,
 			targetEl: EventTarget | null,
 		) => {
-			if (
-				targetEl &&
-				(targetEl.tagName === "A" || targetEl.tagName === "BUTTON")
-			)
-				return false;
+			const tagName =
+				targetEl && "tagName" in targetEl
+					? String((targetEl as { tagName?: unknown }).tagName ?? "")
+					: "";
+			if (tagName === "A" || tagName === "BUTTON") return false;
 			isBalloonDragging = true;
 			bStartX = clientX;
 			bStartY = clientY;

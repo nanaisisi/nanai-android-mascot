@@ -280,7 +280,71 @@ export function buildRawSstpRequest(payload: SstpRequestPayload): string {
 	}
 
 	lines.push("\r\n");
-	return lines.join("\r\n");
+	const raw = lines.join("\r\n");
+
+	if (wasmBridge.isReady()) {
+		try {
+			const parsed = wasmBridge.parseSstpRequest(raw);
+			if (parsed?.command && parsed?.version) {
+				return raw;
+			}
+		} catch {
+			// Fallback to pure TS output
+		}
+	}
+
+	return raw;
+}
+
+function buildSstpResponsePayload(
+	status: string,
+	headerEntries: Iterable<[string, string]>,
+	bodyLines: string[],
+): SstpResponsePayload {
+	let script: string | undefined;
+	let error_description: string | undefined;
+	let reference0: string | undefined;
+	let content_type: string | undefined;
+	let id: string | undefined;
+	const references: Record<string, string> = {};
+
+	for (const [rawKey, rawVal] of headerEntries) {
+		const key = rawKey.trim().toLowerCase();
+		const val = rawVal.trim();
+
+		if (key === "script") {
+			script = val;
+		} else if (key === "errordescription") {
+			error_description = val;
+		} else if (key === "reference0") {
+			reference0 = val;
+			references.Reference0 = val;
+		} else if (key.startsWith("reference") || key.startsWith("argument")) {
+			const normKey = key.startsWith("argument")
+				? `Reference${key.slice(8)}`
+				: `Reference${key.slice(9)}`;
+			references[normKey] = val;
+		} else if (key === "content-type") {
+			content_type = val;
+		} else if (key === "id") {
+			id = val;
+		}
+	}
+
+	const additional_data =
+		bodyLines.length > 0 ? bodyLines.join("\r\n").trim() : undefined;
+	const value = script ?? additional_data ?? "";
+
+	return {
+		status,
+		value,
+		id,
+		reference0,
+		additional_data,
+		error_description,
+		references: Object.keys(references).length > 0 ? references : undefined,
+		content_type,
+	};
 }
 
 /**
@@ -302,16 +366,11 @@ export function parseRawSstpResponse(raw: string): SstpResponsePayload {
 	const parts = statusLine.split(/\s+/);
 	const statusCode = parts[1] ?? "200";
 	const reasonPhrase = parts.slice(2).join(" ") || "OK";
-	const status = `${statusCode} ${reasonPhrase}`.trim();
+	const fallbackStatus = `${statusCode} ${reasonPhrase}`.trim();
 
-	let script: string | undefined;
-	let error_description: string | undefined;
-	let reference0: string | undefined;
-	let content_type: string | undefined;
-	let id: string | undefined;
-	const references: Record<string, string> = {};
-	let readingHeaders = true;
+	const headerLines: string[] = [];
 	const bodyLines: string[] = [];
+	let readingHeaders = true;
 
 	for (let i = 1; i < lines.length; i++) {
 		const line = lines[i];
@@ -320,48 +379,44 @@ export function parseRawSstpResponse(raw: string): SstpResponsePayload {
 				readingHeaders = false;
 				continue;
 			}
-			const colonIdx = line.indexOf(":");
-			if (colonIdx !== -1) {
-				const key = line.slice(0, colonIdx).trim().toLowerCase();
-				const val = line.slice(colonIdx + 1).trim();
-
-				if (key === "script") {
-					script = val;
-				} else if (key === "errordescription") {
-					error_description = val;
-				} else if (key === "reference0") {
-					reference0 = val;
-					references.Reference0 = val;
-				} else if (key.startsWith("reference") || key.startsWith("argument")) {
-					const normKey = key.startsWith("argument")
-						? `Reference${key.slice(8)}`
-						: `Reference${key.slice(9)}`;
-					references[normKey] = val;
-				} else if (key === "content-type") {
-					content_type = val;
-				} else if (key === "id") {
-					id = val;
-				}
-			}
+			headerLines.push(line);
 		} else {
 			bodyLines.push(line);
 		}
 	}
 
-	const additional_data =
-		bodyLines.length > 0 ? bodyLines.join("\r\n").trim() : undefined;
-	const value = script ?? additional_data ?? "";
+	if (wasmBridge.isReady()) {
+		try {
+			const wasmParsed = wasmBridge.parseSstpRequest(
+				[statusLine, ...headerLines].join("\r\n"),
+			);
+			if (wasmParsed) {
+				const wasmStatusCode = wasmParsed.version || statusCode;
+				const wasmStatus = `${wasmStatusCode} ${reasonPhrase}`.trim();
+				const rawHeaders = wasmParsed.headers as
+					| Record<string, string>
+					| Map<string, string>
+					| undefined;
+				const entries: Iterable<[string, string]> =
+					rawHeaders instanceof Map
+						? rawHeaders.entries()
+						: Object.entries(rawHeaders ?? {});
+				return buildSstpResponsePayload(wasmStatus, entries, bodyLines);
+			}
+		} catch {
+			// Fallback to pure TS parser
+		}
+	}
 
-	return {
-		status,
-		value,
-		id,
-		reference0,
-		additional_data,
-		error_description,
-		references: Object.keys(references).length > 0 ? references : undefined,
-		content_type,
-	};
+	const fallbackEntries: Array<[string, string]> = [];
+	for (const line of headerLines) {
+		const colonIdx = line.indexOf(":");
+		if (colonIdx !== -1) {
+			fallbackEntries.push([line.slice(0, colonIdx), line.slice(colonIdx + 1)]);
+		}
+	}
+
+	return buildSstpResponsePayload(fallbackStatus, fallbackEntries, bodyLines);
 }
 
 /**

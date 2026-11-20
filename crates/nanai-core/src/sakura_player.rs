@@ -25,6 +25,8 @@ pub enum StepOutput {
     ScopeChange { scope: u32 },
     /// 選択肢入力待ち (\*)
     ChoiceWait { scope: u32 },
+    /// クリック待ち (\x)
+    ClickWait { scope: u32 },
     /// 選択肢 (\q[title,id])
     Choice {
         scope: u32,
@@ -45,6 +47,8 @@ pub enum StepOutput {
         command: String,
         args: Vec<String>,
     },
+    /// 選択肢マーカー (\![*])
+    Marker { scope: u32 },
     /// スクリプト再生終了 (\e)
     Halt,
     /// 終了/無効ステップ
@@ -146,11 +150,21 @@ impl SakuraPlayerEngine {
                     keep_settings,
                 }
             }
+            SakuraToken::ClearArg { .. } => {
+                self.display_texts.insert(self.current_scope, String::new());
+                StepOutput::Clear {
+                    scope: self.current_scope,
+                    keep_settings: false,
+                }
+            }
             SakuraToken::Voice { path } => StepOutput::Voice {
                 scope: self.current_scope,
                 path,
             },
             SakuraToken::Star => StepOutput::ChoiceWait {
+                scope: self.current_scope,
+            },
+            SakuraToken::ClickWait => StepOutput::ClickWait {
                 scope: self.current_scope,
             },
             SakuraToken::Wait(ms) => StepOutput::Wait { duration_ms: ms },
@@ -168,6 +182,9 @@ impl SakuraPlayerEngine {
                 scope: self.current_scope,
                 command,
                 args,
+            },
+            SakuraToken::Marker => StepOutput::Marker {
+                scope: self.current_scope,
             },
             SakuraToken::Font { .. }
             | SakuraToken::Sync(_)

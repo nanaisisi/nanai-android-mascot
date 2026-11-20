@@ -2,7 +2,7 @@
 
 - **規格**: [bang-execute-compressarchive.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/misc/bang-execute-compressarchive/) (ukadoc-spec/list/sakura-script/misc/bang-execute-compressarchive.md)
 - **検索語**: ArchiveExec
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,6 +10,5 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/command.rs:122` `ArchiveExec {`
-- `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:66` `callback(SakuraCommand::ArchiveExec { action, filename, dest });`
-- `ui/js/ghost/sakura-rust-bridge.js:170` `case "ArchiveExec":`
+- `crates/ui/src/script/command.rs:136` `ArchiveExec {`
+- `crates/ui/src/script/parser/brackets/handlers/raiselike/execution.rs:27` `callback(SakuraCommand::ArchiveExec {`

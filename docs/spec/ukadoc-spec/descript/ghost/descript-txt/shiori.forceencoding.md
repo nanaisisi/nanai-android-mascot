@@ -6,8 +6,8 @@
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `shiori.forceencoding` キーをパース・参照する実装が行われている。
+`src-tauri/src/ghost/scan/directory/manifest/parser.rs` において `shiori.forceencoding` キーのパースおよび強制エンコーディング適用が完全実装済み。
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory/manifest.rs:154` `.and_then(|m| m.get("shiori.forceencoding").cloned());`
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs:124` `.and_then(|m| m.get("shiori.forceencoding").cloned());`

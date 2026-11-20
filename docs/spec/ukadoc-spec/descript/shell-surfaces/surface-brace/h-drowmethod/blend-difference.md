@@ -7,6 +7,6 @@
 
 ## 実装箇所
 
-- `ui/js/surface/surface-load.js:74` `// [blend-difference-fast]`
-- `ui/js/surface/surface-load.js:75` `// [blend-difference]`
-- `ui/js/surface/compositor/layer.js:61` `} else if (method === "blend-difference" || method === "difference") {`
+- `ui/ts/surface/surface-compositor.ts:62` `"blend-difference": "difference",`
+- `tests/surface-compositor.test.ts:34` `expect(resolveCompositeOperation("blend-difference-fast")).toBe(`
+- `ui/ts/surface/surface-compositor.ts:63` `"blend-difference-fast": "difference",`

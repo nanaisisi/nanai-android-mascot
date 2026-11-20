@@ -3,12 +3,19 @@
  * @brief dateinput, timeinput の表示・制御処理
  */
 
+import type {
+	ActiveDialogBox,
+	ModalDialogControllerContext,
+} from "../../modal-dialog-ui.js";
+
 export function openDateInput(
-	this: unknown,
-	params: string | unknown[],
-	scope: unknown,
-) {
-	const id = params[0] || "DateInput";
+	this: ModalDialogControllerContext,
+	params: readonly unknown[] | string = [],
+	scope?: number,
+): HTMLDivElement | null {
+	const rawId = params[0];
+	const id =
+		typeof rawId === "string" && rawId ? rawId : String(rawId || "DateInput");
 	let timeoutMs = 0;
 	let year = "";
 	let month = "";
@@ -79,7 +86,7 @@ export function openDateInput(
 	submitBtn.className = "balloon-choice-btn";
 	submitBtn.style.marginTop = "0";
 
-	let timer: number | null | undefined = null;
+	let timer: ReturnType<typeof setTimeout> | null = null;
 	const boxKey = `inputbox:${id}`;
 
 	const cleanup = (force = false) => {
@@ -110,13 +117,13 @@ export function openDateInput(
 		}
 		cleanup();
 		if (id.startsWith("On")) {
-			await this.app.ghostController?.sendShioriEvent(id, [
+			await this.app?.ghostController?.sendShioriEvent?.(id, [
 				formattedVal,
 				"",
 				...references,
 			]);
 		} else {
-			await this.app.ghostController?.sendShioriEvent("OnUserInput", [
+			await this.app?.ghostController?.sendShioriEvent?.("OnUserInput", [
 				id,
 				formattedVal,
 				"",
@@ -127,7 +134,7 @@ export function openDateInput(
 
 	const cancel = async (reason = "close") => {
 		cleanup(true);
-		await this.app.ghostController?.sendShioriEvent("OnUserInputCancel", [
+		await this.app?.ghostController?.sendShioriEvent?.("OnUserInputCancel", [
 			id,
 			reason,
 			"",
@@ -161,7 +168,7 @@ export function openDateInput(
 		}, timeoutMs);
 	}
 
-	const boxEntry = {
+	const boxEntry: ActiveDialogBox = {
 		id,
 		type: "dateinput",
 		form,
@@ -173,11 +180,13 @@ export function openDateInput(
 }
 
 export function openTimeInput(
-	this: unknown,
-	params: string | unknown[],
-	scope: unknown,
-) {
-	const id = params[0] || "TimeInput";
+	this: ModalDialogControllerContext,
+	params: readonly unknown[] | string = [],
+	scope?: number,
+): HTMLDivElement | null {
+	const rawId = params[0];
+	const id =
+		typeof rawId === "string" && rawId ? rawId : String(rawId || "TimeInput");
 	let timeoutMs = 0;
 	let hour = "";
 	let min = "";
@@ -249,7 +258,7 @@ export function openTimeInput(
 	submitBtn.className = "balloon-choice-btn";
 	submitBtn.style.marginTop = "0";
 
-	let timer: number | null | undefined = null;
+	let timer: ReturnType<typeof setTimeout> | null = null;
 	const boxKey = `inputbox:${id}`;
 
 	const cleanup = (force = false) => {
@@ -279,13 +288,13 @@ export function openTimeInput(
 		}
 		cleanup();
 		if (id.startsWith("On")) {
-			await this.app.ghostController?.sendShioriEvent(id, [
+			await this.app?.ghostController?.sendShioriEvent?.(id, [
 				formattedVal,
 				"",
 				...references,
 			]);
 		} else {
-			await this.app.ghostController?.sendShioriEvent("OnUserInput", [
+			await this.app?.ghostController?.sendShioriEvent?.("OnUserInput", [
 				id,
 				formattedVal,
 				"",
@@ -296,7 +305,7 @@ export function openTimeInput(
 
 	const cancel = async (reason = "close") => {
 		cleanup(true);
-		await this.app.ghostController?.sendShioriEvent("OnUserInputCancel", [
+		await this.app?.ghostController?.sendShioriEvent?.("OnUserInputCancel", [
 			id,
 			reason,
 			"",
@@ -330,7 +339,7 @@ export function openTimeInput(
 		}, timeoutMs);
 	}
 
-	const boxEntry = {
+	const boxEntry: ActiveDialogBox = {
 		id,
 		type: "timeinput",
 		form,

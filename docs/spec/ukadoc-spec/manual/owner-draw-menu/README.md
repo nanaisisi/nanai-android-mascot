@@ -1,14 +1,10 @@
-# オーナードローメニュー仕様の項目別突合
+# ukadoc-spec/manual/owner-draw-menu 項目別突合
 
-- **規格**: [ukadoc-spec/manual/owner-draw-menu.md](https://github.com/ukatech/ukadoc-spec/blob/main/manual/owner-draw-menu.md)
-- **判定基準**: このリポジトリで確認できるメニューの背景・サイドバービットマップ描画、カラーカスタマイズ、フォント設定
+実装コードの文字列検索による一次調査です。
 
-| 項目                                                    | 対応状況  |
-| ------------------------------------------------------- | --------- |
-| [メニュー背景・サイドバービットマップ](menu-bitmaps.md) | ✅ 実装済 |
-| [メニュー配色・セパレータ設定](menu-colors.md)          | ✅ 実装済 |
-| [メニューフォント設定](menu-fonts.md)                   | ✅ 実装済 |
-
-## 対応範囲の共通事項
-
-- シェルの `descript.txt` に定義されたメニュー配色、フォントサイズ、背景・前景・サイドバー画像（Data URL base64 変換）をサブメニュー UI (`ui/ts/ui/submenu.ts`) に動的適用。
+| 項目                                                                                                       | 検索語                                                    | 対応状況  |
+| :--------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------- | :-------: |
+| [`menu_background.png`](menu-background-png.md)                                                            | menu_background.png                                       | ✅ 実装済 |
+| [`menu_foreground.png`](menu-foreground-png.md)                                                            | menu_foreground.png                                       | ✅ 実装済 |
+| [`menu_sidebar.png`](menu-sidebar-png.md)                                                                  | menu_sidebar.png                                          | ✅ 実装済 |
+| [シェル descript.txt と SHIORI Resource の指定・優先順位・端色塗り潰し](resource-and-descript-priority.md) | extract_shell_menu_theme, menu.background.bitmap.filename | ✅ 実装済 |

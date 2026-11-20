@@ -33,9 +33,7 @@ fn test_property_evaluation() {
         "SHIORI/3.0 Standard"
     );
     assert_eq!(evaluate_property_query("shiori.encoding"), "UTF-8");
-    let now = chrono::Local::now();
-    use chrono::Datelike;
-    use chrono::Timelike;
+    let now = jiff::ZonedDateTime::now();
     assert_eq!(
         evaluate_property_query("system.year"),
         now.year().to_string()

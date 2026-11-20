@@ -8,7 +8,7 @@ describe("Balloon SHIORI Events and Property Integration (Slot-10)", () => {
 		const sentEvents: Array<{ event: string; references: string[] }> = [];
 		const mockContext = {
 			...shioriNotifyMethods,
-			sendShioriNotify(event: string, references: Array<string | number>) {
+			sendShioriNotify(event: string, references: unknown[] = []) {
 				sentEvents.push({
 					event,
 					references: references.map(String),

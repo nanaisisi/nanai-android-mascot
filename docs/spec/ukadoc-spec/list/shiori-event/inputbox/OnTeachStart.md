@@ -6,8 +6,9 @@
 
 ## 突合結果
 
-実装コードに「OnTeachStart」が見つからない。
+ティーチボックス展開時に `OnTeachStart` SHIORIイベントを送信する処理を実装 (`ui/ts/ghost/command-handler/teachbox.ts` -> `OnTeachStart`)。
 
 ## 実装箇所
 
-- `ui/js/ghost/command-handler/teachbox.js:7` `handler.app.ghostController?.sendShioriEvent("OnTeachStart").catch(() => {});`
+- `ui/ts/ghost/command-handler/teachbox.ts:17` `?.sendShioriEvent("OnTeachStart")`
+- `ui/ts/ui/renderers/modal-dialog-communication.ts:24` `?.sendShioriEvent?.("OnTeachStart")`

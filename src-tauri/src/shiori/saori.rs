@@ -83,7 +83,12 @@ fn execute_saori_ex_internal(params: ExecuteSaoriExInternalParams<'_>) -> Option
                     .as_secs();
                 Some(now.to_string())
             }
-            _ => Some(chrono::Utc::now().format("%Y-%m-%d %H:%M:%S").to_string()),
+            _ => Some(
+                jiff::Timestamp::now()
+                    .to_zoned_datetime(jiff::tz::TimeZone::UTC)
+                    .strftime("%Y-%m-%d %H:%M:%S")
+                    .to_string(),
+            ),
         },
         "internal_crypto" => match function.to_lowercase().as_str() {
             "digest" => {

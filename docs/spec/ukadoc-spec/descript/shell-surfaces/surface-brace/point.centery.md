@@ -2,7 +2,7 @@
 
 - **規格**: [point.centery.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/point.centery/) (ukadoc-spec/descript/shell-surfaces/surface-brace/point.centery.md)
 - **検索語**: point.centery
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ❌ 未実装
 
 ## 突合結果
 
@@ -11,5 +11,4 @@
 
 ## 実装箇所
 
-- `crates/ui/src/surfaces/tests/collision_tests.rs:143` `point.centery,200`
-- `ui/ts/surface/surface-load-ukadoc.ts:133` `// [point.centery]`
+実装コード内に「point.centery」は検出されませんでした。

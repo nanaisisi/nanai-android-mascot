@@ -6,7 +6,7 @@
 
 ## 突合結果
 
-`ui/js/core/actions/balloon-descript.js` の `rgbFromComponents` により `communicatebox.placeholder.color.r/g/b` を合成し、CSS 変数 `--communicatebox-placeholder-color` として動的適用を実装済み。
+`ui/ts/core/actions/balloon-descript/layout/communicate-box.ts` の `rgbFromComponents` により `communicatebox.placeholder.color.r/g/b` を合成し、CSS 変数 `--communicatebox-placeholder-color` として動的適用を完全実装済み。
 
 ## 実装箇所
 

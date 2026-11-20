@@ -6,9 +6,9 @@
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `kero.seriko.defaultsurface` キーをパース・参照する実装が行われている。
+`crates/nanai-core/src/descript_parser/types.rs` の `kero_default_surface()` において `kero.seriko.defaultsurface` および `kero.defaultsurface` のパースおよび取得が完全実装済み。
 
 ## 実装箇所
 
-- `crates/nanai-core/src/descript_parser.rs:186` `/// Kero側デフォルトサーフィスID (`kero.seriko.defaultsurface`)`
-- `crates/nanai-core/src/descript_parser.rs:188` `self.get("kero.seriko.defaultsurface")`
+- `crates/nanai-core/src/descript_parser/types.rs:213` `/// Kero側デフォルトサーフィスID (`kero.seriko.defaultsurface`)`
+- `crates/nanai-core/src/descript_parser/types.rs:215` `self.get("kero.seriko.defaultsurface")`

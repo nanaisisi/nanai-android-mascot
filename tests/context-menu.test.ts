@@ -1,42 +1,85 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-globalThis.window = globalThis;
-globalThis.location = { search: "?scope=0" };
+type MockDomListener = (event?: Record<string, unknown>) => unknown;
+type MockTauriListener = (event: { payload?: unknown }) => unknown;
+
+interface MockWrapperElement {
+	classList: {
+		_classes: Set<string>;
+		add: (c: string) => void;
+		remove: (c: string) => void;
+		contains: (c: string) => boolean;
+	};
+	querySelector: (sel: string) => {
+		id: string;
+		classList: { contains: (c: string) => boolean };
+		getBoundingClientRect: () => { top: number };
+	} | null;
+	_listeners?: Record<string, () => void>;
+	addEventListener: (t: string, cb: () => void) => void;
+	mouseenter: () => void;
+	mouseleave: () => void;
+}
+
+interface MockTauriInternals {
+	metadata: { currentWindow: { label: string } };
+	invoke: (
+		cmd: string,
+		args?: { event?: string; handler?: MockTauriListener },
+	) => Promise<unknown>;
+	transformCallback: (cb: unknown) => unknown;
+	plugins: {
+		event: {
+			listen: (event: string, cb: MockTauriListener) => Promise<() => void>;
+			emit: () => Promise<void>;
+		};
+	};
+}
+
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
+globalThis.location = { search: "?scope=0" } as unknown as Location;
 globalThis.innerWidth = 800;
 globalThis.innerHeight = 600;
-globalThis.localStorage = { getItem: () => "ivory", setItem: () => {} };
+globalThis.localStorage = {
+	length: 0,
+	clear: () => {},
+	key: () => null,
+	removeItem: () => {},
+	getItem: () => "ivory",
+	setItem: () => {},
+} satisfies Storage;
 
-const documentListeners = {};
-const globalListeners = {};
-const tauriListeners = {};
+const documentListeners: Record<string, MockDomListener> = {};
+const globalListeners: Record<string, MockDomListener> = {};
+const tauriListeners: Record<string, MockTauriListener> = {};
 
 let showSubmenuShouldFail = false;
 
-const mockWrapper = {
+const mockWrapper: MockWrapperElement = {
 	classList: {
 		_classes: new Set(["menu-item-wrapper"]),
-		add(c) {
+		add(c: string) {
 			this._classes.add(c);
 		},
-		remove(c) {
+		remove(c: string) {
 			this._classes.delete(c);
 		},
-		contains(c) {
+		contains(c: string) {
 			return this._classes.has(c);
 		},
 	},
-	querySelector(sel) {
+	querySelector(sel: string) {
 		if (sel === ".menu-item.has-submenu" || sel === "#ghost-switch-btn") {
 			return {
 				id: "ghost-switch-btn",
-				classList: { contains: (c) => c === "has-submenu" },
+				classList: { contains: (c: string) => c === "has-submenu" },
 				getBoundingClientRect: () => ({ top: 100 }),
 			};
 		}
 		return null;
 	},
-	addEventListener(t, cb) {
+	addEventListener(t: string, cb: () => void) {
 		this._listeners = this._listeners || {};
 		this._listeners[t] = cb;
 	},
@@ -50,10 +93,10 @@ const mockWrapper = {
 
 globalThis.document = {
 	body: { classList: { add() {}, remove() {} } },
-	addEventListener(type, cb) {
+	addEventListener(type: string, cb: MockDomListener) {
 		documentListeners[type] = cb;
 	},
-	getElementById(_id) {
+	getElementById(_id: string) {
 		return {
 			innerHTML: "",
 			appendChild() {},
@@ -63,20 +106,20 @@ globalThis.document = {
 			querySelectorAll: () => [],
 		};
 	},
-	createElement: (_tag) => ({
+	createElement: (_tag: string) => ({
 		innerHTML: "",
 		appendChild() {},
 		style: {},
 		dataset: {},
 		addEventListener() {},
 	}),
-	querySelector(sel) {
+	querySelector(sel: string) {
 		if (sel === ".menu-container") {
 			return { getBoundingClientRect: () => ({ right: 700 }) };
 		}
 		return null;
 	},
-	querySelectorAll(sel) {
+	querySelectorAll(sel: string) {
 		if (sel === ".menu-item-wrapper") {
 			return [mockWrapper];
 		}
@@ -90,16 +133,16 @@ globalThis.document = {
 		setAttribute() {},
 		style: { removeProperty() {}, setProperty() {} },
 	},
-};
+} as unknown as Document;
 
-globalThis.addEventListener = (type, cb) => {
+globalThis.addEventListener = ((type: string, cb: MockDomListener) => {
 	globalListeners[type] = cb;
-};
+}) as unknown as typeof globalThis.addEventListener;
 
-globalThis.__TAURI_INTERNALS__ = {
+const tauriInternals: MockTauriInternals = {
 	metadata: { currentWindow: { label: "context_menu" } },
 	invoke: async (cmd, args) => {
-		if (cmd === "plugin:event|listen") {
+		if (cmd === "plugin:event|listen" && args?.event && args.handler) {
 			tauriListeners[args.event] = args.handler;
 			return 1;
 		}
@@ -108,10 +151,10 @@ globalThis.__TAURI_INTERNALS__ = {
 			return;
 		}
 	},
-	transformCallback: (cb) => cb,
+	transformCallback: (cb: unknown) => cb,
 	plugins: {
 		event: {
-			listen: async (event, cb) => {
+			listen: async (event: string, cb: MockTauriListener) => {
 				tauriListeners[event] = cb;
 				return () => {};
 			},
@@ -119,6 +162,7 @@ globalThis.__TAURI_INTERNALS__ = {
 		},
 	},
 };
+globalThis.__TAURI_INTERNALS__ = tauriInternals;
 
 // Import context-menu to initialize listeners
 await import("../ui/ts/ui/context-menu.js");
@@ -176,11 +220,16 @@ test("context-menu event handlers, sync listeners, mouse events and keyboard sho
 	globalListeners.DOMContentLoaded?.();
 
 	// 4. Test document click on has-submenu and normal menu item in Tauri
-	const mockSubmenuBtn = {
+	const mockSubmenuBtn: {
+		id: string;
+		classList: { contains: (c: string) => boolean };
+		getBoundingClientRect: () => { top: number };
+		closest: (sel: string) => unknown;
+	} = {
 		id: "ghost-switch-btn",
-		classList: { contains: (c) => c === "has-submenu" },
+		classList: { contains: (c: string) => c === "has-submenu" },
 		getBoundingClientRect: () => ({ top: 100 }),
-		closest: (sel) => {
+		closest: (sel: string) => {
 			if (sel === ".menu-item") return mockSubmenuBtn;
 			if (sel === ".menu-item-wrapper") return mockWrapper;
 			return null;
@@ -216,7 +265,7 @@ test("context-menu event handlers, sync listeners, mouse events and keyboard sho
 		classList: { contains: () => false },
 		dataset: { action: "recommend" },
 		id: "",
-		closest(sel) {
+		closest(sel: string): unknown {
 			if (sel === ".menu-item, .submenu-container") return null;
 			if (sel === ".menu-item") return this;
 			return null;
@@ -273,6 +322,18 @@ test("context-menu event handlers, sync listeners, mouse events and keyboard sho
 		ctrlKey: true,
 		preventDefault() {},
 	});
+	documentListeners.keydown?.({
+		key: "d",
+		shiftKey: true,
+		ctrlKey: true,
+		preventDefault() {},
+	});
+	documentListeners.keydown?.({
+		key: "l",
+		shiftKey: false,
+		ctrlKey: true,
+		preventDefault() {},
+	});
 
 	// Single accelerator keys
 	for (const k of [
@@ -299,10 +360,75 @@ test("context-menu event handlers, sync listeners, mouse events and keyboard sho
 	assert.ok(true);
 });
 
+test("context menu ignores transient blur during grace window, closes on real blur, and resets submenu state on regular hover", async () => {
+	const internals = globalThis.__TAURI_INTERNALS__ as MockTauriInternals;
+	const origInvoke = internals.invoke;
+	const origHasFocus = (document as unknown as { hasFocus?: () => boolean })
+		.hasFocus;
+	const cmds: string[] = [];
+	let docFocused = false;
+	(document as unknown as { hasFocus?: () => boolean }).hasFocus = () =>
+		docFocused;
+	internals.invoke = async (cmd: string, args?: unknown) => {
+		cmds.push(cmd);
+		return origInvoke(
+			cmd,
+			args as { event?: string; handler?: MockTauriListener },
+		);
+	};
+
+	try {
+		// 1. Reset menu open state via sync-menu-scope -> blur within grace window (<350ms) must NOT close menu
+		await tauriListeners["sync-menu-scope"]?.({ payload: 0 });
+		cmds.length = 0;
+		globalListeners.blur?.();
+		await new Promise((r) => setTimeout(r, 110));
+		assert.equal(cmds.includes("hide_menu_window"), false);
+
+		// 2. Hovering submenu activates hasActiveSubmenu; hovering a regular item resets it and hides submenu window
+		const mockSubmenuBtn = {
+			id: "ghost-switch-btn",
+			classList: { contains: (c: string) => c === "has-submenu" },
+			getBoundingClientRect: () => ({ top: 100 }),
+			closest: (sel: string): unknown =>
+				sel === ".menu-item" ? mockSubmenuBtn : null,
+		};
+		const mockRegularItem = {
+			id: "friends-btn",
+			classList: { contains: () => false },
+			closest: (sel: string): unknown =>
+				sel === ".menu-item" ? mockRegularItem : null,
+		};
+		await new Promise((r) => setTimeout(r, 200));
+		documentListeners.mouseover?.({ target: mockSubmenuBtn });
+		documentListeners.mouseover?.({ target: mockRegularItem });
+		await new Promise((r) => setTimeout(r, 20));
+		assert.equal(cmds.includes("hide_submenu_window"), true);
+
+		// 3. After grace window (>350ms), focus cancels pending blur timer; uncancelled blur closes menu
+		await new Promise((r) => setTimeout(r, 180));
+		cmds.length = 0;
+		docFocused = false;
+		globalListeners.blur?.();
+		globalListeners.focus?.();
+		await new Promise((r) => setTimeout(r, 110));
+		assert.equal(cmds.includes("hide_menu_window"), false);
+
+		globalListeners.blur?.();
+		await new Promise((r) => setTimeout(r, 110));
+		assert.equal(cmds.includes("hide_menu_window"), true);
+	} finally {
+		internals.invoke = origInvoke;
+		(document as unknown as { hasFocus?: () => boolean }).hasFocus =
+			origHasFocus;
+	}
+});
+
 test("context menu enforces non-draggable invariant specification", () => {
 	let dragCalled = false;
-	const origInvoke = globalThis.__TAURI_INTERNALS__.invoke;
-	globalThis.__TAURI_INTERNALS__.invoke = async (cmd) => {
+	const internals = globalThis.__TAURI_INTERNALS__ as MockTauriInternals;
+	const origInvoke = internals.invoke;
+	internals.invoke = async (cmd: string) => {
 		if (cmd.includes("drag")) {
 			dragCalled = true;
 		}

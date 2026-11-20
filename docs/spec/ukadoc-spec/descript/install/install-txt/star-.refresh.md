@@ -6,12 +6,13 @@
 
 ## 突合結果
 
-`src-tauri/src/commands/install/archive.rs` において `*.refresh`（`ghost.refresh`, `shell.refresh` 等）をパース・参照する実装が行われている。
+`src-tauri/src/commands/install/archive/inspection/analyzer/resource_resolver.rs` および `postprocess.rs` において `*.refresh`（`balloon.refresh`, `ghost0.refresh` 等）の解析およびリフレッシュクリーンアップ処理が完全実装済み。
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive/mod.rs:36` `if inspection.refresh {`
-- `src-tauri/src/commands/install/archive/mod.rs:39` `target_dir, inspection.refresh_undelete_mask`
-- `src-tauri/src/commands/install/archive/mod.rs:41` `perform_refresh_cleanup(&target_dir, &inspection.refresh_undelete_mask);`
-- `src-tauri/src/commands/install/archive/mod.rs:46` `if res_target.refresh && res_target.destination_dir.exists() {`
-- `src-tauri/src/commands/install/archive/mod.rs:49` `res_target.destination_dir, res_target.refresh_undelete_mask`
+- `crates/ui/src/update/engine.rs:21` `if !manifest.refresh {`
+- `src-tauri/src/commands/install/archive/mod.rs:63` `if inspection.refresh() {`
+- `crates/ui/src/update/tests/installer_manifest.rs:32` `balloon.refresh,1\r\n\`
+- `src-tauri/src/commands/install/archive/mod.rs:67` `inspection.refresh_undelete_mask()`
+- `crates/ui/src/update/tests/installer_manifest.rs:33` `balloon.refreshundeletemask,balloon_pref.txt\r\n\`
+- `src-tauri/src/commands/install/archive/mod.rs:69` `perform_refresh_cleanup(&target_dir, inspection.refresh_undelete_mask());`

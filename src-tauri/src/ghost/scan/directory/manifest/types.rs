@@ -34,6 +34,10 @@ pub struct GhostManifest {
     pub(crate) sstp_allow_unspecified_send: bool,
     pub(crate) sstp_always_translate: bool,
     pub(crate) install_accept: Option<String>,
+    pub(crate) dont_need_onmousemove: bool,
+    pub(crate) dont_need_bind: bool,
+    pub(crate) dont_need_seriko_talk: bool,
+    pub(crate) name_allowoverride: bool,
 }
 
 #[allow(dead_code)]
@@ -127,5 +131,17 @@ impl GhostManifest {
     }
     pub fn install_accept(&self) -> Option<&str> {
         self.install_accept.as_deref()
+    }
+    pub fn dont_need_onmousemove(&self) -> bool {
+        self.dont_need_onmousemove
+    }
+    pub fn dont_need_bind(&self) -> bool {
+        self.dont_need_bind
+    }
+    pub fn dont_need_seriko_talk(&self) -> bool {
+        self.dont_need_seriko_talk
+    }
+    pub fn name_allowoverride(&self) -> bool {
+        self.name_allowoverride
     }
 }

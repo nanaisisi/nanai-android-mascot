@@ -299,6 +299,30 @@ export {
 	updateBalloonWindowScale,
 };
 
+let registeredShortcutHandler: ((e: KeyboardEvent) => void) | null = null;
+
+/**
+ * バルーンウィンドウ内のキーボードショートカット処理 (`Ctrl+Shift+F10` でバルーン位置初期化)
+ */
+export function handleBalloonWindowKeydown(e: KeyboardEvent): boolean {
+	const key = typeof e?.key === "string" ? e.key.toLowerCase() : "";
+	if (
+		e?.ctrlKey &&
+		e?.shiftKey &&
+		!e?.altKey &&
+		!e?.metaKey &&
+		!e?.repeat &&
+		key === "f10"
+	) {
+		e.preventDefault?.();
+		if (isTauriAvailable()) {
+			void invoke("reset_balloon_positions").catch(() => {});
+		}
+		return true;
+	}
+	return false;
+}
+
 export async function applyBalloonDescript(
 	theme: string,
 	balloonId: number | null = currentBalloonId,
@@ -377,6 +401,22 @@ export function initBalloonWindow() {
 		},
 	});
 
+	if (
+		typeof document !== "undefined" &&
+		typeof document.addEventListener === "function"
+	) {
+		if (
+			registeredShortcutHandler &&
+			typeof document.removeEventListener === "function"
+		) {
+			document.removeEventListener("keydown", registeredShortcutHandler);
+		}
+		registeredShortcutHandler = (e: KeyboardEvent) => {
+			handleBalloonWindowKeydown(e);
+		};
+		document.addEventListener("keydown", registeredShortcutHandler);
+	}
+
 	if (!isTauriAvailable()) return;
 
 	void listen(`update-balloon-content-${scopeId}`, (event: unknown) => {
@@ -386,9 +426,11 @@ export function initBalloonWindow() {
 				theme?: string;
 				balloonId?: number | null;
 				side?: BalloonSide;
+				isSstp?: boolean;
+				sstp?: boolean;
 			};
 		};
-		const { html, theme, balloonId, side } = ev.payload || {};
+		const { html, theme, balloonId, side, isSstp, sstp } = ev.payload || {};
 		const hasTheme = typeof theme === "string" && theme.length > 0;
 		const hasBalloonId = typeof balloonId === "number" || balloonId === null;
 		const hasSide = isValidBalloonSide(side);
@@ -411,6 +453,7 @@ export function initBalloonWindow() {
 		const targetText = document.getElementById("balloon-text");
 		if (targetText && html !== undefined) {
 			if (isBalloonHtmlBlank(html)) {
+				setBalloonMarkerVisible(balloonBox, "sstp-marker", false);
 				targetText.innerHTML = "";
 				targetText.scrollTop = 0;
 				if (balloonBox?.style) {
@@ -433,6 +476,13 @@ export function initBalloonWindow() {
 					scopeId,
 				}).catch(() => {});
 			} else {
+				if (isSstp !== undefined || sstp !== undefined) {
+					setBalloonMarkerVisible(
+						balloonBox,
+						"sstp-marker",
+						Boolean(isSstp ?? sstp),
+					);
+				}
 				if (balloonBox?.style && balloonBox.style.display === "none") {
 					balloonBox.style.display = "";
 				}
@@ -508,6 +558,25 @@ export function initBalloonWindow() {
 		}
 	});
 
+	function setBalloonMarkerVisible(
+		balloonBox: HTMLElement | null,
+		className: string,
+		visible: boolean,
+	): void {
+		if (!balloonBox) return;
+		const existing = balloonBox.querySelector(`.${className}`);
+		if (visible) {
+			if (!existing) {
+				const marker = document.createElement("div");
+				marker.className = className;
+				marker.setAttribute("aria-hidden", "true");
+				balloonBox.appendChild(marker);
+			}
+		} else if (existing) {
+			existing.remove();
+		}
+	}
+
 	void listen("balloon-scale-changed", (event: unknown) => {
 		const ev = event as {
 			payload?: { userScale?: number; scale?: number } | number;
@@ -530,6 +599,18 @@ export function initBalloonWindow() {
 				);
 			}
 		}
+	});
+
+	void listen("balloon-sstp-state", (event: unknown) => {
+		const ev = event as { payload?: { active?: boolean; visible?: boolean } };
+		const visible = Boolean(ev.payload?.visible ?? ev.payload?.active);
+		setBalloonMarkerVisible(balloonBox, "sstp-marker", visible);
+	});
+
+	void listen("balloon-online-state", (event: unknown) => {
+		const ev = event as { payload?: { active?: boolean; visible?: boolean } };
+		const active = Boolean(ev.payload?.active ?? ev.payload?.visible);
+		setBalloonMarkerVisible(balloonBox, "online-marker", active);
 	});
 
 	void emit("balloon-ready", { scopeId });

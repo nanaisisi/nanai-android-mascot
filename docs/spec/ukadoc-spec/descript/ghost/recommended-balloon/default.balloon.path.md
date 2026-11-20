@@ -6,10 +6,10 @@
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` においてゴーストの `descript.txt` 内の `default.balloon.path` キーをパースし、`GhostInfo.default_balloon_path` へ格納・利用する実装が行われている。
+`src-tauri/src/ghost/scan/directory.rs` 等においてゴーストの `descript.txt` 内の `default.balloon.path` キーをパースし、`GhostInfo.default_balloon_path` へ格納・利用する実装が完全に行われている。
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive/postprocess.rs:119` `.and_then(|m| m.get("default.balloon.path").cloned());`
-- `src-tauri/src/common/models.rs:50` `/// [default.balloon.path,パス]:`
-- `src-tauri/src/ghost/scan/directory/manifest.rs:109` `.and_then(|m| m.get("default.balloon.path").cloned());`
+- `src-tauri/src/commands/install/archive/postprocess.rs:136` `.and_then(|m| m.get("default.balloon.path").cloned());`
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs:79` `.and_then(|m| m.get("default.balloon.path").cloned());`
+- `src-tauri/src/shiori/property/evaluator/mod.rs:70` `"default.balloon.path" => {`

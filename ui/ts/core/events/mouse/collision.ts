@@ -116,13 +116,12 @@ export function getCollisionInfo(
 	}
 
 	const inputRect = rect as Partial<CollisionRectLike> | null | undefined;
+	const resolvedDomRect = resolveDomFallbackRect(scopeId);
 	const targetRect = hasPositiveSize(inputRect)
 		? inputRect
-		: (resolveDomFallbackRect(scopeId) ?? rect);
-
-	if (!targetRect) {
-		return { name: "", canvasX: 0, canvasY: 0 };
-	}
+		: hasPositiveSize(resolvedDomRect)
+			? resolvedDomRect
+			: { left: 0, top: 0, width: 200, height: 400 };
 
 	return app.surfaceManager.detectCollision(
 		clientX,

@@ -1,5 +1,10 @@
 import { LONG_PRESS_DELAY } from "./constants.js";
 
+export interface LongPressOptions {
+	delay?: number;
+	onTrigger?: () => void;
+}
+
 /**
  * 長押し（Long Press）タイマーの管理コントローラー
  *
@@ -14,11 +19,11 @@ import { LONG_PRESS_DELAY } from "./constants.js";
  *   cleanup: () => void
  * }}
  */
-export function createLongPressController(options = {}) {
+export function createLongPressController(options: LongPressOptions = {}) {
 	const delay = options.delay ?? LONG_PRESS_DELAY;
 	const onTrigger = options.onTrigger;
 
-	let timer: string | number | NodeJS.Timeout | null | undefined = null;
+	let timer: ReturnType<typeof setTimeout> | null = null;
 	let triggered = false;
 
 	const cancel = () => {
@@ -28,7 +33,7 @@ export function createLongPressController(options = {}) {
 		}
 	};
 
-	const start = (canTrigger: () => unknown) => {
+	const start = (canTrigger?: () => unknown) => {
 		cancel();
 		triggered = false;
 		timer = setTimeout(() => {

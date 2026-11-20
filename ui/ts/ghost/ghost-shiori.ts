@@ -67,6 +67,12 @@ export const ghostShioriMethods = {
 				} | null;
 				const prevGhost = this._previousGhostName || "";
 				let bootRes: ShioriResponse = null;
+				const ghostKey = `ghost_first_boot_${ghost?.name || "default"}`;
+				let isFirstBoot = false;
+				try {
+					isFirstBoot = !localStorage.getItem(ghostKey);
+				} catch (_) {}
+
 				if (prevGhost && prevGhost !== ghost?.name) {
 					frontendLog(`👻 [Init step 4a] sending OnGhostChanged`);
 					const res = await this.sendShioriEvent("OnGhostChanged", [
@@ -75,9 +81,21 @@ export const ghostShioriMethods = {
 						prevGhost,
 					]);
 					bootRes = res as ShioriResponse;
+				} else if (isFirstBoot) {
+					frontendLog(`👻 [Init step 4a] sending OnFirstBoot (UKADOC Spec)`);
+					const vanishCount = String(
+						(ghost as unknown as { vanishCount?: string })?.vanishCount ?? "0",
+					);
+					const res = await this.sendShioriEvent("OnFirstBoot", [vanishCount]);
+					bootRes = res as ShioriResponse;
+					try {
+						localStorage.setItem(ghostKey, "done");
+					} catch (_) {}
 				}
+
+				// UKADOC OnFirstBoot.md 規格: スクリプトが返されなかった (204) 場合、続けて OnBoot を発生させる
 				if (!bootRes || bootRes.status === 204 || !bootRes.value) {
-					frontendLog(`👻 [Init step 4b] sending OnBoot`);
+					frontendLog(`👻 [Init step 4b] sending OnBoot (Fallback on 204)`);
 					const res = await this.sendShioriEvent("OnBoot");
 					bootRes = res as ShioriResponse;
 				}
@@ -101,8 +119,16 @@ export const ghostShioriMethods = {
 					);
 					const appInst =
 						this.app ||
-						(globalThis as any).mascotApp ||
-						(window as any).app ||
+						(
+							globalThis as {
+								mascotApp?: GhostShioriContext;
+							}
+						).mascotApp ||
+						(
+							window as {
+								app?: GhostShioriContext;
+							}
+						).app ||
 						this;
 					if (typeof appInst?.playSakuraScript === "function") {
 						appInst.playSakuraScript(scriptText);
@@ -162,9 +188,6 @@ export const ghostShioriMethods = {
 
 		this._secondTimerId = setInterval(async () => {
 			if (this._secondSending) return;
-			if (this.app?.sakuraPlayer?.isPlaying) {
-				return;
-			}
 			this._secondSending = true;
 			this.uptimeSeconds = (this.uptimeSeconds || 0) + 1;
 			const isSpeaking = this.app?.sakuraPlayer?.isPlaying ? 1 : 0;

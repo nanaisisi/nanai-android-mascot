@@ -6,9 +6,9 @@
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `shiori.encoding` キーをパース・参照する実装が行われている。
+`src-tauri/src/ghost/scan/directory/manifest/parser.rs` および SHIORI プロパティ評価系において `shiori.encoding` のパースおよび文字コード変換参照が完全実装済み。
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory/manifest.rs:151` `.and_then(|m| m.get("shiori.encoding").cloned());`
-- `src-tauri/src/shiori/property/tests.rs:21` `assert_eq!(evaluate_property_query("shiori.encoding"), "UTF-8");`
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs:121` `.and_then(|m| m.get("shiori.encoding").cloned());`
+- `src-tauri/src/shiori/property/tests.rs:35` `assert_eq!(evaluate_property_query("shiori.encoding"), "UTF-8");`

@@ -1,6 +1,11 @@
+import type { NanaiAndroidMascotApp } from "../../main.js";
 import { AppConfig } from "../core/config.js";
 import { emit, invoke, isTauriAvailable } from "../core/tauri-helper.js";
 import { dressupMenuPayload } from "../surface/bind-menu.js";
+
+type MenuAppContext = NanaiAndroidMascotApp & {
+	cachedMenuCaptions?: Record<string, string>;
+};
 
 /** メニュー/クイックパネル関連メソッド (NanaiAndroidMascotApp に mixin) */
 export const menuMethods = {
@@ -9,9 +14,14 @@ export const menuMethods = {
 		screenY: number | null = null,
 		scope: number = 0,
 	) {
+		const app = this as unknown as MenuAppContext;
 		if (isTauriAvailable()) {
-			const sX = (globalThis as unknown).screenX ?? 0;
-			const sY = (globalThis as unknown).screenY ?? 0;
+			const winCoords = globalThis as unknown as {
+				screenX?: number;
+				screenY?: number;
+			};
+			const sX = winCoords.screenX ?? 0;
+			const sY = winCoords.screenY ?? 0;
 			const posX = screenX !== null ? screenX : sX + 200;
 			const posY = screenY !== null ? screenY : sY + 100;
 
@@ -22,50 +32,33 @@ export const menuMethods = {
 					scope,
 				},
 			})
-				.then(() =>
-					(
-						this as unknown as import("../../main.js").NanaiAndroidMascotApp
-					).syncMenuGhosts(scope),
-				)
+				.then(() => app.syncMenuGhosts(scope))
 				.catch((err) => {
 					console.warn(
 						"show_menu_window failed, fallback to toggleHtmlMenu:",
 						err,
 					);
-					(
-						this as unknown as import("../../main.js").NanaiAndroidMascotApp
-					).toggleHtmlMenu(scope);
+					app.toggleHtmlMenu(scope);
 				});
 			return;
 		}
-		(
-			this as unknown as import("../../main.js").NanaiAndroidMascotApp
-		).toggleHtmlMenu(scope);
+		app.toggleHtmlMenu(scope);
 	},
 
 	toggleHtmlMenu(scope: number = 0) {
-		if (
-			!(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
-				.elements.menuContainer
-		)
-			return;
-		const isVisible =
-			(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
-				.elements.menuContainer.style.display !== "none";
+		const app = this as unknown as MenuAppContext;
+		const menuContainer = app.elements.menuContainer;
+		if (!menuContainer) return;
+		const isVisible = menuContainer.style.display !== "none";
 		const nextState = isVisible ? "none" : "block";
-		(
-			this as unknown as import("../../main.js").NanaiAndroidMascotApp
-		).elements.menuContainer.style.display = nextState;
+		menuContainer.style.display = nextState;
 		if (nextState === "block") {
-			(
-				this as unknown as import("../../main.js").NanaiAndroidMascotApp
-			).syncMenuGhosts(scope);
+			app.syncMenuGhosts(scope);
 		}
 	},
 
 	async syncMenuGhosts(scope: number = 0) {
-		const app =
-			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
+		const app = this as unknown as MenuAppContext;
 		const gc = app.ghostController;
 		const sm = app.surfaceManager;
 		const shellNames = gc.shells || ["master"];
@@ -113,7 +106,10 @@ export const menuMethods = {
 			},
 		);
 
-		const dressup = dressupMenuPayload(sm?.shellManifest, sm);
+		const dressup = dressupMenuPayload(
+			sm?.shellManifest,
+			sm as unknown as Parameters<typeof dressupMenuPayload>[1],
+		);
 
 		let recentGhosts: string[] = [];
 		try {
@@ -137,20 +133,9 @@ export const menuMethods = {
 				recentGhosts,
 				captions: app.cachedMenuCaptions || {},
 			});
-			emit(
-				"sync-theme",
-				(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
-					.currentBalloonTheme,
-			);
-			if (
-				(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
-					.availableBalloons
-			) {
-				emit(
-					"sync-balloons",
-					(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
-						.availableBalloons,
-				);
+			emit("sync-theme", app.currentBalloonTheme);
+			if (app.availableBalloons) {
+				emit("sync-balloons", app.availableBalloons);
 			}
 		}
 
@@ -166,9 +151,7 @@ export const menuMethods = {
 					scope,
 					dressup,
 					recentGhosts,
-					captions:
-						(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
-							.cachedMenuCaptions || {},
+					captions: app.cachedMenuCaptions || {},
 				},
 				"*",
 			);
@@ -177,28 +160,22 @@ export const menuMethods = {
 					type: "sync-shells",
 					shells: fullShells,
 					currentShell: currentShellName,
+					currentGhost: gc.currentGhost?.name || gc.currentGhost,
 				},
 				"*",
 			);
 			win.postMessage(
 				{
 					type: "sync-theme",
-					theme: (
-						this as unknown as import("../../main.js").NanaiAndroidMascotApp
-					).currentBalloonTheme,
+					theme: app.currentBalloonTheme,
 				},
 				"*",
 			);
-			if (
-				(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
-					.availableBalloons
-			) {
+			if (app.availableBalloons) {
 				win.postMessage(
 					{
 						type: "sync-balloons",
-						balloons: (
-							this as unknown as import("../../main.js").NanaiAndroidMascotApp
-						).availableBalloons,
+						balloons: app.availableBalloons,
 					},
 					"*",
 				);
@@ -207,44 +184,30 @@ export const menuMethods = {
 	},
 
 	hideMenu() {
+		const app = this as unknown as MenuAppContext;
 		if (isTauriAvailable()) {
 			void invoke("hide_menu_window").catch(() => {});
 		}
-		if (
-			(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
-				.elements.menuContainer
-		) {
-			(
-				this as unknown as import("../../main.js").NanaiAndroidMascotApp
-			).elements.menuContainer.style.display = "none";
+		const menuContainer = app.elements.menuContainer;
+		if (menuContainer) {
+			menuContainer.style.display = "none";
 		}
-		(
-			this as unknown as import("../../main.js").NanaiAndroidMascotApp
-		).hideQuickActionsPanel();
+		app.hideQuickActionsPanel();
 	},
 
 	toggleQuickActionsPanel() {
-		if (
-			!(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
-				.elements.quickActionsPanel
-		)
-			return;
-		const isVisible =
-			(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
-				.elements.quickActionsPanel.style.display !== "none";
-		(
-			this as unknown as import("../../main.js").NanaiAndroidMascotApp
-		).elements.quickActionsPanel.style.display = isVisible ? "none" : "flex";
+		const app = this as unknown as MenuAppContext;
+		const panel = app.elements.quickActionsPanel;
+		if (!panel) return;
+		const isVisible = panel.style.display !== "none";
+		panel.style.display = isVisible ? "none" : "flex";
 	},
 
 	hideQuickActionsPanel() {
-		if (
-			(this as unknown as import("../../main.js").NanaiAndroidMascotApp)
-				.elements.quickActionsPanel
-		) {
-			(
-				this as unknown as import("../../main.js").NanaiAndroidMascotApp
-			).elements.quickActionsPanel.style.display = "none";
+		const app = this as unknown as MenuAppContext;
+		const panel = app.elements.quickActionsPanel;
+		if (panel) {
+			panel.style.display = "none";
 		}
 	},
 };

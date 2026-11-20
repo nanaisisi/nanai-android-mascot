@@ -6,8 +6,10 @@
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `kero.defaulty` キーをパース・参照する実装が行われている。
+`crates/nanai-core/src/descript_parser/types.rs` の `kero_default_pos()` および SHIORI セーフティプロパティ評価系において `kero.defaulty` のパース・参照が完全実装済み。
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property/evaluator/static_rules.rs:46` `"kero.defaultleft" | "kero.defaulttop" | "kero.defaultx" | "kero.defaulty" => "0`
+- `crates/nanai-core/src/descript_parser/types.rs:112` `/// Kero側のデフォルト座標 (`kero.defaultx`, `kero.defaulty`)`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:48` `"kero.defaultleft" | "kero.defaulttop" | "kero.defaultx" | "kero.defaulty" => "0`
+- `crates/nanai-core/src/descript_parser/types.rs:118` `.get("kero.defaulty")`

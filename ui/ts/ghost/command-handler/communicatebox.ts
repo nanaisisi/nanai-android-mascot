@@ -64,8 +64,18 @@ export function openCommunicateBox(
 
 	const submitBtn = document.createElement("button");
 	submitBtn.textContent = "送信";
-	submitBtn.className = "balloon-choice-btn";
+	submitBtn.className = "balloon-choice-btn balloon-ok-btn";
 	submitBtn.style.marginTop = "0";
+
+	const cancelBtn = document.createElement("button");
+	cancelBtn.textContent = "キャンセル";
+	cancelBtn.className = "balloon-choice-btn balloon-cancel-btn";
+	cancelBtn.style.marginTop = "0";
+
+	const modeBtn = document.createElement("button");
+	modeBtn.textContent = "モード";
+	modeBtn.className = "balloon-choice-btn balloon-mode-btn";
+	modeBtn.style.marginTop = "0";
 
 	let timer: number | ReturnType<typeof setTimeout> | null = null;
 	handler.communicateForm = form;
@@ -102,6 +112,16 @@ export function openCommunicateBox(
 		submit();
 	});
 
+	cancelBtn.addEventListener("click", (e: MouseEvent) => {
+		e.stopPropagation();
+		cancel();
+	});
+
+	modeBtn.addEventListener("click", (e: MouseEvent) => {
+		e.stopPropagation();
+		input.focus?.();
+	});
+
 	input.addEventListener("keydown", (e: KeyboardEvent) => {
 		if (e.key === "Enter") {
 			e.stopPropagation();
@@ -114,6 +134,8 @@ export function openCommunicateBox(
 
 	form.appendChild(input);
 	form.appendChild(submitBtn);
+	form.appendChild(cancelBtn);
+	form.appendChild(modeBtn);
 	balloon.appendChild(form);
 	setTimeout(() => input.focus?.(), 50);
 

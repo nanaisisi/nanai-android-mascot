@@ -6,12 +6,13 @@
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `balloon.defaultsurface` キーをパース・参照する実装が行われている。
+`src-tauri/src/ghost/scan/directory/manifest/parser.rs` および `GhostInfo` モデルにおいて `balloon.defaultsurface` キーをパース・参照する実装が完全に行われている。
 
 ## 実装箇所
 
-- `src-tauri/src/common/models.rs:52` `/// [balloon.defaultsurface,数値]:`
-- `src-tauri/src/common/models.rs:54` `/// [sakura.balloon.defaultsurface,数値]:`
-- `src-tauri/src/common/models.rs:56` `/// [kero.balloon.defaultsurface,数値]:`
-- `src-tauri/src/common/models.rs:58` `/// [char*.balloon.defaultsurface,数値]:`
-- `src-tauri/src/ghost/scan/directory/manifest.rs:111` `// [balloon.defaultsurface,数値]: 全身・ベース規定バルーンサーフィス`
+- `crates/nanai-core/src/descript_parser/types.rs:250` `/// [char*.seriko.defaultsurface,数値], [char*.balloon.defaultsurface,数値]: キャラクター別`
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs:82` `m.get("balloon.defaultsurface")`
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs:87` `m.get("sakura.balloon.defaultsurface")`
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs:92` `m.get("kero.balloon.defaultsurface")`
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs:96` `// [balloon.defaultsurface,数値], [sakura.balloon.defaultsurface,数値], [kero.balloo`
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs:99` `// char0.defaultx char0.defaulty char0.defaultleft char0.defaulttop char0.balloo`

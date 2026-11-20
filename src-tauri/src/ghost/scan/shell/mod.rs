@@ -1,7 +1,11 @@
 //! シェル（shell/ 配下）のスキャン
 
+pub mod alias;
 mod bitmap;
+pub mod seriko;
 mod theme;
+
+pub use bitmap::load_shiori_menu_bitmap_data_url;
 
 use crate::common::models::ShellInfo;
 use std::collections::HashMap;

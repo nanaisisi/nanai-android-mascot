@@ -2,7 +2,7 @@
 
 - **規格**: [bang-execute-http-post-URL.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/misc/bang-execute-http-post-URL/) (ukadoc-spec/list/sakura-script/misc/bang-execute-http-post-URL.md)
 - **検索語**: UploadExec
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,6 +10,5 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/command.rs:131` `UploadExec {`
-- `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:74` `callback(SakuraCommand::UploadExec { url, file_path });`
-- `ui/js/ghost/sakura-rust-bridge.js:184` `case "UploadExec":`
+- `crates/ui/src/script/command.rs:145` `UploadExec {`
+- `crates/ui/src/script/parser/brackets/handlers/raiselike/execution.rs:45` `callback(SakuraCommand::UploadExec { url, file_path });`

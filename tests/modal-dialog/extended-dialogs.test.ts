@@ -1,6 +1,13 @@
 import assert from "node:assert/strict";
 import { test, vi } from "vitest";
-import { resetCreatedElements, setupMockDom } from "./helpers.js";
+import type { ModalDialogApp } from "../../ui/ts/ui/renderers/modal-dialog-ui.js";
+import {
+	asMockElement,
+	type MockBalloonContainer,
+	type MockDialogElement,
+	resetCreatedElements,
+	setupMockDom,
+} from "./helpers.js";
 
 setupMockDom();
 
@@ -12,25 +19,31 @@ test("ModalDialogController Cycle 2: passwordinput, textareabox, sliderinput, an
 	vi.useFakeTimers();
 	resetCreatedElements();
 
-	const events = [];
-	const mockApp = {
+	const events: Array<{ ev: string; args: unknown[] }> = [];
+	const balloonText: MockBalloonContainer = {
+		appendChild(child: MockDialogElement) {
+			this.child = child;
+		},
+	};
+	const keroBalloonText: MockBalloonContainer = {
+		appendChild(child: MockDialogElement) {
+			this.child = child;
+		},
+	};
+	const elements: {
+		balloonText: HTMLElement | null;
+		keroBalloonText: HTMLElement | null;
+	} = {
+		balloonText: balloonText as unknown as HTMLElement,
+		keroBalloonText: keroBalloonText as unknown as HTMLElement,
+	};
+	const mockApp: ModalDialogApp = {
 		ghostController: {
-			sendShioriEvent: async (ev, args) => {
+			sendShioriEvent: async (ev: string, args: unknown[] = []) => {
 				events.push({ ev, args });
 			},
 		},
-		elements: {
-			balloonText: {
-				appendChild(child) {
-					this.child = child;
-				},
-			},
-			keroBalloonText: {
-				appendChild(child) {
-					this.child = child;
-				},
-			},
-		},
+		elements,
 	};
 
 	const controller = new ModalDialogController({ app: mockApp });
@@ -43,13 +56,17 @@ test("ModalDialogController Cycle 2: passwordinput, textareabox, sliderinput, an
 		"--placeholder=enter pw",
 		"--reference=refPw",
 	]);
-	const pwForm = mockApp.elements.balloonText.child;
-	const pwInput = pwForm.children.find((c) => c.tagName === "INPUT");
+	const pwForm = balloonText.child as MockDialogElement;
+	const pwInput = pwForm.children.find(
+		(c) => c.tagName === "INPUT",
+	) as MockDialogElement;
 	assert.equal(pwInput.type, "password");
 	assert.equal(pwInput.value, "secret");
 	assert.equal(pwInput.placeholder, "enter pw");
 
-	const pwOkBtn = pwForm.children.find((c) => c.tagName === "BUTTON");
+	const pwOkBtn = pwForm.children.find(
+		(c) => c.tagName === "BUTTON",
+	) as MockDialogElement;
 	pwOkBtn.click();
 	await vi.runAllTimersAsync();
 	assert.ok(
@@ -71,8 +88,10 @@ test("ModalDialogController Cycle 2: passwordinput, textareabox, sliderinput, an
 		"--limit=100",
 		"--timeout=1000",
 	]);
-	const taForm = mockApp.elements.balloonText.child;
-	const taInput = taForm.children.find((c) => c.tagName === "TEXTAREA");
+	const taForm = balloonText.child as MockDialogElement;
+	const taInput = taForm.children.find(
+		(c) => c.tagName === "TEXTAREA",
+	) as MockDialogElement;
 	assert.equal(taInput.value, "line1\nline2\nline3");
 	assert.equal(taInput.placeholder, "desc\nnote\ntip");
 	assert.equal(taInput.maxLength, 100);
@@ -116,9 +135,13 @@ test("ModalDialogController Cycle 2: passwordinput, textareabox, sliderinput, an
 		"90",
 		"--reference=sliderRef",
 	]);
-	const sliderForm = mockApp.elements.balloonText.child;
-	const sliderInput = sliderForm.children.find((c) => c.tagName === "INPUT");
-	const valSpan = sliderForm.children.find((c) => c.tagName === "SPAN");
+	const sliderForm = balloonText.child as MockDialogElement;
+	const sliderInput = sliderForm.children.find(
+		(c) => c.tagName === "INPUT",
+	) as MockDialogElement;
+	const valSpan = sliderForm.children.find(
+		(c) => c.tagName === "SPAN",
+	) as MockDialogElement;
 	assert.equal(sliderInput.type, "range");
 	assert.equal(sliderInput.min, "10");
 	assert.equal(sliderInput.max, "90");
@@ -131,7 +154,9 @@ test("ModalDialogController Cycle 2: passwordinput, textareabox, sliderinput, an
 	assert.equal(valSpan.textContent, "75");
 
 	// submit OK
-	const sliderOkBtn = sliderForm.children.find((c) => c.tagName === "BUTTON");
+	const sliderOkBtn = sliderForm.children.find(
+		(c) => c.tagName === "BUTTON",
+	) as MockDialogElement;
 	sliderOkBtn.click();
 	await vi.runAllTimersAsync();
 	assert.ok(
@@ -147,16 +172,18 @@ test("ModalDialogController Cycle 2: passwordinput, textareabox, sliderinput, an
 
 	// sliderinput with --text option, min/max/default, and Enter key submit
 	events.length = 0;
-	const sliderTextForm = controller.openSliderInput([
-		"SliderText1",
-		"--text=40,10,100",
-		"--reference=sliderRef1",
-		null, // non-string param
-	]);
+	const sliderTextForm = asMockElement(
+		controller.openSliderInput([
+			"SliderText1",
+			"--text=40,10,100",
+			"--reference=sliderRef1",
+			null, // non-string param
+		]),
+	);
 	assert.ok(sliderTextForm);
 	const sliderTextInput = sliderTextForm.children.find(
 		(c) => c.tagName === "INPUT",
-	);
+	) as MockDialogElement;
 	assert.equal(sliderTextInput.value, "40");
 	assert.equal(sliderTextInput.min, "10");
 	assert.equal(sliderTextInput.max, "100");
@@ -178,17 +205,19 @@ test("ModalDialogController Cycle 2: passwordinput, textareabox, sliderinput, an
 
 	// sliderinput with On... ID, --option=noclose, and Escape key cancel
 	events.length = 0;
-	const sliderFormCustom = controller.openSliderInput([
-		"OnSliderCustom",
-		"0",
-		"50",
-		"0",
-		"100",
-		"--option=noclose",
-	]);
+	const sliderFormCustom = asMockElement(
+		controller.openSliderInput([
+			"OnSliderCustom",
+			"0",
+			"50",
+			"0",
+			"100",
+			"--option=noclose",
+		]),
+	);
 	const sliderInputCustom = sliderFormCustom.children.find(
 		(c) => c.tagName === "INPUT",
-	);
+	) as MockDialogElement;
 	// Escape cancel
 	events.length = 0;
 	sliderInputCustom._listeners?.keydown?.({
@@ -220,21 +249,23 @@ test("ModalDialogController Cycle 2: passwordinput, textareabox, sliderinput, an
 	);
 
 	// sliderinput with fallback defaults (NaN inputs)
-	const sliderFormFallback = controller.openSliderInput([
-		"SliderFallback",
-		"--text=invalid,invalid,invalid",
-	]);
+	const sliderFormFallback = asMockElement(
+		controller.openSliderInput([
+			"SliderFallback",
+			"--text=invalid,invalid,invalid",
+		]),
+	);
 	const sliderInputFallback = sliderFormFallback.children.find(
 		(c) => c.tagName === "INPUT",
-	);
+	) as MockDialogElement;
 	assert.equal(sliderInputFallback.min, "0");
 	assert.equal(sliderInputFallback.max, "100");
 
 	// Fail balloon container
-	const savedBalloon = mockApp.elements.balloonText;
-	mockApp.elements.balloonText = null;
+	const savedBalloon = elements.balloonText;
+	elements.balloonText = null;
 	assert.equal(controller.openSliderInput(["FailSlider"]), null);
-	mockApp.elements.balloonText = savedBalloon;
+	elements.balloonText = savedBalloon;
 
 	// 4. Close logic: closeInputBox(__SYSTEM_ALL_INPUT__), closeTextAreaBox, closeDialog
 	controller.openInputBox(["InputA"]);

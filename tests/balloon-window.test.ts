@@ -95,24 +95,41 @@ test("balloon-window covers interactive elements, theme/manifest loading, and Ta
 
 	// 6. Test submodules directly
 	const mockBox = { style: { transform: "", transformOrigin: "" } };
-	const scaleResult = updateBalloonWindowScale(mockBox, 1.25, 0.8);
+	const scaleResult = updateBalloonWindowScale(
+		mockBox as unknown as HTMLElement,
+		1.25,
+		0.8,
+	);
 	assert.strictEqual(scaleResult, 1);
-	const scaleResult2 = updateScaleDirect(mockBox, 1.5, 1.0);
+	const scaleResult2 = updateScaleDirect(
+		mockBox as unknown as HTMLElement,
+		1.5,
+		1.0,
+	);
 	assert.strictEqual(scaleResult2, 1.5);
 	assert.strictEqual(mockBox.style.transform, "scale(1.5)");
 	updateScaleDirect(null, 1.0, 1.0);
 
-	setupInteractiveElements(null, 0);
-	const choiceBtn = {
+	setupInteractiveElements(null as unknown as HTMLElement, 0);
+	const choiceBtn: {
+		getAttribute: () => string;
+		textContent: string;
+		_cb?: (e?: unknown) => void;
+		addEventListener: (_t: unknown, cb: (e?: unknown) => void) => void;
+	} = {
 		getAttribute: () => "choice_direct",
 		textContent: "Direct Choice",
-		addEventListener(_t: unknown, cb: unknown) {
+		addEventListener(_t: unknown, cb: (e?: unknown) => void) {
 			this._cb = cb;
 		},
 	};
-	const anchorLink = {
+	const anchorLink: {
+		getAttribute: () => string;
+		_cb?: (e?: unknown) => void;
+		addEventListener: (_t: unknown, cb: (e?: unknown) => void) => void;
+	} = {
 		getAttribute: () => "anchor_direct",
-		addEventListener(_t: unknown, cb: unknown) {
+		addEventListener(_t: unknown, cb: (e?: unknown) => void) {
 			this._cb = cb;
 		},
 	};
@@ -123,7 +140,7 @@ test("balloon-window covers interactive elements, theme/manifest loading, and Ta
 			return [];
 		},
 	};
-	setupInteractiveDirect(mockText, 1);
+	setupInteractiveDirect(mockText as unknown as HTMLElement, 1);
 	choiceBtn._cb?.({ stopPropagation() {} });
 	anchorLink._cb?.({ stopPropagation() {} });
 
@@ -135,7 +152,7 @@ test("balloon-window covers interactive elements, theme/manifest loading, and Ta
 	assert.ok(loadedChar);
 
 	let callbackDpi = 0;
-	let callbackDontMove = null;
+	let callbackDontMove: unknown = null;
 	const themeRes = await applyBalloonDescript({
 		theme: "ivory",
 		scopeId: 0,
@@ -154,12 +171,12 @@ test("balloon-window covers interactive elements, theme/manifest loading, and Ta
 	let userScaleState = 1.0;
 	const mockGestureBox = {
 		style: { transform: "", transformOrigin: "" },
-		listeners: {},
-		addEventListener(ev: string | number, cb: unknown) {
-			this.listeners[ev] = cb;
+		listeners: {} as Record<string, (e?: unknown) => void>,
+		addEventListener(ev: string | number, cb: (e?: unknown) => void) {
+			this.listeners[String(ev)] = cb;
 		},
 	};
-	setupGesturesDirect(mockGestureBox, {
+	setupGesturesDirect(mockGestureBox as unknown as HTMLElement, {
 		scopeId: 0,
 		getIsBalloonDontMove: () => false,
 		getUserScale: () => userScaleState,
@@ -200,10 +217,15 @@ test("balloon-window covers interactive elements, theme/manifest loading, and Ta
 	mockGestureBox.listeners.touchend({ touches: [] });
 	const pinchRequestEvent = env.emittedEvents.find(
 		(e) =>
-			e.event === "request-balloon-scale-change" && e.payload?.userScale > 1.25,
+			e.event === "request-balloon-scale-change" &&
+			typeof e.payload?.userScale === "number" &&
+			e.payload.userScale > 1.25,
 	);
 	assert.ok(pinchRequestEvent);
-	setupWindowGestures(null, {});
+	setupWindowGestures(
+		null,
+		{} as unknown as Parameters<typeof setupWindowGestures>[1],
+	);
 
 	delete globalThis.__TAURI__;
 	delete globalThis.__TAURI_INTERNALS__;
@@ -484,16 +506,16 @@ test("balloon-window updates scroll on content, invokes resize_balloon_window on
 
 	try {
 		const balloonBox = enhanceMockElement(
-			env.getEl("balloon-box") as Record<string, unknown>,
+			env.getEl("balloon-box") as unknown as Record<string, unknown>,
 		);
 		const balloonText = enhanceMockElement(
-			env.getEl("balloon-text") as Record<string, unknown>,
+			env.getEl("balloon-text") as unknown as Record<string, unknown>,
 		);
 		const arrowUp = enhanceMockElement(
-			env.getEl("balloon-arrow-up") as Record<string, unknown>,
+			env.getEl("balloon-arrow-up") as unknown as Record<string, unknown>,
 		);
 		const arrowDown = enhanceMockElement(
-			env.getEl("balloon-arrow-down") as Record<string, unknown>,
+			env.getEl("balloon-arrow-down") as unknown as Record<string, unknown>,
 		);
 		balloonText.scrollTop = 0;
 		balloonText.clientHeight = 100;
@@ -607,7 +629,7 @@ test("balloon-window updates scroll on content, invokes resize_balloon_window on
 		resizeCalls.length = 0;
 		blockImages = true;
 		await applyBalloonDescript({
-			theme: "nsm",
+			theme: "nam",
 			scopeId: 0,
 			currentUserScale: 1.0,
 		});
@@ -748,7 +770,7 @@ test("balloon-window reloads balloon images when balloonId or side changes under
 			const name = String(req.name ?? "");
 			const file = String(req.file ?? "");
 			imageRequests.push({ name, file });
-			if (name === "nsm" && validFiles.has(file)) {
+			if (name === "nam" && validFiles.has(file)) {
 				return "data:image/svg+xml;base64,svg";
 			}
 			return validFiles.has(file) ? `data:image/png;base64,${file}` : null;
@@ -840,7 +862,7 @@ test("balloon-window reloads balloon images when balloonId or side changes under
 		// SVG theme does not request .pna mask
 		imageRequests.length = 0;
 		await capturedListeners["balloon-theme-changed"]?.({
-			payload: { theme: "nsm", balloonId: null, side: "left" },
+			payload: { theme: "nam", balloonId: null, side: "left" },
 		});
 		await new Promise((r) => setTimeout(r, 40));
 
@@ -967,4 +989,93 @@ test("parseValidRect validrect.right=0 fallback and applyCommunicateBoxPropertie
 	});
 	assert.strictEqual(cbElNoX.style.maxWidth, "calc(100% - 16px)");
 	assert.strictEqual(cbElNoX.style.boxSizing, "border-box");
+});
+
+test("balloon-window binds Ctrl+Shift+F10 to reset_balloon_positions and ignores unrelated modifiers", async () => {
+	const env = setupBalloonMockEnvironment();
+	const internals = (
+		globalThis as unknown as {
+			__TAURI_INTERNALS__: {
+				invoke: (cmd: string, args?: unknown) => Promise<unknown>;
+			};
+		}
+	).__TAURI_INTERNALS__;
+	const origInvoke = internals.invoke;
+	const resetCalls: Array<{ cmd: string; args: unknown }> = [];
+
+	internals.invoke = async (cmd: string, args?: unknown) => {
+		if (cmd === "reset_balloon_positions") {
+			resetCalls.push({ cmd, args });
+			return;
+		}
+		return await origInvoke(cmd, args);
+	};
+
+	try {
+		const { initBalloonWindow, handleBalloonWindowKeydown } = await import(
+			"../ui/ts/ghost/balloon-window.js"
+		);
+		initBalloonWindow();
+		await new Promise((r) => setTimeout(r, 20));
+
+		const keydownListener = env.docListeners.keydown as unknown as (
+			e: unknown,
+		) => void;
+		assert.ok(typeof keydownListener === "function");
+
+		// Ctrl+Shift+F10 triggers reset_balloon_positions and calls preventDefault
+		let prevented = false;
+		keydownListener({
+			key: "F10",
+			ctrlKey: true,
+			shiftKey: true,
+			altKey: false,
+			metaKey: false,
+			preventDefault() {
+				prevented = true;
+			},
+		});
+		assert.strictEqual(prevented, true);
+		assert.strictEqual(resetCalls.length, 1);
+
+		// Lowercase f10 also triggers
+		let preventedLower = false;
+		assert.strictEqual(
+			handleBalloonWindowKeydown({
+				key: "f10",
+				ctrlKey: true,
+				shiftKey: true,
+				preventDefault() {
+					preventedLower = true;
+				},
+			} as unknown as KeyboardEvent),
+			true,
+		);
+		assert.strictEqual(preventedLower, true);
+		assert.strictEqual(resetCalls.length, 2);
+
+		// Unrelated modifiers / missing shift / wrong key / repeat must be ignored
+		const ignoredEvents = [
+			{ key: "F10", ctrlKey: true, shiftKey: true, altKey: true },
+			{ key: "F10", ctrlKey: true, shiftKey: true, metaKey: true },
+			{ key: "F10", ctrlKey: true, shiftKey: false },
+			{ key: "F10", ctrlKey: false, shiftKey: true },
+			{ key: "F10", ctrlKey: true, shiftKey: true, repeat: true },
+			{ key: "F12", ctrlKey: true, shiftKey: true },
+		];
+		for (const ev of ignoredEvents) {
+			let calledPrevent = false;
+			const handled = handleBalloonWindowKeydown({
+				...ev,
+				preventDefault() {
+					calledPrevent = true;
+				},
+			} as unknown as KeyboardEvent);
+			assert.strictEqual(handled, false);
+			assert.strictEqual(calledPrevent, false);
+		}
+		assert.strictEqual(resetCalls.length, 2);
+	} finally {
+		internals.invoke = origInvoke;
+	}
 });

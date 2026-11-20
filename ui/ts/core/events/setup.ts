@@ -1,3 +1,7 @@
+import {
+	type CollisionOverlayController,
+	renderCollisionOverlayForScope,
+} from "../../surface/ghost-surface-dom.js";
 import { showBalloonContextMenu } from "../../ui/balloon-context-menu.js";
 import {
 	emit,
@@ -299,7 +303,7 @@ export const setupMethods = {
 				});
 				return false;
 			};
-			el.addEventListener("contextmenu", handler as EventListener, true);
+			el.addEventListener("contextmenu", handler, true);
 		};
 
 		bindBalloon(
@@ -545,6 +549,18 @@ export const setupMethods = {
 				const cachedSrc = app.ghostController?.currentSurfaces?.get(scopeId);
 				if (cachedSrc) {
 					emit(`update-subchar-image-${scopeId}`, { src: cachedSrc });
+				}
+				const showCollisionArea = Boolean(
+					app.settings?.showCollisionArea ||
+						(app as unknown as { showCollisionArea?: boolean })
+							.showCollisionArea,
+				);
+				if (showCollisionArea) {
+					const controller: CollisionOverlayController =
+						(app.ghostController as unknown as CollisionOverlayController) ?? {
+							app: app as unknown as CollisionOverlayController["app"],
+						};
+					renderCollisionOverlayForScope(controller, scopeId, null, null);
 				}
 			}
 		});

@@ -14,19 +14,34 @@ import {
 	handleExecuteSntpCommand,
 	handleOpenSystemTarget,
 } from "../ui/ts/ghost/command-handler/system/target.js";
+import type { SakuraCommandHandler } from "../ui/ts/ghost/sakura-command-handler.js";
+
+interface TauriInternalsMock {
+	invoke: (cmd: string, args?: unknown) => Promise<unknown>;
+}
+
+const globalWithTauri = globalThis as unknown as {
+	__TAURI_INTERNALS__?: TauriInternalsMock;
+};
 
 describe("Command Handler Plugins & Desktop Coverage", () => {
 	it("plugin.js covers plugin command and timer plugin command with Tauri invoke", async () => {
-		const invoked = [];
-		globalThis.window = globalThis;
-		globalThis.__TAURI_INTERNALS__ = {
-			invoke: async (cmd, args) => {
-				invoked.push({ cmd, args });
+		const invoked: Array<{
+			cmd: string;
+			args: { request: { pluginName: string; eventId: string } };
+		}> = [];
+		globalThis.window = globalThis as unknown as Window & typeof globalThis;
+		globalWithTauri.__TAURI_INTERNALS__ = {
+			invoke: async (cmd: string, args?: unknown) => {
+				invoked.push({
+					cmd,
+					args: args as { request: { pluginName: string; eventId: string } },
+				});
 			},
 		};
 
 		// standard plugin event
-		await handlePluginEvent({}, [
+		await handlePluginEvent({} as unknown as SakuraCommandHandler, [
 			"plugin",
 			"my-plugin",
 			"OnCustomEvent",
@@ -38,7 +53,7 @@ describe("Command Handler Plugins & Desktop Coverage", () => {
 		assert.equal(invoked[0].args.request.pluginName, "my-plugin");
 
 		// timer plugin event
-		await handlePluginEvent({}, [
+		await handlePluginEvent({} as unknown as SakuraCommandHandler, [
 			"timerraise",
 			"1000",
 			"0",
@@ -50,24 +65,31 @@ describe("Command Handler Plugins & Desktop Coverage", () => {
 		assert.equal(invoked[1].args.request.eventId, "OnTimerEvent");
 
 		// invoke failure logs warning
-		globalThis.__TAURI_INTERNALS__.invoke = async () => {
+		globalWithTauri.__TAURI_INTERNALS__.invoke = async () => {
 			throw new Error("plugin invoke fail");
 		};
-		await handlePluginEvent({}, ["plugin", "fail-plugin", "OnFail"]);
+		await handlePluginEvent({} as unknown as SakuraCommandHandler, [
+			"plugin",
+			"fail-plugin",
+			"OnFail",
+		]);
 	});
 
 	it("system/target.js covers biff, sntp, and open targets", async () => {
 		let emailChecked = false;
 		let sntpSent = false;
-		const pathOpened = [];
+		const pathOpened: Array<{ cmd: string; args: { path: string } }> = [];
 		let menuToggled = false;
-		const windowOpened = [];
+		const windowOpened: Array<string | URL | undefined> = [];
 
-		globalThis.window = globalThis;
-		globalThis.open = (url) => windowOpened.push(url);
-		globalThis.__TAURI_INTERNALS__ = {
-			invoke: async (cmd, args) => {
-				pathOpened.push({ cmd, args });
+		globalThis.window = globalThis as unknown as Window & typeof globalThis;
+		globalThis.open = (url?: string | URL) => {
+			windowOpened.push(url);
+			return null;
+		};
+		globalWithTauri.__TAURI_INTERNALS__ = {
+			invoke: async (cmd: string, args?: unknown) => {
+				pathOpened.push({ cmd, args: args as { path: string } });
 			},
 		};
 
@@ -79,7 +101,7 @@ describe("Command Handler Plugins & Desktop Coverage", () => {
 					},
 				},
 				ghostController: {
-					sendShioriEvent: async (_ev, _args) => {
+					sendShioriEvent: async (_ev: string, _args: string[]) => {
 						sntpSent = true;
 					},
 					currentGhost: { path: "/ghost/path" },
@@ -91,12 +113,12 @@ describe("Command Handler Plugins & Desktop Coverage", () => {
 					show: () => {},
 				},
 			},
-		};
+		} as unknown as SakuraCommandHandler;
 
-		await handleBiffCommand(handler);
+		await handleBiffCommand(handler, []);
 		assert.equal(emailChecked, true);
 
-		await handleExecuteSntpCommand(handler);
+		await handleExecuteSntpCommand(handler, []);
 		assert.equal(sntpSent, true);
 
 		// open explorer
@@ -129,13 +151,13 @@ describe("Command Handler Plugins & Desktop Coverage", () => {
 	});
 
 	it("system/desktop.js covers alignment, tray, notifications, and reset position", async () => {
-		let trayIconSet = null;
-		let notificationShown = null;
-		const actionDispatched = [];
+		let trayIconSet: unknown = null;
+		let notificationShown: unknown = null;
+		const actionDispatched: string[] = [];
 
-		globalThis.window = globalThis;
-		globalThis.__TAURI_INTERNALS__ = {
-			invoke: async (cmd, args) => {
+		globalThis.window = globalThis as unknown as Window & typeof globalThis;
+		globalWithTauri.__TAURI_INTERNALS__ = {
+			invoke: async (cmd: string, args?: unknown) => {
 				if (cmd === "set_tray_icon") trayIconSet = args;
 				if (cmd === "show_tray_notification") notificationShown = args;
 			},
@@ -143,9 +165,9 @@ describe("Command Handler Plugins & Desktop Coverage", () => {
 
 		const handler = {
 			app: {
-				dispatchAction: async (action) => actionDispatched.push(action),
+				dispatchAction: async (action: string) => actionDispatched.push(action),
 			},
-		};
+		} as unknown as SakuraCommandHandler;
 
 		// alignment free (returns early)
 		await handleSetAlignmentOnDesktop(handler, [
@@ -168,10 +190,10 @@ describe("Command Handler Plugins & Desktop Coverage", () => {
 		assert.deepEqual(notificationShown, { title: "Title", text: "Text" });
 
 		// reset window and balloon pos
-		await handleExecuteResetWindowPos(handler);
+		await handleExecuteResetWindowPos(handler, []);
 		assert.ok(actionDispatched.includes("reset-shell-position"));
 
-		await handleExecuteResetBalloonPos(handler);
+		await handleExecuteResetBalloonPos(handler, []);
 		assert.ok(actionDispatched.includes("reset-balloon-position"));
 	});
 });

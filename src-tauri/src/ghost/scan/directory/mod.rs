@@ -4,6 +4,7 @@
 
 mod filter;
 pub mod manifest;
+pub mod package_files;
 mod scan;
 mod types;
 

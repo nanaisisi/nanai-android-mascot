@@ -1,4 +1,27 @@
-import { invoke } from "../core/tauri-helper.js";
+import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import type {
+	BalloonMenuItem,
+	DressupMenuPayload,
+	RecentGhostInput,
+} from "./renderers/menu-balloon-dressup-renderer.js";
+import type {
+	MenuGhostInput,
+	MenuShellInput,
+} from "./renderers/menu-ghost-shell-renderer.js";
+
+export interface SubmenuRenderOptions {
+	currentSubmenuType: string;
+	cachedGhosts: MenuGhostInput[];
+	currentGhostName: string | null;
+	cachedShells: MenuShellInput[];
+	currentShellName: string | null;
+	cachedDressup: DressupMenuPayload | null;
+	dressupScope: number;
+	cachedBalloons: BalloonMenuItem[];
+	currentBalloonTheme: string | null;
+	cachedRecentGhosts: RecentGhostInput[];
+	dispatchSubmenuAction: (action: string, payload?: unknown) => void;
+}
 
 /**
  * サブメニューの内容を描画するレンダラ
@@ -15,7 +38,7 @@ export function renderSubmenuContent({
 	currentBalloonTheme,
 	cachedRecentGhosts,
 	dispatchSubmenuAction,
-}) {
+}: SubmenuRenderOptions) {
 	const container = document.getElementById("submenu-content");
 	if (!container) return;
 	container.innerHTML = "";
@@ -29,7 +52,7 @@ export function renderSubmenuContent({
 			container.appendChild(empty);
 			return;
 		}
-		cachedGhosts.forEach((ghostItem: { name: unknown }) => {
+		cachedGhosts.forEach((ghostItem) => {
 			const ghostName =
 				typeof ghostItem === "string" ? ghostItem : ghostItem?.name || "";
 			const isCurrent = !isCall && ghostName === currentGhostName;
@@ -47,7 +70,7 @@ export function renderSubmenuContent({
 		});
 	} else if (currentSubmenuType === "shell") {
 		(cachedShells.length > 0 ? cachedShells : ["master"]).forEach(
-			(shellItem: { name: unknown; display_name: unknown }) => {
+			(shellItem) => {
 				const shellName =
 					typeof shellItem === "string"
 						? shellItem
@@ -99,7 +122,7 @@ export function renderSubmenuContent({
 			}
 		}
 	} else if (currentSubmenuType === "balloon") {
-		const renderBalloons = (balloonsList: unknown[]) => {
+		const renderBalloons = (balloonsList: BalloonMenuItem[]) => {
 			container.innerHTML = "";
 			const activeTheme =
 				currentBalloonTheme ||
@@ -109,7 +132,7 @@ export function renderSubmenuContent({
 				(typeof localStorage !== "undefined"
 					? localStorage.getItem("nanai_balloon_theme")
 					: null) ||
-				"nsm";
+				"nam";
 
 			const currentNorm = String(activeTheme || "")
 				.trim()
@@ -118,13 +141,13 @@ export function renderSubmenuContent({
 			(balloonsList.length > 0
 				? balloonsList
 				: [
-						{ dir_name: "nsm", name: "NAMデフォルト+" },
+						{ dir_name: "nam", name: "NAMデフォルト+" },
 						{
-							dir_name: "nsm_vertical",
+							dir_name: "nam_vertical",
 							name: "NAMデフォルト+(頭上)",
 						},
 					]
-			).forEach((balloonItem: { dir_name: unknown; name: unknown }) => {
+			).forEach((balloonItem) => {
 				const dirName = String(
 					balloonItem.dir_name || balloonItem.name || "",
 				).trim();
@@ -154,7 +177,7 @@ export function renderSubmenuContent({
 				.catch(() => invoke("list_balloons"))
 				.then((res) => {
 					if (Array.isArray(res) && res.length > 0) {
-						renderBalloons(res);
+						renderBalloons(res as BalloonMenuItem[]);
 					} else {
 						renderBalloons([]);
 					}
@@ -171,44 +194,34 @@ export function renderSubmenuContent({
 			container.appendChild(empty);
 			return;
 		}
-		cachedRecentGhosts.forEach(
-			(
-				item: {
-					name: unknown;
-					hasSubmenu: unknown;
-					subitems: string | unknown[];
-					shells: string | unknown[];
-					action: unknown;
-				} | null,
-			) => {
-				const ghostName = typeof item === "string" ? item : item?.name || "";
-				const hasSub =
-					typeof item === "object" &&
-					item !== null &&
-					(item.hasSubmenu ||
-						(item.subitems && item.subitems.length > 0) ||
-						(item.shells && item.shells.length > 0));
+		cachedRecentGhosts.forEach((item) => {
+			const ghostName = typeof item === "string" ? item : item?.name || "";
+			const hasSub =
+				typeof item === "object" &&
+				item !== null &&
+				(item.hasSubmenu ||
+					(item.subitems && item.subitems.length > 0) ||
+					(item.shells && item.shells.length > 0));
 
-				const btn = document.createElement("button");
-				btn.type = "button";
-				btn.className = `menu-item${hasSub ? " has-submenu" : ""}`;
-				if (hasSub) {
-					btn.setAttribute("aria-haspopup", "true");
-				}
-				btn.innerHTML = `<span class="menu-item-indicator"></span><span class="menu-item-label">${ghostName}</span>`;
-				btn.addEventListener("click", () => {
-					const action =
-						typeof item === "object" && item?.action
-							? item.action
-							: "recent-ghost";
-					dispatchSubmenuAction(
-						action,
-						typeof item === "object" ? item : ghostName,
-					);
-				});
-				container.appendChild(btn);
-			},
-		);
+			const btn = document.createElement("button");
+			btn.type = "button";
+			btn.className = `menu-item${hasSub ? " has-submenu" : ""}`;
+			if (hasSub) {
+				btn.setAttribute("aria-haspopup", "true");
+			}
+			btn.innerHTML = `<span class="menu-item-indicator"></span><span class="menu-item-label">${ghostName}</span>`;
+			btn.addEventListener("click", () => {
+				const action =
+					typeof item === "object" && item?.action
+						? item.action
+						: "recent-ghost";
+				dispatchSubmenuAction(
+					action,
+					typeof item === "object" ? item : ghostName,
+				);
+			});
+			container.appendChild(btn);
+		});
 	} else if (
 		currentSubmenuType === "utility" ||
 		currentSubmenuType === "utility-root" ||
@@ -225,12 +238,28 @@ export function renderSubmenuContent({
 			{ action: "updatecheck", label: "本体更新をチェック (U)", shortcut: "" },
 			{ action: "speech-recognition", label: "音声認識", shortcut: "" },
 			{ action: "speech-synthesis", label: "音声合成 (V)", shortcut: "" },
-			{ action: "addressbar", label: "アドレスバー (A)", shortcut: "" },
+			{
+				action: "addressbar",
+				label: "アドレスバー (A)",
+				shortcut: "Ctrl+Shift+U",
+			},
 			{ action: "open-file", label: "ファイルを開く (1)", shortcut: "Ctrl+O" },
 			{
 				action: "open-folder",
 				label: "フォルダを選択する (S)",
-				shortcut: "Ctrl+Shift+U",
+				shortcut: "Ctrl+F",
+			},
+			{
+				action: "script-log",
+				label: "スクリプトログ (L)",
+				shortcut: "Ctrl+L",
+				isDevOnly: true,
+			},
+			{
+				action: "dev-palette",
+				label: "開発用パレット (D)",
+				shortcut: "Ctrl+Shift+D",
+				isDevOnly: true,
 			},
 			{
 				action: "clear-cache",
@@ -261,13 +290,31 @@ export function renderSubmenuContent({
 				shortcut: "Ctrl+Shift+Del",
 			},
 		];
+
+		let isDevMode = isTauriAvailable();
+		try {
+			const saved = localStorage.getItem("nanai-android-mascot-settings");
+			if (saved) {
+				const s = JSON.parse(saved);
+				if (s.developerModeEnabled !== undefined) {
+					isDevMode = Boolean(s.developerModeEnabled);
+				} else if (s.devModeEnabled !== undefined) {
+					isDevMode = Boolean(s.devModeEnabled);
+				}
+			}
+		} catch (_) {}
+
 		utilityItems.forEach((item) => {
+			if (item.isDevOnly && !isDevMode) return;
+
 			const btn = document.createElement("button");
 			btn.type = "button";
 			btn.className = "menu-item";
 			btn.innerHTML = `<span class="menu-item-indicator"></span><span class="menu-item-label">${item.label}</span>${item.shortcut ? `<span style="opacity:0.6; font-size:0.75rem; margin-left:8px;">${item.shortcut}</span>` : ""}`;
 			btn.addEventListener("click", () => {
-				dispatchSubmenuAction(item.action);
+				if (item.action) {
+					dispatchSubmenuAction(item.action);
+				}
 			});
 			container.appendChild(btn);
 		});
@@ -353,6 +400,81 @@ export function renderSubmenuContent({
 			btn.addEventListener("click", () => {
 				dispatchSubmenuAction(`balloon-scale-${pct}`);
 			});
+			container.appendChild(btn);
+		});
+	} else if (
+		currentSubmenuType === "settings" ||
+		currentSubmenuType === "settings-root" ||
+		currentSubmenuType === "preferences"
+	) {
+		const settingsItems = [
+			{ action: "settings-main", label: "本体設定...(P)" },
+			{ action: "settings-ghost", label: "ゴーストごとの設定...(G)" },
+			{ type: "separator" },
+			{
+				action: "window-mode-all",
+				label: "ウインドウモード - 全ゴースト",
+				checked: true,
+			},
+			{
+				action: "window-mode-per-ghost",
+				label: "ウインドウモード - ゴーストごと",
+				checked: false,
+			},
+			{ action: "toggle-proxy", label: "プロキシサーバを有効にする(X)" },
+			{ action: "charset-settings", label: "文字コード設定(C)" },
+			{ type: "separator" },
+			{
+				label: "[旧互換機能]",
+				isHeader: true,
+				disabled: true,
+			},
+			{
+				action: "talk-interval-ghost-choice",
+				label: "　話すタイミングをゴースト任せ(L)",
+				checked: true,
+			},
+			{
+				action: "legacy-spec-support",
+				label: "　旧仕様サポート(0)",
+				disabled: true,
+			},
+		];
+
+		settingsItems.forEach((item) => {
+			if (item.type === "separator") {
+				const separator = document.createElement("hr");
+				separator.className = "menu-separator";
+				container.appendChild(separator);
+				return;
+			}
+			if (item.isHeader) {
+				const header = document.createElement("div");
+				header.className = "menu-item is-disabled";
+				header.style.cssText =
+					"font-weight: bold; opacity: 0.5; color: #888888; font-size: 11px; padding: 2px 8px; cursor: not-allowed; user-select: none;";
+				header.textContent = item.label;
+				container.appendChild(header);
+				return;
+			}
+
+			const btn = document.createElement("button");
+			btn.type = "button";
+			const isDisabled = Boolean(item.disabled);
+			btn.disabled = isDisabled;
+			btn.className = `menu-item${item.checked ? " is-current" : ""}${isDisabled ? " is-disabled" : ""}`;
+			if (isDisabled) {
+				btn.style.cssText =
+					"opacity: 0.5; color: #888888; cursor: not-allowed;";
+			}
+			btn.innerHTML = `<span class="menu-item-indicator">${item.checked ? "✓" : ""}</span><span class="menu-item-label">${item.label}</span>`;
+			if (!isDisabled) {
+				btn.addEventListener("click", () => {
+					if (item.action) {
+						dispatchSubmenuAction(item.action);
+					}
+				});
+			}
 			container.appendChild(btn);
 		});
 	}

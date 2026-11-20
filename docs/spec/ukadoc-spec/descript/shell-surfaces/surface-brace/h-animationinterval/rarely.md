@@ -2,13 +2,13 @@
 
 - **規格**: [rarely.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/rarely/) (ukadoc-spec/descript/shell-surfaces/surface-brace/h-animationinterval/rarely.md)
 - **検索語**: rarely
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 
 ## 実装箇所
 
-- `crates/ui/src/surfaces/types/draw.rs:66` `assert_eq!(Interval::parse("rarely"), Interval::Rarely);`
-- `crates/ui/src/surfaces/types/draw.rs:224` `/// `rarely`：まれに発火（より長い乱数周期）`
-- `crates/ui/src/surfaces/types/draw.rs:261` `"rarely" => Self::Rarely,`
-- `crates/ui/src/animation/timeline.rs:74` `/// 乱数周期系（sometimes / rarely / random,N）の1秒あたり発火確率`
-- `crates/ui/src/animation/tests.rs:62` `assert!((Interval::parse("rarely").fire_per_second().unwrap() - 1f64 / 30f64).ab`
+- `crates/nanai-core/src/seriko_animation.rs:41` `pub(crate) interval: String, // sometimes, rarely, always, runagain, bind, never`
+- `crates/nanai-surface/src/types/draw/interval.rs:72` `"rarely" => return Self::Rarely,`
+- `crates/nanai-surface/src/types/draw/interval.rs:94` `"rarely" => Self::Rarely,`
+- `crates/nanai-surface/src/types/draw/tests.rs:7` `assert_eq!(Interval::parse("rarely"), Interval::Rarely);`
+- `crates/nanai-surface/src/types/draw/tests.rs:21` `assert_eq!(Interval::parse("bind+rarely"), Interval::Rarely);`

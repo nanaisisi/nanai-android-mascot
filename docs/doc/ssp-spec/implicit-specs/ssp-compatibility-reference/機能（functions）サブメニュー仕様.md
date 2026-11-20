@@ -22,4 +22,10 @@ SSP の「機能」項目（`functions/index.md`）に対する互換・再実�
 - **音声認識 & 音声合成**:
   - Web Speech API (`SpeechRecognition` / `SpeechSynthesis`) を用いて、ブラウザ／WebView ネイティブで動作。
 
+### 3.3 開発者用機能の配置順序（Developer Mode Items）
+
+- 開発モード有効時（`developerModeEnabled`）に `機能 (F)`（`utility`）サブメニューへ追加される開発者用項目は、末尾ではなく **`フォルダを選択する (S)`（`open-folder`）の直下・`ゴーストキャッシュ開放 (G)`（`clear-cache`）の前** に配置する。
+  1. `スクリプトログ (L)`（`script-log`, `Ctrl+L`）
+  2. `開発用パレット (D)`（`dev-palette`, `Ctrl+Shift+D`）
+
 ---

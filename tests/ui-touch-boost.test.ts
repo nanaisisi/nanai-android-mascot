@@ -16,13 +16,17 @@ describe("UI Renderers and Touch Bridge Coverage Boost", () => {
 			},
 		};
 
+		const textareaListeners: Record<string, (ev: unknown) => void> = {};
 		const textareaMock = {
 			value: "test",
-			addEventListener: (t: string | number, cb: unknown) => {
-				textareaMock[t] = cb;
+			addEventListener: (t: string | number, cb: (ev: unknown) => void) => {
+				textareaListeners[String(t)] = cb;
 			},
-			dispatchEvent: (ev: { type: string | number }) => {
-				if (textareaMock[ev.type]) textareaMock[ev.type](ev);
+			dispatchEvent: (ev: {
+				type: string | number;
+				[key: string]: unknown;
+			}) => {
+				textareaListeners[String(ev.type)]?.(ev);
 			},
 			scrollIntoView: () => {},
 		};
@@ -41,8 +45,10 @@ describe("UI Renderers and Touch Bridge Coverage Boost", () => {
 		const origDoc = globalThis.document;
 		globalThis.document = {
 			createElement: () => formMock,
-			createDocumentFragment: () => ({ appendChild: () => {} }),
-		};
+			createDocumentFragment: () => ({
+				appendChild: <T extends Node>(node: T) => node,
+			}),
+		} as unknown as Document;
 
 		const app = {
 			elements: {
@@ -88,8 +94,11 @@ describe("UI Renderers and Touch Bridge Coverage Boost", () => {
 	});
 
 	it("OverlayManager covers error catches and reset state", async () => {
-		globalThis.window = globalThis;
-		globalThis.__TAURI_INTERNALS__ = {
+		globalThis.window = globalThis as unknown as Window & typeof globalThis;
+		const tauriGlobal = globalThis as unknown as {
+			__TAURI_INTERNALS__?: { invoke: () => Promise<unknown> };
+		};
+		tauriGlobal.__TAURI_INTERNALS__ = {
 			invoke: async () => {
 				throw new Error("mock invoke error");
 			},
@@ -121,7 +130,7 @@ describe("UI Renderers and Touch Bridge Coverage Boost", () => {
 		assert.equal(overlay.overlayTransparency, 1.0);
 		assert.equal(overlay.isClickThrough, false);
 
-		delete globalThis.__TAURI_INTERNALS__;
+		delete tauriGlobal.__TAURI_INTERNALS__;
 	});
 
 	it("DockManager covers gesture unbind error handling", () => {

@@ -6,20 +6,25 @@
 
 import { ANDROID_EVENTS, ANDROID_LIFECYCLE_STATES } from "./constants.js";
 
+export interface LifecycleRecognizer {
+	reset?: () => void;
+}
+
+export interface LifecycleContext {
+	setLifecycleState: (state: string) => void;
+	getGestureRecognizer: () => LifecycleRecognizer | null;
+	dispatch: (eventName: string, data: unknown) => void;
+}
+
 /**
  * ライフサイクルイベント（visibilitychange, freeze, pagehide）のリスナーを設定
- * @param {object} context
- * @param {(state: string) => void} context.setLifecycleState ライフサイクル状態更新関数
- * @param {() => object|null} context.getGestureRecognizer 連携するGestureRecognizer取得関数
- * @param {(eventName: string, data: unknown) => void} context.dispatch イベントディスパッチ関数
+ * @param {LifecycleContext} context
  * @returns {Array<() => void>} クリーンアップ関数の配列
  */
-export function setupVisibilityListeners(context: {
-	setLifecycleState: unknown;
-	getGestureRecognizer: unknown;
-	dispatch: unknown;
-}) {
-	const cleanupFns = [];
+export function setupVisibilityListeners(
+	context: LifecycleContext,
+): Array<() => void> {
+	const cleanupFns: Array<() => void> = [];
 	const { setLifecycleState, getGestureRecognizer, dispatch } = context;
 
 	if (
@@ -79,7 +84,7 @@ export function setupVisibilityListeners(context: {
 		typeof window !== "undefined" &&
 		typeof window.addEventListener === "function"
 	) {
-		const onPageHide = (e: { persisted: unknown }) => {
+		const onPageHide = (e: PageTransitionEvent) => {
 			setLifecycleState(ANDROID_LIFECYCLE_STATES.STOPPED);
 			const recognizer = getGestureRecognizer();
 			if (recognizer && typeof recognizer.reset === "function") {

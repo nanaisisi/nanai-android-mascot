@@ -107,9 +107,8 @@ pub fn evaluate_system_os(sub: &str) -> String {
                 .to_string()
         }
         "timezone.offset" => {
-            use chrono::Offset;
-            let now = chrono::Local::now();
-            let offset_secs = now.offset().fix().local_minus_utc();
+            let now = jiff::ZonedDateTime::now();
+            let offset_secs = now.offset().seconds();
             let offset_mins = offset_secs / 60;
             (-offset_mins).to_string()
         }
@@ -121,7 +120,7 @@ pub fn evaluate_system_os(sub: &str) -> String {
             }
         }
         "uptime" => get_system_uptime_secs().to_string(),
-        "unixtime" => chrono::Utc::now().timestamp().to_string(),
+        "unixtime" => jiff::Timestamp::now().as_second().to_string(),
         "idletime" => get_user_idle_time_secs().to_string(),
         "dnd.mode" => get_system_dnd_mode(),
         _ => std::env::consts::OS.to_string(),

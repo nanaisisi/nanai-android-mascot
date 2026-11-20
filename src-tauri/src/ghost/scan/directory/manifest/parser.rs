@@ -93,6 +93,10 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
             .and_then(|v| v.trim().parse::<i32>().ok())
     });
 
+    // [balloon.defaultsurface,数値], [sakura.balloon.defaultsurface,数値], [kero.balloon.defaultsurface,数値], [char*.balloon.defaultsurface,数値]:
+    // [char*.defaultx,X座標], [char*.defaulty,Y座標], [char*.defaultleft,X座標], [char*.defaulttop,Y座標]:
+    // [char*.seriko.alignmenttodesktop,位置情報], [char*.seriko.defaultsurface,数値], [char*.name,名前]:
+    // char0.defaultx char0.defaulty char0.defaultleft char0.defaulttop char0.balloon.defaultsurface char0.seriko.alignmenttodesktop char0.seriko.defaultsurface char1.name
     let mut char_balloon_defaultsurfaces = BTreeMap::new();
     if let Some(ref m) = meta_map {
         for (k, v) in m.iter() {
@@ -159,6 +163,30 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
             .or_else(|| m.get("accept").cloned())
     });
 
+    let dont_need_onmousemove = meta_map
+        .as_ref()
+        .and_then(|m| m.get("don't need onmousemove"))
+        .map(|v| v.trim() == "1")
+        .unwrap_or(false);
+
+    let dont_need_bind = meta_map
+        .as_ref()
+        .and_then(|m| m.get("don't need bind"))
+        .map(|v| v.trim() == "1")
+        .unwrap_or(false);
+
+    let dont_need_seriko_talk = meta_map
+        .as_ref()
+        .and_then(|m| m.get("don't need seriko talk"))
+        .map(|v| v.trim() == "1")
+        .unwrap_or(false);
+
+    let name_allowoverride = meta_map
+        .as_ref()
+        .and_then(|m| m.get("name.allowoverride"))
+        .map(|v| v.trim() != "0")
+        .unwrap_or(true);
+
     GhostManifest {
         display_name,
         version,
@@ -190,5 +218,9 @@ pub fn parse_ghost_manifest(path: &Path, dir_name: &str) -> GhostManifest {
         sstp_allow_unspecified_send,
         sstp_always_translate,
         install_accept,
+        dont_need_onmousemove,
+        dont_need_bind,
+        dont_need_seriko_talk,
+        name_allowoverride,
     }
 }

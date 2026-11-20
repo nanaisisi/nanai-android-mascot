@@ -17,6 +17,7 @@ import {
 	getShellManifest,
 	manifestToSurfaceData,
 	parseSurfacesTextWithRust,
+	type RawShellManifest,
 } from "./shell-manifest.js";
 import {
 	type CollisionAreaRecord,
@@ -26,7 +27,10 @@ import {
 	surfaceCollisionMethods,
 } from "./surface-collision.js";
 import {
+	type ComposedLayerInput,
 	composeSurfaceElements,
+	drawComposedLayer,
+	loadLayerImage,
 	processChromaKey,
 } from "./surface-compositor.js";
 
@@ -173,6 +177,23 @@ function normalizeParsedCollision(
 	return normalizeCollisionRecord(raw) ?? (raw as CollisionAreaRecord);
 }
 
+export interface ParsedSurfacesTxtData {
+	collisions: Record<string, CollisionAreaRecord[]>;
+	elements: Record<string, SurfaceElementRecord[]>;
+	animations: Record<string, SurfaceAnimationRecord[]>;
+	points: Record<string, Record<string, unknown>>;
+	balloonOffsets: Record<string, Record<string, { x?: number; y?: number }>>;
+	aliases: Record<string, number[]>;
+	keroAliases: Record<string, number[]>;
+	charAliases: Record<number, Record<string, number[]>>;
+	cursors: Record<string, CursorDefinitionRecord[]>;
+	tooltips: Record<string, Record<string, string>>;
+	names: Record<string, string>;
+	iconRects: Record<string, number[]>;
+	collisionSort: string;
+	animationSort: string;
+}
+
 function preprocessSurfacesTxtForWasm(text: string): string {
 	return text
 		.replace(/\r\n?/g, "\n")
@@ -186,19 +207,24 @@ function preprocessSurfacesTxtForWasm(text: string): string {
 				plainSpec: string | undefined,
 				brace: string | undefined,
 			) => {
-				const spec = (bracketSpec ?? plainSpec ?? "").trim();
-				if (!spec) return _m;
+				const rawSpec = (bracketSpec ?? plainSpec ?? "").trim();
+				if (!rawSpec) return _m;
+				const spec = rawSpec.includes("!")
+					? expandRangeValues(rawSpec).join(",") || rawSpec
+					: rawSpec;
 				const header = `${indent}surface${append ?? ""}${spec}`;
 				return brace ? `${header}\n{` : header;
 			},
 		);
 }
 
+export { expandRangeValues as expandSurfaceRange };
+
 function parseCollisionFallbackLine(
 	trimmed: string,
 	currentSurfaces: string[],
 	collisions: Record<string, CollisionAreaRecord[]>,
-) {
+): void {
 	const lower = trimmed.toLowerCase();
 	const parts = trimmed.split(",").map((s) => s.trim());
 	let rec: CollisionAreaRecord | null = null;
@@ -287,7 +313,14 @@ function parseCollisionFallbackLine(
 	}
 }
 
-function parseSurfacesTxtFallback(text: string) {
+/**
+ * surfaces.txt の拡張メタデータ（alias / cursor / tooltip / point.* 等）を抽出し、
+ * WASM/Rust 非利用時のみコア要素・当たり判定のフォールバック解析も同パスで実行する。
+ */
+function scanSurfacesTxt(
+	text: string,
+	includeCore: boolean,
+): ParsedSurfacesTxtData {
 	const collisions: Record<string, CollisionAreaRecord[]> = {};
 	const elements: Record<string, SurfaceElementRecord[]> = {};
 	const animations: Record<string, SurfaceAnimationRecord[]> = {};
@@ -428,8 +461,10 @@ function parseSurfacesTxtFallback(text: string) {
 			blockType = "surface";
 			const rangeSpec = surfaceMatch[1] ?? surfaceMatch[2] ?? "";
 			currentSurfaces = expandRangeValues(rangeSpec);
-			for (const s of currentSurfaces) {
-				if (!collisions[s]) collisions[s] = [];
+			if (includeCore) {
+				for (const s of currentSurfaces) {
+					if (!collisions[s]) collisions[s] = [];
+				}
 			}
 			continue;
 		}
@@ -450,9 +485,9 @@ function parseSurfacesTxtFallback(text: string) {
 				const rect = [coords[0], coords[1], coords[2], coords[3]];
 				for (const s of currentSurfaces) iconRects[s] = rect;
 			}
-		} else if (lower.startsWith("collision")) {
+		} else if (includeCore && lower.startsWith("collision")) {
 			parseCollisionFallbackLine(trimmed, currentSurfaces, collisions);
-		} else if (lower.startsWith("element")) {
+		} else if (includeCore && lower.startsWith("element")) {
 			const parts = trimmed.split(",").map((s) => s.trim());
 			if (parts.length >= 5) {
 				const idMatch = parts[0].match(/\d+/);
@@ -523,49 +558,86 @@ function parseSurfacesTxtFallback(text: string) {
 	};
 }
 
-function loadHtmlImage(src: string): Promise<HTMLImageElement | null> {
-	if (!src || typeof Image === "undefined") return Promise.resolve(null);
-	return new Promise((resolve) => {
-		const img = new Image();
-		if (!src.startsWith("data:")) {
-			img.crossOrigin = "anonymous";
-		}
-		img.onload = () => resolve(img);
-		img.onerror = () => resolve(null);
-		img.src = src;
-	});
-}
-
-function drawComposedLayer(
-	ctx: CanvasRenderingContext2D,
-	img: HTMLImageElement,
-	layer: SurfaceLayerInput,
-) {
-	const x = Number(layer.x ?? 0);
-	const y = Number(layer.y ?? 0);
-	const method = String(layer.type ?? "overlay").toLowerCase();
-
-	if (method === "replace") {
-		const w = img.naturalWidth || img.width || 0;
-		const h = img.naturalHeight || img.height || 0;
-		if (w > 0 && h > 0) {
-			ctx.clearRect(x, y, w, h);
-		}
-		ctx.globalCompositeOperation = "source-over";
-	} else if (method === "add" || method === "addition") {
-		ctx.globalCompositeOperation = "lighter";
-	} else if (method === "multiply" || method === "blend-multiply") {
-		ctx.globalCompositeOperation = "multiply";
-	} else if (method === "screen" || method === "blend-screen") {
-		ctx.globalCompositeOperation = "screen";
-	} else if (method === "reduce") {
-		ctx.globalCompositeOperation = "destination-in";
-	} else {
-		ctx.globalCompositeOperation = "source-over";
+function normalizeWasmSurfacesResult(
+	wasmData: WasmParsedSurfacesResult,
+	meta: ParsedSurfacesTxtData,
+): ParsedSurfacesTxtData {
+	const collisions: Record<string, CollisionAreaRecord[]> = {};
+	for (const [sid, list] of entriesOf(wasmData.collisions)) {
+		collisions[sid] = Array.isArray(list)
+			? list.map(normalizeParsedCollision)
+			: [];
 	}
 
-	ctx.drawImage(img, x, y);
-	ctx.globalCompositeOperation = "source-over";
+	const elements: Record<string, SurfaceElementRecord[]> = {};
+	for (const [sid, list] of entriesOf(wasmData.elements)) {
+		elements[sid] = Array.isArray(list)
+			? list.map((e, idx) => ({
+					id: Number(e.id ?? idx),
+					type: String(e.method ?? e.type ?? "overlay").toLowerCase(),
+					method: String(e.method ?? e.type ?? "overlay").toLowerCase(),
+					file: String(e.file ?? ""),
+					x: Number(e.x ?? 0),
+					y: Number(e.y ?? 0),
+				}))
+			: [];
+	}
+
+	const animations: Record<string, SurfaceAnimationRecord[]> = {};
+	for (const [sid, list] of entriesOf(wasmData.animations)) {
+		animations[sid] = Array.isArray(list)
+			? (list as unknown as SurfaceAnimationRecord[])
+			: [];
+	}
+
+	return {
+		collisions,
+		elements,
+		animations,
+		points:
+			wasmData.points && Object.keys(wasmData.points).length > 0
+				? (wasmData.points as Record<string, Record<string, unknown>>)
+				: meta.points,
+		balloonOffsets:
+			wasmData.balloonOffsets && Object.keys(wasmData.balloonOffsets).length > 0
+				? (wasmData.balloonOffsets as Record<
+						string,
+						Record<string, { x?: number; y?: number }>
+					>)
+				: meta.balloonOffsets,
+		aliases: meta.aliases,
+		keroAliases: meta.keroAliases,
+		charAliases: meta.charAliases,
+		cursors: meta.cursors,
+		tooltips: meta.tooltips,
+		names: meta.names,
+		iconRects: meta.iconRects,
+		collisionSort: String(
+			wasmData.collision_sort || meta.collisionSort || "none",
+		).toLowerCase(),
+		animationSort: String(
+			wasmData.animation_sort || meta.animationSort || "none",
+		).toLowerCase(),
+	};
+}
+
+/**
+ * `surfaces.txt` を WASM 優先で構造化パースし、拡張メタデータ（alias/cursor/tooltip/point.*）を統合する。
+ */
+export function parseSurfacesTxt(text: string): ParsedSurfacesTxtData {
+	if (!text || typeof text !== "string") {
+		return scanSurfacesTxt("", false);
+	}
+	if (wasmBridge.isReady()) {
+		const wasmData = wasmBridge.parseSurfacesTxt(
+			preprocessSurfacesTxtForWasm(text),
+		) as WasmParsedSurfacesResult | null;
+		if (wasmData) {
+			const meta = scanSurfacesTxt(text, false);
+			return normalizeWasmSurfacesResult(wasmData, meta);
+		}
+	}
+	return scanSurfacesTxt(text, true);
 }
 
 export class SurfaceManager {
@@ -757,31 +829,28 @@ export class SurfaceManager {
 		}
 	}
 
-	applyShellManifest(manifest: unknown): void {
-		if (!manifest || typeof manifest !== "object") return;
-		const data = manifestToSurfaceData(manifest);
-		this.collisions =
-			(data.collisions as Record<string, CollisionAreaRecord[]>) ?? {};
-		this.elements =
-			(data.elements as Record<string, SurfaceElementRecord[]>) ?? {};
-		this.animations =
-			(data.animations as Record<string, SurfaceAnimationRecord[]>) ?? {};
+	private applyParsedSurfacesData(data: Partial<ParsedSurfacesTxtData>): void {
+		this.collisions = data.collisions ?? {};
+		this.elements = data.elements ?? {};
+		this.animations = data.animations ?? {};
 		this.points = (data.points as Record<string, unknown>) ?? {};
 		this.balloonOffsets =
 			(data.balloonOffsets as Record<string, unknown>) ?? {};
-		this.aliases = (data.aliases as Record<string, number[]>) ?? {};
-		this.keroAliases = (data.keroAliases as Record<string, number[]>) ?? {};
-		this.charAliases =
-			(data.charAliases as Record<number | string, Record<string, number[]>>) ??
-			{};
-		this.cursors =
-			(data.cursors as Record<string, CursorDefinitionRecord[]>) ?? {};
-		this.tooltips =
-			(data.tooltips as Record<string, Record<string, string>>) ?? {};
-		this.names = (data.names as Record<string, string>) ?? {};
-		this.iconRects = (data.iconRects as Record<string, number[]>) ?? {};
+		this.aliases = data.aliases ?? {};
+		this.keroAliases = data.keroAliases ?? {};
+		this.charAliases = data.charAliases ?? {};
+		this.cursors = data.cursors ?? {};
+		this.tooltips = data.tooltips ?? {};
+		this.names = data.names ?? {};
+		this.iconRects = data.iconRects ?? {};
 		this.collisionSort = data.collisionSort ?? "none";
 		this.animationSort = data.animationSort ?? "none";
+	}
+
+	applyShellManifest(manifest: RawShellManifest | unknown): void {
+		if (!manifest || typeof manifest !== "object") return;
+		const data = manifestToSurfaceData(manifest as RawShellManifest);
+		this.applyParsedSurfacesData(data as Partial<ParsedSurfacesTxtData>);
 		this.shellManifest = manifest as ShellManifestLike;
 		if (this.shellManifest.directory) {
 			this.shellPath = String(this.shellManifest.directory);
@@ -798,110 +867,47 @@ export class SurfaceManager {
 		this.baseCanvasCache.clear();
 		if (!text || typeof text !== "string") return;
 
-		const supplementary = parseSurfacesTxtFallback(text);
-		const wasmInput = preprocessSurfacesTxtForWasm(text);
-
 		if (isTauriAvailable()) {
-			const rustData = await parseSurfacesTextWithRust(wasmInput);
+			const rustData = await parseSurfacesTextWithRust(
+				preprocessSurfacesTxtForWasm(text),
+			);
 			if (rustData) {
-				this.collisions =
-					(rustData.collisions as Record<string, CollisionAreaRecord[]>) ?? {};
-				this.elements =
-					(rustData.elements as Record<string, SurfaceElementRecord[]>) ?? {};
-				this.animations =
-					(rustData.animations as Record<string, SurfaceAnimationRecord[]>) ??
-					{};
-				this.points =
-					Object.keys(rustData.points ?? {}).length > 0
-						? (rustData.points as Record<string, unknown>)
-						: supplementary.points;
-				this.balloonOffsets =
-					Object.keys(rustData.balloonOffsets ?? {}).length > 0
-						? (rustData.balloonOffsets as Record<string, unknown>)
-						: supplementary.balloonOffsets;
-				this.aliases = supplementary.aliases;
-				this.keroAliases = supplementary.keroAliases;
-				this.charAliases = supplementary.charAliases;
-				this.cursors = supplementary.cursors;
-				this.tooltips = supplementary.tooltips;
-				this.names = supplementary.names;
-				this.iconRects = supplementary.iconRects;
-				this.collisionSort = supplementary.collisionSort;
-				this.animationSort = supplementary.animationSort;
+				const meta = scanSurfacesTxt(text, false);
+				this.applyParsedSurfacesData({
+					collisions:
+						(rustData.collisions as Record<string, CollisionAreaRecord[]>) ??
+						{},
+					elements:
+						(rustData.elements as Record<string, SurfaceElementRecord[]>) ?? {},
+					animations:
+						(rustData.animations as Record<string, SurfaceAnimationRecord[]>) ??
+						{},
+					points:
+						Object.keys(rustData.points ?? {}).length > 0
+							? (rustData.points as Record<string, Record<string, unknown>>)
+							: meta.points,
+					balloonOffsets:
+						Object.keys(rustData.balloonOffsets ?? {}).length > 0
+							? (rustData.balloonOffsets as Record<
+									string,
+									Record<string, { x?: number; y?: number }>
+								>)
+							: meta.balloonOffsets,
+					aliases: meta.aliases,
+					keroAliases: meta.keroAliases,
+					charAliases: meta.charAliases,
+					cursors: meta.cursors,
+					tooltips: meta.tooltips,
+					names: meta.names,
+					iconRects: meta.iconRects,
+					collisionSort: meta.collisionSort,
+					animationSort: meta.animationSort,
+				});
 				return;
 			}
 		}
 
-		const wasmData = wasmBridge.parseSurfacesTxt(
-			wasmInput,
-		) as WasmParsedSurfacesResult | null;
-		if (wasmData) {
-			const normalizedCollisions: Record<string, CollisionAreaRecord[]> = {};
-			for (const [sid, list] of entriesOf(wasmData.collisions)) {
-				normalizedCollisions[sid] = Array.isArray(list)
-					? list.map(normalizeParsedCollision)
-					: [];
-			}
-
-			const normalizedElements: Record<string, SurfaceElementRecord[]> = {};
-			for (const [sid, list] of entriesOf(wasmData.elements)) {
-				normalizedElements[sid] = Array.isArray(list)
-					? list.map((e, idx) => ({
-							id: Number(e.id ?? idx),
-							type: String(e.method ?? e.type ?? "overlay").toLowerCase(),
-							method: String(e.method ?? e.type ?? "overlay").toLowerCase(),
-							file: String(e.file ?? ""),
-							x: Number(e.x ?? 0),
-							y: Number(e.y ?? 0),
-						}))
-					: [];
-			}
-
-			const normalizedAnimations: Record<string, SurfaceAnimationRecord[]> = {};
-			for (const [sid, list] of entriesOf(wasmData.animations)) {
-				normalizedAnimations[sid] = Array.isArray(list)
-					? (list as unknown as SurfaceAnimationRecord[])
-					: [];
-			}
-
-			this.collisions = normalizedCollisions;
-			this.elements = normalizedElements;
-			this.animations = normalizedAnimations;
-			this.points =
-				(wasmData.points as Record<string, unknown>) ?? supplementary.points;
-			this.balloonOffsets =
-				(wasmData.balloonOffsets as Record<string, unknown>) ??
-				supplementary.balloonOffsets;
-			this.aliases = supplementary.aliases;
-			this.keroAliases = supplementary.keroAliases;
-			this.charAliases = supplementary.charAliases;
-			this.cursors = supplementary.cursors;
-			this.tooltips = supplementary.tooltips;
-			this.names = supplementary.names;
-			this.iconRects = supplementary.iconRects;
-			this.collisionSort = String(
-				wasmData.collision_sort || supplementary.collisionSort || "none",
-			).toLowerCase();
-			this.animationSort = String(
-				wasmData.animation_sort || supplementary.animationSort || "none",
-			).toLowerCase();
-			return;
-		}
-
-		this.collisions = supplementary.collisions;
-		this.elements = supplementary.elements;
-		this.animations = supplementary.animations;
-		this.points = supplementary.points;
-		this.balloonOffsets = supplementary.balloonOffsets;
-		this.aliases = supplementary.aliases;
-		this.keroAliases = supplementary.keroAliases;
-		this.charAliases = supplementary.charAliases;
-		this.cursors = supplementary.cursors;
-		this.tooltips = supplementary.tooltips;
-		this.names = supplementary.names;
-		this.iconRects = supplementary.iconRects;
-		this.collisionSort = supplementary.collisionSort;
-		this.animationSort = supplementary.animationSort;
+		this.applyParsedSurfacesData(parseSurfacesTxt(text));
 	}
 
 	processChromaKey(
@@ -1092,10 +1098,10 @@ export class SurfaceManager {
 
 		try {
 			const [baseImg, ...layerImgs] = await Promise.all([
-				loadHtmlImage(baseImgSrc),
+				loadLayerImage(baseImgSrc),
 				...allLayers.map((layer) =>
 					resolveImagePath(layer.file).then((resolved) =>
-						resolved ? loadHtmlImage(resolved) : null,
+						resolved ? loadLayerImage(resolved) : null,
 					),
 				),
 			]);
@@ -1115,7 +1121,7 @@ export class SurfaceManager {
 			for (let i = 0; i < allLayers.length; i++) {
 				const img = layerImgs[i];
 				if (img) {
-					drawComposedLayer(ctx, img, allLayers[i]);
+					drawComposedLayer(ctx, img, allLayers[i] as ComposedLayerInput);
 				}
 			}
 			return canvas.toDataURL("image/png");

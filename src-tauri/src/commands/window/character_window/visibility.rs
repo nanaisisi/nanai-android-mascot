@@ -49,21 +49,66 @@ impl ShowCharacterWindowParams {
     }
 }
 
-#[cfg(desktop)]
-fn monitor_logical_bounds(monitor: &tauri::Monitor) -> (f64, f64, f64, f64, f64) {
-    let scale = monitor.scale_factor();
-    let safe_scale = if scale > 0.0 && scale.is_finite() {
+#[cfg(any(desktop, test))]
+fn sanitize_scale(scale: f64) -> f64 {
+    if scale > 0.0 && scale.is_finite() {
         scale
     } else {
         1.0
+    }
+}
+
+#[cfg(any(desktop, test))]
+fn work_area_to_logical(
+    pos_x: i32,
+    pos_y: i32,
+    width: u32,
+    height: u32,
+    scale: f64,
+) -> (f64, f64, f64, f64, f64) {
+    let safe_scale = sanitize_scale(scale);
+    let work_x = (pos_x as f64) / safe_scale;
+    let work_y = (pos_y as f64) / safe_scale;
+    let work_w = (width as f64) / safe_scale;
+    let work_h = (height as f64) / safe_scale;
+    (safe_scale, work_x, work_y, work_w, work_h)
+}
+
+#[cfg(desktop)]
+fn monitor_logical_work_area(monitor: &tauri::Monitor) -> (f64, f64, f64, f64, f64) {
+    let work = monitor.work_area();
+    work_area_to_logical(
+        work.position.x,
+        work.position.y,
+        work.size.width,
+        work.size.height,
+        monitor.scale_factor(),
+    )
+}
+
+#[cfg(any(desktop, test))]
+fn compute_default_character_position(
+    scope_id: i32,
+    eff_w: f64,
+    eff_h: f64,
+    work_x: f64,
+    work_y: f64,
+    work_w: f64,
+    work_h: f64,
+) -> (f64, f64) {
+    // スコープ0 (メイン): 右下 (タスクバー抜きワークスペース底面)
+    // スコープ1以降 (サブ): メインの左側等に並べる
+    let raw_x = if scope_id == 0 {
+        work_x + work_w - eff_w - 80.0
+    } else {
+        work_x + work_w - eff_w - 320.0 - (scope_id as f64 * 220.0)
     };
-    let mon_pos = monitor.position();
-    let mon_size = monitor.size();
-    let mon_x = (mon_pos.x as f64) / safe_scale;
-    let mon_y = (mon_pos.y as f64) / safe_scale;
-    let screen_w = (mon_size.width as f64) / safe_scale;
-    let screen_h = (mon_size.height as f64) / safe_scale;
-    (safe_scale, mon_x, mon_y, screen_w, screen_h)
+    let raw_y = work_y + work_h - eff_h;
+
+    // 初期未指定配置・リセット時のみワークスペース内に収める
+    let max_x = (work_x + work_w - eff_w).max(work_x);
+    let max_y = (work_y + work_h - eff_h).max(work_y);
+    (raw_x.clamp(work_x, max_x), raw_y.clamp(work_y, max_y))
 }
 
 /// キャラクター（スコープ N）ウィンドウ表示コマンド (0=メイン, 1=サブ/うにゅ, 2以降=追加キャラ)
@@ -150,15 +195,25 @@ pub async fn show_character_window(
             }));
         }
 
-        if let (Some(px), Some(py)) = (x, y) {
+        if x.is_some() || y.is_some() {
             moved_or_resized = true;
+            // シェルの位置指定は画面外・タスクバー上を含め上下左右とも制限しない
+            let cur_pos = sub_win.outer_position().ok();
+            let target_px = x
+                .map(|v| v.round() as i32)
+                .or_else(|| cur_pos.map(|p| p.x))
+                .unwrap_or(200);
+            let target_py = y
+                .map(|v| v.round() as i32)
+                .or_else(|| cur_pos.map(|p| p.y))
+                .unwrap_or(200);
             let _ = sub_win.set_position(tauri::Position::Physical(tauri::PhysicalPosition {
-                x: px as i32,
-                y: py as i32,
+                x: target_px,
+                y: target_py,
             }));
         } else if is_new || !is_visible {
             moved_or_resized = true;
-            // モニター情報を取得して初回のみ画面右下 (デスクトップの床) に標準配置（論理座標でモニター内にクランプ）
+            // モニターのタスクバー抜きワークスペース (work_area) を取得して初回のみ右下基準に標準配置
             let mut target_x = 200.0;
             let mut target_y = 200.0;
 
@@ -169,8 +224,8 @@ pub async fn show_character_window(
                 .or_else(|| app_handle.primary_monitor().ok().flatten());
 
             if let Some(monitor) = monitor {
-                let (safe_scale, mon_x, mon_y, screen_w, screen_h) =
-                    monitor_logical_bounds(&monitor);
+                let (safe_scale, work_x, work_y, work_w, work_h) =
+                    monitor_logical_work_area(&monitor);
                 let (eff_w, eff_h) = if should_resize {
                     (win_width, win_height)
                 } else if let Ok(sz) = sub_win.outer_size() {
@@ -186,72 +241,37 @@ pub async fn show_character_window(
                     (win_width, win_height)
                 };
 
-                // スコープ0 (メイン): 右下 (タスクバー上)
-                if scope_id == 0 {
-                    target_x = mon_x + screen_w - eff_w - 80.0;
-                    target_y = mon_y + screen_h - eff_h - 120.0;
-                } else {
-                    // スコープ1以降 (サブ): メインの左側等に並べる
-                    target_x = mon_x + screen_w - eff_w - 320.0 - (scope_id as f64 * 220.0);
-                    target_y = mon_y + screen_h - eff_h - 120.0;
-                }
-
-                let max_x = (mon_x + screen_w - eff_w).max(mon_x);
-                let max_y = (mon_y + screen_h - eff_h).max(mon_y);
-                target_x = target_x.clamp(mon_x, max_x);
-                target_y = target_y.clamp(mon_y, max_y);
+                (target_x, target_y) = compute_default_character_position(
+                    scope_id, eff_w, eff_h, work_x, work_y, work_w, work_h,
+                );
             }
 
             let _ = sub_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
                 x: target_x,
                 y: target_y,
             }));
-        } else if should_resize && !is_new && is_visible && x.is_none() && y.is_none() {
-            // リサイズ時に画面右端・下端・左端・上端からはみ出さないようにモニター内にクランプ
-            if let Ok(pos) = sub_win.outer_position() {
-                let monitor = sub_win
-                    .current_monitor()
-                    .ok()
-                    .flatten()
-                    .or_else(|| app_handle.primary_monitor().ok().flatten());
-                if let Some(monitor) = monitor {
-                    let (safe_scale, mon_x, mon_y, screen_w, screen_h) =
-                        monitor_logical_bounds(&monitor);
-                    let pos_x = (pos.x as f64) / safe_scale;
-                    let pos_y = (pos.y as f64) / safe_scale;
-
-                    if pos_x + win_width > mon_x + screen_w
-                        || pos_y + win_height > mon_y + screen_h
-                        || pos_x < mon_x
-                        || pos_y < mon_y
-                    {
-                        let max_x = (mon_x + screen_w - win_width).max(mon_x);
-                        let max_y = (mon_y + screen_h - win_height).max(mon_y);
-                        let clamped_x = pos_x.clamp(mon_x, max_x);
-                        let clamped_y = pos_y.clamp(mon_y, max_y);
-                        let _ = sub_win.set_position(tauri::Position::Logical(
-                            tauri::LogicalPosition {
-                                x: clamped_x,
-                                y: clamped_y,
-                            },
-                        ));
-                    }
-                }
-            }
         }
 
-        let _ = sub_win.show();
-        let _ = sub_win.set_focus();
+        if is_new || !is_visible {
+            let _ = sub_win.show();
+        }
+        let menu_is_visible = app_handle
+            .get_webview_window("menu_window")
+            .and_then(|w| w.is_visible().ok())
+            .unwrap_or(false);
+        if is_new && !menu_is_visible {
+            let _ = sub_win.set_focus();
+        }
 
-        if moved_or_resized {
-            if let Some(state) = app_handle.try_state::<crate::common::state::AppState>() {
-                let _ = super::super::balloon_window::sync_balloon_position_impl(
-                    &app_handle,
-                    &state,
-                    scope_id,
-                )
-                .await;
-            }
+        if moved_or_resized
+            && let Some(state) = app_handle.try_state::<crate::common::state::AppState>()
+        {
+            let _ = super::super::balloon_window::sync_balloon_position_impl(
+                &app_handle,
+                &state,
+                scope_id,
+            )
+            .await;
         }
     }
     Ok(())
@@ -380,14 +400,148 @@ pub async fn reset_character_positions(
     app_handle: tauri::AppHandle,
     state: tauri::State<'_, crate::common::state::AppState>,
 ) -> Result<(), String> {
-    use tauri::Manager;
-    let n = *state.num_characters.lock();
-    let max_scopes = if n > 0 { n } else { 2 };
-    for scope_id in 0..max_scopes {
-        let label = format!("subchar_window_{}", scope_id);
-        if let Some(win) = app_handle.get_webview_window(&label) {
-            let _ = win.center();
+    #[cfg(desktop)]
+    {
+        use std::collections::BTreeSet;
+        use tauri::{Emitter, Manager};
+
+        let n = *state.num_characters.lock();
+        let max_scopes = if n > 0 { n } else { 2 };
+        let mut scopes: BTreeSet<i32> = (0..max_scopes).collect();
+        for label in app_handle.webview_windows().keys() {
+            if let Some(suffix) = label.strip_prefix("subchar_window_")
+                && let Ok(parsed) = suffix.parse::<i32>()
+            {
+                scopes.insert(parsed);
+            }
+        }
+
+        let primary_monitor = app_handle.primary_monitor().ok().flatten();
+        for scope_id in scopes {
+            let label = format!("subchar_window_{}", scope_id);
+            if let Some(win) = app_handle.get_webview_window(&label) {
+                let monitor = primary_monitor
+                    .clone()
+                    .or_else(|| win.current_monitor().ok().flatten());
+                let (target_x, target_y, safe_scale) = if let Some(ref monitor) = monitor {
+                    let (scale, work_x, work_y, work_w, work_h) =
+                        monitor_logical_work_area(monitor);
+                    let (eff_w, eff_h) = if let Ok(sz) = win.outer_size() {
+                        if sz.width > 0 && sz.height > 0 {
+                            ((sz.width as f64) / scale, (sz.height as f64) / scale)
+                        } else {
+                            (200.0, 360.0)
+                        }
+                    } else {
+                        (200.0, 360.0)
+                    };
+                    let (tx, ty) = compute_default_character_position(
+                        scope_id, eff_w, eff_h, work_x, work_y, work_w, work_h,
+                    );
+                    (tx, ty, scale)
+                } else {
+                    (200.0, 200.0, 1.0)
+                };
+
+                let _ = win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
+                    x: target_x,
+                    y: target_y,
+                }));
+
+                let (phys_x, phys_y) = match win.outer_position() {
+                    Ok(pos) => (pos.x, pos.y),
+                    Err(_) => (
+                        (target_x * safe_scale).round() as i32,
+                        (target_y * safe_scale).round() as i32,
+                    ),
+                };
+                let _ = win.emit(
+                    "character-positions-reset",
+                    serde_json::json!({
+                        "scopeId": scope_id,
+                        "x": phys_x,
+                        "y": phys_y,
+                    }),
+                );
+                let _ = super::super::balloon_window::sync_balloon_position_impl(
+                    &app_handle,
+                    &state,
+                    scope_id,
+                )
+                .await;
+            }
         }
     }
+    #[cfg(not(desktop))]
+    {
+        let _ = (&app_handle, &state);
+    }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn work_area_to_logical_handles_taskbar_and_hidpi_scale() {
+        assert_eq!(
+            work_area_to_logical(0, 0, 1920, 1032, 1.0),
+            (1.0, 0.0, 0.0, 1920.0, 1032.0)
+        );
+        assert_eq!(
+            work_area_to_logical(90, 60, 2790, 1560, 1.5),
+            (1.5, 60.0, 40.0, 1860.0, 1040.0)
+        );
+        assert_eq!(
+            work_area_to_logical(0, 0, 1280, 720, 0.0),
+            (1.0, 0.0, 0.0, 1280.0, 720.0)
+        );
+        assert_eq!(
+            work_area_to_logical(0, 0, 1280, 720, f64::NAN),
+            (1.0, 0.0, 0.0, 1280.0, 720.0)
+        );
+    }
+
+    #[test]
+    fn default_character_position_uses_work_area_bottom_right() {
+        // 1920x1080 with 48px bottom taskbar -> work_area height = 1032
+        assert_eq!(
+            compute_default_character_position(0, 200.0, 360.0, 0.0, 0.0, 1920.0, 1032.0),
+            (1640.0, 672.0)
+        );
+        // Subchar (scope 1) placed to the left of main character
+        assert_eq!(
+            compute_default_character_position(1, 200.0, 360.0, 0.0, 0.0, 1920.0, 1032.0),
+            (1180.0, 672.0)
+        );
+        // Top/left taskbar work_area offset (60, 40) with HiDPI logical size
+        assert_eq!(
+            compute_default_character_position(0, 200.0, 360.0, 60.0, 40.0, 1860.0, 1040.0),
+            (1640.0, 720.0)
+        );
+        // Oversized window stays anchored to work_area origin for initial unset default
+        assert_eq!(
+            compute_default_character_position(2, 500.0, 800.0, 60.0, 40.0, 400.0, 600.0),
+            (60.0, 40.0)
+        );
+    }
+
+    #[test]
+    fn params_preserve_unclamped_offscreen_coordinates() {
+        let p = ShowCharacterWindowParams::new(0, Some(-450.0), Some(-220.0), Some(200.0), None);
+        assert_eq!(p.scope_id(), 0);
+        assert_eq!(p.x(), Some(-450.0));
+        assert_eq!(p.y(), Some(-220.0));
+        assert_eq!(p.width(), Some(200.0));
+        assert_eq!(p.height(), None);
+
+        let parsed: ShowSubcharWindowParams = serde_json::from_str(
+            r#"{"scopeId": 2, "x": 3840.0, "y": 2160.0, "width": 160.0, "height": 300.0}"#,
+        )
+        .expect("deserialize ShowSubcharWindowParams");
+        assert_eq!(parsed.scope_id(), 2);
+        assert_eq!(parsed.x(), Some(3840.0));
+        assert_eq!(parsed.y(), Some(2160.0));
+    }
 }

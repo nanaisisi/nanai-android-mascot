@@ -1,4 +1,4 @@
-//! Tauri Invoke コマンドハンドラー一括登録モジュール
+﻿//! Tauri Invoke コマンドハンドラー一括登録モジュール
 
 use crate::commands;
 use crate::fmo;
@@ -15,6 +15,8 @@ pub fn get_invoke_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         commands::file::get_recent_files,
         commands::file::open_ghost_directory,
         commands::shell::shell_manifest,
+        commands::shell::get_shell_readme,
+        commands::shell::get_shell_thumbnail,
         commands::shell::parse_sakura_script,
         commands::shell::parse_surfaces_text,
         commands::shell::animation_timeline,
@@ -22,9 +24,15 @@ pub fn get_invoke_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         commands::shell::list_balloons,
         commands::shell::balloon_manifest,
         commands::shell::load_balloon_image,
+        commands::shell::load_balloon_ui_asset,
         commands::shell::get_balloon_readme,
+        commands::shell::get_balloon_thumbnail,
         commands::shell::uninstall_ghost,
         commands::shell::get_ghost_info,
+        commands::shell::load_shiori_menu_bitmap,
+        commands::shell::get_ghost_readme,
+        commands::shell::get_ghost_terms,
+        commands::shell::get_ghost_thumbnail,
         commands::shell::surface_composition_plan,
         commands::shell::create_surface_frame_buffer,
         commands::shell::clear_frame_buffer_rect,
@@ -50,6 +58,7 @@ pub fn get_invoke_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         commands::window::setup_foreground_service,
         commands::window::set_overlay_transparency,
         commands::window::set_click_through,
+        commands::window::resize_overlay_window,
         commands::window::trim_memory_command,
         commands::window::test_command,
         commands::window::minimize_app,
@@ -87,6 +96,10 @@ pub fn get_invoke_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         commands::file::load_surface_pna,
         commands::update::network::commands::check_ghost_update,
         commands::update::network::commands::execute_ghost_update,
+        commands::update::network::commands::update_shell,
+        commands::update::network::commands::update_balloon,
+        commands::update::network::commands::update_plugin,
+        commands::update::network::commands::update_headline,
         commands::update::generate_updates2_dau,
         commands::ext::scan_plugins,
         commands::ext::scan_headlines,
@@ -109,6 +122,8 @@ pub fn get_invoke_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         commands::calendar::delete_schedule,
         commands::calendar::trigger_calendar_event,
         commands::shiori::send_on_translate,
-        commands::shiori::send_ghost_call_event
+        commands::shiori::execute_makoto_translate,
+        commands::shiori::send_ghost_call_event,
+        commands::shell::ghost::get_makoto_translators
     ]
 }

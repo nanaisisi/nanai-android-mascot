@@ -6,12 +6,13 @@
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `sakura.name` キーをパースし、本体（\0）表示名 `GhostInfo.sakura_name` へ設定する実装が行われている。
+`src-tauri/src/ghost/scan/directory/manifest/parser.rs` および `crates/nanai-core/src/descript_parser/types.rs` において本体（\0）表示名 `sakura.name` のパースおよび `GhostInfo.sakura_name` へのバインドが完全実装済み。
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive/postprocess.rs:100` `.and_then(|m| m.get("sakura.name").cloned());`
-- `src-tauri/src/ghost/scan/directory/manifest.rs:59` `m.get("sakura.name")`
+- `crates/nanai-core/src/descript_parser/types.rs:56` `/// 桜側キャラクター名 (`sakura.name`)`
+- `src-tauri/src/commands/install/archive/mod.rs:118` `for key in ["name", "sakura.name"] {`
+- `crates/nanai-core/src/descript_parser/types.rs:58` `self.get("sakura.name")`
+- `src-tauri/src/commands/install/archive/mod.rs:180` `// Case-insensitive match on sakura.name`
 - `crates/ui/src/descript/tests.rs:54` `sakura.name,Sakura\n\`
-- `crates/ui/src/descript/parser/queries.rs:14` `/// キャラクター本体名（`kero.name`または`sakura.name`）`
-- `crates/ui/src/descript/parser/queries.rs:16` `self.get("sakura.name")`
+- `src-tauri/src/commands/install/archive/postprocess.rs:117` `.and_then(|m| m.get("sakura.name").cloned());`

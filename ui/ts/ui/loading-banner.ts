@@ -12,19 +12,44 @@ if (params.get("version") && verEl) {
 	verEl.textContent = `v${params.get("version")}`;
 }
 
-if (globalThis.__TAURI__) {
-	const listenFn =
-		globalThis.__TAURI__.event?.listen || globalThis.__TAURI__.listen;
+interface LoadingBannerPayload {
+	name?: string;
+	version?: string;
+}
+
+interface LoadingBannerTauri {
+	event?: {
+		listen?: (
+			event: string,
+			handler: (event: { payload?: LoadingBannerPayload }) => void,
+		) => unknown;
+	};
+	listen?: (
+		event: string,
+		handler: (event: { payload?: LoadingBannerPayload }) => void,
+	) => unknown;
+	window?: {
+		getCurrentWindow?: () => {
+			startDragging?: () => Promise<void>;
+		};
+	};
+}
+
+const tauriApi = globalThis.__TAURI__ as unknown as
+	| LoadingBannerTauri
+	| undefined;
+
+if (tauriApi) {
+	const listenFn = tauriApi.event?.listen || tauriApi.listen;
 	if (typeof listenFn === "function") {
-		listenFn("update-loading-banner", (event: { payload: unknown }) => {
+		listenFn("update-loading-banner", (event) => {
 			const data = event.payload;
 			if (data?.name && nameEl) nameEl.textContent = data.name;
 			if (data?.version && verEl) verEl.textContent = `v${data.version}`;
 		});
 	}
 
-	const startDraggingFn =
-		globalThis.__TAURI__.window?.getCurrentWindow?.()?.startDragging;
+	const startDraggingFn = tauriApi.window?.getCurrentWindow?.()?.startDragging;
 	if (typeof startDraggingFn === "function") {
 		document.body.addEventListener("mousedown", (e) => {
 			if (e.button === 0) {
@@ -40,3 +65,5 @@ if (globalThis.__TAURI__) {
 		);
 	}
 }
+
+export {};

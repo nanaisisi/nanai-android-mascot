@@ -6,17 +6,17 @@ import { MENU_CAPTION_DEFINITIONS } from "../ui/ts/ui/renderers/menu-caption-ren
 
 describe("Balloon Skin & Typography Cycle 6 Features (Slot-10)", () => {
 	it("sets writing mode property correctly for vertical: 1 and resets properly", () => {
-		const cssVars = {};
+		const cssVars: Record<string, string> = {};
 		const mockRoot = {
 			style: {
-				setProperty(k, v) {
+				setProperty(k: string, v: string) {
 					cssVars[k] = v;
 				},
-				removeProperty(k) {
+				removeProperty(k: string) {
 					delete cssVars[k];
 				},
 			},
-		};
+		} as unknown as HTMLElement;
 
 		// 1. Horizontal by default / vertical: 0
 		applyAssetProperties(mockRoot, { vertical: "0" }, {});
@@ -38,7 +38,7 @@ describe("Balloon Skin & Typography Cycle 6 Features (Slot-10)", () => {
 			querySelector() {
 				return null;
 			},
-		};
+		} as unknown as Document;
 		mgr.resetDescript();
 		assert.equal(cssVars["--balloon-writing-mode"], undefined);
 	});

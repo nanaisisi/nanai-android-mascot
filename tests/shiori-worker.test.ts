@@ -1,42 +1,57 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
+interface WorkerMessage {
+	type: string;
+	success?: boolean;
+	[key: string]: unknown;
+}
+
+type WorkerListener = (ev: { data: unknown }) => Promise<void> | void;
+
+interface MockWorkerSelf {
+	_listener?: WorkerListener;
+	addEventListener(_type: string, cb: WorkerListener): void;
+	postMessage(msg: WorkerMessage): void;
+}
+
+class MockMemory {
+	buffer = new ArrayBuffer(1024);
+}
+
 // Mock WebAssembly and self (Worker global scope)
-const postedMessages = [];
-globalThis.self = {
-	addEventListener(_type, cb) {
+const postedMessages: WorkerMessage[] = [];
+const mockSelf: MockWorkerSelf = {
+	addEventListener(_type: string, cb: WorkerListener) {
 		this._listener = cb;
 	},
-	postMessage(msg) {
+	postMessage(msg: WorkerMessage) {
 		postedMessages.push(msg);
 	},
 };
+globalThis.self = mockSelf as unknown as Window & typeof globalThis;
 
 globalThis.WebAssembly = {
-	Memory: class {
-		constructor() {
-			this.buffer = new ArrayBuffer(1024);
-		}
-	},
-	instantiate: async () => ({
+	Memory: MockMemory as unknown as typeof WebAssembly.Memory,
+	instantiate: (async () => ({
 		instance: {
 			exports: {
-				memory: new globalThis.WebAssembly.Memory(),
+				memory: new MockMemory(),
 				load: () => {},
-				request: (ptr) => ptr,
-				malloc: (_size) => 10,
+				request: (ptr: number) => ptr,
+				malloc: (_size: number) => 10,
 				free: () => {},
 				unload: () => {},
 			},
 		},
-	}),
-};
+	})) as unknown as typeof WebAssembly.instantiate,
+} as unknown as typeof WebAssembly;
 
 // Import shiori-worker to register listener
 await import("../ui/ts/ghost/shiori-worker.js");
 
 test("shiori-worker message handler covers LOAD, REQUEST, UNLOAD, and default actions", async () => {
-	const listener = globalThis.self._listener;
+	const listener = mockSelf._listener;
 	assert.ok(listener);
 
 	// 1. REQUEST when not loaded
@@ -82,9 +97,9 @@ test("shiori-worker message handler covers LOAD, REQUEST, UNLOAD, and default ac
 	assert.ok(postedMessages.some((m) => m.type === "ERROR"));
 
 	// 6. LOAD failure catch branch
-	globalThis.WebAssembly.instantiate = async () => {
+	globalThis.WebAssembly.instantiate = (async () => {
 		throw new Error("Instantiate fail");
-	};
+	}) as unknown as typeof WebAssembly.instantiate;
 	postedMessages.length = 0;
 	await listener({
 		data: { type: "LOAD", id: 6, payload: { wasmBytes: new Uint8Array([0]) } },

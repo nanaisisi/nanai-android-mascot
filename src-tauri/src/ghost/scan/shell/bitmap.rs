@@ -8,6 +8,20 @@ pub fn load_menu_bitmap_data_url(
     ghost_master_dir: &Path,
     ghost_dir: &Path,
 ) -> Option<String> {
+    load_menu_bitmap_from_bases(rel_path, &[shell_dir, ghost_master_dir, ghost_dir])
+}
+
+/// SHIORI Resource 経由のメニュー画像を `ghost/master` 相対優先で読み込んで Data URL (base64) に変換する
+pub fn load_shiori_menu_bitmap_data_url(
+    rel_path: &str,
+    ghost_master_dir: &Path,
+    shell_dir: &Path,
+    ghost_dir: &Path,
+) -> Option<String> {
+    load_menu_bitmap_from_bases(rel_path, &[ghost_master_dir, shell_dir, ghost_dir])
+}
+
+fn load_menu_bitmap_from_bases(rel_path: &str, search_bases: &[&Path]) -> Option<String> {
     let normalized = rel_path.trim().replace('\\', "/");
     if normalized.is_empty() {
         return None;
@@ -19,7 +33,6 @@ pub fn load_menu_bitmap_data_url(
         return Some(normalized);
     }
 
-    let search_bases = [shell_dir, ghost_master_dir, ghost_dir];
     for base in search_bases {
         let direct = base.join(&normalized);
         let resolved = if direct.is_file() {
@@ -49,62 +62,103 @@ pub fn load_menu_bitmap_data_url(
         }
     }
 
-    // ゴーストにメニュー背景画像がない場合、内部保持の白背景PNGデータURLをメモリ上で返却（ファイル書き込みなし）
-    if normalized.to_ascii_lowercase().contains("background")
-        || normalized.to_ascii_lowercase().contains("menu")
-        || normalized == "menu_background.png"
-    {
-        let white_png: &[u8] = &[
-            0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d, 0x49, 0x48,
-            0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x02, 0x00, 0x00,
-            0x00, 0x90, 0x77, 0x53, 0xde, 0x00, 0x00, 0x00, 0x0c, 0x49, 0x44, 0x41, 0x54, 0x08,
-            0xd7, 0x63, 0xf8, 0xcf, 0xc0, 0x00, 0x00, 0x03, 0x01, 0x01, 0x18, 0xdd, 0x8d, 0xb0,
-            0x32, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82,
-        ];
-        let b64 = base64::engine::general_purpose::STANDARD.encode(white_png);
-        return Some(format!("data:image/png;base64,{b64}"));
-    }
-
-    // ホバー時（foreground / cursor / fg）の画像がない場合、内部保持の黒画像（1x1 solid black PNG）をメモリ上で返却
-    if normalized.to_ascii_lowercase().contains("foreground")
-        || normalized.to_ascii_lowercase().contains("cursor")
-        || normalized.to_ascii_lowercase().contains("fg")
-        || normalized == "menu_foreground.png"
-    {
-        let black_png: &[u8] = &[
-            0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d, 0x49, 0x48,
-            0x44, 0x52, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x01, 0x08, 0x02, 0x00, 0x00,
-            0x00, 0x90, 0x77, 0x53, 0xde, 0x00, 0x00, 0x00, 0x0c, 0x49, 0x44, 0x41, 0x54, 0x08,
-            0xd7, 0x63, 0xf8, 0xcf, 0xc0, 0x00, 0x00, 0x03, 0x01, 0x01, 0x18, 0xdd, 0x8d, 0xb0,
-            0x32, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60, 0x82,
-        ];
-        let b64 = base64::engine::general_purpose::STANDARD.encode(black_png);
-        return Some(format!("data:image/png;base64,{b64}"));
-    }
-
-    // サイドバー画像がない場合に menu_sidebar.png 画像を作成
-    if normalized.to_ascii_lowercase().contains("sidebar") || normalized == "menu_sidebar.png" {
-        let target_path = shell_dir.join(&normalized);
-        if let Some(parent) = target_path.parent() {
-            let _ = std::fs::create_dir_all(parent);
-        }
-        if !target_path.is_file() {
-            let sidebar_png: &[u8] = &[
-                0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00, 0x0d, 0x49, 0x48,
-                0x44, 0x52, 0x00, 0x00, 0x00, 0x18, 0x00, 0x00, 0x00, 0x20, 0x08, 0x02, 0x00, 0x00,
-                0x00, 0xb8, 0x59, 0x6e, 0x91, 0x00, 0x00, 0x00, 0x1b, 0x49, 0x44, 0x41, 0x54, 0x78,
-                0x9c, 0x63, 0xf8, 0xcf, 0xc0, 0xf0, 0x1f, 0x03, 0x13, 0x35, 0x68, 0x12, 0x27, 0xa1,
-                0x28, 0x4c, 0x98, 0x19, 0x33, 0x66, 0x0c, 0x00, 0x00, 0x68, 0x3d, 0x0b, 0xe5, 0x77,
-                0x6b, 0x08, 0x4d, 0x00, 0x00, 0x00, 0x00, 0x49, 0x45, 0x4e, 0x44, 0xae, 0x42, 0x60,
-                0x82,
-            ];
-            let _ = std::fs::write(&target_path, sidebar_png);
-        }
-        if let Ok(bytes) = std::fs::read(&target_path) {
-            let b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);
-            return Some(format!("data:image/png;base64,{b64}"));
-        }
-    }
-
     None
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs;
+
+    #[test]
+    fn test_load_menu_bitmap_returns_none_when_missing_without_side_effects() {
+        let temp_root = std::env::temp_dir().join("nanai_test_menu_bitmap");
+        let _ = fs::remove_dir_all(&temp_root);
+        let shell_dir = temp_root.join("shell").join("master");
+        let ghost_master_dir = temp_root.join("ghost").join("master");
+        fs::create_dir_all(&shell_dir).unwrap();
+        fs::create_dir_all(&ghost_master_dir).unwrap();
+
+        assert_eq!(
+            load_menu_bitmap_data_url(
+                "menu_background.png",
+                &shell_dir,
+                &ghost_master_dir,
+                &temp_root
+            ),
+            None
+        );
+        assert_eq!(
+            load_menu_bitmap_data_url(
+                "menu_foreground.png",
+                &shell_dir,
+                &ghost_master_dir,
+                &temp_root
+            ),
+            None
+        );
+        assert_eq!(
+            load_menu_bitmap_data_url(
+                "menu_sidebar.png",
+                &shell_dir,
+                &ghost_master_dir,
+                &temp_root
+            ),
+            None
+        );
+        assert!(!shell_dir.join("menu_sidebar.png").exists());
+
+        let _ = fs::remove_dir_all(&temp_root);
+    }
+
+    #[test]
+    fn test_load_menu_bitmap_reads_external_file() {
+        let temp_root = std::env::temp_dir().join("nanai_test_menu_bitmap_load");
+        let _ = fs::remove_dir_all(&temp_root);
+        let shell_dir = temp_root.join("shell").join("master");
+        let ghost_master_dir = temp_root.join("ghost").join("master");
+        fs::create_dir_all(&shell_dir).unwrap();
+        fs::create_dir_all(&ghost_master_dir).unwrap();
+
+        let dummy_bytes = b"\x89PNG\r\n\x1a\n";
+        fs::write(shell_dir.join("menu_sidebar.png"), dummy_bytes).unwrap();
+        let res = load_menu_bitmap_data_url(
+            "menu_sidebar.png",
+            &shell_dir,
+            &ghost_master_dir,
+            &temp_root,
+        );
+        assert!(res.is_some());
+        assert!(res.unwrap().starts_with("data:image/png;base64,"));
+
+        let _ = fs::remove_dir_all(&temp_root);
+    }
+
+    #[test]
+    fn test_load_shiori_menu_bitmap_prioritizes_ghost_master() {
+        let temp_root = std::env::temp_dir().join("nanai_test_shiori_menu_bitmap");
+        let _ = fs::remove_dir_all(&temp_root);
+        let shell_dir = temp_root.join("shell").join("master");
+        let ghost_master_dir = temp_root.join("ghost").join("master");
+        fs::create_dir_all(&shell_dir).unwrap();
+        fs::create_dir_all(&ghost_master_dir).unwrap();
+
+        fs::write(shell_dir.join("menu_bg.png"), b"SHELL").unwrap();
+        fs::write(ghost_master_dir.join("menu_bg.png"), b"MASTER").unwrap();
+
+        let res = load_shiori_menu_bitmap_data_url(
+            "menu_bg.png",
+            &ghost_master_dir,
+            &shell_dir,
+            &temp_root,
+        )
+        .unwrap();
+        let expected_master = format!(
+            "data:image/png;base64,{}",
+            base64::engine::general_purpose::STANDARD.encode(b"MASTER")
+        );
+        assert_eq!(res, expected_master);
+
+        let _ = fs::remove_dir_all(&temp_root);
+    }
 }

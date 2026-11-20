@@ -23,7 +23,7 @@ describe("core-coverage-boost: tauri-helper edge cases", () => {
 	});
 
 	it("logs warnings on IPC queue alerts for 100, 1000, 5000 pending items", async () => {
-		globalThis.window = globalThis;
+		globalThis.window = globalThis as unknown as Window & typeof globalThis;
 		const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 		const logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
@@ -57,7 +57,9 @@ describe("core-coverage-boost: tauri-helper edge cases", () => {
 
 		globalThis.__TAURI_INTERNALS__ = {};
 		// Mock window without required methods
-		globalThis.__TAURI_PATTERN__ = { pattern: "all" };
+		(globalThis as unknown as Record<string, unknown>).__TAURI_PATTERN__ = {
+			pattern: "all",
+		};
 
 		await startDraggingWindow();
 		assert.ok(

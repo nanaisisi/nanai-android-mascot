@@ -1,13 +1,13 @@
-# ネットワーク更新仕様の項目別突合
+# ukadoc-spec/manual/update 項目別突合
 
-- **規格**: [manual/update.md](https://github.com/ukatech/ukadoc-spec/blob/main/manual/update.md)
-- **判定基準**: このリポジトリで確認できる updates2.dau / updates.txt 解析、ネットワーク更新実行処理
+実装コードの文字列検索による一次調査です。
 
-| 項目                                                             | 対応状況  |
-| ---------------------------------------------------------------- | --------- |
-| [updates2.dau / updates.txt 解析](updates2-dau.md)               | ✅ 実装済 |
-| [ネットワーク更新実行 (`check_ghost_update`)](network-update.md) | ✅ 実装済 |
-
-## 対応範囲の共通事項
-
-- ゴーストの `homeurl` 等から更新定義を取得・パースし、MD5 ハッシュ突合と差分ダウンロードによる安全なアップデートを実行。
+| 項目                                                                                         | 検索語                                                         |  対応状況   |
+| :------------------------------------------------------------------------------------------- | :------------------------------------------------------------- | :---------: |
+| [バルーン・プラグイン・ヘッドラインのネットワーク更新ファイル配置](balloon-update-layout.md) | update_balloon                                                 | ⚠️ 一部対応 |
+| [delete.txt / delete1.txt](delete-txt.md)                                                    | delete.txt, parse_delete_txt, process_delete_txt               |  ✅ 実装済  |
+| [developer_options.txt](developer-options-txt.md)                                            | developer_options.txt, parse_developer_options, isNoUpdatePath |  ✅ 実装済  |
+| [ゴーストのネットワーク更新ファイル配置](ghost-update-layout.md)                             | check_ghost_update, execute_ghost_update, startNetworkUpdate   |  ✅ 実装済  |
+| [追加シェルのネットワーク更新ファイル配置](shell-update-layout.md)                           | update_shell                                                   |  ✅ 実装済  |
+| [updates.txt](updates-txt.md)                                                                | updates.txt, parse_update_definition                           |  ✅ 実装済  |
+| [updates2.dau](updates2-dau.md)                                                              | updates2.dau, generate_updates2_dau                            |  ✅ 実装済  |

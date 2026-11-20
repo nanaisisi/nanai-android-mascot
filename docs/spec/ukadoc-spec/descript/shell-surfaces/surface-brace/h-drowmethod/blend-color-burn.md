@@ -7,6 +7,6 @@
 
 ## 実装箇所
 
-- `ui/js/surface/surface-load.js:62` `// [blend-color-burn-fast]`
-- `ui/js/surface/surface-load.js:63` `// [blend-color-burn]`
-- `ui/js/surface/compositor/layer.js:55` `} else if (method === "blend-color-burn" || method === "color-burn") {`
+- `ui/ts/surface/surface-compositor.ts:56` `"blend-color-burn": "color-burn",`
+- `tests/surface-compositor.test.ts:25` `expect(resolveCompositeOperation("blend-color-burn-fast")).toBe(`
+- `ui/ts/surface/surface-compositor.ts:57` `"blend-color-burn-fast": "color-burn",`

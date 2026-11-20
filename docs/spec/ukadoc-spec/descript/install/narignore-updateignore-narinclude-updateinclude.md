@@ -6,7 +6,7 @@
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `.narignore`, `.updateignore`, `.narinclude`, `.updateinclude`, `.dev_ignore` の存在判定および除外・保護ハンドリングを行う実装が行われている。
+`src-tauri/src/ghost/scan/directory/filter.rs` (`should_skip_directory`) において `.narignore`, `.updateignore`, `.narinclude`, `.updateinclude` ファイル群の検出・評価およびスキャン・除外制御処理が完全実装済み。
 
 ## 実装箇所
 

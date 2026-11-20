@@ -1,16 +1,15 @@
-# インストール仕様の項目別突合
+# ukadoc-spec/manual/install 項目別突合
 
-- **規格**: [ukadoc-spec/manual/install.md](https://github.com/ukatech/ukadoc-spec/blob/main/manual/install.md)
-- **判定基準**: このリポジトリで確認できる NAR/ZIP インストール、install.txt 解析、ネットワーク更新、アンインストール処理
+実装コードの文字列検索による一次調査です。
 
-| 項目                                                   | 対応状況  |
-| ------------------------------------------------------ | --------- |
-| [NAR / ZIP アーカイブ展開](nar-install.md)             | ✅ 実装済 |
-| [install.txt 解析](install-txt.md)                     | ✅ 実装済 |
-| [ネットワーク更新 (`updates2.dau`)](update-install.md) | ✅ 実装済 |
-| [アンインストール (`uninstall_ghost`)](uninstall.md)   | ✅ 実装済 |
-
-## 対応範囲の共通事項
-
-- 拡張子 `.nar` または `.zip` のアーカイブを受信し、ZipSlip 防止機構付きで安全に展開。
-- `install.txt` の `type`（ghost, balloon, shell 等）および `directory` を判定して適切なアセットパスへ配置。
+| 項目                                                             | 検索語                            |  対応状況   |
+| :--------------------------------------------------------------- | :-------------------------------- | :---------: |
+| [標準的な追加シェル構成](additional-shell.md)                    | assets/shell                      |  ✅ 実装済  |
+| [ゴーストへのバルーン等同梱構成](bundled-package.md)             | resolve_bundled_resources_config  |  ✅ 実装済  |
+| [`developer_options.txt`](developer-options-txt.md)              | developer_options.txt             |  ✅ 実装済  |
+| [`install.txt`](install-txt.md)                                  | parse_install_manifest            |  ✅ 実装済  |
+| [SSP専用 複数インストール用パッケージ](multi-install-package.md) | buildInstallCompleteAllArgs       |  ✅ 実装済  |
+| [`nar / zip / lzh / cab / exe` アーカイブ形式](nar-archive.md)   | install_ghost_archive, unlha32    | ⚠️ 一部対応 |
+| [標準的なバルーン構成](standard-balloon.md)                      | flatten_balloon_directory         |  ✅ 実装済  |
+| [標準的なゴーストパッケージ構成](standard-ghost.md)              | extract_ghost_archive_from_reader |  ✅ 実装済  |
+| [`supplement` サプリメント構成](supplement.md)                   | supplement                        |  ✅ 実装済  |

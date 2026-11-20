@@ -18,19 +18,23 @@ export interface SurfaceManagerInterface {
 	[key: string]: unknown;
 }
 
-export interface GhostSurfaceControllerInterface {
+export interface CollisionOverlayController {
 	app?: {
 		surfaceManager?: SurfaceManagerInterface;
 		[key: string]: unknown;
 	};
+	currentSurfaces?: Map<number, string>;
+	[key: string]: unknown;
+}
+
+export interface GhostSurfaceControllerInterface
+	extends CollisionOverlayController {
 	loadSurfaceAsset: (
 		cmd: string,
 		ghostPath: string,
 		shell: string,
 		resolveId: string | number,
 	) => Promise<string>;
-	currentSurfaces?: Map<number, string>;
-	[key: string]: unknown;
 }
 
 export async function applySurfaceImageToDom(
@@ -81,9 +85,12 @@ export async function applySurfaceImageToDom(
 				if (fileName.startsWith("data:")) {
 					return fileName;
 				}
-				const resolveId =
-					fileName.replace(/\.[^/.]+$/, "").replace(/^surface/i, "") || "0";
+				const isSurfacePrefix = /^surface/i.test(fileName);
+				const resolveId = isSurfacePrefix
+					? fileName.replace(/\.[^/.]+$/, "").replace(/^surface/i, "") || "0"
+					: fileName;
 				const pnaFileName = fileName.replace(/\.[^/.]+$/, ".pna");
+				const pnaResolveId = isSurfacePrefix ? resolveId : pnaFileName;
 				let layerSrc = null;
 				let layerPnaSrc = null;
 
@@ -93,7 +100,12 @@ export async function applySurfaceImageToDom(
 						.catch(() => null);
 					if (!layerSrc) return null;
 					layerPnaSrc = await controller
-						.loadSurfaceAsset("load_surface_pna", ghostPath, shell, resolveId)
+						.loadSurfaceAsset(
+							"load_surface_pna",
+							ghostPath,
+							shell,
+							pnaResolveId,
+						)
 						.catch(() => null);
 				} else {
 					layerSrc = convertFileSrc(`${ghostPath}/shell/${shell}/${fileName}`);
@@ -159,10 +171,14 @@ export async function applySurfaceImageToDom(
 
 	if (img) {
 		img.style.display = "block";
+		img.style.visibility = "visible";
+		img.style.opacity = "1";
 		if (fallbackSrc) {
 			img.onerror = () => {
 				img.onerror = null;
 				img.src = fallbackSrc;
+				img.style.display = "block";
+				img.style.visibility = "visible";
 			};
 		} else {
 			img.onerror = null;
@@ -172,13 +188,237 @@ export async function applySurfaceImageToDom(
 			await img.decode().catch(() => {});
 		}
 	} else if (placeholder) {
+		placeholder.style.display = "flex";
+		placeholder.style.visibility = "visible";
+		placeholder.style.opacity = "1";
 		const errorAttr = fallbackSrc
 			? `onerror="this.onerror=null; this.src='${fallbackSrc}';"`
 			: "";
 		placeholder.innerHTML = `<img src="${transparentSrc}" 
                                alt="scope${scopeId}" 
                                ${errorAttr}
-                               style="width: 100%; height: 100%; object-fit: contain; pointer-events: auto;">`;
+                               style="width: 100%; height: 100%; object-fit: contain; pointer-events: auto; visibility: visible; opacity: 1;">`;
 	}
+
+	renderCollisionOverlayForScope(
+		controller,
+		scopeId,
+		surfaceId,
+		placeholder || img?.parentElement || null,
+	);
 	return transparentSrc;
+}
+
+function resolveSurfaceIdForScope(
+	sm: Record<string, unknown> | undefined,
+	scopeId: number,
+	surfaceId?: number | string | null,
+): number | string {
+	if (surfaceId !== undefined && surfaceId !== null && surfaceId !== "") {
+		return surfaceId;
+	}
+	if (typeof sm?.currentSurfaceIdFor === "function") {
+		const resolved = (
+			sm.currentSurfaceIdFor as (s: number) => number | string | undefined
+		)(scopeId);
+		if (resolved !== undefined && resolved !== null && resolved !== "") {
+			return resolved;
+		}
+	}
+	const charSurfaceIds = sm?.charSurfaceIds as
+		| Record<number, number | string>
+		| undefined;
+	if (charSurfaceIds?.[scopeId] !== undefined) {
+		return charSurfaceIds[scopeId];
+	}
+	return scopeId === 1
+		? ((sm?.keroSurfaceId as number | string | undefined) ?? 10)
+		: ((sm?.currentSurfaceId as number | string | undefined) ?? 0);
+}
+
+export function renderCollisionOverlayForScope(
+	controller: CollisionOverlayController,
+	scopeId: number,
+	surfaceId?: number | string | null,
+	ghostDisplayEl: HTMLElement | null = null,
+) {
+	const app = controller.app as Record<string, unknown> | undefined;
+	const settings = (app?.settings as Record<string, unknown>) || {};
+	const colInput =
+		typeof document !== "undefined" &&
+		typeof document.getElementById === "function"
+			? (document.getElementById(
+					"dev-check-collision",
+				) as HTMLInputElement | null)
+			: null;
+	const showCollisions = Boolean(
+		settings.showCollisionArea || app?.showCollisionArea || colInput?.checked,
+	);
+
+	const sm = app?.surfaceManager as Record<string, unknown> | undefined;
+	const resolvedSurfaceId = resolveSurfaceIdForScope(sm, scopeId, surfaceId);
+	const sid = String(resolvedSurfaceId);
+	const collisionsMap = sm?.collisions as Record<string, unknown[]> | undefined;
+	const baseColList = Array.isArray(collisionsMap?.[sid])
+		? collisionsMap[sid]
+		: Array.isArray(collisionsMap?.default)
+			? collisionsMap.default
+			: [];
+	const animationsMap = sm?.animations as Record<string, unknown> | undefined;
+	const animEntriesRaw = animationsMap?.[sid];
+	const animEntries = Array.isArray(animEntriesRaw)
+		? animEntriesRaw
+		: animEntriesRaw && typeof animEntriesRaw === "object"
+			? Object.values(animEntriesRaw)
+			: [];
+	const animColList: unknown[] = [];
+	for (const anim of animEntries) {
+		if (
+			anim &&
+			typeof anim === "object" &&
+			Array.isArray((anim as { collisions?: unknown[] }).collisions)
+		) {
+			animColList.push(...(anim as { collisions: unknown[] }).collisions);
+		}
+	}
+	const colList =
+		animColList.length > 0 ? [...baseColList, ...animColList] : baseColList;
+
+	const iconRectsMap = sm?.iconRects as Record<string, number[]> | undefined;
+	const pointsMap = sm?.points as
+		| Record<string, Record<string, unknown>>
+		| undefined;
+	const iconRect = Array.isArray(iconRectsMap?.[sid])
+		? iconRectsMap[sid]
+		: null;
+	const points =
+		pointsMap?.[sid] && typeof pointsMap[sid] === "object"
+			? pointsMap[sid]
+			: null;
+	const collisionMode =
+		sm?.collisionMode === "rect" ? ("rect" as const) : ("full" as const);
+
+	if (isTauriAvailable()) {
+		try {
+			const eventPayload: Record<string, unknown> = {
+				visible: showCollisions,
+				surfaceId: resolvedSurfaceId,
+				collisions: showCollisions ? colList : [],
+			};
+			if (showCollisions && iconRect) {
+				eventPayload.iconRect = iconRect;
+			}
+			if (showCollisions && points) {
+				eventPayload.points = points;
+			}
+			if (collisionMode !== "full") {
+				eventPayload.mode = collisionMode;
+			}
+			void Promise.resolve(
+				emit(`update-subchar-collisions-${scopeId}`, eventPayload),
+			).catch(() => {});
+		} catch (_e) {}
+	}
+
+	if (typeof document === "undefined") return;
+
+	const container =
+		ghostDisplayEl ||
+		(typeof document.getElementById === "function"
+			? document.getElementById(
+					scopeId === 1 ? "kero-display" : "ghost-display",
+				)
+			: null) ||
+		(typeof document.querySelector === "function"
+			? document.querySelector(`.ghost-display[data-scope="${scopeId}"]`)
+			: null);
+
+	if (!container) return;
+
+	let canvas = (
+		typeof container.querySelector === "function"
+			? container.querySelector(".collision-overlay-canvas")
+			: null
+	) as HTMLCanvasElement | null;
+
+	if (!showCollisions) {
+		if (canvas?.style) canvas.style.display = "none";
+		return;
+	}
+
+	if (!canvas && typeof document.createElement === "function") {
+		canvas = document.createElement("canvas");
+		canvas.className = "collision-overlay-canvas";
+		container.appendChild(canvas);
+	}
+
+	if (!canvas) return;
+
+	const img = (
+		typeof container.querySelector === "function"
+			? container.querySelector("img")
+			: null
+	) as HTMLImageElement | null;
+	const baseW = Number(sm?.baseWidth) || 200;
+	const baseH = Number(sm?.baseHeight) || 400;
+	const w = Math.max(
+		baseW,
+		img?.naturalWidth || img?.width || container.clientWidth || 200,
+	);
+	const h = Math.max(
+		baseH,
+		img?.naturalHeight || img?.height || container.clientHeight || 400,
+	);
+
+	canvas.width = w;
+	canvas.height = h;
+	if (canvas.style) canvas.style.display = "block";
+
+	if (sm && typeof sm.renderCollisionOverlayCanvas === "function") {
+		(
+			sm.renderCollisionOverlayCanvas as (
+				c: HTMLCanvasElement,
+				sid: number | string,
+				s: number,
+			) => void
+		)(canvas, resolvedSurfaceId, scopeId);
+	}
+}
+
+export function renderAllCollisionOverlays(
+	controller: CollisionOverlayController,
+) {
+	const app = controller.app as Record<string, unknown> | undefined;
+	const sm = app?.surfaceManager as Record<string, unknown> | undefined;
+	const scopes = new Set<number>([0, 1]);
+
+	if (controller.currentSurfaces instanceof Map) {
+		for (const scope of controller.currentSurfaces.keys()) {
+			if (typeof scope === "number" && Number.isFinite(scope)) {
+				scopes.add(scope);
+			}
+		}
+	}
+
+	const charSurfaceIds = sm?.charSurfaceIds as
+		| Record<string, unknown>
+		| undefined;
+	if (charSurfaceIds && typeof charSurfaceIds === "object") {
+		for (const key of Object.keys(charSurfaceIds)) {
+			const parsed = Number(key);
+			if (Number.isInteger(parsed) && parsed >= 0) {
+				scopes.add(parsed);
+			}
+		}
+	}
+
+	for (const scopeId of scopes) {
+		const resolvedSurfaceId = resolveSurfaceIdForScope(sm, scopeId);
+		renderCollisionOverlayForScope(
+			controller,
+			scopeId,
+			resolvedSurfaceId,
+			null,
+		);
+	}
 }

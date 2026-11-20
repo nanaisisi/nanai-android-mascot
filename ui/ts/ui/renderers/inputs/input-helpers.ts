@@ -3,22 +3,28 @@
  * @brief inputbox autocomplete および parseBoxOptions ヘルパー処理
  */
 
+import type {
+	BoxOptions,
+	ModalDialogControllerContext,
+} from "../modal-dialog-ui.js";
+
 export async function attachAutocomplete(
-	this: unknown,
-	inputEl: {
-		setAttribute: (arg0: string, arg1: string) => void;
-		parentElement: { appendChild: (arg0: HTMLDataListElement) => void };
-	},
+	this: ModalDialogControllerContext,
+	inputEl: HTMLElement | null | undefined,
 	boxType: string,
 	id = "",
-	parentForm = null,
-) {
+	parentForm: HTMLElement | null = null,
+): Promise<HTMLDataListElement | null> {
 	if (!this.app?.ghostController?.sendShioriEvent || !inputEl) return null;
 	try {
-		const res = await this.app.ghostController.sendShioriEvent(
+		const res = (await this.app.ghostController.sendShioriEvent(
 			"inputbox.autocomplete",
 			boxType === "inputbox" ? [boxType, id] : [boxType],
-		);
+		)) as
+			| string
+			| { value?: string; response?: string; toString?: () => string }
+			| null
+			| undefined;
 		const rawVal =
 			typeof res === "string"
 				? res
@@ -57,15 +63,19 @@ export async function attachAutocomplete(
 	}
 }
 
-export function parseBoxOptions(params: string | unknown[]) {
-	const id = params[0] || "UserInput";
+export function parseBoxOptions(
+	params: readonly unknown[] | string,
+): BoxOptions {
+	const rawId = params[0];
+	const id =
+		typeof rawId === "string" && rawId ? rawId : String(rawId || "UserInput");
 	let timeoutMs = 0;
 	let defaultText = "";
 	let placeholder = "";
 	let limit = 0;
 	let noClose = false;
 	let noClear = false;
-	const references = [];
+	const references: string[] = [];
 
 	for (let i = 1; i < params.length; i++) {
 		const p = params[i] ?? "";

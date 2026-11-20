@@ -7,6 +7,6 @@
 
 ## 実装箇所
 
-- `ui/js/surface/surface-load.js:87` `// [blend-lighten-fast]`
-- `ui/js/surface/surface-load.js:88` `// [blend-lighten]`
-- `ui/js/surface/compositor/layer.js:51` `} else if (method === "blend-lighten" || method === "lighten") {`
+- `ui/ts/surface/surface-compositor.ts:52` `"blend-lighten": "lighten",`
+- `tests/surface-compositor.test.ts:21` `expect(resolveCompositeOperation("blend-lighten-fast")).toBe("lighten");`
+- `ui/ts/surface/surface-compositor.ts:53` `"blend-lighten-fast": "lighten",`

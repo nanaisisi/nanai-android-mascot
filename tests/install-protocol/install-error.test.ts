@@ -9,7 +9,7 @@ describe("install-protocol - error parsing & failure args", () => {
 	test("parseInstallErrorReason maps errors to UKADOC failure reasons", () => {
 		assert.equal(
 			parseInstallErrorReason("invalid type: install.txt type=unknown"),
-			"unsupported",
+			"invalid type",
 		);
 		assert.equal(
 			parseInstallErrorReason("サポートされていないアーカイブ種別です"),

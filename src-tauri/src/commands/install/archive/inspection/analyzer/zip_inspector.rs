@@ -4,6 +4,20 @@ use crate::commands::install::resolve_asset_path;
 use crate::commands::install::utils::*;
 use crate::ui_adapter::update::InstallResourceConfig;
 
+pub fn normalize_install_kind(raw: Option<&str>) -> String {
+    raw.map(|s| {
+        let first = s.split(',').next().unwrap_or(s).trim().to_lowercase();
+        first
+            .split(" with ")
+            .next()
+            .unwrap_or(&first)
+            .trim()
+            .to_string()
+    })
+    .filter(|s| !s.is_empty())
+    .unwrap_or_else(|| "ghost".to_string())
+}
+
 pub fn inspect_zip_archive<R: std::io::Read + std::io::Seek>(
     zip: &mut zip::ZipArchive<R>,
     fallback_name: &str,
@@ -103,10 +117,7 @@ pub fn inspect_zip_archive<R: std::io::Read + std::io::Seek>(
         ghost_name = fallback_name.to_string();
     }
 
-    let kind = install_type
-        .as_deref()
-        .map(|s| s.split(',').next().unwrap_or(s).trim().to_lowercase())
-        .unwrap_or_else(|| "ghost".to_string());
+    let kind = normalize_install_kind(install_type.as_deref());
     if kind != "ghost"
         && kind != "balloon"
         && kind != "shell"
@@ -146,7 +157,22 @@ pub fn inspect_zip_archive<R: std::io::Read + std::io::Seek>(
                     "balloon" => resolve_asset_path("assets/balloon", app_handle).ok(),
                     "headline" => resolve_asset_path("assets/headline", app_handle).ok(),
                     "plugin" => resolve_asset_path("assets/plugin", app_handle).ok(),
-                    "shell" => resolve_asset_path("assets/shell", app_handle).ok(),
+                    "shell" => {
+                        if kind == "ghost" {
+                            resolve_asset_path("assets/ghost", app_handle)
+                                .ok()
+                                .map(|ghosts_base| {
+                                    let ghost_dir = if ghosts_base.join(&alt_safe_name).exists() {
+                                        ghosts_base.join(&alt_safe_name)
+                                    } else {
+                                        ghosts_base.join(&safe_dir_name)
+                                    };
+                                    ghost_dir.join("shell")
+                                })
+                        } else {
+                            resolve_asset_path("assets/shell", app_handle).ok()
+                        }
+                    }
                     "calendar.skin" => resolve_asset_path("assets/calendar/skin", app_handle).ok(),
                     "calendar.plugin" => {
                         resolve_asset_path("assets/calendar/plugin", app_handle).ok()

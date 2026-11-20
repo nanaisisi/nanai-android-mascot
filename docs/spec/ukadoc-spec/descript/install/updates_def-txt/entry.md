@@ -6,12 +6,13 @@
 
 ## 突合結果
 
-`crates/ui/src/update.rs` (`parse_update_definition`) においてネットワーク更新定義 (`updates_def.txt` / `updates2.dau`) 内の相対パス行および `ignore`, `readonly`, `delete`, `size=` オプションフラグを自動解析・処理する実装が行われている。
+`crates/ui/src/update/parser/update_definition.rs` (`parse_update_definition`) および `crates/ui/src/update/types.rs` (`is_ignored`) において `updates_def.txt` 内の「相対パス,ignore」および各種オプションフラグ (`readonly`, `delete`, `size=`) のパース・判定が完全実装済み。
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory/mod.rs:63` `println!("🚫 Skipping ghost directory with ignore file: {:?}", path);`
-- `crates/ui/src/update/types.rs:28` `self.flags.iter().any(|f| f.eq_ignore_ascii_case("ignore"))`
 - `crates/ui/src/update/parser/update_definition.rs:65` `} else if extra_trimmed.eq_ignore_ascii_case("ignore") {`
+- `src-tauri/src/ghost/scan/directory/package_files.rs:72` `ignore: Option<PatternSet>,`
+- `ui/assets/LICENSE-3RD-PARTY.html:8301` `<li><a href="https://github.com/BurntSushi/ripgrep/tree/master/crates/ignore" ta`
+- `ui/ts/ui/context-menu.ts:274` `const { getCurrentWindow } = await import(/* @vite-ignore */ modName);`
 - `crates/ui/src/update/parser/update_definition.rs:67` `option_flags.push("ignore".to_string());`
-- `crates/ui/src/update/tests/definition_package.rs:90` `assert_eq!(entries[0].flags, vec!["ignore", "readonly", "delete"]);`
+- `src-tauri/src/ghost/scan/directory/package_files.rs:79` `ignore: PatternSet::load(&root.join(".narignore")),`

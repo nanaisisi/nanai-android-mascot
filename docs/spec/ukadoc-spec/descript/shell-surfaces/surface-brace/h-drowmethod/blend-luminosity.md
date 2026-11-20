@@ -7,6 +7,6 @@
 
 ## 実装箇所
 
-- `ui/js/surface/surface-load.js:95` `// [blend-luminosity-fast]`
-- `ui/js/surface/surface-load.js:96` `// [blend-luminosity]`
-- `ui/js/surface/compositor/layer.js:71` `} else if (method === "blend-luminosity" || method === "luminosity") {`
+- `ui/ts/surface/surface-compositor.ts:72` `"blend-luminosity": "luminosity",`
+- `tests/surface-compositor.test.ts:43` `expect(resolveCompositeOperation("blend-luminosity-fast")).toBe(`
+- `ui/ts/surface/surface-compositor.ts:73` `"blend-luminosity-fast": "luminosity",`

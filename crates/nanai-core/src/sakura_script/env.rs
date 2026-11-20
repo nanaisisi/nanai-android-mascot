@@ -117,9 +117,7 @@ impl SakuraEnvContext {
 
 impl Default for SakuraEnvContext {
     fn default() -> Self {
-        let now = chrono::Local::now();
-        use chrono::Datelike;
-        use chrono::Timelike;
+        let now = jiff::ZonedDateTime::now();
         Self {
             username: "User".to_string(),
             selfname: "Sakura".to_string(),
@@ -129,11 +127,11 @@ impl Default for SakuraEnvContext {
             screen_width: 1024,
             screen_height: 768,
             year: now.year() as u32,
-            month: now.month(),
-            day: now.day(),
-            hour: now.hour(),
-            minute: now.minute(),
-            second: now.second(),
+            month: now.month() as u32,
+            day: now.day() as u32,
+            hour: now.hour() as u32,
+            minute: now.minute() as u32,
+            second: now.second() as u32,
             system_os: if cfg!(target_os = "android") {
                 "Android".to_string()
             } else if cfg!(target_os = "windows") {
@@ -282,7 +280,7 @@ pub fn expand_sakura_environment_variables(script: &str, ctx: &SakuraEnvContext)
         result = result.replacen("%m?", word, 1);
     }
 
-    result = result.replace("%*", "");
+    result = result.replace("%*", "\\![*]");
     result = result.replace("%system.os", ctx.system_os());
     result = result.replace("%system.version", ctx.system_version());
 

@@ -6,8 +6,8 @@
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `shiori.cache` キーをパース・参照する実装が行われている。
+`src-tauri/src/ghost/scan/directory/manifest/parser.rs` において `shiori.cache` キーをパース・参照しキャッシュ制御を行う実装が完全に行われている。
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory/manifest.rs:148` `.and_then(|m| m.get("shiori.cache").cloned());`
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs:118` `.and_then(|m| m.get("shiori.cache").cloned());`

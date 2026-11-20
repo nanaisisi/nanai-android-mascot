@@ -6,7 +6,7 @@
 
 ## 突合結果
 
-`src-tauri/src/commands/ext.rs` において `dllname` キーをパース・参照する実装が行われている。
+`src-tauri/src/commands/ext.rs` においてヘッドラインの `descript.txt` 内の `dllname` ディレクティブのパースおよび保持が完全実装済み。
 
 ## 実装箇所
 

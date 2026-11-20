@@ -21,22 +21,31 @@ export const INSTALL_IDENTIFIERS = Object.freeze([
 	"balloon",
 	"plugin",
 	"headline",
-	"package",
+	"rss",
 	"supplement",
+	"ghost with balloon",
+	"shell with balloon",
+	"package",
+	"language",
 	"calendar.skin",
 	"calendar.plugin",
 	"profile",
 	"taromime",
+	"ghost_or_shell",
+	"unknown",
 ]);
 
 /**
  * UKADOC仕様: インストールの失敗理由 (Install Reasons of Failure)
- * 定義一覧: unsupported, extraction, unlha32 error, artificial, write error, invalid path, format error
+ * 定義一覧: unsupported, extraction, unlha32, unlha32 error, invalid type, password, artificial, write error, invalid path, format error
  */
 export const INSTALL_FAILURE_REASONS = Object.freeze([
 	"unsupported",
 	"extraction",
+	"unlha32",
 	"unlha32 error",
+	"invalid type",
+	"password",
 	"artificial",
 	"write error",
 	"invalid path",
@@ -57,6 +66,22 @@ export function normalizeInstallType(
 		return lower;
 	}
 	return lower || "unknown";
+}
+
+/**
+ * インストール失敗理由の正規化 (UKADOC「インストールの失敗理由」準拠)
+ * @param {string} reason
+ * @returns {string}
+ */
+export function normalizeInstallFailureReason(
+	reason: InstallFailureReason | string | null | undefined,
+): string {
+	if (!reason || typeof reason !== "string") return "unsupported";
+	const lower = reason.trim().toLowerCase();
+	if (INSTALL_FAILURE_REASONS.includes(lower)) {
+		return lower;
+	}
+	return "unsupported";
 }
 
 /**
@@ -169,27 +194,18 @@ export function buildInstallRerouteArgs(
 }
 
 /**
- * 例外オブジェクトやエラー文字列から UKADOC 準拠の「インストールの失敗理由」を抽出
- * @param {unknown} err
- * @returns {string} - "unsupported" | "extraction" | "unlha32 error" | "artificial" | "write error" | "invalid path"
+ * 例外オブジェクトやエラー文字列から UKADOC 準拠の「インストールの失敗理由」を抽出 (純TSフォールバック)
  */
-export function parseErrorReason(err: unknown): string {
-	const msg = String((err as { message?: string })?.message || err || "");
-
-	if (wasmBridge.isReady()) {
-		try {
-			return wasmBridge.parseInstallErrorReason(msg);
-		} catch {
-			// fallback
-		}
-	}
-
+export function parseInstallErrorReasonFallback(err: unknown): string {
+	const msg = String((err as { message?: unknown })?.message ?? err ?? "");
 	const lower = msg.toLowerCase();
-	if (
-		lower.includes("unsupported") ||
-		lower.includes("invalid type") ||
-		lower.includes("サポートされていない")
-	) {
+	if (lower.includes("password") || lower.includes("パスワード")) {
+		return "password";
+	}
+	if (lower.includes("invalid type") || lower.includes("install.txt")) {
+		return "invalid type";
+	}
+	if (lower.includes("unsupported") || lower.includes("サポートされていない")) {
 		return "unsupported";
 	}
 	if (
@@ -208,23 +224,47 @@ export function parseErrorReason(err: unknown): string {
 	) {
 		return "invalid path";
 	}
-	if (
-		lower.includes("unlha32") ||
-		lower.includes("lha") ||
-		lower.includes("corrupt") ||
-		lower.includes("crc")
-	) {
+	if (lower.includes("corrupt") || lower.includes("crc")) {
 		return "unlha32 error";
 	}
 	if (
-		lower.includes("write error") ||
-		lower.includes("fileio") ||
-		lower.includes("permission denied") ||
-		lower.includes("io error")
+		lower.includes("permission") ||
+		lower.includes("access denied") ||
+		lower.includes("write") ||
+		lower.includes("書き込み")
 	) {
 		return "write error";
 	}
+	if (
+		lower.includes("format") ||
+		lower.includes("invalid") ||
+		lower.includes("形式")
+	) {
+		return "format error";
+	}
+	if (lower.includes("unlha32") || lower.includes("lha")) {
+		return "unlha32";
+	}
 	return "extraction";
+}
+
+/**
+ * 例外オブジェクトやエラー文字列から UKADOC 準拠の「インストールの失敗理由」を抽出
+ * @param {unknown} err
+ * @returns {string} - "unsupported" | "extraction" | "unlha32 error" | "artificial" | "write error" | "invalid path" | "format error"
+ */
+export function parseErrorReason(err: unknown): string {
+	const msg = String((err as { message?: unknown })?.message ?? err ?? "");
+
+	if (wasmBridge.isReady()) {
+		try {
+			return wasmBridge.parseInstallErrorReason(msg);
+		} catch {
+			// fallback
+		}
+	}
+
+	return parseInstallErrorReasonFallback(msg);
 }
 
 export const parseInstallErrorReason = parseErrorReason;

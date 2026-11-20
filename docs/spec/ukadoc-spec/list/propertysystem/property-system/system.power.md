@@ -2,7 +2,7 @@
 
 - **規格**: [system.power.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/system.power/) (ukadoc-spec/list/propertysystem/property-system/system.power.md)
 - **検索語**: system.power.
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,5 +10,5 @@ UKADOC `system.power` 仕様に従い、`source` (`ac` / `battery` / `ups` / `un
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property/evaluator/rules/system_hardware.rs` `pub fn evaluate_system_power(q: &str)`
-- `src-tauri/src/shiori/property/tests.rs` `evaluate_property_query("system.power.source")`
+- `src-tauri/src/shiori/property/tests.rs:73` `assert!(!evaluate_property_query("system.power.source").is_empty());`
+- `src-tauri/src/shiori/property/tests.rs:74` `assert!(!evaluate_property_query("system.power.battery.percent").is_empty());`

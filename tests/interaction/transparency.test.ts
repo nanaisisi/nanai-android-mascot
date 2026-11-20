@@ -11,12 +11,12 @@ describe("transparency interaction submodule", () => {
 		// Non-IMG element
 		assert.equal(isPixelTransparent(null, 10, 10), false);
 		assert.equal(
-			isPixelTransparent(/** @type {any} */ ({ tagName: "DIV" }), 10, 10),
+			isPixelTransparent({ tagName: "DIV" } as unknown as HTMLElement, 10, 10),
 			false,
 		);
 
 		// Zero-size image
-		const zeroImg = /** @type {any} */ ({
+		const zeroImg = {
 			tagName: "IMG",
 			getBoundingClientRect: () => ({
 				left: 0,
@@ -26,11 +26,11 @@ describe("transparency interaction submodule", () => {
 			}),
 			naturalWidth: 10,
 			naturalHeight: 10,
-		});
+		} as unknown as HTMLElement;
 		assert.equal(isPixelTransparent(zeroImg, 5, 5), true);
 
 		// Out of bounds image
-		const normalImg = /** @type {any} */ ({
+		const normalImg = {
 			tagName: "IMG",
 			getBoundingClientRect: () => ({
 				left: 10,
@@ -40,7 +40,7 @@ describe("transparency interaction submodule", () => {
 			}),
 			naturalWidth: 50,
 			naturalHeight: 50,
-		});
+		} as unknown as HTMLElement;
 		// clientX < left
 		assert.equal(isPixelTransparent(normalImg, 5, 20), true);
 		// clientX >= right

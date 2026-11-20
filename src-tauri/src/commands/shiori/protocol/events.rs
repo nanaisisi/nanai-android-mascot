@@ -47,6 +47,12 @@ pub async fn send_on_translate(
     }
 }
 
+/// Windows 専用 `makoto.dll` をロードし、MAKOTO/2.0 プロトコルでさくらスクリプトを翻訳する
+#[tauri::command]
+pub async fn execute_makoto_translate(dll_path: String, script: String) -> Result<String, String> {
+    crate::shiori::makoto::execute_makoto_dll(std::path::Path::new(&dll_path), &script)
+}
+
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
 pub struct SendGhostCallEventParams {
     event: String,

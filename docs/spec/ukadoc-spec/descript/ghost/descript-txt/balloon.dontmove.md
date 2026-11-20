@@ -6,12 +6,9 @@
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `balloon.dontmove` キーをパース・参照する実装が行われている。
+`ui/ts/core/actions/balloon-descript/layout/alignment.ts` および `ui/ts/ghost/balloon-window/theme.ts` において `balloon.dontmove`, `sakura.balloon.dontmove`, `kero.balloon.dontmove` 等の各キーを評価し、バルーン固定配置フラグを設定する実装が完全に行われている。
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/layout.js:193` `// [balloon.dontmove,数値], [sakura.balloon.dontmove,数値], [kero.balloon.dontmove,数`
-- `ui/js/core/actions/balloon-descript/layout.js:196` `props["balloon.dontmove"] === "1" ||`
-- `ui/js/core/actions/balloon-descript/layout.js:197` `props["balloon.dontmove"]?.toLowerCase() === "true" ||`
-- `ui/js/core/actions/balloon-descript/layout.js:198` `props["sakura.balloon.dontmove"] === "1" ||`
-- `ui/js/core/actions/balloon-descript/layout.js:199` `props["sakura.balloon.dontmove"]?.toLowerCase() === "true" ||`
+- `ui/ts/core/actions/balloon-descript/layout/alignment.ts` (`balloon.dontmove`)
+- `ui/ts/ghost/balloon-window/theme.ts` (`balloon.dontmove`)

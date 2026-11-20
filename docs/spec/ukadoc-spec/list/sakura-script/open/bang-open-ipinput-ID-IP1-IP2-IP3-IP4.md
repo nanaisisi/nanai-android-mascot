@@ -2,16 +2,16 @@
 
 - **規格**: [bang-open-ipinput-ID-IP1-IP2-IP3-IP4.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/open/bang-open-ipinput-ID-IP1-IP2-IP3-IP4/) (ukadoc-spec/list/sakura-script/open/bang-open-ipinput-ID-IP1-IP2-IP3-IP4.md)
 - **検索語**: OpenDialog
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
-\\![open,...] コマンドのパース処理を実装 (crates/ui/src/script/parser/brackets/handlers/raiselike.rs -> SakuraCommand::OpenDialog)。
+`\![open,ipinput,...]` コマンドのパース (`crates/ui/src/script/parser/brackets/handlers/raiselike.rs`), コマンドディスパッチ (`ui/ts/ghost/command-handler/inputbox.ts` -> `openIpInput`), および 4 桁 IP アドレス入力 4 フィールドコントロール (`ui/ts/ui/renderers/inputs/advanced/ip-input.ts`) が完全実装済み。
 
 ## 実装箇所
 
-- `crates/ui/src/script/command.rs:87` `OpenDialog {`
-- `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:126` `callback(SakuraCommand::OpenDialog {`
-- `crates/ui/src/script/parser/brackets/handlers/underscore.rs:128` `callback(SakuraCommand::OpenDialog {`
-- `crates/ui/src/script/parser/brackets/handlers/underscore.rs:136` `callback(SakuraCommand::OpenDialog {`
-- `ui/js/ghost/sakura-rust-bridge.js:235` `case "OpenDialog":`
+- `crates/ui/src/script/command.rs:101` `OpenDialog {`
+- `crates/ui/src/script/parser/brackets/handlers/raiselike/settings/handlers.rs:36` `callback(SakuraCommand::OpenDialog {`
+- `crates/ui/src/script/parser/brackets/handlers/underscore/handlers.rs:154` `callback(SakuraCommand::OpenDialog {`
+- `crates/ui/src/script/parser/brackets/handlers/underscore/handlers.rs:162` `callback(SakuraCommand::OpenDialog {`
+- `crates/ui/src/tests/sakura_script.rs:169` `SakuraCommand::OpenDialog {`

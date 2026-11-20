@@ -2,7 +2,7 @@
 
 - **規格**: [baseware.windowmode.md](https://ukatech.shillest.net/ukadoc-spec/list/propertysystem/property-system/baseware.windowmode/) (ukadoc-spec/list/propertysystem/property-system/baseware.windowmode.md)
 - **検索語**: baseware.windowmode
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,5 +10,4 @@
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property/evaluator/rules/baseware.rs` `pub fn evaluate_baseware_property(sub: &str)`
-- `src-tauri/src/shiori/property/tests.rs` `evaluate_property_query("baseware.windowmode")`
+- `src-tauri/src/shiori/property/tests.rs:23` `assert_eq!(evaluate_property_query("baseware.windowmode"), "normal");`

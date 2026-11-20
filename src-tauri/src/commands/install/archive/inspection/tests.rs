@@ -1,4 +1,6 @@
-use crate::commands::install::archive::inspection::resolve_bundled_resources_config;
+use crate::commands::install::archive::inspection::{
+    normalize_install_kind, resolve_bundled_resources_config,
+};
 use std::collections::HashMap;
 
 #[test]
@@ -85,4 +87,17 @@ fn test_inspect_extended_options_and_refresh() {
         .map(|s| s.to_string())
         .collect();
     assert_eq!(masks, vec!["important.dat", "config.xml"]);
+}
+
+#[test]
+fn test_normalize_install_kind() {
+    assert_eq!(normalize_install_kind(None), "ghost");
+    assert_eq!(normalize_install_kind(Some("")), "ghost");
+    assert_eq!(normalize_install_kind(Some("ghost")), "ghost");
+    assert_eq!(normalize_install_kind(Some("ghost with balloon")), "ghost");
+    assert_eq!(
+        normalize_install_kind(Some("Shell With Balloon, something")),
+        "shell"
+    );
+    assert_eq!(normalize_install_kind(Some("package")), "package");
 }

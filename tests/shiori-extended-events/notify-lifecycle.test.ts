@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { shioriNotifyMethods } from "../../ui/ts/ghost/shiori-notify.js";
 import {
+	createMockNotifyObj,
 	createMockShioriController,
 	type MockShioriController,
 } from "./helpers.js";
@@ -13,10 +13,7 @@ describe("shiori-notify UKADOC lifecycle, environment & communication protocols"
 	});
 
 	it("sends notifyMouseEvent with eventName and arbitrary references", async () => {
-		const notifyObj = {
-			...shioriNotifyMethods,
-			sendShioriNotify: mockController.sendShioriNotify,
-		};
+		const notifyObj = createMockNotifyObj(mockController);
 
 		await notifyObj.notifyMouseEvent("OnMouseEnter", [
 			10,
@@ -34,10 +31,7 @@ describe("shiori-notify UKADOC lifecycle, environment & communication protocols"
 	});
 
 	it("sends UKADOC lifecycle notifications (OnGhostChanging, OnGhostChanged, OnShellChanged, etc.)", async () => {
-		const notifyObj = {
-			...shioriNotifyMethods,
-			sendShioriNotify: mockController.sendShioriNotify,
-		};
+		const notifyObj = createMockNotifyObj(mockController);
 
 		await notifyObj.notifyGhostLifecycle("OnGhostChanging", [
 			"NextGhost",
@@ -76,10 +70,7 @@ describe("shiori-notify UKADOC lifecycle, environment & communication protocols"
 	});
 
 	it("sends vanish, url-drop, file-drop, and os-state notifications", async () => {
-		const notifyObj = {
-			...shioriNotifyMethods,
-			sendShioriNotify: mockController.sendShioriNotify,
-		};
+		const notifyObj = createMockNotifyObj(mockController);
 
 		await notifyObj.notifyVanishEvent("OnVanished", ["VanishedGhost"]);
 		expect(mockController.sendShioriNotify).toHaveBeenCalledWith("OnVanished", [

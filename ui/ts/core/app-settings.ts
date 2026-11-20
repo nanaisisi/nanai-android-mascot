@@ -8,11 +8,11 @@ import {
 
 export const settingsMethods = {
 	loadSettings() {
+		const app =
+			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
 		try {
 			const saved = localStorage.getItem("nanai-android-mascot-settings");
 			if (saved) {
-				const app =
-					this as unknown as import("../../main.js").NanaiAndroidMascotApp;
 				const parsed = JSON.parse(saved) as Record<string, unknown>;
 				app.settings = {
 					...app.settings,
@@ -22,12 +22,54 @@ export const settingsMethods = {
 		} catch (_error) {
 			// 設定未保存またはパース失敗時はデフォルト維持
 		}
+
+		// デバッグビルド時・開発環境判定: 明示的未設定時はデフォルトで開発者機能を標準ON
+		const isDevEnvironment =
+			isTauriAvailable() ||
+			(typeof location !== "undefined" &&
+				(location.hostname === "localhost" ||
+					location.hostname === "127.0.0.1"));
+
+		if (
+			isDevEnvironment &&
+			(app.settings as Record<string, unknown>)?.developerModeEnabled ===
+				undefined
+		) {
+			app.settings = {
+				...app.settings,
+				developerModeEnabled: true,
+				devModeEnabled: true,
+				showCollisionArea: false,
+			};
+		}
 	},
 
 	applySettings() {
 		const app =
 			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
-		document.body.classList.toggle("dark-mode", !!app.settings?.darkMode);
+
+		// ダークモード設定の適用 (OS自動/ダーク/ライト)
+		const dmOpt =
+			(app.settings?.darkModeOpt as string) ||
+			(app.settings?.darkMode ? "dark" : "auto");
+		let isDark = false;
+		if (dmOpt === "dark") {
+			isDark = true;
+		} else if (dmOpt === "light") {
+			isDark = false;
+		} else if (
+			typeof window !== "undefined" &&
+			typeof window.matchMedia === "function"
+		) {
+			isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+		}
+		if (typeof document !== "undefined" && document.body) {
+			document.body.classList.toggle("dark-mode", isDark);
+			document.documentElement?.setAttribute(
+				"data-theme",
+				isDark ? "dark" : "light",
+			);
+		}
 
 		// シェル倍率 (50%〜200%)
 		const shellScaleVal =
@@ -210,10 +252,75 @@ export const settingsMethods = {
 		}
 	},
 
-	playSakuraScript(script: string) {
+	async playSakuraScript(script: string) {
 		const app =
 			this as unknown as import("../../main.js").NanaiAndroidMascotApp;
-		return app.sakuraPlayer?.play?.(script);
+		let translated = script;
+		const ghostName = app.ghostController?.currentGhost?.name;
+		const shellName =
+			(app.ghostController as { currentShellName?: string } | undefined)
+				?.currentShellName ?? null;
+
+		let order: string[] = ["shiori"];
+		let ghostMakoto: string | null = null;
+		let shellMakoto: string | null = null;
+		if (ghostName) {
+			try {
+				const info = await invoke<{
+					ghost_makoto: string | null;
+					shell_makoto: string | null;
+					order: string[];
+				}>("get_makoto_translators", { ghostName, shellName });
+				ghostMakoto = info?.ghost_makoto ?? null;
+				shellMakoto = info?.shell_makoto ?? null;
+				if (Array.isArray(info?.order) && info.order.length > 0) {
+					order = info.order;
+				}
+			} catch {
+				// Fallback to default shiori-only order when command is unavailable
+			}
+		}
+
+		for (const stage of order) {
+			if (stage === "shiori") {
+				try {
+					const res = await invoke<string>("send_on_translate", {
+						script: translated,
+					});
+					if (typeof res === "string" && res.length > 0) {
+						translated = res;
+					}
+				} catch {
+					// Keep current script if OnTranslate fails or is unavailable
+				}
+			} else if (stage === "ghost" && ghostMakoto) {
+				try {
+					const res = await invoke<string>("execute_makoto_translate", {
+						dllPath: ghostMakoto,
+						script: translated,
+					});
+					if (typeof res === "string" && res.length > 0) {
+						translated = res;
+					}
+				} catch {
+					// Keep current script if ghost makoto.dll fails or is unsupported (e.g. Android)
+				}
+			} else if (stage === "shell" && shellMakoto) {
+				try {
+					const res = await invoke<string>("execute_makoto_translate", {
+						dllPath: shellMakoto,
+						script: translated,
+					});
+					if (typeof res === "string" && res.length > 0) {
+						translated = res;
+					}
+				} catch {
+					// Keep current script if shell makoto.dll fails or is unsupported (e.g. Android)
+				}
+			}
+		}
+
+		return app.sakuraPlayer?.play?.(translated);
 	},
 
 	startSecondTimer() {

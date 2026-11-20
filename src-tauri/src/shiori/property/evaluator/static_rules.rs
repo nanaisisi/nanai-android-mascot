@@ -14,6 +14,8 @@ pub(super) fn evaluate_static_property(q: &str) -> Option<String> {
         "currentghost.balloon.mousecursor.arrow" => "",
         "currentghost.balloon.mousecursor.text" => "",
         "currentghost.balloon.mousecursor.wait" => "",
+        "currentghost.balloon.mousecursor.grip" => "",
+        "currentghost.balloon.mousecursor.hand" => "",
         "currentghost.balloon.mousecursor" => "",
         "history.balloon.count" => "0",
         "history.balloon.index(0).name" | "history.balloon.index(0)" => "",

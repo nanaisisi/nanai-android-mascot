@@ -99,13 +99,13 @@ describe("install-protocol - update-protocol legacy coverage", () => {
 	});
 
 	test("createUpdateProgressHandler relays events to GhostController", async () => {
-		const dispatched = [];
+		const dispatched: Array<{ ev: string; args: unknown[] }> = [];
 		const mockGc = {
-			sendShioriEvent: async (ev, args) => {
+			sendShioriEvent: async (ev: string, args: unknown[] = []) => {
 				dispatched.push({ ev, args });
 			},
 		};
-		let failed = null;
+		let failed: string | null = null;
 		const handler = createUpdateProgressHandler(
 			mockGc,
 			(f) => {

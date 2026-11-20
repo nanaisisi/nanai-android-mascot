@@ -6,12 +6,13 @@
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `developer_options.txt` を読み込み、開発者向け除外・制御フラグ行を抽出・適用する実装が行われている。
+`src-tauri/src/ghost/scan/directory/filter.rs`, `crates/nanai-core/src/update_protocol/helpers.rs` (`is_no_update_path`), および `src-tauri/src/commands/update/generation.rs` において `developer_options.txt` のパースおよび開発者向け除外・制御フラグの適用が完全実装済み。
 
 ## 実装箇所
 
-- `src-tauri/src/commands/update/generation.rs:18` `let dev_opt_path = dir.join("developer_options.txt");`
-- `src-tauri/src/ghost/scan/directory/filter.rs:12` `/// Parse developer_options.txt if present`
-- `src-tauri/src/ghost/scan/directory/filter.rs:14` `let dev_options_path = path.join("developer_options.txt");`
-- `crates/nanai-core/src/update_protocol.rs:60` `/// developer_options.txt の noupdate ディレクティブ除外判定`
-- `crates/ui/src/update/engine.rs:36` `/// developer_options.txt の内容をパースして noupdate ファイル一覧を取得`
+- `crates/nanai-core/src/update_protocol/helpers.rs:26` `/// developer_options.txt の noupdate ディレクティブ除外判定`
+- `src-tauri/src/commands/install/archive/packaging.rs:10` `// [自動的に除外される対象]: UKADOC / SSP developer_options.txt 仕様自動除外定義`
+- `ui/ts/core/actions/update-protocol.ts:88` `* developer_options.txt の noupdate ディレクティブ除外判定 (純TSフォールバック)`
+- `crates/nanai-core/src/update_protocol/helpers.rs:82` `/// developer_options.txt テキストをパース (UKADOC仕様)`
+- `src-tauri/src/commands/install/archive/packaging.rs:45` `let dev_opts_path = source_dir.join("developer_options.txt");`
+- `ui/ts/core/actions/update-protocol.ts:103` `* developer_options.txt の noupdate ディレクティブ除外判定`

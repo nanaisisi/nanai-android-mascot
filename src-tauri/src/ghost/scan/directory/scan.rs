@@ -76,6 +76,7 @@ pub async fn scan_ghost_directory(
             let shells = scan_shells_from_ghost(&path);
 
             Some(GhostInfo {
+                assets: crate::ghost::scan::assets::discover_ghost_assets(&path),
                 name: manifest.display_name().to_string(),
                 version: manifest.version().map(ToString::to_string),
                 path: path.to_string_lossy().to_string(),
@@ -109,6 +110,10 @@ pub async fn scan_ghost_directory(
                 shiori_logo_align: manifest.shiori_logo_align().map(ToString::to_string),
                 shiori_logo_x: manifest.shiori_logo_x(),
                 shiori_logo_y: manifest.shiori_logo_y(),
+                dont_need_onmousemove: manifest.dont_need_onmousemove(),
+                dont_need_bind: manifest.dont_need_bind(),
+                dont_need_seriko_talk: manifest.dont_need_seriko_talk(),
+                name_allowoverride: manifest.name_allowoverride(),
             })
         });
     }
@@ -141,6 +146,7 @@ pub async fn scan_ghost_directory(
                 (None, None)
             };
             ghosts.push(GhostInfo {
+                assets: Default::default(),
                 name: "mock_nanai".to_string(),
                 version: Some("1.0.0".to_string()),
                 path: mock_nanai_path.to_string_lossy().to_string(),
@@ -172,6 +178,10 @@ pub async fn scan_ghost_directory(
                 shiori_logo_align: None,
                 shiori_logo_x: None,
                 shiori_logo_y: None,
+                dont_need_onmousemove: false,
+                dont_need_bind: false,
+                dont_need_seriko_talk: false,
+                name_allowoverride: true,
             });
         }
     }

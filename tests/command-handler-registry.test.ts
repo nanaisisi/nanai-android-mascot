@@ -2,12 +2,14 @@ import { describe, expect, it } from "vitest";
 
 import { handleJumpCommand } from "../ui/ts/ghost/command-handler/jump.js";
 import {
+	type CommandHandlerFn,
 	getCommandHandler,
 	normalizeCommandKey,
 	registerCommandHandler,
 	unregisterCommandHandler,
 } from "../ui/ts/ghost/command-handler/registry.js";
 import { SakuraCommandHandler } from "../ui/ts/ghost/sakura-command-handler.js";
+import type { SakuraScriptPlayer } from "../ui/ts/ghost/sakura-script.js";
 
 describe("CommandHandlerMap & Registry", () => {
 	it("normalizes command keys properly", () => {
@@ -19,7 +21,7 @@ describe("CommandHandlerMap & Registry", () => {
 	});
 
 	it("registers, gets, and unregisters handlers", () => {
-		const dummyHandler = () => "custom";
+		const dummyHandler = (() => "custom") as unknown as CommandHandlerFn;
 		registerCommandHandler("test:custom", dummyHandler);
 
 		expect(getCommandHandler("test", "custom")).toBe(dummyHandler);
@@ -39,7 +41,7 @@ describe("CommandHandlerMap & Registry", () => {
 
 	it("dispatches custom commands via SakuraCommandHandler", async () => {
 		let executed = false;
-		let receivedArgs = [];
+		let receivedArgs: string[] = [];
 
 		registerCommandHandler("plugin:myfeature", (_handler, args) => {
 			executed = true;
@@ -47,7 +49,10 @@ describe("CommandHandlerMap & Registry", () => {
 		});
 
 		const dummyApp = { ghostController: {} };
-		const player = { currentScope: 0, app: dummyApp };
+		const player = {
+			currentScope: 0,
+			app: dummyApp,
+		} as unknown as SakuraScriptPlayer;
 		const cmdHandler = new SakuraCommandHandler(player);
 
 		await cmdHandler.runCommand(["plugin", "myfeature", "arg1", "arg2"]);
@@ -61,17 +66,17 @@ describe("CommandHandlerMap & Registry", () => {
 describe("Jump command handler (\\j[...])", () => {
 	it("opens external URL via globalThis.open", async () => {
 		const originalOpen = globalThis.open;
-		let openedUrl = "";
-		let openedTarget = "";
+		let openedUrl: string | URL | undefined = "";
+		let openedTarget: string | undefined = "";
 
-		globalThis.open = (url, target) => {
+		globalThis.open = (url?: string | URL, target?: string) => {
 			openedUrl = url;
 			openedTarget = target;
 			return null;
 		};
 
 		try {
-			const dummyHandler = { app: {} };
+			const dummyHandler = { app: {} } as unknown as SakuraCommandHandler;
 			await handleJumpCommand(dummyHandler, "https://example.com/ghost/update");
 			expect(openedUrl).toBe("https://example.com/ghost/update");
 			expect(openedTarget).toBe("_blank");
@@ -81,16 +86,16 @@ describe("Jump command handler (\\j[...])", () => {
 	});
 
 	it("dispatches On-event jump to SHIORI", async () => {
-		const events = [];
+		const events: Array<{ ev: string; args: string[] }> = [];
 		const dummyHandler = {
 			app: {
 				ghostController: {
-					sendShioriEvent: async (ev, args) => {
+					sendShioriEvent: async (ev: string, args: string[]) => {
 						events.push({ ev, args });
 					},
 				},
 			},
-		};
+		} as unknown as SakuraCommandHandler;
 
 		await handleJumpCommand(dummyHandler, "OnMyCustomJump", ["ref0", "ref1"]);
 		expect(events.length).toBe(1);
@@ -101,16 +106,16 @@ describe("Jump command handler (\\j[...])", () => {
 	});
 
 	it("dispatches choice label jump via OnChoiceSelect", async () => {
-		const events = [];
+		const events: Array<{ ev: string; args: string[] }> = [];
 		const dummyHandler = {
 			app: {
 				ghostController: {
-					sendShioriEvent: async (ev, args) => {
+					sendShioriEvent: async (ev: string, args: string[]) => {
 						events.push({ ev, args });
 					},
 				},
 			},
-		};
+		} as unknown as SakuraCommandHandler;
 
 		await handleJumpCommand(dummyHandler, "label_entry_point", ["arg1"]);
 		expect(events.length).toBe(1);
@@ -121,8 +126,8 @@ describe("Jump command handler (\\j[...])", () => {
 	});
 
 	it("ignores empty jump target", async () => {
-		const dummyHandler = { app: {} };
+		const dummyHandler = { app: {} } as unknown as SakuraCommandHandler;
 		await handleJumpCommand(dummyHandler, "");
-		await handleJumpCommand(dummyHandler, null);
+		await handleJumpCommand(dummyHandler, null as unknown as string);
 	});
 });

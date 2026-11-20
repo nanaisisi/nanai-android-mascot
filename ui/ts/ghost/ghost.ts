@@ -1,12 +1,25 @@
 import { AppConfig } from "../core/config.js";
-import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import {
+	convertFileSrc,
+	invoke,
+	isTauriAvailable,
+} from "../core/tauri-helper.js";
 import { ghostSurfaceMethods } from "../surface/ghost-surface.js";
 import { ghostShioriMethods } from "./ghost-shiori.js";
+
+export interface GhostAssets {
+	thumbnail?: string | null;
+	ai0?: string | null;
+	ai0_dark?: string | null;
+	cursors?: string[];
+	icons?: string[];
+}
 
 export interface GhostInfo {
 	name: string;
 	path?: string;
 	shells?: string[];
+	assets?: GhostAssets;
 	[key: string]: unknown;
 }
 
@@ -30,6 +43,7 @@ export class GhostController {
 		charPosition?: number | string,
 	) => Promise<unknown>;
 	declare stopSecondChangeTimer?: () => void;
+	declare applyGhostCursor?: () => void;
 	declare callGhost?: (name: string) => Promise<unknown>;
 	declare evaluateProperty?: (prop: string) => Promise<unknown>;
 	declare sendGhostChanging?: (
@@ -226,6 +240,7 @@ export class GhostController {
 		} catch (_e) {}
 
 		this.currentGhost = ghost;
+		this.applyGhostCursor?.();
 
 		if (isTauriAvailable()) {
 			try {
@@ -332,6 +347,35 @@ export class GhostController {
 				} catch (_e) {}
 			}
 		}
+	}
+
+	getAi0ImagePath(): string | null {
+		const assets = this.currentGhost?.assets;
+		if (!assets) return null;
+		const isDark =
+			typeof window !== "undefined" &&
+			typeof window.matchMedia === "function" &&
+			window.matchMedia("(prefers-color-scheme: dark)").matches;
+		if (isDark) {
+			return assets.ai0_dark || assets.ai0 || null;
+		}
+		return assets.ai0 || assets.ai0_dark || null;
+	}
+
+	async openAigraph() {
+		const ai0Path = this.getAi0ImagePath();
+		if (ai0Path && typeof document !== "undefined") {
+			const logoEl = document.querySelector<HTMLImageElement>(
+				"#aigraph-logo, #aigraph-modal-content img",
+			);
+			if (logoEl) {
+				logoEl.src = convertFileSrc(ai0Path);
+			}
+		}
+		const modalManager = (
+			this.app as { modalManager?: { show?: (id: string) => void } } | undefined
+		)?.modalManager;
+		modalManager?.show?.("aigraph-modal-content");
 	}
 }
 

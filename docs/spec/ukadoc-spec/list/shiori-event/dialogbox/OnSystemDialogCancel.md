@@ -6,8 +6,12 @@
 
 ## 突合結果
 
-OnSystemDialogCancel ダイアログ関連SHIORIイベント通知処理を実装 (ui/js/ghost/shiori-notify.js -> sendShioriNotify).
+システムダイアログのキャンセル/消去時に `OnSystemDialogCancel` SHIORIイベントを送信する処理を実装 (`ui/ts/ui/renderers/modal-dialog-system.ts` -> `OnSystemDialogCancel`)。
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:25` `* - OnConfigurationDialogHelp, OnGhostTermsAccept, OnGhostTermsDecline, OnSystem`
+- `crates/nanai-core/src/shiori_protocol_helpers/events/system.rs:280` `pub fn build_on_system_dialog_cancel_request`
+- `ui/ts/ghost/shiori-protocol.ts:163` `SYSTEM_DIALOG_CANCEL: "OnSystemDialogCancel"`
+- `ui/ts/ghost/command-handler/inputbox.ts:80` `handler.app.ghostController?.sendShioriEvent("OnSystemDialogCancel", [`
+- `ui/ts/ui/renderers/modal-dialog-choices.ts:33` `this.app?.ghostController?.sendShioriEvent?.("OnSystemDialogCancel", [`
+- `ui/ts/ui/renderers/modal-dialog-system.ts:104` `"OnSystemDialogCancel"`

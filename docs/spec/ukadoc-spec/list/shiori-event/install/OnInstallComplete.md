@@ -6,13 +6,13 @@
 
 ## 突合結果
 
-実装コードに「OnInstallComplete」が見つからない。
+UKADOC 規格準拠の「OnInstallComplete」イベント引数構築 (`build_install_complete_args`) を Rust コアおよび TypeScript アクションとして完全実装。
 
 
 ## 実装箇所
 
-- `crates/nanai-core/src/install_protocol.rs:51` `/// OnInstallComplete SHIORI 引数生成`
+- `crates/nanai-core/src/install_protocol/events.rs:31` `/// OnInstallComplete SHIORI 引数生成`
 - `ui/ts/core/actions/ghost-install-action.ts:81` `"OnInstallComplete",`
 - `ui/ts/core/actions/ghost-install-action.ts:103` `"OnInstallComplete",`
 - `ui/ts/core/actions/ghost-install-action.ts:115` `"OnInstallComplete",`
-- `ui/ts/core/actions/install-protocol.ts:7` `* - OnInstallComplete: Reference0=種別 ("ghost", "shell", "balloon", "plugin", "he`
+- `ui/ts/core/actions/install-protocol.ts:100` `* OnInstallComplete SHIORI 引数生成`

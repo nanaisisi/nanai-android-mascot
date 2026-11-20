@@ -2,12 +2,33 @@
  * @file modal-explorer.js
  * @brief ゴーストエクスプローラモーダルのリスナーおよびテーブル描画・操作ロジック
  */
-export function setupExplorerListeners(modalManager: unknown, app: unknown) {
+
+import type { AppModalTarget, ModalManager } from "./modal.js";
+
+export interface ExplorerGhostInfo {
+	name: string;
+	craftman?: string;
+	path?: string;
+	group?: string;
+	install_date?: string;
+	update_date?: string;
+	update_result?: string;
+	sakura_name?: string;
+	kero_name?: string;
+	[key: string]: unknown;
+}
+
+export function setupExplorerListeners(
+	modalManager: ModalManager,
+	app: AppModalTarget | null,
+) {
 	const rows = modalManager.content?.querySelector("#explorer-rows");
 	const status = modalManager.content?.querySelector("#explorer-status");
-	const search = modalManager.content?.querySelector("#explorer-search");
-	let ghosts: unknown[] = [];
-	let selected: { name: unknown } | null = null;
+	const search = modalManager.content?.querySelector(
+		"#explorer-search",
+	) as HTMLInputElement | null;
+	let ghosts: ExplorerGhostInfo[] = [];
+	let selected: ExplorerGhostInfo | null = null;
 	let sortKey = "name";
 	let sortAsc = true;
 	let _searchIndex = -1;
@@ -20,22 +41,18 @@ export function setupExplorerListeners(modalManager: unknown, app: unknown) {
 	};
 	const updateSortHeaderIndicators = () => {
 		modalManager.content
-			?.querySelectorAll("th[data-sort]")
-			.forEach(
-				(header: {
-					dataset: { label: unknown; sort: string };
-					textContent: string;
-				}) => {
-					const baseLabel =
-						header.dataset.label || header.textContent.replace(/ [▲▼]$/, "");
-					header.dataset.label = baseLabel;
-					if (header.dataset.sort === sortKey) {
-						header.textContent = `${baseLabel} ${sortAsc ? "▲" : "▼"}`;
-					} else {
-						header.textContent = baseLabel;
-					}
-				},
-			);
+			?.querySelectorAll<HTMLElement>("th[data-sort]")
+			.forEach((header) => {
+				const baseLabel =
+					header.dataset.label ||
+					(header.textContent ?? "").replace(/ [▲▼]$/, "");
+				header.dataset.label = baseLabel;
+				if (header.dataset.sort === sortKey) {
+					header.textContent = `${baseLabel} ${sortAsc ? "▲" : "▼"}`;
+				} else {
+					header.textContent = baseLabel;
+				}
+			});
 	};
 	const render = () => {
 		if (!rows) return;
@@ -84,7 +101,7 @@ export function setupExplorerListeners(modalManager: unknown, app: unknown) {
 				render();
 			});
 			tr.addEventListener("dblclick", async () => {
-				await app.ghostController.selectGhost(ghost.name);
+				await app?.ghostController?.selectGhost?.(ghost.name);
 				modalManager.hide();
 			});
 			rows.appendChild(tr);
@@ -92,11 +109,12 @@ export function setupExplorerListeners(modalManager: unknown, app: unknown) {
 		if (status) status.textContent = `${list.length} 件`;
 	};
 	const load = async () => {
-		ghosts = (await app.ghostController.scanGhosts()) || [];
+		ghosts =
+			((await app?.ghostController?.scanGhosts?.()) as ExplorerGhostInfo[]) ||
+			[];
 		selected =
 			ghosts.find(
-				(ghost: { name: unknown }) =>
-					ghost.name === app.ghostController.currentGhost?.name,
+				(ghost) => ghost.name === app?.ghostController?.currentGhost?.name,
 			) ||
 			ghosts[0] ||
 			null;
@@ -111,31 +129,26 @@ export function setupExplorerListeners(modalManager: unknown, app: unknown) {
 	});
 
 	modalManager.content
-		?.querySelectorAll("th[data-sort]")
-		.forEach(
-			(th: {
-				addEventListener: (arg0: string, arg1: () => void) => void;
-				dataset: unknown[];
-			}) => {
-				th.addEventListener("click", () => {
-					const key = th.dataset.sort;
-					if (!key) return;
-					if (sortKey === key) {
-						sortAsc = !sortAsc;
-					} else {
-						sortKey = key;
-						sortAsc = true;
-					}
-					render();
-				});
-			},
-		);
+		?.querySelectorAll<HTMLElement>("th[data-sort]")
+		.forEach((th) => {
+			th.addEventListener("click", () => {
+				const key = th.dataset.sort;
+				if (!key) return;
+				if (sortKey === key) {
+					sortAsc = !sortAsc;
+				} else {
+					sortKey = key;
+					sortAsc = true;
+				}
+				render();
+			});
+		});
 
 	modalManager.content
 		?.querySelector("#explorer-switch-btn")
 		?.addEventListener("click", async () => {
 			if (!selected) return;
-			await app.ghostController.selectGhost(selected.name);
+			await app?.ghostController?.selectGhost?.(selected.name);
 			modalManager.hide();
 		});
 

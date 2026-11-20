@@ -6,33 +6,35 @@
 
 import { ANDROID_EVENTS } from "./constants.js";
 
+export type BackButtonHandler = () => boolean | Promise<boolean>;
+
 /**
  * Android戻るボタンハンドラを管理するクラス
  */
 export class BackButtonManager {
-	_dispatch: (eventName: unknown, data: unknown) => void;
-	_backHandlers: never[];
+	_dispatch: (eventName: string, data: unknown) => void;
+	_backHandlers: BackButtonHandler[];
 	/**
-	 * @param {Function} [dispatchFn] イベントディスパッチ用コールバック
+	 * @param {(eventName: string, data: unknown) => void} [dispatchFn] イベントディスパッチ用コールバック
 	 */
-	constructor(dispatchFn: (eventName: unknown, data: unknown) => void) {
+	constructor(dispatchFn?: (eventName: string, data: unknown) => void) {
 		this._dispatch = typeof dispatchFn === "function" ? dispatchFn : () => {};
 		this._backHandlers = [];
 	}
 
 	/**
 	 * Android戻るボタンハンドラを登録 (スタック方式)
-	 * @param {() => boolean|Promise<boolean>} handler trueを返すと戻る処理を消費(consume)したとみなす
+	 * @param {BackButtonHandler | null | undefined} handler trueを返すと戻る処理を消費(consume)したとみなす
 	 * @returns {() => void} 登録解除関数
 	 */
-	registerBackHandler(handler: unknown) {
+	registerBackHandler(
+		handler: BackButtonHandler | null | undefined,
+	): () => void {
 		if (typeof handler === "function") {
 			this._backHandlers.push(handler);
 		}
 		return () => {
-			this._backHandlers = this._backHandlers.filter(
-				(h: unknown) => h !== handler,
-			);
+			this._backHandlers = this._backHandlers.filter((h) => h !== handler);
 		};
 	}
 
@@ -41,10 +43,11 @@ export class BackButtonManager {
 	 * スタックの末尾（最前面）から順にハンドラを実行し、trueが返されたら停止
 	 * @returns {Promise<boolean>} ハンドラによって処理されたかどうか
 	 */
-	async handleBackButton() {
+	async handleBackButton(): Promise<boolean> {
 		this._dispatch(ANDROID_EVENTS.BACK_BUTTON, { timestamp: Date.now() });
 		for (let i = this._backHandlers.length - 1; i >= 0; i--) {
 			const handler = this._backHandlers[i];
+			if (!handler) continue;
 			try {
 				const handled = await handler();
 				if (handled) {

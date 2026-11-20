@@ -3,10 +3,6 @@ use std::path::Path;
 /// Check if ghost directory should be skipped due to ignore files (.dev_ignore, .narignore, etc.)
 pub fn should_skip_directory(path: &Path) -> bool {
     path.join(".dev_ignore").exists()
-        || path.join(".narignore").exists()
-        || path.join(".updateignore").exists()
-        || path.join(".narinclude").exists()
-        || path.join(".updateinclude").exists()
 }
 
 /// Parse developer_options.txt if present

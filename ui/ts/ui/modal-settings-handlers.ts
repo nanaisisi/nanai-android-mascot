@@ -1,4 +1,9 @@
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import {
+	getSurfaceDisplayName,
+	getVisibleSurfaceTableGroups,
+	type RawShellManifest,
+} from "../surface/shell-manifest.js";
 import type { AppModalTarget, ModalManager } from "./modal.js";
 import {
 	escapeHtml,
@@ -20,36 +25,233 @@ export class ModalSettingsHandlers {
 	}
 
 	setupSettingsListeners() {
-		const form = {
-			autoLoad: document.getElementById(
-				"auto-load-ghost",
-			) as HTMLInputElement | null,
-			darkMode: document.getElementById("dark-mode") as HTMLInputElement | null,
-			shellScale: document.getElementById("shell-scale") as
-				| HTMLSelectElement
-				| HTMLInputElement
-				| null,
-			balloonScale: document.getElementById("balloon-scale") as
-				| HTMLSelectElement
-				| HTMLInputElement
-				| null,
-			saveBtn: document.getElementById("save-settings-btn"),
-			resetBtn: document.getElementById("reset-settings-btn"),
-		};
+		// タブ切り替えリスナー
+		const tabBtns = document.querySelectorAll(".nam-tab-btn");
+		const tabContents = document.querySelectorAll(".nam-tab-content");
+		tabBtns.forEach((btn) => {
+			btn.addEventListener("click", (e) => {
+				tabBtns.forEach((b) => {
+					(b as HTMLElement).style.background = "#eee";
+					b.classList.remove("active");
+				});
+				tabContents.forEach((c) => {
+					(c as HTMLElement).style.display = "none";
+				});
+				const targetBtn = e.currentTarget as HTMLElement;
+				targetBtn.style.background = "#fff";
+				targetBtn.classList.add("active");
+				const tabId = targetBtn.getAttribute("data-tab");
+				const activeContent = document.getElementById(`nam-tab-${tabId}`);
+				if (activeContent) {
+					activeContent.style.display = "block";
+				} else {
+					const defaultContent = document.getElementById("nam-tab-general");
+					if (defaultContent) defaultContent.style.display = "block";
+				}
+			});
+		});
 
-		if (form.autoLoad && this.app) {
-			form.autoLoad.checked = Boolean(this.app.settings?.autoLoadGhost);
+		// デバッグモード判定: 基本非表示、debug時はデフォルトオン (inline-block)
+		const devTabBtn =
+			document.getElementById("ssp-tab-btn-dev") ||
+			document.getElementById("nam-tab-btn-dev");
+		const s = (this.app?.settings as Record<string, unknown>) || {};
+		const isDevMode =
+			Boolean(s.developerModeEnabled) ||
+			Boolean(s.devModeEnabled) ||
+			s.debugLevel === "debug" ||
+			isTauriAvailable();
+
+		if (devTabBtn?.style) {
+			devTabBtn.style.display = isDevMode ? "inline-block" : "none";
 		}
-		if (form.darkMode && this.app) {
-			form.darkMode.checked = Boolean(this.app.settings?.darkMode);
+
+		// フォームエレメント取得ヘルパー
+		const getCheck = (id: string) =>
+			document.getElementById(id) as HTMLInputElement | null;
+		const getRadio = (name: string) =>
+			typeof document.querySelector === "function"
+				? (document.querySelector(
+						`input[name="${name}"]:checked`,
+					) as HTMLInputElement | null)
+				: null;
+		const setRadio = (name: string, val: string) => {
+			if (typeof document.querySelector === "function") {
+				const radio = document.querySelector(
+					`input[name="${name}"][value="${val}"]`,
+				) as HTMLInputElement | null;
+				if (radio) radio.checked = true;
+			}
+		};
+		const getText = (id: string) =>
+			document.getElementById(id) as HTMLInputElement | null;
+
+		const autoUpdateCheck = getCheck("auto-update-check");
+		const fileAssociation = getCheck("file-association");
+		const alwaysShowUninstall = getCheck("always-show-uninstall");
+		const alwaysShowTrayIcon = getCheck("always-show-tray-icon");
+		const showReadmeOnInstall = getCheck("show-readme-on-install");
+		const registerHotkeys = getCheck("register-hotkeys");
+		const showStatusWindow = getCheck("show-transparent-status-window");
+		const virusCheckEnabled = getCheck("virus-check-enabled");
+		// 統合オーバーレイ設定チェックボックス (テンプレートに無ければ動的挿入)
+		if (
+			!document.getElementById("android-overlay-unified") &&
+			typeof document.createElement === "function"
+		) {
+			const devLabel = document
+				.getElementById("developer-mode-enabled")
+				?.closest("label");
+			if (devLabel?.parentElement) {
+				const label = document.createElement("label");
+				label.innerHTML =
+					'<input type="checkbox" id="android-overlay-unified" /> Androidオーバーレイで全キャラを単一ウインドウに統合表示する';
+				devLabel.parentElement.insertBefore(label, devLabel);
+			}
 		}
-		if (form.shellScale && this.app) {
-			form.shellScale.value =
-				(this.app.settings?.shellScale as string) || "100";
-		}
-		if (form.balloonScale && this.app) {
-			form.balloonScale.value =
-				(this.app.settings?.balloonScale as string) || "100";
+		const androidOverlayUnified = getCheck("android-overlay-unified");
+		const developerModeEnabled = getCheck("developer-mode-enabled");
+		const userName = getText("user-name");
+		const userNickname = getText("user-nickname");
+		const userBirthday = getText("user-birthday");
+
+		// 開発/その他タブエレメント参照 (SSP本物互換)
+		const changeFmoName = getCheck("change-fmo-name");
+		const fmoNameInput = getText("fmo-name-input");
+		const dropMakeNar = getCheck("drop-make-nar");
+		const keepOldUpdateFiles = getCheck("keep-old-update-files");
+		const ignoreReadonlyFiles = getCheck("ignore-readonly-files");
+		const hideMissingSurface = getCheck("hide-missing-surface");
+		const fakeMateriaMutex = getCheck("fake-materia-mutex");
+		const suppressVanish = getCheck("suppress-vanish");
+		const unlockMultipleInstance = getCheck("unlock-multiple-instance");
+		const useVcsForUpdate = getCheck("use-vcs-for-update");
+		const notifyWarningError = getCheck("notify-warning-error");
+		const useExceptionHandler = getCheck("use-exception-handler");
+		const includeBetaOnAutoupdate = getCheck("include-beta-on-autoupdate");
+		const makeUpdates2Dau = getCheck("make-updates2-dau");
+		const makeUpdatesTxt = getCheck("make-updates-txt");
+		const alwaysUtf8Charset = getCheck("always-utf8-charset");
+		const cacheHashCalculation = getCheck("cache-hash-calculation");
+		const narCustomDirPath = getText("nar-custom-dir-path");
+
+		// 初期設定値のフォームへのセット
+		if (this.app?.settings) {
+			const s = this.app.settings as Record<string, unknown>;
+			if (autoUpdateCheck)
+				autoUpdateCheck.checked = (s.autoUpdateCheck as boolean) ?? true;
+			if (fileAssociation)
+				fileAssociation.checked = (s.fileAssociation as boolean) ?? true;
+			if (alwaysShowUninstall)
+				alwaysShowUninstall.checked =
+					(s.alwaysShowUninstall as boolean) ?? false;
+			if (alwaysShowTrayIcon)
+				alwaysShowTrayIcon.checked = (s.alwaysShowTrayIcon as boolean) ?? true;
+			if (showReadmeOnInstall)
+				showReadmeOnInstall.checked =
+					(s.showReadmeOnInstall as boolean) ?? true;
+			if (registerHotkeys)
+				registerHotkeys.checked = (s.registerHotkeys as boolean) ?? false;
+			if (showStatusWindow)
+				showStatusWindow.checked = (s.showStatusWindow as boolean) ?? false;
+			if (androidOverlayUnified)
+				androidOverlayUnified.checked =
+					(s.androidOverlayUnified as boolean) ?? false;
+			if (virusCheckEnabled)
+				virusCheckEnabled.checked = (s.virusCheckEnabled as boolean) ?? true;
+			if (developerModeEnabled) {
+				const isDevEnv =
+					isTauriAvailable() ||
+					(typeof location !== "undefined" &&
+						(location.hostname === "localhost" ||
+							location.hostname === "127.0.0.1"));
+				developerModeEnabled.checked =
+					(s.developerModeEnabled as boolean) ?? Boolean(isDevEnv);
+
+				developerModeEnabled.addEventListener("change", () => {
+					if (devTabBtn?.style) {
+						devTabBtn.style.display = developerModeEnabled.checked
+							? "inline-block"
+							: "none";
+					}
+				});
+			}
+			if (s.darkModeOpt) setRadio("dark-mode-opt", String(s.darkModeOpt));
+			if (s.locationOpt) setRadio("location-opt", String(s.locationOpt));
+			if (s.tabletModeOpt) setRadio("tablet-mode-opt", String(s.tabletModeOpt));
+			if (userName && s.userName) userName.value = String(s.userName);
+			if (userNickname && s.userNickname)
+				userNickname.value = String(s.userNickname);
+			if (userBirthday && s.userBirthday)
+				userBirthday.value = String(s.userBirthday);
+			if (s.userGender) setRadio("user-gender", String(s.userGender));
+
+			// 開発/その他タブ初期セット
+			if (changeFmoName)
+				changeFmoName.checked = (s.changeFmoName as boolean) ?? false;
+			if (fmoNameInput && s.fmoNameInput)
+				fmoNameInput.value = String(s.fmoNameInput);
+			if (dropMakeNar)
+				dropMakeNar.checked = (s.dropMakeNar as boolean) ?? false;
+			if (keepOldUpdateFiles)
+				keepOldUpdateFiles.checked = (s.keepOldUpdateFiles as boolean) ?? false;
+			if (ignoreReadonlyFiles)
+				ignoreReadonlyFiles.checked =
+					(s.ignoreReadonlyFiles as boolean) ?? true;
+			if (hideMissingSurface)
+				hideMissingSurface.checked = (s.hideMissingSurface as boolean) ?? false;
+			if (fakeMateriaMutex)
+				fakeMateriaMutex.checked = (s.fakeMateriaMutex as boolean) ?? false;
+			if (suppressVanish)
+				suppressVanish.checked = (s.suppressVanish as boolean) ?? false;
+			if (unlockMultipleInstance)
+				unlockMultipleInstance.checked =
+					(s.unlockMultipleInstance as boolean) ?? false;
+			if (useVcsForUpdate)
+				useVcsForUpdate.checked = (s.useVcsForUpdate as boolean) ?? false;
+			if (notifyWarningError)
+				notifyWarningError.checked = (s.notifyWarningError as boolean) ?? true;
+			if (useExceptionHandler)
+				useExceptionHandler.checked =
+					(s.useExceptionHandler as boolean) ?? true;
+			if (includeBetaOnAutoupdate)
+				includeBetaOnAutoupdate.checked =
+					(s.includeBetaOnAutoupdate as boolean) ?? false;
+			if (makeUpdates2Dau)
+				makeUpdates2Dau.checked = (s.makeUpdates2Dau as boolean) ?? true;
+			if (makeUpdatesTxt)
+				makeUpdatesTxt.checked = (s.makeUpdatesTxt as boolean) ?? true;
+			const alwaysUtf8I18n = getCheck("always-utf8-charset-i18n");
+			const defaultReadmeCharsetSel = document.getElementById(
+				"default-readme-charset-select",
+			) as HTMLSelectElement | null;
+
+			const isAlwaysUtf8 = (s.alwaysUtf8Charset as boolean) ?? false;
+			if (alwaysUtf8Charset) alwaysUtf8Charset.checked = isAlwaysUtf8;
+			if (alwaysUtf8I18n) alwaysUtf8I18n.checked = isAlwaysUtf8;
+
+			if (alwaysUtf8Charset && alwaysUtf8I18n) {
+				alwaysUtf8Charset.addEventListener("change", () => {
+					if (alwaysUtf8I18n)
+						alwaysUtf8I18n.checked = alwaysUtf8Charset.checked;
+				});
+				alwaysUtf8I18n.addEventListener("change", () => {
+					if (alwaysUtf8Charset)
+						alwaysUtf8Charset.checked = alwaysUtf8I18n.checked;
+				});
+			}
+
+			if (defaultReadmeCharsetSel && s.defaultReadmeCharset) {
+				defaultReadmeCharsetSel.value = String(s.defaultReadmeCharset);
+			}
+
+			if (cacheHashCalculation)
+				cacheHashCalculation.checked =
+					(s.cacheHashCalculation as boolean) ?? true;
+			if (s.narLocationOpt)
+				setRadio("nar-location-opt", String(s.narLocationOpt));
+			if (narCustomDirPath && s.narCustomDirPath)
+				narCustomDirPath.value = String(s.narCustomDirPath);
 		}
 
 		const overlayBtn = document.getElementById("open-overlay-settings-btn");
@@ -71,14 +273,73 @@ export class ModalSettingsHandlers {
 			}
 		});
 
-		form.saveBtn?.addEventListener("click", () => {
+		// 保存処理 (OK / 保存ボタン)
+		const saveBtn = document.getElementById("save-settings-btn");
+		const closeBtn = document.getElementById("close-settings-btn");
+
+		const saveAction = () => {
 			if (this.app) {
+				const darkModeOpt = getRadio("dark-mode-opt")?.value || "auto";
+				const isDark =
+					darkModeOpt === "dark" ||
+					(darkModeOpt === "auto" &&
+						typeof window !== "undefined" &&
+						typeof window.matchMedia === "function" &&
+						Boolean(window.matchMedia("(prefers-color-scheme: dark)").matches));
+
 				this.app.settings = {
 					...this.app.settings,
-					autoLoadGhost: form.autoLoad?.checked ?? true,
-					darkMode: form.darkMode?.checked ?? false,
-					shellScale: form.shellScale?.value ?? "100",
-					balloonScale: form.balloonScale?.value ?? "100",
+					autoUpdateCheck: autoUpdateCheck?.checked ?? true,
+					fileAssociation: fileAssociation?.checked ?? true,
+					alwaysShowUninstall: alwaysShowUninstall?.checked ?? false,
+					alwaysShowTrayIcon: alwaysShowTrayIcon?.checked ?? true,
+					showReadmeOnInstall: showReadmeOnInstall?.checked ?? true,
+					registerHotkeys: registerHotkeys?.checked ?? false,
+					showStatusWindow: showStatusWindow?.checked ?? false,
+					virusCheckEnabled: virusCheckEnabled?.checked ?? true,
+					androidOverlayUnified: androidOverlayUnified?.checked ?? false,
+					developerModeEnabled: developerModeEnabled?.checked ?? false,
+					// 開発/その他タブ本物互換項目
+					changeFmoName: changeFmoName?.checked ?? false,
+					fmoNameInput: fmoNameInput?.value || "Sakura",
+					dropMakeNar: dropMakeNar?.checked ?? false,
+					keepOldUpdateFiles: keepOldUpdateFiles?.checked ?? false,
+					ignoreReadonlyFiles: ignoreReadonlyFiles?.checked ?? true,
+					hideMissingSurface: hideMissingSurface?.checked ?? false,
+					fakeMateriaMutex: fakeMateriaMutex?.checked ?? false,
+					suppressVanish: suppressVanish?.checked ?? false,
+					unlockMultipleInstance: unlockMultipleInstance?.checked ?? false,
+					useVcsForUpdate: useVcsForUpdate?.checked ?? false,
+					notifyWarningError: notifyWarningError?.checked ?? true,
+					useExceptionHandler: useExceptionHandler?.checked ?? true,
+					includeBetaOnAutoupdate: includeBetaOnAutoupdate?.checked ?? false,
+					makeUpdates2Dau: makeUpdates2Dau?.checked ?? true,
+					makeUpdatesTxt: makeUpdatesTxt?.checked ?? true,
+					alwaysUtf8Charset:
+						alwaysUtf8Charset?.checked ||
+						(
+							document.getElementById(
+								"always-utf8-charset-i18n",
+							) as HTMLInputElement | null
+						)?.checked ||
+						false,
+					defaultReadmeCharset:
+						(
+							document.getElementById(
+								"default-readme-charset-select",
+							) as HTMLSelectElement | null
+						)?.value || "auto",
+					cacheHashCalculation: cacheHashCalculation?.checked ?? true,
+					narLocationOpt: getRadio("nar-location-opt")?.value || "ask",
+					narCustomDirPath: narCustomDirPath?.value || "",
+					darkModeOpt,
+					darkMode: isDark,
+					locationOpt: getRadio("location-opt")?.value || "auto",
+					tabletModeOpt: getRadio("tablet-mode-opt")?.value || "auto",
+					userName: userName?.value || "ユーザ",
+					userNickname: userNickname?.value || "マスター",
+					userBirthday: userBirthday?.value || "",
+					userGender: getRadio("user-gender")?.value || "none",
 				};
 
 				localStorage.setItem(
@@ -86,13 +347,22 @@ export class ModalSettingsHandlers {
 					JSON.stringify(this.app.settings),
 				);
 				this.app.applySettings?.();
-				this.app.showBalloon?.("設定を保存しました。");
-				setTimeout(() => this.app?.hideBalloon?.(), 2000);
+				if (typeof window !== "undefined" && window.dispatchEvent) {
+					window.dispatchEvent(
+						new CustomEvent("nam:android:overlay-unified-request", {
+							detail: { enabled: androidOverlayUnified?.checked ?? false },
+						}),
+					);
+				}
 			}
 			this.manager.hide();
-		});
+		};
 
-		form.resetBtn?.addEventListener("click", () => {
+		saveBtn?.addEventListener("click", saveAction);
+		closeBtn?.addEventListener("click", () => this.manager.hide());
+
+		const resetBtn = document.getElementById("reset-settings-btn");
+		resetBtn?.addEventListener("click", () => {
 			if (confirm("設定を初期値に戻しますか？")) {
 				localStorage.removeItem("nanai-android-mascot-settings");
 				if (this.app) {
@@ -107,10 +377,6 @@ export class ModalSettingsHandlers {
 					};
 					this.app.applySettings?.();
 				}
-				if (form.autoLoad) form.autoLoad.checked = true;
-				if (form.darkMode) form.darkMode.checked = false;
-				if (form.shellScale) form.shellScale.value = "100";
-				if (form.balloonScale) form.balloonScale.value = "100";
 				this.app?.showBalloon?.("設定を初期化しました。");
 				setTimeout(() => this.app?.hideBalloon?.(), 2000);
 			}
@@ -300,5 +566,100 @@ export class ModalSettingsHandlers {
 					resultsEl.innerHTML = `<div class="info">✅ パス解決結果: <code>${escapeHtml(rawPath)}</code> ➔ <code>${escapeHtml(resolved)}</code></div>`;
 				}
 			});
+	}
+
+	setupSurfaceTestListeners() {
+		document
+			.getElementById("close-surface-test-btn")
+			?.addEventListener("click", () => {
+				this.manager.hide();
+			});
+
+		const scopeSelect = document.getElementById(
+			"surface-test-scope",
+		) as HTMLSelectElement | null;
+		const idInput = document.getElementById(
+			"surface-test-id-input",
+		) as HTMLInputElement | null;
+		const applyBtn = document.getElementById("surface-test-apply-btn");
+		const statusEl = document.getElementById("surface-test-status");
+		const groupsEl = document.getElementById("surface-test-groups");
+
+		const surfaceManager = (
+			this.app as
+				| {
+						surfaceManager?: {
+							shellManifest?: RawShellManifest | null;
+							setSurfaceId?: (id: number, scope?: number) => void;
+						};
+				  }
+				| null
+				| undefined
+		)?.surfaceManager;
+		const manifest = surfaceManager?.shellManifest;
+
+		const applySurface = (surfaceId: number) => {
+			const scopeId = Number.parseInt(scopeSelect?.value ?? "0", 10) || 0;
+			surfaceManager?.setSurfaceId?.(surfaceId, scopeId);
+			if (idInput) {
+				idInput.value = String(surfaceId);
+			}
+			if (statusEl) {
+				const name = getSurfaceDisplayName(manifest, surfaceId);
+				statusEl.textContent = name
+					? `表示中: ${surfaceId} (${name})`
+					: `表示中: ${surfaceId}`;
+			}
+		};
+
+		applyBtn?.addEventListener("click", () => {
+			const parsed = Number.parseInt(idInput?.value ?? "0", 10);
+			if (!Number.isNaN(parsed) && parsed >= 0) {
+				applySurface(parsed);
+			}
+		});
+
+		if (!groupsEl) return;
+
+		const groups = getVisibleSurfaceTableGroups(manifest?.surface_table);
+		if (groups.length === 0) {
+			groupsEl.innerHTML =
+				'<div style="color: #666;">surfacetable.txt のグループ定義がありません。上のID直接指定からテストできます。</div>';
+			return;
+		}
+
+		groupsEl.innerHTML = "";
+		for (const group of groups) {
+			const section = document.createElement("div");
+			section.style.marginBottom = "10px";
+
+			const title = document.createElement("div");
+			title.style.cssText =
+				"font-weight: bold; margin-bottom: 4px; color: #333; border-bottom: 1px solid #e0e0e0; padding-bottom: 2px;";
+			title.textContent = group.name ?? "";
+			section.appendChild(title);
+
+			const list = document.createElement("div");
+			list.style.cssText = "display: flex; flex-wrap: wrap; gap: 4px;";
+			for (const entry of group.entries ?? []) {
+				if (entry.surface_id === undefined) continue;
+				const surfaceId = entry.surface_id;
+				const btn = document.createElement("button");
+				btn.type = "button";
+				btn.style.cssText =
+					"padding: 3px 8px; font-size: 11px; border: 1px solid #ccc; border-radius: 3px; background: #fff; cursor: pointer;";
+				const displayName =
+					getSurfaceDisplayName(manifest, surfaceId) ?? entry.name;
+				btn.textContent = displayName
+					? `${surfaceId}: ${displayName}`
+					: String(surfaceId);
+				btn.addEventListener("click", () => {
+					applySurface(surfaceId);
+				});
+				list.appendChild(btn);
+			}
+			section.appendChild(list);
+			groupsEl.appendChild(section);
+		}
 	}
 }

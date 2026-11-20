@@ -9,7 +9,6 @@ use super::{
     },
     system_os::{evaluate_system_os, evaluate_theme_mode, get_system_dnd_mode},
 };
-use chrono::{Datelike, Timelike};
 
 pub fn evaluate_system_subsystem(
     sub: &str,
@@ -60,7 +59,7 @@ pub fn evaluate_system_subsystem(
     }
 
     // System date and time
-    let now = chrono::Local::now();
+    let now = jiff::ZonedDateTime::now();
     match sub {
         "year" => now.year().to_string(),
         "month" => now.month().to_string(),
@@ -68,8 +67,8 @@ pub fn evaluate_system_subsystem(
         "hour" => now.hour().to_string(),
         "minute" => now.minute().to_string(),
         "second" => now.second().to_string(),
-        "millisecond" => now.timestamp_subsec_millis().to_string(),
-        "dayofweek" => now.weekday().num_days_from_sunday().to_string(),
+        "millisecond" => now.millisecond().to_string(),
+        "dayofweek" => now.weekday().to_sunday_zero_offset().to_string(),
         _ => format!("(unknown property: {})", raw_query),
     }
 }

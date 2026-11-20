@@ -62,10 +62,11 @@ describe("InternalWindowManager & VirtualWindow - Lifecycle & Layouts", () => {
 			width: 250,
 			height: 180,
 		});
-		win.element.offsetLeft = 80;
-		win.element.offsetTop = 90;
-		win.element.offsetWidth = 250;
-		win.element.offsetHeight = 180;
+		const el = win.element as unknown as MockDomElement;
+		el.offsetLeft = 80;
+		el.offsetTop = 90;
+		el.offsetWidth = 250;
+		el.offsetHeight = 180;
 
 		win.maximize();
 		assert.equal(win.isMaximized, true);

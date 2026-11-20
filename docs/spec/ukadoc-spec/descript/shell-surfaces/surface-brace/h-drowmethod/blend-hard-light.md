@@ -7,6 +7,6 @@
 
 ## 実装箇所
 
-- `ui/js/surface/surface-load.js:81` `// [blend-hard-light-fast]`
-- `ui/js/surface/surface-load.js:82` `// [blend-hard-light]`
-- `ui/js/surface/compositor/layer.js:57` `} else if (method === "blend-hard-light" || method === "hard-light") {`
+- `ui/ts/surface/surface-compositor.ts:58` `"blend-hard-light": "hard-light",`
+- `tests/surface-compositor.test.ts:28` `expect(resolveCompositeOperation("blend-hard-light-fast")).toBe(`
+- `ui/ts/surface/surface-compositor.ts:59` `"blend-hard-light-fast": "hard-light",`

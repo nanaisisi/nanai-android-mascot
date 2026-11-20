@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { beforeEach, describe, it, vi } from "vitest";
 
-globalThis.window = globalThis;
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
 
 import {
 	BalloonThemeManager,
@@ -10,9 +10,20 @@ import {
 import * as tauriHelper from "../ui/ts/core/tauri-helper.js";
 
 describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
-	let cssVars = {};
-	let docAttrs = {};
-	let mockEl = null;
+	let cssVars: Record<string, string> = {};
+	let docAttrs: Record<string, string> = {};
+	let mockEl: {
+		style: {
+			transform: string;
+			transformOrigin: string;
+			padding: string;
+			maxWidth: string;
+			borderImage: string;
+			setProperty: (k: string, v: string) => void;
+			removeProperty: (k: string) => void;
+		};
+		setAttribute: (k: string, v: string) => void;
+	};
 
 	beforeEach(() => {
 		cssVars = {};
@@ -24,32 +35,33 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 				padding: "",
 				maxWidth: "",
 				borderImage: "",
-				setProperty(k, v) {
+				setProperty(k: string, v: string) {
 					cssVars[k] = v;
 				},
-				removeProperty(k) {
+				removeProperty(k: string) {
 					delete cssVars[k];
 				},
 			},
-			setAttribute(k, v) {
+			setAttribute(k: string, v: string) {
 				docAttrs[k] = v;
 			},
 		};
 
 		globalThis.document = {
 			documentElement: {
-				setAttribute(k, v) {
+				setAttribute(k: string, v: string) {
 					docAttrs[k] = v;
 				},
-				getAttribute(k) {
+				getAttribute(k: string) {
 					return docAttrs[k];
 				},
 				style: {
-					setProperty(k, v) {
+					setProperty(k: string, v: string) {
 						cssVars[k] = v;
 					},
-					removeProperty(k) {
+					removeProperty(k: string) {
 						delete cssVars[k];
+						return "";
 					},
 				},
 			},
@@ -57,24 +69,25 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 				className: "",
 				style: {},
 			},
-			querySelector(sel) {
+			querySelector(sel: string) {
 				if (sel === ".balloon") return mockEl;
 				return null;
 			},
-		};
+		} as unknown as Document;
 
+		const storageData: Record<string, string> = {};
 		globalThis.localStorage = {
-			_data: {},
-			getItem(k) {
-				return this._data[k] || null;
+			_data: storageData,
+			getItem(k: string) {
+				return storageData[k] || null;
 			},
-			setItem(k, v) {
-				this._data[k] = String(v);
+			setItem(k: string, v: string) {
+				storageData[k] = String(v);
 			},
-			removeItem(k) {
-				delete this._data[k];
+			removeItem(k: string) {
+				delete storageData[k];
 			},
-		};
+		} as unknown as Storage;
 	});
 
 	it("initializes BalloonThemeManager with default or app properties", () => {
@@ -149,16 +162,16 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 
 	it("cycles balloon themes correctly with default and custom lists", () => {
 		const mockApp = {
-			currentBalloonTheme: "nsm",
+			currentBalloonTheme: "nam",
 			showBalloon() {},
 			hideBalloon() {},
 		};
 		const mgr = new BalloonThemeManager(mockApp);
 
 		const next1 = mgr.cycleTheme();
-		assert.equal(next1, "nsm_vertical");
-		assert.equal(mgr.currentTheme, "nsm_vertical");
-		assert.equal(mockApp.currentBalloonTheme, "nsm_vertical");
+		assert.equal(next1, "nam_vertical");
+		assert.equal(mgr.currentTheme, "nam_vertical");
+		assert.equal(mockApp.currentBalloonTheme, "nam_vertical");
 
 		// Custom list
 		mgr.availableBalloons = [
@@ -171,19 +184,33 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 	});
 
 	it("applies balloon scale with numeric and action inputs and dispatches OnBalloonScaling", () => {
-		let scalingEvent = null;
-		let scalingNotifyArgs = null;
+		let scalingEvent: unknown = null;
+		let scalingNotifyArgs: unknown = null;
+		const ghostController: {
+			sendShioriEvent: (event: string, args?: string[]) => void;
+			sendBalloonScalingNotify?: (
+				afterX: number,
+				beforeX: number,
+				afterY: number,
+				beforeY: number,
+			) => void;
+		} = {
+			sendShioriEvent(event: string, args?: string[]) {
+				scalingEvent = { event, args };
+			},
+			sendBalloonScalingNotify(
+				afterX: number,
+				beforeX: number,
+				afterY: number,
+				beforeY: number,
+			) {
+				scalingNotifyArgs = { afterX, beforeX, afterY, beforeY };
+			},
+		};
 		const mockApp = {
 			balloonUserScale: 1,
 			balloonDpiScale: 1,
-			ghostController: {
-				sendShioriEvent(event, args) {
-					scalingEvent = { event, args };
-				},
-				sendBalloonScalingNotify(afterX, beforeX, afterY, beforeY) {
-					scalingNotifyArgs = { afterX, beforeX, afterY, beforeY };
-				},
-			},
+			ghostController,
 			showBalloon() {},
 			hideBalloon() {},
 		};
@@ -216,13 +243,16 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 		const mockApp = {
 			balloonDpiScale: 1.25,
 			balloonUserScale: 1.5,
-			elements: { balloonDisplay: { style: {} } },
+			elements: { balloonDisplay: { style: {} } as unknown as HTMLElement },
 		};
 		const mgr = new BalloonThemeManager(mockApp);
 		cssVars["--balloon-font-family"] = "Arial";
 
 		mgr.resetDescript();
-		assert.equal(cssVars["--balloon-font-family"], undefined);
+		assert.equal(
+			(cssVars as Record<string, string | undefined>)["--balloon-font-family"],
+			undefined,
+		);
 		assert.equal(mockApp.balloonDpiScale, 1);
 		assert.equal(mgr.dpiScale, 1);
 	});
@@ -230,7 +260,7 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 	it("delegates balloonThemeActions to BalloonThemeManager preserving backward compatibility", async () => {
 		const app = {
 			...balloonThemeActions,
-			currentBalloonTheme: "nsm",
+			currentBalloonTheme: "nam",
 			balloonUserScale: 1,
 			balloonDpiScale: 1,
 			availableBalloons: [],
@@ -239,7 +269,7 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 		};
 
 		app.cycleBalloonTheme();
-		assert.equal(app.currentBalloonTheme, "nsm_vertical");
+		assert.equal(app.currentBalloonTheme, "nam_vertical");
 		assert.ok(app.balloonThemeManager instanceof BalloonThemeManager);
 
 		app.applyBalloonScaleAction("balloon-scale-125");
@@ -253,12 +283,16 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 	});
 
 	it("listens to request-balloon-scale-change when Tauri is available", async () => {
-		let listenHandler = null;
+		let listenHandler:
+			| ((event: { payload: { userScale: unknown } }) => Promise<void> | void)
+			| null = null;
 		vi.spyOn(tauriHelper, "isTauriAvailable").mockReturnValue(true);
 		vi.spyOn(tauriHelper, "listen").mockImplementation(
 			async (eventName, handler) => {
 				if (eventName === "request-balloon-scale-change") {
-					listenHandler = handler;
+					listenHandler = handler as (event: {
+						payload: { userScale: unknown };
+					}) => Promise<void> | void;
 				}
 				return () => {};
 			},
@@ -268,11 +302,14 @@ describe("BalloonThemeManager & balloonThemeActions (Slot-10)", () => {
 		const mockApp = { balloonUserScale: 1, showBalloon() {}, hideBalloon() {} };
 		new BalloonThemeManager(mockApp);
 		await Promise.resolve();
-		assert.ok(listenHandler);
+		const activeHandler = listenHandler as
+			| ((event: { payload: { userScale: unknown } }) => Promise<void> | void)
+			| null;
+		assert.ok(activeHandler);
 
-		await listenHandler({ payload: { userScale: 1.75 } });
-		await listenHandler({ payload: { userScale: "invalid" } });
-		await listenHandler({ payload: { userScale: 0 } });
+		await activeHandler({ payload: { userScale: 1.75 } });
+		await activeHandler({ payload: { userScale: "invalid" } });
+		await activeHandler({ payload: { userScale: 0 } });
 
 		vi.restoreAllMocks();
 	});

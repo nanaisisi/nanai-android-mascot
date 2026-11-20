@@ -7,6 +7,6 @@
 
 ## 実装箇所
 
-- `ui/js/surface/surface-load.js:103` `// [blend-saturation-fast]`
-- `ui/js/surface/surface-load.js:104` `// [blend-saturation]`
-- `ui/js/surface/compositor/layer.js:67` `} else if (method === "blend-saturation" || method === "saturation") {`
+- `ui/ts/surface/surface-compositor.ts:68` `"blend-saturation": "saturation",`
+- `tests/surface-compositor.test.ts:39` `expect(resolveCompositeOperation("blend-saturation-fast")).toBe(`
+- `ui/ts/surface/surface-compositor.ts:69` `"blend-saturation-fast": "saturation",`

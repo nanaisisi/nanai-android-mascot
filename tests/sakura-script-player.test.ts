@@ -18,7 +18,7 @@ describe("SakuraScriptPlayer Balloon Display Integration", () => {
 		const balloonText = {
 			textContent: "",
 			innerHTML: "",
-			appendChild(node: any) {
+			appendChild(node: { textContent?: string | null }) {
 				this.textContent += node.textContent || "";
 			},
 		};
@@ -26,7 +26,7 @@ describe("SakuraScriptPlayer Balloon Display Integration", () => {
 		const keroBalloonText = {
 			textContent: "",
 			innerHTML: "",
-			appendChild(node: any) {
+			appendChild(node: { textContent?: string | null }) {
 				this.textContent += node.textContent || "";
 			},
 		};
@@ -49,19 +49,24 @@ describe("SakuraScriptPlayer Balloon Display Integration", () => {
 
 		const player = new SakuraScriptPlayer("", mockApp);
 
+		const playerInternal = player as unknown as {
+			appendTextToBalloon: (app: unknown, scope: number, text: string) => void;
+			clearBalloon: (app: unknown, scope: number) => void;
+		};
+
 		// 1. Process TextAppend for scope 0 (sakura)
-		(player as any).appendTextToBalloon(mockApp, 0, "Hello Sakura");
+		playerInternal.appendTextToBalloon(mockApp, 0, "Hello Sakura");
 		assert.equal(balloonDisplay.style.display, "block");
 		assert.ok(balloonText.textContent.includes("Hello Sakura"));
 
 		// 2. Process TextAppend for scope 1 (kero)
-		(player as any).appendTextToBalloon(mockApp, 1, "Hello Kero");
+		playerInternal.appendTextToBalloon(mockApp, 1, "Hello Kero");
 		assert.equal(keroDisplayOrSlotStyle(keroBalloonDisplay), "block");
 		assert.equal(keroSlot.style.display, "block");
 		assert.ok(keroBalloonText.textContent.includes("Hello Kero"));
 
 		// 3. Clear balloon
-		(player as any).clearBalloon(mockApp, 0);
+		playerInternal.clearBalloon(mockApp, 0);
 		assert.equal(balloonDisplay.style.display, "none");
 		assert.equal(balloonText.textContent, "");
 	});
@@ -275,6 +280,8 @@ describe("SakuraScriptPlayer Balloon Display Integration", () => {
 	});
 });
 
-function keroDisplayOrSlotStyle(el: any) {
+function keroDisplayOrSlotStyle(
+	el: { style?: { display?: string } } | null | undefined,
+) {
 	return el?.style?.display;
 }

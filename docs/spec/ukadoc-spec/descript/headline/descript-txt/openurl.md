@@ -6,7 +6,7 @@
 
 ## 突合結果
 
-`src-tauri/src/commands/ext.rs` において `openurl` キーをパースし、`HeadlineInfo.url` へ設定する実装が行われている。
+`src-tauri/src/commands/ext.rs` において `openurl` キーのパースおよび `HeadlineInfo.url` 設定が完全実装済み。
 
 ## 実装箇所
 

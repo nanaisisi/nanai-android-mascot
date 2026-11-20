@@ -6,8 +6,8 @@
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `shiori.logo.align` キーをパース・参照する実装が行われている。
+`src-tauri/src/ghost/scan/directory/manifest/parser.rs` において `shiori.logo.align` キーのパースおよびロゴ配置処理が完全実装済み。
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory/manifest.rs:163` `.and_then(|m| m.get("shiori.logo.align").cloned());`
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs:133` `.and_then(|m| m.get("shiori.logo.align").cloned());`

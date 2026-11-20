@@ -6,7 +6,7 @@
 
 ## 突合結果
 
-`src-tauri/src/commands/ext.rs` において `otherghosttalk` キーをパース・参照する実装が行われている。
+`src-tauri/src/commands/ext.rs` においてプラグインの `otherghosttalk` キーのパースおよび設定参照が完全実装済み。
 
 ## 実装箇所
 

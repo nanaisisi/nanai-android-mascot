@@ -1,26 +1,95 @@
 /**
  * SakuraScriptPlayer facade (powered by Pure Rust / WASM core SakuraPlayerEngine)
  */
+import type { NanaiAndroidMascotApp } from "../../main.js";
 import {
 	emit,
 	frontendLog,
 	invoke,
 	isSinglePageUi,
 } from "../core/tauri-helper.js";
+import type { StepOutput } from "../core/wasm/pkg/nanai_core.js";
 import {
 	createSakuraPlayerWasm,
 	freeSakuraPlayerWasm,
 	stepSakuraPlayerWasm,
 } from "../core/wasm/wasm-sakura.js";
 
+export interface SyncObjectManagerLike {
+	set: (name: string) => void;
+	reset: (name: string) => void;
+	wait: (
+		name: string,
+		options?: { timeout?: number; resetOnWait?: boolean },
+	) => Promise<void>;
+}
+
+export interface PlaybackControllerLike {
+	setBalloonWait?: (param: string | undefined) => void;
+	setQuickMode?: (enable: boolean) => void;
+	syncObjects?: SyncObjectManagerLike;
+}
+
+export interface ModalDialogControllerLike {
+	openSystemDialog?: (
+		dialogType: string,
+		dialogParams: string[],
+		scope?: number,
+	) => Promise<unknown> | unknown;
+	openPasswordInput?: (params: string[], scope?: number) => unknown;
+	openInputBox?: (
+		params: string[],
+		scope?: number,
+		isPassword?: boolean,
+	) => unknown;
+	openTextAreaBox?: (params: string[], scope?: number) => unknown;
+	openSliderInput?: (params: string[], scope?: number) => unknown;
+	openIpInput?: (params: string[], scope?: number) => unknown;
+	openDateInput?: (params: string[], scope?: number) => unknown;
+	openTimeInput?: (params: string[], scope?: number) => unknown;
+	closeInputBox?: (
+		id?: string,
+		scope?: number,
+		notifyCancel?: boolean,
+	) => unknown;
+	closeTextAreaBox?: (id?: string, scope?: number) => unknown;
+	closeDialog?: (id?: string, notifyCancel?: boolean) => unknown;
+}
+
+export interface CommandAppExtensions {
+	modalDialogController?: ModalDialogControllerLike;
+	balloonTheme?: string;
+	alignmentToDesktop?: string;
+	networkActions?: {
+		checkEmail?: (account?: string) => Promise<unknown>;
+		[key: string]: unknown;
+	};
+	syncObjectManager?: SyncObjectManagerLike;
+	surfaceAnimationManager?: {
+		setSerikoTalkEnabled?: (scope: number, enabled: boolean) => void;
+		[key: string]: unknown;
+	};
+	sakuraCommandHandler?: {
+		runCommand?: (args: string[]) => Promise<unknown> | unknown;
+	};
+	dispatchAction?: (
+		action: string,
+		payload?: unknown,
+	) => Promise<unknown> | unknown;
+}
+
+export type CommandHandlerApp = NanaiAndroidMascotApp & CommandAppExtensions;
+
 export interface StepOutputData {
-	action: string;
+	action: StepOutput["action"] | string;
 	data?: {
 		scope?: number;
 		text?: string;
 		surface_id?: number;
 		balloon_id?: number;
 		animation_id?: number;
+		keep_settings?: boolean;
+		path?: string;
 		title?: string;
 		id?: string;
 		duration_ms?: number;
@@ -37,8 +106,14 @@ export class SakuraScriptPlayer {
 	public currentScope = 0;
 	private timerId: ReturnType<typeof setTimeout> | null = null;
 	private isLoopRunning = false;
+	private isWaitingForClick = false;
+	private clickWaitScope = 0;
 	private scopeBalloonIds = new Map<number, number>();
-	public app: any = null;
+	public app: CommandHandlerApp | null = null;
+	public choiceTimeout?: number;
+	public balloonTimeout?: number;
+	public playbackController?: PlaybackControllerLike;
+	[modeFlag: `is_${string}`]: unknown;
 
 	private isBalloonContentBlank(
 		htmlOrText: string,
@@ -62,8 +137,8 @@ export class SakuraScriptPlayer {
 		return this.playerInstance !== null || this.isLoopRunning;
 	}
 
-	constructor(script = "", app?: any) {
-		this.app = app;
+	constructor(script = "", app?: unknown) {
+		this.app = (app as CommandHandlerApp) ?? null;
 		if (script) {
 			this.loadScript(script);
 		}
@@ -91,12 +166,13 @@ export class SakuraScriptPlayer {
 		}
 	}
 
-	private getApp(): any {
+	private getApp(): CommandHandlerApp | null {
 		if (this.app) return this.app;
-		const g = globalThis as any;
+		const g = globalThis as { mascotApp?: CommandHandlerApp };
 		if (g.mascotApp) return g.mascotApp;
-		if (typeof window !== "undefined" && (window as any).app) {
-			return (window as any).app;
+		if (typeof window !== "undefined") {
+			const win = window as unknown as { app?: CommandHandlerApp };
+			if (win.app) return win.app;
 		}
 		return null;
 	}
@@ -198,10 +274,21 @@ export class SakuraScriptPlayer {
 				this.isLoopRunning = false;
 				return;
 			}
+			case "ClickWait": {
+				this.isLoopRunning = false;
+				this.isWaitingForClick = true;
+				this.clickWaitScope = scope;
+				this.appendClickWaitMarker(app, scope);
+				return;
+			}
 			case "Anchor": {
 				const title = stepRes.data?.text || "";
 				const id = stepRes.data?.id || "";
 				this.addAnchorToBalloon(app, scope, title, id);
+				break;
+			}
+			case "Marker": {
+				this.appendMarkerToBalloon(app, scope);
 				break;
 			}
 			case "Wait": {
@@ -211,7 +298,9 @@ export class SakuraScriptPlayer {
 			case "Command": {
 				const cmd = stepRes.data?.command;
 				const args = stepRes.data?.args || [];
-				if (cmd && app?.sakuraCommandHandler?.runCommand) {
+				if (cmd === "marker" || cmd === "*") {
+					this.appendMarkerToBalloon(app, scope);
+				} else if (cmd && app?.sakuraCommandHandler?.runCommand) {
 					void app.sakuraCommandHandler.runCommand([cmd, ...args]);
 				}
 				break;
@@ -235,7 +324,7 @@ export class SakuraScriptPlayer {
 		return null;
 	}
 
-	private getBalloonElements(app: any, scope: number) {
+	private getBalloonElements(app: CommandHandlerApp | null, scope: number) {
 		const textEl =
 			scope === 0
 				? app?.elements?.balloonText || this.getDocElement("balloon-text")
@@ -263,7 +352,11 @@ export class SakuraScriptPlayer {
 		return { textEl, dispEl, slotEl };
 	}
 
-	private appendTextToBalloon(app: any, scope: number, text: string): void {
+	private appendTextToBalloon(
+		app: CommandHandlerApp | null,
+		scope: number,
+		text: string,
+	): void {
 		const { textEl, dispEl, slotEl } = this.getBalloonElements(app, scope);
 
 		if (slotEl?.style && slotEl.style.display === "none") {
@@ -342,7 +435,7 @@ export class SakuraScriptPlayer {
 	}
 
 	private applyBalloonSurfaceChange(
-		app: any,
+		app: CommandHandlerApp | null,
 		scope: number,
 		balloonId: number,
 	): void {
@@ -419,14 +512,18 @@ export class SakuraScriptPlayer {
 		});
 	}
 
-	public clearAllBalloons(app?: any): void {
+	public clearAllBalloons(app?: CommandHandlerApp | null): void {
 		const targetApp = app || this.getApp();
 		for (let s = 0; s < 8; s++) {
 			this.clearBalloon(targetApp, s);
 		}
 	}
 
-	private clearBalloon(app: any, scope: number, _keepSettings = false): void {
+	private clearBalloon(
+		app: CommandHandlerApp | null,
+		scope: number,
+		_keepSettings = false,
+	): void {
 		const { textEl, dispEl } = this.getBalloonElements(app, scope);
 
 		if (textEl) {
@@ -449,7 +546,7 @@ export class SakuraScriptPlayer {
 	}
 
 	private addChoiceToBalloon(
-		app: any,
+		app: CommandHandlerApp | null,
 		scope: number,
 		title: string,
 		id: string,
@@ -479,6 +576,19 @@ export class SakuraScriptPlayer {
 					this.scheduleNextStep(0);
 				}
 			});
+			btn.addEventListener("mouseenter", () => {
+				if (app?.ghostController?.sendShioriEvent) {
+					void app.ghostController.sendShioriEvent("OnChoiceEnter", [
+						id,
+						title,
+					]);
+				}
+			});
+			btn.addEventListener("mouseleave", () => {
+				if (app?.ghostController?.sendShioriEvent) {
+					void app.ghostController.sendShioriEvent("OnChoiceEnter", ["", ""]);
+				}
+			});
 			textEl.appendChild(btn);
 		}
 
@@ -495,8 +605,60 @@ export class SakuraScriptPlayer {
 		});
 	}
 
+	private appendClickWaitMarker(
+		app: CommandHandlerApp | null,
+		scope: number,
+	): void {
+		const { textEl, dispEl } = this.getBalloonElements(app, scope);
+
+		if (
+			textEl &&
+			typeof document !== "undefined" &&
+			typeof document.createElement === "function"
+		) {
+			for (const el of textEl.querySelectorAll(".clickwait-marker")) {
+				el.remove();
+			}
+			const markerSpan = document.createElement("span");
+			markerSpan.className = "clickwait-marker";
+			textEl.appendChild(markerSpan);
+		}
+
+		if (dispEl?.style && isSinglePageUi()) {
+			dispEl.style.display = "block";
+		}
+
+		const theme = app?.currentBalloonTheme || "default";
+		void emit(`update-balloon-content-${scope}`, {
+			html: textEl ? textEl.innerHTML : "",
+			theme,
+			balloonId: this.scopeBalloonIds.get(scope) ?? null,
+		});
+	}
+
+	private clearClickWaitMarker(
+		app: CommandHandlerApp | null,
+		scope: number,
+	): void {
+		const { textEl } = this.getBalloonElements(app, scope);
+		if (!textEl) return;
+
+		const markers = textEl.querySelectorAll(".clickwait-marker");
+		if (markers.length === 0) return;
+
+		for (const el of markers) {
+			el.remove();
+		}
+		const theme = app?.currentBalloonTheme || "default";
+		void emit(`update-balloon-content-${scope}`, {
+			html: textEl.innerHTML,
+			theme,
+			balloonId: this.scopeBalloonIds.get(scope) ?? null,
+		});
+	}
+
 	private addAnchorToBalloon(
-		app: any,
+		app: CommandHandlerApp | null,
 		scope: number,
 		title: string,
 		id: string,
@@ -522,7 +684,49 @@ export class SakuraScriptPlayer {
 					]);
 				}
 			});
+			a.addEventListener("mouseenter", () => {
+				if (app?.ghostController?.sendShioriEvent) {
+					void app.ghostController.sendShioriEvent("OnAnchorEnter", [
+						id,
+						title,
+					]);
+				}
+			});
+			a.addEventListener("mouseleave", () => {
+				if (app?.ghostController?.sendShioriEvent) {
+					void app.ghostController.sendShioriEvent("OnAnchorEnter", ["", ""]);
+				}
+			});
 			textEl.appendChild(a);
+		}
+
+		if (dispEl?.style && isSinglePageUi()) {
+			dispEl.style.display = "block";
+		}
+
+		const theme = app?.currentBalloonTheme || "default";
+		const targetScope = scope;
+		void emit(`update-balloon-content-${targetScope}`, {
+			html: textEl ? textEl.innerHTML : "",
+			theme,
+			balloonId: this.scopeBalloonIds.get(targetScope) ?? null,
+		});
+	}
+
+	private appendMarkerToBalloon(
+		app: CommandHandlerApp | null,
+		scope: number,
+	): void {
+		const { textEl, dispEl } = this.getBalloonElements(app, scope);
+
+		if (
+			textEl &&
+			typeof document !== "undefined" &&
+			typeof document.createElement === "function"
+		) {
+			const markerSpan = document.createElement("span");
+			markerSpan.className = "balloon-marker";
+			textEl.appendChild(markerSpan);
 		}
 
 		if (dispEl?.style && isSinglePageUi()) {
@@ -544,6 +748,12 @@ export class SakuraScriptPlayer {
 	}
 
 	public skip(): void {
+		if (this.isWaitingForClick) {
+			this.clearClickWaitMarker(this.getApp(), this.clickWaitScope);
+			this.isWaitingForClick = false;
+			this.resume();
+			return;
+		}
 		while (this.isLoopRunning && this.playerInstance) {
 			const stepRes = stepSakuraPlayerWasm(
 				this.playerInstance,
@@ -590,6 +800,12 @@ export class SakuraScriptPlayer {
 					stepRes.data?.text || "",
 					stepRes.data?.id || "",
 				);
+			} else if (stepRes.action === "ClickWait") {
+				this.isLoopRunning = false;
+				this.isWaitingForClick = true;
+				this.clickWaitScope = scope;
+				this.appendClickWaitMarker(app, scope);
+				return;
 			}
 		}
 		this.stop();
@@ -597,6 +813,10 @@ export class SakuraScriptPlayer {
 
 	public stop(): void {
 		this.isLoopRunning = false;
+		if (this.isWaitingForClick) {
+			this.clearClickWaitMarker(this.getApp(), this.clickWaitScope);
+			this.isWaitingForClick = false;
+		}
 		if (this.timerId) {
 			clearTimeout(this.timerId);
 			this.timerId = null;
@@ -616,6 +836,10 @@ export class SakuraScriptPlayer {
 	}
 
 	public resume(): void {
+		if (this.isWaitingForClick) {
+			this.clearClickWaitMarker(this.getApp(), this.clickWaitScope);
+			this.isWaitingForClick = false;
+		}
 		if (this.playerInstance && !this.isLoopRunning) {
 			this.startLoop();
 		}

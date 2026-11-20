@@ -1,3 +1,8 @@
+import {
+	type CollisionOverlayController,
+	renderAllCollisionOverlays,
+} from "../../surface/ghost-surface-dom.js";
+import { showDevPalette } from "../../ui/dev-palette.js";
 import { AppConfig } from "../config.js";
 import { invoke, isTauriAvailable } from "../tauri-helper.js";
 import { handleSystemMenuAction } from "./menu-action-system.js";
@@ -30,16 +35,36 @@ export interface MenuActionContext {
 		options?: { checkOnly?: boolean },
 	) => unknown;
 	showGhostInformation?: () => unknown;
-	handleMenuAction?: (action: string) => unknown;
+	handleMenuAction?: (action: string, payload?: unknown) => unknown;
 	showBalloon?: (message: string) => unknown;
-	hideBalloon?: () => unknown;
+	hideBalloon?: (scopeId?: number, reason?: string) => unknown;
 	elements?: {
 		ghostDisplay?: HTMLElement | null;
 		[key: string]: HTMLElement | null | undefined;
 	};
 	interactionManager?: {
-		balloonOffsetX: number;
-		balloonOffsetY: number;
+		balloonOffsetX?: number;
+		balloonOffsetY?: number;
+		resetShellPositions?: () => unknown;
+		resetBalloonPositions?: () => unknown;
+		[key: string]: unknown;
+	};
+	sakuraPlayer?: {
+		isPlaying?: boolean;
+		processStep?: () => void;
+		stop?: () => void;
+		[key: string]: unknown;
+	};
+	balloonThemeManager?: {
+		toggleBalloonSide?: (scopeId: number) => void;
+		[key: string]: unknown;
+	};
+	toggleBalloonSide?: (scopeId: number) => void;
+	app?: {
+		settings?: Record<string, unknown>;
+		sakuraPlayer?: unknown;
+		balloonThemeManager?: unknown;
+		renderCollisionOverlay?: () => void;
 		[key: string]: unknown;
 	};
 	checkEmail?: () => unknown;
@@ -189,6 +214,142 @@ export function handleMenuActionImpl(
 		return context.showGhostInformation?.();
 	}
 
+	// 設定サブメニュー本物仕様アクション
+	if (action === "settings-main" || action === "settings-dialog") {
+		context.modalManager?.show?.("settings-modal-content");
+		return;
+	}
+	if (action === "settings-ghost") {
+		context.modalManager?.show?.("settings-modal-content");
+		return;
+	}
+	if (action === "window-mode-all" || action === "window-mode-per-ghost") {
+		if (context.app?.settings) {
+			(context.app.settings as Record<string, unknown>).windowModePerGhost =
+				action === "window-mode-per-ghost";
+		}
+		return;
+	}
+	if (action === "toggle-proxy") {
+		if (context.app?.settings) {
+			const s = context.app.settings as Record<string, unknown>;
+			s.enableProxy = !s.enableProxy;
+		}
+		return;
+	}
+	if (action === "charset-settings") {
+		context.modalManager?.show?.("settings-modal-content");
+		return;
+	}
+	if (action === "talk-interval-ghost-choice") {
+		if (context.app?.settings) {
+			const s = context.app.settings as Record<string, unknown>;
+			s.talkIntervalGhostChoice = !s.talkIntervalGhostChoice;
+		}
+		return;
+	}
+	if (action === "legacy-spec-support") {
+		if (context.app?.settings) {
+			const s = context.app.settings as Record<string, unknown>;
+			s.legacySpecSupport = !s.legacySpecSupport;
+		}
+		return;
+	}
+	if (action === "script-log" || action === "show-script-log") {
+		if (isTauriAvailable()) {
+			void invoke("show_ssp_log_window").catch(() => {
+				context.modalManager?.show?.("plugins-modal-content");
+			});
+		} else {
+			context.modalManager?.show?.("plugins-modal-content");
+		}
+		return;
+	}
+	if (
+		action === "dev-palette" ||
+		action === "show-dev-palette" ||
+		action === "open-dev"
+	) {
+		const ghostName = context.ghostController?.currentGhost?.name || "Emily";
+		showDevPalette({ ghostName, app: context.app || context });
+		return;
+	}
+
+	// 本物仕様開発パレットアクション
+	if (action === "toggle-collision-area" || action === "show-collision-area") {
+		const targetApp = (context.app || context) as Record<string, unknown>;
+		if (targetApp) {
+			if (!targetApp.settings || typeof targetApp.settings !== "object") {
+				targetApp.settings = {};
+			}
+			const s = targetApp.settings as Record<string, unknown>;
+			const payloadObj =
+				payload && typeof payload === "object"
+					? (payload as { enabled?: unknown })
+					: null;
+			const nextState =
+				typeof payloadObj?.enabled === "boolean"
+					? payloadObj.enabled
+					: !(s.showCollisionArea ?? targetApp.showCollisionArea);
+			s.showCollisionArea = nextState;
+			targetApp.showCollisionArea = nextState;
+
+			const colInput =
+				typeof document !== "undefined" &&
+				typeof document.getElementById === "function"
+					? (document.getElementById(
+							"dev-check-collision",
+						) as HTMLInputElement | null)
+					: null;
+			if (colInput) {
+				colInput.checked = nextState;
+			}
+
+			const gc = targetApp.ghostController as
+				| CollisionOverlayController
+				| undefined;
+			renderAllCollisionOverlays(
+				gc ?? {
+					app: targetApp as unknown as CollisionOverlayController["app"],
+				},
+			);
+			if (
+				typeof (targetApp as { renderCollisionOverlay?: unknown })
+					.renderCollisionOverlay === "function"
+			) {
+				(
+					targetApp as { renderCollisionOverlay: () => void }
+				).renderCollisionOverlay();
+			}
+		}
+		return;
+	}
+	if (action === "open-script-input" || action === "script-input") {
+		context.modalManager?.show?.("plugins-modal-content");
+		return;
+	}
+	if (action === "open-surface-test" || action === "surface-test") {
+		context.modalManager?.show?.("surface-test-modal-content");
+		return;
+	}
+	if (action === "show-error-log" || action === "error-log") {
+		if (isTauriAvailable()) {
+			void invoke("show_ssp_log_window").catch(() => {
+				context.modalManager?.show?.("plugins-modal-content");
+			});
+		} else {
+			context.modalManager?.show?.("plugins-modal-content");
+		}
+		return;
+	}
+	if (action === "seriko-inspector") {
+		context.modalManager?.show?.("plugins-modal-content");
+		return;
+	}
+	if (action === "open-exec") {
+		return handleMenuActionImpl(context, "open-folder", payload);
+	}
+
 	if (action === "headlines" || action === "headline") {
 		gc?.sendShioriEvent?.("OnHeadline");
 		return;
@@ -208,20 +369,24 @@ export function handleMenuActionImpl(
 		return gc?.selectGhost?.(currentName);
 	}
 	if (action === "reset-shell-position" || action === "resetwindowpos") {
+		const resetShellEl = (el: HTMLElement | null | undefined) => {
+			if (!el) return;
+			if (el.style) {
+				el.style.left = "";
+				el.style.top = "";
+				el.style.transform = "";
+				el.style.margin = "";
+			}
+			el.classList?.remove?.("is-docked-left", "is-docked-right");
+		};
 		context.interactionManager?.resetShellPositions?.();
+		resetShellEl(context.elements?.ghostDisplay);
 		if (typeof document !== "undefined") {
 			const targets = document.querySelectorAll(
 				".ghost-display, .character-slot, .ghost-character, .character-placeholder",
 			);
 			targets.forEach((el) => {
-				const hEl = el as HTMLElement;
-				if (hEl?.style) {
-					hEl.style.left = "";
-					hEl.style.top = "";
-					hEl.style.transform = "";
-					hEl.style.margin = "";
-				}
-				hEl.classList.remove("is-docked-left", "is-docked-right");
+				resetShellEl(el as HTMLElement);
 			});
 		}
 		if (isTauriAvailable()) {
@@ -231,7 +396,23 @@ export function handleMenuActionImpl(
 		return;
 	}
 	if (action === "reset-balloon-position" || action === "resetballoonpos") {
-		context.interactionManager?.resetBalloonPositions?.();
+		if (context.interactionManager) {
+			if (
+				typeof context.interactionManager.resetBalloonPositions === "function"
+			) {
+				context.interactionManager.resetBalloonPositions();
+			} else {
+				context.interactionManager.balloonOffsetX = 0;
+				context.interactionManager.balloonOffsetY = 0;
+			}
+		}
+		if (typeof localStorage !== "undefined") {
+			try {
+				localStorage.removeItem("nanai_balloon_offset");
+			} catch (_e) {
+				// Fallback if localStorage access fails
+			}
+		}
 		if (typeof document !== "undefined") {
 			const balloons = document.querySelectorAll(".balloon-display");
 			balloons.forEach((el) => {

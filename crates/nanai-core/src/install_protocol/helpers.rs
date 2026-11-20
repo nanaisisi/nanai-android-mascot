@@ -7,11 +7,12 @@ use wasm_bindgen::prelude::*;
 pub fn normalize_install_type(install_type: Option<&str>) -> String {
     match install_type {
         Some(t) => {
-            let trimmed = t.trim();
-            if trimmed.is_empty() {
-                "unknown".to_string()
-            } else {
-                trimmed.to_ascii_lowercase()
+            let lower = t.trim().to_ascii_lowercase();
+            match lower.as_str() {
+                "calendar plugin" | "calendar.plugin" => "calendar.plugin".to_string(),
+                "calendar skin" | "calendar.skin" | "calendar" => "calendar.skin".to_string(),
+                "" => "unknown".to_string(),
+                other => other.to_string(),
             }
         }
         None => "unknown".to_string(),
@@ -21,10 +22,11 @@ pub fn normalize_install_type(install_type: Option<&str>) -> String {
 /// 例外文字列から UKADOC 準拠の「インストールの失敗理由」を抽出
 pub fn parse_install_error_reason(err: &str) -> &'static str {
     let lower = err.to_ascii_lowercase();
-    if lower.contains("unsupported")
-        || lower.contains("invalid type")
-        || lower.contains("サポートされていない")
-    {
+    if lower.contains("password") || lower.contains("パスワード") {
+        "password"
+    } else if lower.contains("invalid type") || lower.contains("install.txt") {
+        "invalid type"
+    } else if lower.contains("unsupported") || lower.contains("サポートされていない") {
         "unsupported"
     } else if lower.contains("artificial")
         || lower.contains("cancel")
@@ -38,11 +40,7 @@ pub fn parse_install_error_reason(err: &str) -> &'static str {
         || lower.contains("absolute path")
     {
         "invalid path"
-    } else if lower.contains("unlha32")
-        || lower.contains("lha")
-        || lower.contains("corrupt")
-        || lower.contains("crc")
-    {
+    } else if lower.contains("corrupt") || lower.contains("crc") {
         "unlha32 error"
     } else if lower.contains("permission")
         || lower.contains("access denied")
@@ -52,6 +50,8 @@ pub fn parse_install_error_reason(err: &str) -> &'static str {
         "write error"
     } else if lower.contains("format") || lower.contains("invalid") || lower.contains("形式") {
         "format error"
+    } else if lower.contains("unlha32") || lower.contains("lha") {
+        "unlha32"
     } else {
         "extraction"
     }
@@ -73,11 +73,14 @@ pub fn wasm_parse_install_error_reason(err: &str) -> i32 {
     match reason {
         "unsupported" => 0,
         "extraction" => 1,
-        "unlha32 error" => 2,
-        "artificial" => 3,
-        "write error" => 4,
-        "invalid path" => 5,
-        "format error" => 6,
+        "unlha32" => 2,
+        "unlha32 error" => 3,
+        "invalid type" => 4,
+        "password" => 5,
+        "artificial" => 6,
+        "write error" => 7,
+        "invalid path" => 8,
+        "format error" => 9,
         _ => 1,
     }
 }

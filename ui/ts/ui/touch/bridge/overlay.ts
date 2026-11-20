@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file overlay.js
  * @description Slot-12 Android プラットフォーム判別 & オーバーレイ・フォアグラウンドサービス制御
  * Contract: OverlayManager, isAndroidPlatform, isNativeAndroidPlatform
@@ -10,6 +10,10 @@ import {
 	isTauriAvailable,
 } from "../../../core/tauri-helper.js";
 import { ANDROID_EVENTS } from "./constants.js";
+import {
+	computeUnifiedLayout,
+	type UnifiedLayoutInput,
+} from "./unified-layout.js";
 
 /**
  * Android環境かどうかを判定 (Windows環境下では絶対false)
@@ -40,22 +44,31 @@ export function isNativeAndroidPlatform() {
 	return isTauriAvailable() && isAndroidPlatform();
 }
 
+export type OverlayInvokeHandler = (
+	cmd: string,
+	args?: Record<string, unknown>,
+) => Promise<unknown>;
+
+export interface OverlayManagerOptions {
+	invokeHandler?: OverlayInvokeHandler;
+	dispatchFn?: (eventName: string, data: unknown) => void;
+}
+
 /**
  * オーバーレイおよびプラットフォームIPC機能を管理するクラス
  */
 export class OverlayManager {
-	_invoke: unknown;
-	_dispatch: unknown;
+	_invoke: OverlayInvokeHandler;
+	_dispatch: (eventName: string, data: unknown) => void;
 	_isForegroundServiceActive: boolean;
 	_isOverlayEnabled: boolean;
 	_overlayTransparency: number;
 	_isClickThrough: boolean;
+	_isUnified = false;
 	/**
-	 * @param {object} [options={}]
-	 * @param {Function} [options.invokeHandler] カスタムinvoke関数
-	 * @param {Function} [options.dispatchFn] イベントディスパッチ用コールバック
+	 * @param {OverlayManagerOptions} [options={}]
 	 */
-	constructor(options = {}) {
+	constructor(options: OverlayManagerOptions = {}) {
 		this._invoke = options.invokeHandler || invoke;
 		this._dispatch =
 			typeof options.dispatchFn === "function" ? options.dispatchFn : () => {};
@@ -98,10 +111,50 @@ export class OverlayManager {
 	}
 
 	/**
+	 * 全キャラ単一ウインドウ表示が有効か
+	 * @returns {boolean}
+	 */
+	get isUnified() {
+		return this._isUnified;
+	}
+
+	/**
+	 * 単一ウインドウ統合表示の切り替え
+	 * @param {boolean} enabled
+	 * @returns {boolean}
+	 */
+	setUnified(enabled: boolean) {
+		this._isUnified = Boolean(enabled);
+		this._dispatch(ANDROID_EVENTS.OVERLAY_UNIFIED_CHANGED, {
+			enabled: this._isUnified,
+		});
+		return this._isUnified;
+	}
+
+	/**
+	 * 統合レイアウトを計算し、単一ウインドウのサイズを適用する。無効時は null。
+	 */
+	async applyUnifiedLayout(characters: UnifiedLayoutInput[], gap?: number) {
+		if (!this._isUnified) return null;
+		const layout = computeUnifiedLayout(characters, gap);
+		if (layout.width > 0 && isTauriAvailable()) {
+			try {
+				await this._invoke("resize_overlay_window", {
+					width: layout.width,
+					height: layout.height,
+				});
+			} catch (err) {
+				console.warn("applyUnifiedLayout invoke error:", err);
+			}
+		}
+		return layout;
+	}
+
+	/**
 	 * オーバーレイ権限リクエスト・案内コマンド
 	 * @returns {Promise<string>}
 	 */
-	async requestOverlayPermission() {
+	async requestOverlayPermission(): Promise<string> {
 		if (isTauriAvailable()) {
 			try {
 				const result = await this._invoke("request_overlay_permission");
@@ -110,7 +163,7 @@ export class OverlayManager {
 					enabled: true,
 					detail: result,
 				});
-				return result;
+				return result as string;
 			} catch (err) {
 				console.warn("requestOverlayPermission error:", err);
 				throw err;
@@ -132,14 +185,14 @@ export class OverlayManager {
 	 * @param {boolean} enabled
 	 * @returns {Promise<string>}
 	 */
-	async setupForegroundService(enabled: boolean) {
+	async setupForegroundService(enabled: boolean): Promise<string> {
 		if (isTauriAvailable()) {
 			try {
 				const result = await this._invoke("setup_foreground_service", {
 					enabled,
 				});
 				this._isForegroundServiceActive = enabled;
-				return result;
+				return result as string;
 			} catch (err) {
 				console.warn("setupForegroundService error:", err);
 				throw err;
@@ -239,5 +292,6 @@ export class OverlayManager {
 		this._isOverlayEnabled = false;
 		this._overlayTransparency = 1.0;
 		this._isClickThrough = false;
+		this._isUnified = false;
 	}
 }

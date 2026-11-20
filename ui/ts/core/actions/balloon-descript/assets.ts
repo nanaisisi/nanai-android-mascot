@@ -7,6 +7,28 @@ import { wasmBridge } from "../../wasm-bridge.js";
  * // [descript.txt（Balloonの）]: Balloon descript.txt アセット・画像属性バインディング
  */
 /**
+ * OS/システムロケールに基づく既定文字コードの判定 (UKADOC 規格「OSの標準設定」準拠)
+ */
+export function getOSSystemDefaultCharset(): string {
+	if (typeof navigator !== "undefined" && navigator.language) {
+		const lang = navigator.language.toLowerCase();
+		if (lang.startsWith("ja")) {
+			return "Shift_JIS"; // 日本語 OS システムロケール (CP932)
+		}
+		if (lang.startsWith("zh-cn") || lang === "zh") {
+			return "GBK"; // 簡体字中国語 OS システムロケール (CP936)
+		}
+		if (lang.startsWith("zh-tw") || lang.startsWith("zh-hk")) {
+			return "Big5"; // 繁体字中国語 OS システムロケール (CP950)
+		}
+		if (lang.startsWith("ko")) {
+			return "EUC-KR"; // 韓国語 OS システムロケール (CP949)
+		}
+	}
+	return "Shift_JIS"; // 伺か/SSP エコシステム既定値
+}
+
+/**
  * [推奨の意味] [recommended.ghost,ゴースト名] [recommended.ghost.path,パス] の検証関数 (WASM駆動)
  */
 export function verifyRecommendedGhost(
@@ -64,6 +86,19 @@ export function verifyRecommendedGhost(
 	return { isRecommended: true };
 }
 
+interface TauriCoreWithConvert {
+	convertFileSrc?: (path: string) => string;
+}
+
+function resolveBalloonAssetUrl(fullPath: string): string {
+	const tauriCore = (
+		globalThis.__TAURI__ as { core?: TauriCoreWithConvert } | undefined
+	)?.core;
+	return tauriCore?.convertFileSrc
+		? tauriCore.convertFileSrc(fullPath)
+		: fullPath;
+}
+
 export function applyAssetProperties(
 	root: HTMLElement,
 	props: Record<string, string>,
@@ -86,9 +121,9 @@ export function applyAssetProperties(
 	// [readme,ファイル名]: props["readme"]
 	if (p.readme) root.style.setProperty("--balloon-readme", p.readme);
 
-	// [readme.charset,文字コード]: props["readme.charset"]
-	if (p["readme.charset"])
-		root.style.setProperty("--balloon-readme-charset", p["readme.charset"]);
+	// [readme.charset,文字コード]: props["readme.charset"] (未指定時はハードコードせず None / システム設定に委ねる)
+	const readmeCharset = p["readme.charset"] || p.charset || "";
+	root.style.setProperty("--balloon-readme-charset", readmeCharset);
 
 	// [推奨の意味], [recommended.ghost,ゴースト名], [recommended.ghost.path,パス]:
 	if (p["recommended.ghost"]) {
@@ -135,6 +170,16 @@ export function applyAssetProperties(
 		img.src = cleanUrl;
 	};
 
+	const setFallbackAsset = (
+		theme: string,
+		file: string,
+		cssVarName: string,
+	) => {
+		const url = resolveBalloonAssetUrl(`assets/balloon/${theme}/${file}`);
+		preloadBalloonAsset(url);
+		root.style.setProperty(cssVarName, `url("${url}")`);
+	};
+
 	const setBalloonImage = (propName: string, cssVarName: string) => {
 		const filename = p[propName];
 		if (filename) {
@@ -148,20 +193,10 @@ export function applyAssetProperties(
 						}
 					})
 					.catch(() => {
-						const fullPath = `assets/balloon/${themeName}/${filename}`;
-						const url = globalThis.__TAURI__?.core?.convertFileSrc
-							? globalThis.__TAURI__.core.convertFileSrc(fullPath)
-							: fullPath;
-						preloadBalloonAsset(url);
-						root.style.setProperty(cssVarName, `url("${url}")`);
+						setFallbackAsset(themeName, filename, cssVarName);
 					});
 			} else {
-				const fullPath = `assets/balloon/${themeName}/${filename}`;
-				const url = globalThis.__TAURI__?.core?.convertFileSrc
-					? globalThis.__TAURI__.core.convertFileSrc(fullPath)
-					: fullPath;
-				preloadBalloonAsset(url);
-				root.style.setProperty(cssVarName, `url("${url}")`);
+				setFallbackAsset(themeName, filename, cssVarName);
 			}
 		}
 	};
@@ -175,13 +210,17 @@ export function applyAssetProperties(
 		: scopeId === 1
 			? "arrowk"
 			: scopeId >= 2
-				? `arrowp${scopeId}`
+				? `arrowp${scopeId}def`
 				: "arrows";
 
 	const arrowBaseName = defaultArrowBase.replace(/\.(png|bmp|jpg|jpeg)$/i, "");
 	const themeName = (instance?.currentBalloonTheme as string) || "default";
 
-	const resolveAndSetArrow = (file: string, cssVar: string) => {
+	const resolveAndSetArrow = (
+		file: string,
+		cssVar: string,
+		fallbackFile?: string,
+	) => {
 		if (typeof invoke === "function") {
 			void invoke("load_balloon_image", { name: themeName, file })
 				.then((dataUrl) => {
@@ -189,44 +228,153 @@ export function applyAssetProperties(
 						preloadBalloonAsset(dataUrl as string);
 						root.style.setProperty(cssVar, `url("${dataUrl}")`);
 						root.style.setProperty("--balloon-arrow-display", "block");
+					} else if (fallbackFile && fallbackFile !== file) {
+						resolveAndSetArrow(fallbackFile, cssVar);
 					}
 				})
 				.catch(() => {
-					const fullPath = `assets/balloon/${themeName}/${file}`;
-					const url = globalThis.__TAURI__?.core?.convertFileSrc
-						? globalThis.__TAURI__.core.convertFileSrc(fullPath)
-						: fullPath;
-					preloadBalloonAsset(url);
-					root.style.setProperty(cssVar, `url("${url}")`);
+					if (fallbackFile && fallbackFile !== file) {
+						resolveAndSetArrow(fallbackFile, cssVar);
+					} else {
+						setFallbackAsset(themeName, file, cssVar);
+					}
 				});
 		} else {
-			const fullPath = `assets/balloon/${themeName}/${file}`;
-			const url = globalThis.__TAURI__?.core?.convertFileSrc
-				? globalThis.__TAURI__.core.convertFileSrc(fullPath)
-				: fullPath;
-			preloadBalloonAsset(url);
-			root.style.setProperty(cssVar, `url("${url}")`);
+			setFallbackAsset(themeName, file, cssVar);
 		}
 	};
 
 	if (p["arrow.filename"]) {
 		root.style.setProperty("--balloon-arrow-display", "block");
-		resolveAndSetArrow(`${arrowBaseName}0.png`, "--balloon-arrow0-image");
-		resolveAndSetArrow(`${arrowBaseName}1.png`, "--balloon-arrow1-image");
+		resolveAndSetArrow(
+			`${arrowBaseName}0.png`,
+			"--balloon-arrow0-image",
+			"arrows0.png",
+		);
+		resolveAndSetArrow(
+			`${arrowBaseName}1.png`,
+			"--balloon-arrow1-image",
+			"arrows1.png",
+		);
 	} else {
-		resolveAndSetArrow(`${arrowBaseName}0.png`, "--balloon-arrow0-image");
-		resolveAndSetArrow(`${arrowBaseName}1.png`, "--balloon-arrow1-image");
+		resolveAndSetArrow(
+			`${arrowBaseName}0.png`,
+			"--balloon-arrow0-image",
+			"arrows0.png",
+		);
+		resolveAndSetArrow(
+			`${arrowBaseName}1.png`,
+			"--balloon-arrow1-image",
+			"arrows1.png",
+		);
 	}
 	setBalloonImage("balloon.image", "--balloon-bg-image");
 	setBalloonImage("arrow.filename", "--balloon-arrow-image");
 	// [clickwaitmarker.filename,ファイル名]:
-	setBalloonImage("clickwaitmarker.filename", "--balloon-clickwait-image");
-	// [marker.filename,ファイル名]:
-	setBalloonImage("marker.filename", "--balloon-marker-image");
-	// [onlinemarker.filename,ファイル名]:
-	setBalloonImage("onlinemarker.filename", "--balloon-online-image");
-	// [sstpmarker.filename,ファイル名]:
-	setBalloonImage("sstpmarker.filename", "--balloon-sstpmarker-image");
+	if (p["clickwaitmarker.filename"]) {
+		setBalloonImage("clickwaitmarker.filename", "--balloon-clickwait-image");
+	} else if (typeof invoke === "function") {
+		void invoke("load_balloon_ui_asset", {
+			name: themeName,
+			stem: "clickwait",
+			scopeId,
+		})
+			.then((dataUrl) => {
+				if (dataUrl) {
+					preloadBalloonAsset(dataUrl as string);
+					root.style.setProperty(
+						"--balloon-clickwait-image",
+						`url("${dataUrl}")`,
+					);
+				}
+			})
+			.catch(() => {});
+	}
+
+	if (typeof invoke === "function") {
+		const uiButtonAssets: ReadonlyArray<readonly [string, string]> = [
+			["ok_button", "--balloon-ok-button-image"],
+			["cancel_button", "--balloon-cancel-button-image"],
+			["mode_button", "--balloon-mode-button-image"],
+		];
+		for (const [stem, cssVar] of uiButtonAssets) {
+			void invoke("load_balloon_ui_asset", {
+				name: themeName,
+				stem,
+				scopeId,
+			})
+				.then((dataUrl) => {
+					if (dataUrl) {
+						preloadBalloonAsset(dataUrl as string);
+						root.style.setProperty(cssVar, `url("${dataUrl}")`);
+					}
+				})
+				.catch(() => {});
+		}
+	}
+
+	// [marker.filename,ファイル名] または UKADOC 標準マーカー (`markers.png`, `markerk.png`, `markerp*def.png`, `marker.png`)
+	const defaultMarkerFile = p["marker.filename"]
+		? p["marker.filename"]
+		: scopeId === 1
+			? "markerk.png"
+			: scopeId >= 2
+				? `markerp${scopeId}def.png`
+				: "markers.png";
+
+	const resolveAssetChain = (candidates: string[], cssVar: string) => {
+		const uniqueCandidates = [...new Set(candidates.filter(Boolean))];
+		const tryNext = (index: number) => {
+			const file = uniqueCandidates[index];
+			if (!file) return;
+			if (typeof invoke === "function") {
+				void invoke("load_balloon_image", { name: themeName, file })
+					.then((dataUrl) => {
+						if (dataUrl) {
+							preloadBalloonAsset(dataUrl as string);
+							root.style.setProperty(cssVar, `url("${dataUrl}")`);
+						} else {
+							tryNext(index + 1);
+						}
+					})
+					.catch(() => {
+						tryNext(index + 1);
+					});
+			} else {
+				setFallbackAsset(themeName, file, cssVar);
+			}
+		};
+		tryNext(0);
+	};
+
+	resolveAssetChain(
+		[defaultMarkerFile, "markers.png", "marker.png", "sstp.png"],
+		"--balloon-marker-image",
+	);
+
+	// [onlinemarker.filename,ファイル名] または UKADOC 標準オンラインマーカー (`online0.png`, `online00.png`, `online.png`):
+	if (p["onlinemarker.filename"]) {
+		setBalloonImage("onlinemarker.filename", "--balloon-online-image");
+	} else {
+		resolveAssetChain(
+			["online0.png", "online00.png", "online.png"],
+			"--balloon-online-image",
+		);
+	}
+
+	// [sstpmarker.filename,ファイル名] または UKADOC 標準 SSTP マーカー (`sstp_new.png`, `sstp_newk.png`, `sstp.png`, `sstpmarker.png`)
+	const defaultSstpMarkerFile = p["sstpmarker.filename"]
+		? p["sstpmarker.filename"]
+		: scopeId === 1
+			? "sstp_newk.png"
+			: scopeId >= 2
+				? `sstp_newp${scopeId}def.png`
+				: "sstp_new.png";
+
+	resolveAssetChain(
+		[defaultSstpMarkerFile, "sstp_new.png", "sstp.png"],
+		"--balloon-sstpmarker-image",
+	);
 
 	const setMouseCursor = (propName: string, varName: string) => {
 		const filename = p[propName];
@@ -256,6 +404,10 @@ export function applyAssetProperties(
 	setMouseCursor("mousecursor.text", "--balloon-cursor-text");
 	// [mousecursor.wait,ファイル名]:
 	setMouseCursor("mousecursor.wait", "--balloon-cursor-wait");
+	// [mousecursor.grip,ファイル名]:
+	setMouseCursor("mousecursor.grip", "--balloon-cursor-grip");
+	// [mousecursor.hand,ファイル名]:
+	setMouseCursor("mousecursor.hand", "--balloon-cursor-hand");
 
 	// [arrow0.x,座標], [arrow0.y,座標], [arrow1.x,座標], [arrow1.y,座標]:
 	const applyArrowCoord = (

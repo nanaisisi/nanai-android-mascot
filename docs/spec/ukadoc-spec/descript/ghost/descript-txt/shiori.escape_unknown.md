@@ -6,8 +6,8 @@
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `shiori.escape_unknown` キーをパース・参照する実装が行われている。
+`src-tauri/src/ghost/scan/directory/manifest/parser.rs` において `shiori.escape_unknown` キーのパースおよび制御参照が完全実装済み。
 
 ## 実装箇所
 
-- `src-tauri/src/ghost/scan/directory/manifest.rs:157` `.and_then(|m| m.get("shiori.escape_unknown").cloned());`
+- `src-tauri/src/ghost/scan/directory/manifest/parser.rs:127` `.and_then(|m| m.get("shiori.escape_unknown").cloned());`

@@ -2,19 +2,22 @@ import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 
 import { SakuraCommandHandler } from "../../ui/ts/ghost/sakura-command-handler.js";
+import type { SakuraScriptPlayer } from "../../ui/ts/ghost/sakura-script.js";
 
 describe("SakuraCommandHandler methods & lifecycle", () => {
 	it("exercises openInputBox, teachBox, communicateBox, alignment, windowState, and jump", async () => {
 		globalThis.document = {
-			createElement: () => ({
-				style: {},
-				appendChild: () => {},
-				addEventListener: () => {},
-				remove: () => {},
-				focus: () => {},
-			}),
-		};
-		const modalCalls: { method: string; opts?: any; cancel?: any }[] = [];
+			createElement: () =>
+				({
+					style: {},
+					appendChild: () => {},
+					addEventListener: () => {},
+					remove: () => {},
+					focus: () => {},
+				}) as unknown as HTMLElement,
+		} as unknown as Document;
+		const modalCalls: { method: string; opts?: unknown; cancel?: unknown }[] =
+			[];
 		const mockPlayer = {
 			currentScope: 0,
 			app: {
@@ -23,14 +26,14 @@ describe("SakuraCommandHandler methods & lifecycle", () => {
 					keroBalloonText: { appendChild: () => {}, innerHTML: "" },
 				},
 				modalDialogController: {
-					openInputBox: (opts: any) =>
+					openInputBox: (opts: unknown) =>
 						modalCalls.push({ method: "inputbox", opts }),
-					openTeachBox: (opts: any) =>
+					openTeachBox: (opts: unknown) =>
 						modalCalls.push({ method: "teachbox", opts }),
-					openCommunicateBox: (opts: any) =>
+					openCommunicateBox: (opts: unknown) =>
 						modalCalls.push({ method: "communicatebox", opts }),
 					closeTeachBox: () => modalCalls.push({ method: "closeTeachBox" }),
-					closeCommunicateBox: (cancel: any) =>
+					closeCommunicateBox: (cancel: unknown) =>
 						modalCalls.push({ method: "closeCommunicateBox", cancel }),
 				},
 				ghostController: {
@@ -43,7 +46,9 @@ describe("SakuraCommandHandler methods & lifecycle", () => {
 			},
 		};
 
-		const handler = new SakuraCommandHandler(mockPlayer);
+		const handler = new SakuraCommandHandler(
+			mockPlayer as unknown as SakuraScriptPlayer,
+		);
 
 		// 1. Box methods
 		handler.openInputBox(["id1", "--text=hello"]);

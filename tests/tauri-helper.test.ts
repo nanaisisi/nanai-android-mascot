@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-globalThis.window = globalThis;
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
 
 import {
 	convertFileSrc,
@@ -123,7 +123,15 @@ test("invoke, listen, emit, moveCurrentWindowBy, getCurrentWindowPosition, and i
 	// 3. Tauri available tests
 	let invokedCmd = "";
 	let _invokedArgs = null;
-	globalThis.__TAURI_INTERNALS__ = {
+	const tauriGlobal = globalThis as unknown as {
+		__TAURI_INTERNALS__?: {
+			metadata: { currentWindow: { label: string } };
+			invoke: (cmd: string, args: unknown) => Promise<unknown>;
+			transformCallback: (cb: unknown) => unknown;
+			plugins: unknown;
+		};
+	};
+	const mockInternals = {
 		metadata: { currentWindow: { label: "main" } },
 		invoke: async (cmd: string, args: unknown) => {
 			invokedCmd = cmd;
@@ -146,6 +154,7 @@ test("invoke, listen, emit, moveCurrentWindowBy, getCurrentWindowPosition, and i
 			},
 		},
 	};
+	tauriGlobal.__TAURI_INTERNALS__ = mockInternals;
 
 	// Successful invoke
 	ipcQueueStats.reset();
@@ -188,12 +197,12 @@ test("invoke, listen, emit, moveCurrentWindowBy, getCurrentWindowPosition, and i
 	assert.equal(pos?.y, 250);
 
 	// Error catch branches for moveCurrentWindowBy and getCurrentWindowPosition
-	globalThis.__TAURI_INTERNALS__.invoke = async () => {
+	mockInternals.invoke = async () => {
 		throw new Error("window error");
 	};
 	await moveCurrentWindowBy(10, 10, { x: 0, y: 0 });
 	assert.equal(await getCurrentWindowPosition(), null);
 
-	delete globalThis.__TAURI_INTERNALS__;
+	delete tauriGlobal.__TAURI_INTERNALS__;
 	assert.ok(true);
 });

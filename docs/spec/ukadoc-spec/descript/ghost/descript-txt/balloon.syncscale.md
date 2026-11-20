@@ -6,12 +6,8 @@
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `balloon.syncscale` キーをパース・参照する実装が行われている。
+`ui/ts/core/actions/balloon-descript/layout/alignment.ts` において `balloon.syncscale`, `sakura.balloon.syncscale`, `kero.balloon.syncscale` 等の各キーを評価し、キャラクタースケール同期フラグを設定する実装が完全に行われている。
 
 ## 実装箇所
 
-- `ui/js/core/actions/balloon-descript/layout.js:205` `// [balloon.syncscale,true], [sakura.balloon.syncscale,true], [kero.balloon.sync`
-- `ui/js/core/actions/balloon-descript/layout.js:208` `props["balloon.syncscale"] === "1" ||`
-- `ui/js/core/actions/balloon-descript/layout.js:209` `props["balloon.syncscale"]?.toLowerCase() === "true" ||`
-- `ui/js/core/actions/balloon-descript/layout.js:210` `props["sakura.balloon.syncscale"] === "1" ||`
-- `ui/js/core/actions/balloon-descript/layout.js:211` `props["sakura.balloon.syncscale"]?.toLowerCase() === "true" ||`
+- `ui/ts/core/actions/balloon-descript/layout/alignment.ts` (`balloon.syncscale`)

@@ -23,10 +23,10 @@ describe("ModalDialogController Robustness (Cycle 9)", () => {
 				keroBalloonText: createMockElement("div"),
 			},
 			ghostController: {
-				sendShioriEvent: async (name, args) => {
+				sendShioriEvent: async (name: string, args: unknown[] = []) => {
 					sentEvents.push({ name, args });
 				},
-				sendTeachInput: (val) => {
+				sendTeachInput: (val: string) => {
 					sentEvents.push({ name: "sendTeachInput", args: [val] });
 				},
 				clearTeachHistory: () => {
@@ -54,8 +54,8 @@ describe("ModalDialogController Robustness (Cycle 9)", () => {
 		expect(controller.activeBoxes.has("teachbox")).toBe(false);
 		const cancelEv = sentEvents.find((e) => e.name === "OnTeachInputCancel");
 		expect(cancelEv).toBeDefined();
-		expect(cancelEv.args[1]).toBe("timeout");
-		expect(cancelEv.args[2]).toBe("Ref1");
+		expect(cancelEv?.args[1]).toBe("timeout");
+		expect(cancelEv?.args[2]).toBe("Ref1");
 	});
 
 	it("handles closeTeachBox with cancel notification", () => {
@@ -67,7 +67,7 @@ describe("ModalDialogController Robustness (Cycle 9)", () => {
 
 		const cancelEv = sentEvents.find((e) => e.name === "OnTeachInputCancel");
 		expect(cancelEv).toBeDefined();
-		expect(cancelEv.args[1]).toBe("close");
+		expect(cancelEv?.args[1]).toBe("close");
 	});
 
 	it("handles openCommunicateBox with timeout, references, and cancel notification", async () => {
@@ -88,9 +88,9 @@ describe("ModalDialogController Robustness (Cycle 9)", () => {
 			(e) => e.name === "OnCommunicateInputCancel",
 		);
 		expect(cancelEv).toBeDefined();
-		expect(cancelEv.args[1]).toBe("timeout");
-		expect(cancelEv.args[2]).toBe("RefA");
-		expect(cancelEv.args[3]).toBe("RefB");
+		expect(cancelEv?.args[1]).toBe("timeout");
+		expect(cancelEv?.args[2]).toBe("RefA");
+		expect(cancelEv?.args[3]).toBe("RefB");
 	});
 
 	it("handles closeCommunicateBox with notifyCancel parameter", () => {
@@ -104,7 +104,7 @@ describe("ModalDialogController Robustness (Cycle 9)", () => {
 			(e) => e.name === "OnCommunicateInputCancel",
 		);
 		expect(cancelEv).toBeDefined();
-		expect(cancelEv.args[1]).toBe("close");
+		expect(cancelEv?.args[1]).toBe("close");
 	});
 
 	it("handles closeDialog with specific target ID and __SYSTEM_ALL_DIALOG__", () => {
@@ -116,7 +116,7 @@ describe("ModalDialogController Robustness (Cycle 9)", () => {
 
 		const cancelEv = sentEvents.find((e) => e.name === "OnSystemDialogCancel");
 		expect(cancelEv).toBeDefined();
-		expect(cancelEv.args[0]).toBe("CustomDlg");
+		expect(cancelEv?.args[0]).toBe("CustomDlg");
 
 		// Open two dialogs and close all
 		sentEvents = [];
@@ -128,6 +128,6 @@ describe("ModalDialogController Robustness (Cycle 9)", () => {
 
 		const cancelAll = sentEvents.find((e) => e.name === "OnSystemDialogCancel");
 		expect(cancelAll).toBeDefined();
-		expect(cancelAll.args[0]).toBe("__SYSTEM_ALL_DIALOG__");
+		expect(cancelAll?.args[0]).toBe("__SYSTEM_ALL_DIALOG__");
 	});
 });

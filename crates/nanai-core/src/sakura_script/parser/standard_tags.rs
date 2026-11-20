@@ -93,21 +93,26 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
                 chars.next();
                 tokens.push(SakuraToken::Newline);
             }
-            'c' => {
+            c @ ('c' | 'C') => {
+                let keep_settings = c == 'C';
                 chars.next();
-                tokens.push(SakuraToken::Clear {
-                    keep_settings: false,
-                });
-            }
-            'C' => {
-                chars.next();
-                tokens.push(SakuraToken::Clear {
-                    keep_settings: true,
-                });
+                if chars.peek() == Some(&'[') {
+                    if let Some(arg) = parse_bracket_arg(chars) {
+                        tokens.push(SakuraToken::ClearArg { arg });
+                    } else {
+                        tokens.push(SakuraToken::Clear { keep_settings });
+                    }
+                } else {
+                    tokens.push(SakuraToken::Clear { keep_settings });
+                }
             }
             '*' => {
                 chars.next();
                 tokens.push(SakuraToken::Star);
+            }
+            'x' | 'X' => {
+                chars.next();
+                tokens.push(SakuraToken::ClickWait);
             }
             'e' | 'E' => {
                 chars.next();
@@ -192,9 +197,13 @@ pub fn parse_backslash_sequence<I: Iterator<Item = char>>(
             '!' => {
                 chars.next();
                 if let Some(arg) = parse_bracket_arg(chars) {
-                    let args = split_bracket_args(&arg);
-                    let command = args.first().cloned().unwrap_or_default();
-                    tokens.push(SakuraToken::Command { command, args });
+                    if arg.trim() == "*" {
+                        tokens.push(SakuraToken::Marker);
+                    } else {
+                        let args = split_bracket_args(&arg);
+                        let command = args.first().cloned().unwrap_or_default();
+                        tokens.push(SakuraToken::Command { command, args });
+                    }
                 }
             }
             '_' => {

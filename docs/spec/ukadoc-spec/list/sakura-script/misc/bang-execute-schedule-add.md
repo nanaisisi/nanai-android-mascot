@@ -2,7 +2,7 @@
 
 - **規格**: [bang-execute-schedule-add.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/misc/bang-execute-schedule-add/) (ukadoc-spec/list/sakura-script/misc/bang-execute-schedule-add.md)
 - **検索語**: ScheduleAdd
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,5 +10,7 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/command.rs:81` `ScheduleAdd {`
-- `crates/ui/src/script/parser/brackets/handlers/raiselike.rs:56` `callback(SakuraCommand::ScheduleAdd {`
+- `crates/ui/src/script/command.rs:95` `ScheduleAdd {`
+- `ui/ts/ghost/sakura-rust-bridge.ts:131` `| { type: "ScheduleAdd"; payload?: RustCommandObjectPayload }`
+- `crates/ui/src/script/parser/brackets/handlers/raiselike/execution.rs:12` `callback(SakuraCommand::ScheduleAdd {`
+- `ui/ts/ghost/sakura-rust-bridge.ts:438` `case "ScheduleAdd":`

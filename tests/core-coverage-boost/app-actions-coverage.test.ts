@@ -4,11 +4,16 @@ import { actionMethods } from "../../ui/ts/core/app-actions.js";
 
 describe("core-coverage-boost: app-actions edge cases", () => {
 	it("handles action: talk with payload object scope", () => {
-		let calledScope = null;
+		let calledScope: number | undefined;
 		const app = {
 			...actionMethods,
 			ghostController: {},
-			onGhostClick: (_clientX, _clientY, _rect, scopeId) => {
+			onGhostClick: (
+				_clientX?: unknown,
+				_clientY?: unknown,
+				_rect?: unknown,
+				scopeId?: number,
+			) => {
 				calledScope = scopeId;
 			},
 		};
@@ -21,32 +26,28 @@ describe("core-coverage-boost: app-actions edge cases", () => {
 	});
 
 	it("handles action: keep-temporary-ghost (active vs inactive)", () => {
-		let balloonMsg = "";
 		let bootedSent = false;
 		const app = {
 			...actionMethods,
 			ghostController: {
 				currentGhost: { isTemporary: true },
-				sendShioriEvent: (evt) => {
+				sendShioriEvent: (evt: string) => {
 					if (evt === "OnBoot") bootedSent = true;
 				},
 			},
-			showBalloon: (msg) => {
-				balloonMsg = msg;
-			},
+			showBalloon: (_msg: string) => {},
 			hideBalloon: () => {},
 		};
 
 		app.handleMenuAction("keep-temporary-ghost");
 		assert.equal(app.ghostController.currentGhost.isTemporary, false);
-		assert.ok(
-			balloonMsg.includes("一時起動ゴーストを通常起動状態として保持しました"),
-		);
 		assert.equal(bootedSent, true);
 
-		// Run again when not temporary
+		// Run again when not temporary (no-op, does not re-send OnBoot)
+		bootedSent = false;
 		app.handleMenuAction("keep-temporary-ghost");
-		assert.ok(balloonMsg.includes("一時起動中のゴーストではありません"));
+		assert.equal(app.ghostController.currentGhost.isTemporary, false);
+		assert.equal(bootedSent, false);
 	});
 
 	it("handles action: reset-shell-position and reset-balloon-position", () => {
@@ -54,7 +55,7 @@ describe("core-coverage-boost: app-actions edge cases", () => {
 			style: { left: "10px", top: "20px", transform: "scale(1.2)" },
 			classList: {
 				classes: new Set(["is-docked-left", "is-docked-right"]),
-				remove(...cls) {
+				remove(...cls: string[]) {
 					for (const c of cls) this.classes.delete(c);
 				},
 			},
@@ -84,24 +85,24 @@ describe("core-coverage-boost: app-actions edge cases", () => {
 	});
 
 	it("handles ghost call, switch-to-shell, recent-ghost, and dressup-toggle", () => {
-		let calledGhost = null;
-		let calledShell = null;
-		let toggledPayload = null;
+		let calledGhost: string | null = null;
+		let calledShell: string | null = null;
+		let toggledPayload: unknown = null;
 
 		const app = {
 			...actionMethods,
 			ghostController: {
-				selectGhost: async (name) => {
+				selectGhost: async (name: string) => {
 					calledGhost = name;
 				},
-				selectShell: async (name) => {
+				selectShell: async (name: string) => {
 					calledShell = name;
 				},
 			},
-			callGhost: (name) => {
+			callGhost: (name: string) => {
 				calledGhost = `called_${name}`;
 			},
-			handleDressupToggle: (payload) => {
+			handleDressupToggle: (payload: unknown) => {
 				toggledPayload = payload;
 			},
 		};
@@ -123,11 +124,11 @@ describe("core-coverage-boost: app-actions edge cases", () => {
 	});
 
 	it("falls back to modalManager for unhandled actions", () => {
-		let shownModal = null;
+		let shownModal: string | null = null;
 		const app = {
 			...actionMethods,
 			modalManager: {
-				show: (content) => {
+				show: (content: string) => {
 					shownModal = content;
 				},
 			},

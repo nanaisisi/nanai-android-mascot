@@ -6,12 +6,12 @@
 
 ## 突合結果
 
-UI/Rust 側から sendShioriEvent 等でイベントを送信している(実装箇所を参照)。
+単一行入力ボックス/拡張入力ボックスのキャンセル時に `OnUserInputCancel` SHIORIイベントを送信する処理を実装 (`ui/ts/ui/renderers/inputs/text-inputs.ts` -> `OnUserInputCancel`)。
 
 ## 実装箇所
 
+- `crates/nanai-core/src/shiori_protocol_helpers/events/input.rs:178` `pub fn build_on_user_input_cancel_request`
 - `ui/ts/ui/renderers/inputs/text-inputs.ts:90` `await this.app.ghostController?.sendShioriEvent("OnUserInputCancel", [`
 - `ui/ts/ui/renderers/inputs/advanced/date-time-inputs.ts:126` `await this.app.ghostController?.sendShioriEvent("OnUserInputCancel", [`
-- `ui/ts/ui/renderers/inputs/advanced/date-time-inputs.ts:291` `await this.app.ghostController?.sendShioriEvent("OnUserInputCancel", [`
 - `ui/ts/ui/renderers/inputs/advanced/ip-input.ts:137` `await this.app.ghostController?.sendShioriEvent("OnUserInputCancel", [`
 - `ui/ts/ui/renderers/inputs/advanced/slider-input.ts:114` `await this.app.ghostController?.sendShioriEvent("OnUserInputCancel", [`

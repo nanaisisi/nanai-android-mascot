@@ -190,12 +190,16 @@ pub enum SakuraToken {
     Newline,
     /// 画面クリア (\c: reset, \C: keep settings)
     Clear { keep_settings: bool },
+    /// 引数付き画面クリア (\c[line,N], \c[char,N])
+    ClearArg { arg: String },
     /// 音声再生指定 (\__v[path])
     Voice { path: String },
     /// ウエイト (\w1 ~ \w9, \_w[ms])
     Wait(u32),
     /// 選択肢入力待ち (\*)
     Star,
+    /// クリック待ち (\x)
+    ClickWait,
     /// 選択肢 (\q[title,id])
     Choice {
         title: String,
@@ -220,6 +224,8 @@ pub enum SakuraToken {
     RawToggle { active: bool, delimiter: String },
     /// 拡張コマンド (\![...])
     Command { command: String, args: Vec<String> },
+    /// 選択肢マーカー / 箇条書き記号 (\![*])
+    Marker,
     /// スクリプト終了 (\e)
     Halt,
 }

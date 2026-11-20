@@ -8,6 +8,23 @@ use nanai_surface::{CursorDefinition, SortKind};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
+/// シェル `descript.txt` から抽出される SERIKO 関連設定
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct ShellSerikoConfig {
+    /// 推奨 DPI (`seriko.dpi`)
+    pub dpi: Option<u32>,
+    /// クロスフェード強制無効化 (`seriko.force_disable_crossfade`)
+    pub force_disable_crossfade: bool,
+    /// スコープ Z オーダー (`seriko.zorder`)
+    pub zorder: Vec<u32>,
+    /// 連動移動スコープ群 (`seriko.sticky-window`)
+    pub sticky_window: Vec<u32>,
+    /// Sakura 側デスクトップ位置揃え (`sakura.seriko.alignmenttodesktop` / `seriko.alignmenttodesktop`)
+    pub sakura_alignment_to_desktop: Option<String>,
+    /// Kero 側デスクトップ位置揃え (`kero.seriko.alignmenttodesktop` / `seriko.alignmenttodesktop`)
+    pub kero_alignment_to_desktop: Option<String>,
+}
+
 /// シェル全体のマニフェスト（`Shell::manifest()` の出力）
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct ShellManifest {
@@ -43,6 +60,9 @@ pub struct ShellManifest {
     /// `*.tooltips` ブロック定義
     #[serde(default)]
     pub(crate) tooltips: BTreeMap<String, BTreeMap<String, String>>,
+    /// SERIKO 関連設定（`descript.txt` の `seriko.*`）
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub(crate) seriko: Option<ShellSerikoConfig>,
 }
 
 #[allow(dead_code)]
@@ -58,6 +78,12 @@ impl ShellManifest {
     }
     pub fn descript(&self) -> &Descript {
         &self.descript
+    }
+    pub fn seriko(&self) -> Option<&ShellSerikoConfig> {
+        self.seriko.as_ref()
+    }
+    pub fn set_seriko(&mut self, seriko: Option<ShellSerikoConfig>) {
+        self.seriko = seriko;
     }
     pub fn surfaces(&self) -> &[SurfaceManifest] {
         &self.surfaces
@@ -124,6 +150,7 @@ impl Shell {
             animation_sort: self.surfaces_txt.animation_sort().cloned(),
             cursors: self.surfaces_txt.cursors().clone(),
             tooltips: self.surfaces_txt.tooltips().clone(),
+            seriko: None,
         }
     }
 }

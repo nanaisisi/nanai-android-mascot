@@ -31,7 +31,7 @@ export function isTauriAvailable(): boolean {
 		!!g.__TAURI_IPC__ ||
 		!!g.__TAURI_POST_MESSAGE__ ||
 		typeof g.ipc === "function" ||
-		typeof (g as any).rpc === "function" ||
+		typeof (g as { rpc?: unknown }).rpc === "function" ||
 		!!(nav?.userAgent && /Tauri/i.test(nav.userAgent)) ||
 		!!(
 			loc &&

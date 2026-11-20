@@ -2,12 +2,15 @@
 
 - **規格**: [kero.seriko.alignmenttodesktop.md](https://ukatech.shillest.net/ukadoc-spec/descript/ghost/descript-txt/) (ukadoc-spec/descript/ghost/descript-txt/kero.seriko.alignmenttodesktop.md)
 - **検索語**: kero.seriko.alignmenttodesktop
-- **対応状況**: ❌ 未実装
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `kero.seriko.alignmenttodesktop` キーをパース・参照する実装が行われている。
+`crates/nanai-core/src/descript_parser/types.rs` の `kero_alignment_to_desktop()` において `kero.seriko.alignmenttodesktop` ディレクティブのパースおよび取得が完全実装済み。
 
 ## 実装箇所
 
-実装コード内に「kero.seriko.alignmenttodesktop」は検出されませんでした。
+- `crates/nanai-core/src/descript_parser/types.rs:220` `/// デスクトップ位置揃え設定 (`seriko.alignmenttodesktop`, `sakura.seriko.alignmenttodesktop`
+- `crates/nanai-core/src/descript_parser/types.rs:224` `.or_else(|| self.get("kero.seriko.alignmenttodesktop"))`
+- `crates/nanai-core/src/descript_parser/types.rs:227` `/// Kero側デスクトップ位置揃え設定 (`kero.seriko.alignmenttodesktop`)`
+- `crates/nanai-core/src/descript_parser/types.rs:229` `self.get("kero.seriko.alignmenttodesktop")`

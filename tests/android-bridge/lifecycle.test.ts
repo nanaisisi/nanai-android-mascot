@@ -5,6 +5,8 @@ import {
 	AndroidBridge,
 } from "../../ui/ts/ui/touch/index.js";
 
+type LifecycleEventHandler = (event?: unknown) => void;
+
 describe("AndroidBridge - Lifecycle", () => {
 	let originalDocument: unknown;
 	let originalWindow: unknown;
@@ -28,10 +30,13 @@ describe("AndroidBridge - Lifecycle", () => {
 	});
 
 	it("handles document visibilitychange for lifecycle events (PAUSE / RESUME)", () => {
-		const listeners = {};
+		const listeners: Record<string | number, LifecycleEventHandler> = {};
 		const mockDoc = {
 			hidden: false,
-			addEventListener: (event: string | number, handler: unknown) => {
+			addEventListener: (
+				event: string | number,
+				handler: LifecycleEventHandler,
+			) => {
 				listeners[event] = handler;
 			},
 		};
@@ -61,10 +66,13 @@ describe("AndroidBridge - Lifecycle", () => {
 	});
 
 	it("updates lifecycle state and triggers reset on gestureRecognizer", () => {
-		const listeners = {};
+		const listeners: Record<string | number, LifecycleEventHandler> = {};
 		const mockDoc = {
 			hidden: false,
-			addEventListener: (event: string | number, handler: unknown) => {
+			addEventListener: (
+				event: string | number,
+				handler: LifecycleEventHandler,
+			) => {
 				listeners[event] = handler;
 			},
 		};
@@ -105,12 +113,15 @@ describe("AndroidBridge - Lifecycle", () => {
 	});
 
 	it("handles freeze and pagehide lifecycle transitions and destroy cleanup", () => {
-		const docListeners = {};
-		const winListeners = {};
+		const docListeners: Record<string | number, LifecycleEventHandler> = {};
+		const winListeners: Record<string | number, LifecycleEventHandler> = {};
 
 		const mockDoc = {
 			hidden: false,
-			addEventListener: (event: string | number, handler: unknown) => {
+			addEventListener: (
+				event: string | number,
+				handler: LifecycleEventHandler,
+			) => {
 				docListeners[event] = handler;
 			},
 			removeEventListener: (event: string | number) => {
@@ -118,7 +129,10 @@ describe("AndroidBridge - Lifecycle", () => {
 			},
 		};
 		const mockWin = {
-			addEventListener: (event: string | number, handler: unknown) => {
+			addEventListener: (
+				event: string | number,
+				handler: LifecycleEventHandler,
+			) => {
 				winListeners[event] = handler;
 			},
 			removeEventListener: (event: string | number) => {

@@ -2,8 +2,21 @@
  * @file surface-collision.ts
  * @brief サーフィスエイリアス解決、マウス・タッチ当たり判定、カーソル/ツールチップ検索モジュール
  */
+
+import type {
+	CollisionArea,
+	CollisionShape,
+} from "../core/wasm/pkg/nanai_core.js";
 import { wasmBridge } from "../core/wasm-bridge.js";
-import { collisionContains, collisionRecord } from "./shell-manifest.js";
+import {
+	type CollisionDisplayMode,
+	renderCollisionOverlay,
+} from "./collision-overlay-renderer.js";
+import {
+	collisionContains,
+	collisionRecord,
+	type RawCollisionArea,
+} from "./shell-manifest.js";
 
 export interface CollisionTargetRect {
 	left?: number;
@@ -17,7 +30,7 @@ export interface CollisionTargetRect {
 export interface CollisionAreaRecord {
 	id?: number | null;
 	name?: string;
-	shape?: string | Record<string, unknown>;
+	shape?: CollisionShape | string | Record<string, unknown>;
 	x1?: number;
 	y1?: number;
 	x2?: number;
@@ -49,6 +62,14 @@ export interface CursorDefinitionRecord {
 
 export interface SurfaceCollisionContext {
 	collisions?: Record<string | number, CollisionAreaRecord[]>;
+	animations?: Record<
+		string | number,
+		| Array<{ collisions?: CollisionAreaRecord[] }>
+		| Record<string, { collisions?: CollisionAreaRecord[] }>
+	>;
+	iconRects?: Record<string | number, number[]>;
+	points?: Record<string | number, Record<string, unknown>>;
+	collisionMode?: CollisionDisplayMode;
 	aliases?: Record<string, number[]> | null;
 	keroAliases?: Record<string, number[]> | null;
 	charAliases?: Record<number | string, Record<string, number[]>> | null;
@@ -62,69 +83,40 @@ export interface SurfaceCollisionContext {
 }
 
 export function normalizeCollisionRecord(
-	col: CollisionAreaRecord | Record<string, unknown> | null | undefined,
+	col:
+		| CollisionAreaRecord
+		| RawCollisionArea
+		| Record<string, unknown>
+		| null
+		| undefined,
 ): CollisionAreaRecord | null {
 	if (!col) return null;
 	const record = col as CollisionAreaRecord;
 	if (typeof record.shape === "string") {
 		return record;
 	}
-	if (record.shape && typeof record.shape === "object") {
-		const shapeObj = record.shape as Record<string, unknown>;
-		if (
-			"Rect" in shapeObj ||
-			"Circle" in shapeObj ||
-			"Ellipse" in shapeObj ||
-			"Polygon" in shapeObj
-		) {
-			return collisionRecord(record) as CollisionAreaRecord;
-		}
-		if (typeof shapeObj.shape === "string") {
-			const kind = shapeObj.shape.toLowerCase();
-			if (kind === "rect") {
-				return collisionRecord({
-					id: record.id,
-					name: record.name,
-					shape: { Rect: shapeObj },
-				}) as CollisionAreaRecord;
-			}
-			if (kind === "circle") {
-				return collisionRecord({
-					id: record.id,
-					name: record.name,
-					shape: { Circle: shapeObj },
-				}) as CollisionAreaRecord;
-			}
-			if (kind === "ellipse") {
-				return collisionRecord({
-					id: record.id,
-					name: record.name,
-					shape: { Ellipse: shapeObj },
-				}) as CollisionAreaRecord;
-			}
-			if (kind === "polygon") {
-				return collisionRecord({
-					id: record.id,
-					name: record.name,
-					shape: { Polygon: shapeObj },
-				}) as CollisionAreaRecord;
-			}
-		}
-	}
-	return collisionRecord(record) as CollisionAreaRecord;
+	return collisionRecord(col as RawCollisionArea) as CollisionAreaRecord;
 }
 
-function toWasmCollisionArea(
-	col: CollisionAreaRecord,
-): Record<string, unknown> | null {
+function isWasmCollisionShape(shape: unknown): shape is CollisionShape {
+	if (!shape || typeof shape !== "object") return false;
+	const kind = (shape as { shape?: unknown }).shape;
+	return (
+		kind === "rect" ||
+		kind === "circle" ||
+		kind === "ellipse" ||
+		kind === "polygon"
+	);
+}
+
+function toWasmCollisionArea(col: CollisionAreaRecord): CollisionArea | null {
 	const name = String(col.name ?? "");
 	const id = col.id != null && Number.isInteger(col.id) ? col.id : null;
 
+	if (isWasmCollisionShape(col.shape)) {
+		return { id, name, shape: col.shape };
+	}
 	if (col.shape && typeof col.shape === "object") {
-		const shapeObj = col.shape as Record<string, unknown>;
-		if (typeof shapeObj.shape === "string") {
-			return { id, name, shape: shapeObj };
-		}
 		const normalized = normalizeCollisionRecord(col);
 		if (!normalized || typeof normalized.shape !== "string") return null;
 		return toWasmCollisionArea(normalized);
@@ -189,8 +181,8 @@ function toWasmCollisionArea(
 
 function toWasmCollisionList(
 	colList: CollisionAreaRecord[],
-): Record<string, unknown>[] | null {
-	const result: Record<string, unknown>[] = [];
+): CollisionArea[] | null {
+	const result: CollisionArea[] = [];
 	for (const col of colList) {
 		const converted = toWasmCollisionArea(col);
 		if (!converted) return null;
@@ -262,15 +254,64 @@ function resolveScopeKeys(scopeId: number | string): string[] {
 }
 
 export function findHitCollisionName(
-	collisions: unknown[],
+	collisions: CollisionArea[] | unknown[],
 	x: number,
 	y: number,
 ): string | null {
 	return wasmBridge.findHitCollisionName(collisions, x, y);
 }
 
+export function collectSurfaceCollisions(
+	context: SurfaceCollisionContext,
+	sid: string,
+): CollisionAreaRecord[] {
+	const baseColList =
+		context.collisions?.[sid] || context.collisions?.default || [];
+	const animEntriesRaw = context.animations?.[sid];
+	const animEntries = Array.isArray(animEntriesRaw)
+		? animEntriesRaw
+		: animEntriesRaw && typeof animEntriesRaw === "object"
+			? Object.values(animEntriesRaw)
+			: [];
+	const animCols: CollisionAreaRecord[] = [];
+	for (const anim of animEntries) {
+		if (anim && Array.isArray(anim.collisions)) {
+			animCols.push(...anim.collisions);
+		}
+	}
+	return animCols.length > 0 ? [...baseColList, ...animCols] : baseColList;
+}
+
 export const surfaceCollisionMethods = {
 	findHitCollisionName,
+
+	renderCollisionOverlayCanvas(
+		this: SurfaceCollisionContext,
+		canvas: HTMLCanvasElement,
+		surfaceId: number | string | null = null,
+		scopeId = 0,
+	): void {
+		const sid =
+			surfaceId !== null && surfaceId !== undefined
+				? String(surfaceId)
+				: String(
+						this.currentSurfaceIdFor?.(scopeId) ?? (scopeId === 1 ? 10 : 0),
+					);
+		const colList = collectSurfaceCollisions(this, sid);
+		const iconRect = Array.isArray(this.iconRects?.[sid])
+			? this.iconRects[sid]
+			: null;
+		const points =
+			this.points?.[sid] && typeof this.points[sid] === "object"
+				? this.points[sid]
+				: null;
+		renderCollisionOverlay(canvas, {
+			collisions: colList as Array<Record<string, unknown>>,
+			mode: this.collisionMode,
+			iconRect,
+			points,
+		});
+	},
 
 	resolveSurfaceNumber(
 		this: SurfaceCollisionContext,

@@ -3,9 +3,10 @@ import {
 	handleWindowState,
 	setAlignmentToDesktop,
 } from "../ui/ts/ghost/command-handler/window.js";
+import type { SakuraCommandHandler } from "../ui/ts/ghost/sakura-command-handler.js";
 
 describe("Sakura command window handlers", () => {
-	let originalTauri: unknown;
+	let originalTauri: typeof globalThis.__TAURI__;
 
 	beforeEach(() => {
 		originalTauri = globalThis.__TAURI__;
@@ -31,7 +32,7 @@ describe("Sakura command window handlers", () => {
 				window: {
 					getCurrentWindow: () => win,
 				},
-			};
+			} as unknown as typeof globalThis.__TAURI__;
 
 			await handleWindowState("stayontop");
 			expect(win.setAlwaysOnTop).toHaveBeenCalledWith(true);
@@ -46,7 +47,7 @@ describe("Sakura command window handlers", () => {
 				window: {
 					getCurrentWindow: () => win,
 				},
-			};
+			} as unknown as typeof globalThis.__TAURI__;
 
 			await handleWindowState("!stayontop");
 			expect(win.setAlwaysOnTop).toHaveBeenCalledWith(false);
@@ -61,14 +62,14 @@ describe("Sakura command window handlers", () => {
 				window: {
 					getCurrentWindow: () => win,
 				},
-			};
+			} as unknown as typeof globalThis.__TAURI__;
 			const handler = {
 				app: {
 					ghostController: {
 						sendShioriEvent: vi.fn().mockResolvedValue(undefined),
 					},
 				},
-			};
+			} as unknown as SakuraCommandHandler;
 
 			await handleWindowState("minimize", handler);
 			expect(win.minimize).toHaveBeenCalled();
@@ -87,14 +88,14 @@ describe("Sakura command window handlers", () => {
 				window: {
 					getCurrentWindow: () => win,
 				},
-			};
+			} as unknown as typeof globalThis.__TAURI__;
 			const handler = {
 				app: {
 					ghostController: {
 						sendShioriEvent: vi.fn().mockResolvedValue(undefined),
 					},
 				},
-			};
+			} as unknown as SakuraCommandHandler;
 
 			await handleWindowState("restore", handler);
 			expect(win.unminimize).toHaveBeenCalled();
@@ -115,7 +116,7 @@ describe("Sakura command window handlers", () => {
 				window: {
 					getCurrentWindow: () => win,
 				},
-			};
+			} as unknown as typeof globalThis.__TAURI__;
 
 			await handleWindowState("stayontop");
 			expect(consoleWarnSpy).toHaveBeenCalledWith(
@@ -127,14 +128,14 @@ describe("Sakura command window handlers", () => {
 
 	describe("setAlignmentToDesktop", () => {
 		it("sets handler app alignmentToDesktop and returns early for mode 'free'", async () => {
-			const handler = { app: {} };
+			const handler = { app: {} } as unknown as SakuraCommandHandler;
 			await setAlignmentToDesktop(handler, "free");
 			expect(handler.app.alignmentToDesktop).toBe("free");
 		});
 
 		it("returns early when globalThis.__TAURI__ is undefined", async () => {
 			globalThis.__TAURI__ = undefined;
-			const handler = { app: {} };
+			const handler = { app: {} } as unknown as SakuraCommandHandler;
 			await setAlignmentToDesktop(handler, "bottom");
 			expect(handler.app.alignmentToDesktop).toBe("bottom");
 		});
@@ -150,16 +151,18 @@ describe("Sakura command window handlers", () => {
 					getCurrentWindow: () => win,
 					currentMonitor: vi.fn().mockResolvedValue(null),
 				},
-			};
+			} as unknown as typeof globalThis.__TAURI__;
 
-			const handler = { app: {} };
+			const handler = { app: {} } as unknown as SakuraCommandHandler;
 			await setAlignmentToDesktop(handler, "bottom");
 			expect(win.setPosition).not.toHaveBeenCalled();
 		});
 
 		it("calculates correct positions for bottom, top, left, and right modes", async () => {
 			class MockPhysicalPosition {
-				constructor(x, y) {
+				x: number;
+				y: number;
+				constructor(x: number, y: number) {
 					this.x = x;
 					this.y = y;
 				}
@@ -180,9 +183,9 @@ describe("Sakura command window handlers", () => {
 					currentMonitor: vi.fn().mockResolvedValue(monitor),
 					PhysicalPosition: MockPhysicalPosition,
 				},
-			};
+			} as unknown as typeof globalThis.__TAURI__;
 
-			const handler = { app: {} };
+			const handler = { app: {} } as unknown as SakuraCommandHandler;
 
 			// bottom: x remains 50, y = 0 + 1080 - 300 = 780
 			await setAlignmentToDesktop(handler, "bottom");
@@ -224,9 +227,9 @@ describe("Sakura command window handlers", () => {
 						size: { width: 1920, height: 1080 },
 					}),
 				},
-			};
+			} as unknown as typeof globalThis.__TAURI__;
 
-			const handler = { app: {} };
+			const handler = { app: {} } as unknown as SakuraCommandHandler;
 			await setAlignmentToDesktop(handler, "bottom");
 			expect(consoleWarnSpy).toHaveBeenCalledWith(
 				"alignmenttodesktop 失敗:",

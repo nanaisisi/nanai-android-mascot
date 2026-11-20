@@ -7,6 +7,6 @@
 
 ## 実装箇所
 
-- `ui/js/surface/surface-load.js:79` `// [blend-exclusion-fast]`
-- `ui/js/surface/surface-load.js:80` `// [blend-exclusion]`
-- `ui/js/surface/compositor/layer.js:63` `} else if (method === "blend-exclusion" || method === "exclusion") {`
+- `ui/ts/surface/surface-compositor.ts:64` `"blend-exclusion": "exclusion",`
+- `tests/surface-compositor.test.ts:37` `expect(resolveCompositeOperation("blend-exclusion-fast")).toBe("exclusion");`
+- `ui/ts/surface/surface-compositor.ts:65` `"blend-exclusion-fast": "exclusion",`

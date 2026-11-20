@@ -1,17 +1,35 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
+import type { AppModalTarget } from "../ui/ts/ui/modal.js";
 
-globalThis.window = globalThis;
-const elements = {};
+interface MockModalElement {
+	style: Record<string, string>;
+	innerHTML: string;
+	_listeners?: Record<string, (event?: unknown) => void>;
+	querySelectorAll: () => NodeListOf<Element>;
+	addEventListener: (type: string, cb: (event?: unknown) => void) => void;
+	click: () => void;
+	querySelector: () => {
+		addEventListener: (_t: string, cb: () => void) => void;
+	};
+}
+
+interface MockTauriInternals {
+	invoke: (cmd: string) => Promise<void>;
+	transformCallback: (cb: unknown) => unknown;
+}
+
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
+const elements: Record<string, MockModalElement> = {};
 globalThis.document = {
-	querySelectorAll: () => [],
-	getElementById(id) {
+	querySelectorAll: () => [] as unknown as NodeListOf<Element>,
+	getElementById(id: string) {
 		if (!elements[id]) {
 			elements[id] = {
 				style: {},
 				innerHTML: "<div>Mock Content</div>",
-				querySelectorAll: () => [],
-				addEventListener(type, cb) {
+				querySelectorAll: () => [] as unknown as NodeListOf<Element>,
+				addEventListener(type: string, cb: (event?: unknown) => void) {
 					this._listeners = this._listeners || {};
 					this._listeners[type] = cb;
 				},
@@ -19,49 +37,51 @@ globalThis.document = {
 					this._listeners?.click?.({ target: this });
 				},
 				querySelector: () => ({
-					addEventListener(_t, cb) {
+					addEventListener(_t: string, cb: () => void) {
 						cb();
 					},
 				}),
 			};
 		}
-		return elements[id];
+		return elements[id] as unknown as HTMLElement;
 	},
-	createElement: (_tag) => ({
-		innerHTML: "",
-		appendChild() {},
-		style: {},
-		dataset: {},
-		querySelectorAll: () => [],
-		addEventListener() {},
-	}),
-};
+	createElement: (_tag: string) =>
+		({
+			innerHTML: "",
+			appendChild() {},
+			style: {},
+			dataset: {},
+			querySelectorAll: () => [] as unknown as NodeListOf<Element>,
+			addEventListener() {},
+		}) as unknown as HTMLElement,
+} as unknown as Document;
 
 const { ModalManager } = await import("../ui/ts/ui/modal.js");
 
 test("ModalManager covers 100% of init, show for all contents, hide, notifications, and Tauri modal windows", async () => {
-	const mockApp = {
+	const mockApp: AppModalTarget = {
 		settings: { autoLoadGhost: true, darkMode: false },
 		ghostController: { scanGhosts: async () => [] },
 		scanBalloons: async () => [],
-	};
+	} as unknown as AppModalTarget;
 	const manager = new ModalManager(mockApp);
 
 	// 1. hide and show in non-Tauri
 	delete globalThis.__TAURI__;
 	delete globalThis.__TAURI_INTERNALS__;
 	manager.hide();
-	assert.equal(manager.overlay.style.display, "none");
+	assert.equal((manager.overlay as HTMLElement).style.display, "none");
 
 	// 2. Tauri environment
-	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (cmd) => {
+	const tauriInternals: MockTauriInternals = {
+		invoke: async (cmd: string) => {
 			if (cmd === "show_modal_window") return;
 			if (cmd === "hide_modal_window") return;
 		},
-		transformCallback: (cb) => cb,
+		transformCallback: (cb: unknown) => cb,
 	};
-	globalThis.window = globalThis;
+	globalThis.__TAURI_INTERNALS__ = tauriInternals;
+	globalThis.window = globalThis as unknown as Window & typeof globalThis;
 
 	// Test show for ALL contentId types
 	const contentTypes = [
@@ -76,7 +96,7 @@ test("ModalManager covers 100% of init, show for all contents, hide, notificatio
 
 	for (const id of contentTypes) {
 		manager.show(id);
-		assert.equal(manager.overlay.style.display, "flex");
+		assert.equal((manager.overlay as HTMLElement).style.display, "flex");
 	}
 
 	// Test explorer-modal-content which initiates background ghost scan & reload
@@ -85,22 +105,22 @@ test("ModalManager covers 100% of init, show for all contents, hide, notificatio
 	// 3. showNotification (success & error) + click OK button
 	manager.showNotification("Info", "Test message", false);
 	elements["modal-ok-btn"]?.click();
-	assert.equal(manager.overlay.style.display, "none");
+	assert.equal((manager.overlay as HTMLElement).style.display, "none");
 
 	manager.showNotification("Error", "Critical error", true);
 	elements["modal-ok-btn"]?.click();
 
 	// 4. Test init listeners (closeBtn click & overlay click)
 	manager.show("ghost-modal-content");
-	manager.closeBtn.click();
-	assert.equal(manager.overlay.style.display, "none");
+	(manager.closeBtn as HTMLElement).click();
+	assert.equal((manager.overlay as HTMLElement).style.display, "none");
 
 	manager.show("ghost-modal-content");
-	manager.overlay.click();
-	assert.equal(manager.overlay.style.display, "none");
+	(manager.overlay as HTMLElement).click();
+	assert.equal((manager.overlay as HTMLElement).style.display, "none");
 
 	// 5. Test error catch in showWindowIfNeeded & hide
-	globalThis.__TAURI_INTERNALS__.invoke = async () => {
+	tauriInternals.invoke = async () => {
 		throw new Error("IPC fail");
 	};
 	manager.show("ghost-modal-content");

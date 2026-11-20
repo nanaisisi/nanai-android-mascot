@@ -7,8 +7,6 @@
 
 ## 実装箇所
 
-- `ui/js/surface/surface-load.js:64` `// [blend-color-dodge-fast]`
-- `ui/js/surface/surface-load.js:65` `// [blend-color-dodge-glow-fast]`
-- `ui/js/surface/surface-load.js:66` `// [blend-color-dodge-glow]`
-- `ui/js/surface/surface-load.js:67` `// [blend-color-dodge]`
-- `ui/js/surface/compositor/layer.js:53` `} else if (method === "blend-color-dodge" || method === "color-dodge") {`
+- `ui/ts/surface/surface-compositor.ts:54` `"blend-color-dodge": "color-dodge",`
+- `tests/surface-compositor.test.ts:22` `expect(resolveCompositeOperation("blend-color-dodge-fast")).toBe(`
+- `ui/ts/surface/surface-compositor.ts:55` `"blend-color-dodge-fast": "color-dodge",`

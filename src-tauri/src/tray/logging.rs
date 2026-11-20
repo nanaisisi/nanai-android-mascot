@@ -10,6 +10,11 @@ pub fn log_tray(msg: &str) {
         .append(true)
         .open("nanai_tray_debug.log")
     {
-        let _ = writeln!(f, "[{}] {}", chrono::Local::now().format("%H:%M:%S"), msg);
+        let _ = writeln!(
+            f,
+            "[{}] {}",
+            jiff::ZonedDateTime::now().strftime("%H:%M:%S"),
+            msg
+        );
     }
 }

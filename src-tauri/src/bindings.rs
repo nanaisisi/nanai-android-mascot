@@ -17,6 +17,7 @@ pub fn export_typescript_bindings() {
             crate::commands::window::setup_foreground_service,
             crate::commands::window::set_overlay_transparency,
             crate::commands::window::set_click_through,
+            crate::commands::window::resize_overlay_window,
             crate::commands::window::trim_memory_command,
         ]);
 

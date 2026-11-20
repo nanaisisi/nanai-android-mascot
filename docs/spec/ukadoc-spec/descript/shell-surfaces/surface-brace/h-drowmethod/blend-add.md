@@ -7,8 +7,7 @@
 
 ## 実装箇所
 
-- `ui/js/surface/surface-load.js:58` `// [blend-add-fast]`
-- `ui/js/surface/surface-load.js:59` `// [blend-add-glow-fast]`
-- `ui/js/surface/surface-load.js:60` `// [blend-add-glow]`
-- `ui/js/surface/surface-load.js:61` `// [blend-add]`
-- `ui/js/surface/compositor/layer.js:47` `} else if (method === "blend-add" || method === "add") {`
+- `ui/ts/surface/surface-compositor.ts:40` `"blend-add": "lighter",`
+- `tests/surface-compositor.test.ts:12` `expect(resolveCompositeOperation("blend-add")).toBe("lighter");`
+- `ui/ts/surface/surface-compositor.ts:41` `"blend-add-fast": "lighter",`
+- `tests/surface-compositor.test.ts:13` `expect(resolveCompositeOperation("blend-add-fast")).toBe("lighter");`

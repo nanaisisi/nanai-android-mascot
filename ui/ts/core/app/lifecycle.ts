@@ -20,7 +20,20 @@ import type { AppSettings } from "./types.js";
 export class NanaiAndroidMascotApp {
 	declare loadSettings: () => void;
 	declare setupEventListeners: () => Promise<void>;
+	declare setupGhostInteractions: () => void;
+	declare setupUiButtons: () => void;
+	declare setupGlobalListeners: () => void;
+	declare setupExternalMenuListeners: () => Promise<void>;
 	declare applySettings: () => void;
+	declare applyBalloonTheme: () => void;
+	declare wait: (ms: number) => Promise<void>;
+	declare sendUpdateResultSummary: (
+		ghostName: string,
+		success: boolean,
+		detail: number | string,
+		failedFile: string | null,
+		checkOnly?: boolean,
+	) => Promise<void>;
 	declare startSecondTimer: () => void;
 	declare stopSecondTimer: () => void;
 	declare hideMenu: () => void;
@@ -141,12 +154,20 @@ export class NanaiAndroidMascotApp {
 			urlParams.get("ghost_name") ||
 			(search ? AppConfig.paths.fallbackGhostName : null);
 
-		this.balloonThemeManager = new BalloonThemeManager(this as any);
-		this.ghostController = new GhostController(this as any);
+		this.balloonThemeManager = new BalloonThemeManager(
+			this as unknown as ConstructorParameters<typeof BalloonThemeManager>[0],
+		);
+		this.ghostController = new GhostController(
+			this as unknown as ConstructorParameters<typeof GhostController>[0],
+		);
 		this.dictationManager = new DictationManager(this);
-		this.interactionManager = new InteractionManager(this as any);
-		this.surfaceManager = new SurfaceManager() as any;
-		this.sakuraPlayer = new SakuraScriptPlayer() as any;
+		this.interactionManager = new InteractionManager(
+			this as unknown as ConstructorParameters<typeof InteractionManager>[0],
+		);
+		this.surfaceManager =
+			new SurfaceManager() as unknown as typeof this.surfaceManager;
+		this.sakuraPlayer =
+			new SakuraScriptPlayer() as unknown as typeof this.sakuraPlayer;
 		this.internalWindowManager = new InternalWindowManager();
 		this.modalManager = null;
 		this.elements = {};
@@ -193,7 +214,9 @@ export class NanaiAndroidMascotApp {
 
 		initUIEnvironment(this);
 
-		this.modalManager = new ModalManager(this as any);
+		this.modalManager = new ModalManager(
+			this as unknown as ConstructorParameters<typeof ModalManager>[0],
+		);
 		try {
 			this.loadSettings?.();
 		} catch (_e) {}

@@ -3,7 +3,7 @@
  * @brief OS・シェル・ユーザー等の環境情報通知
  */
 
-import type { OsEnvironmentEvent } from "../../../core/wasm/pkg/nanai_core.js";
+import type { OsEnvironmentEvent } from "../../core/wasm/pkg/nanai_core.js";
 import type { LifecycleContext } from "./ghost-lifecycle/lifecycle-events.js";
 
 export const shioriNotifyEnvironment = {

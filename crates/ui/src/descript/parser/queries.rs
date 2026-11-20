@@ -126,7 +126,7 @@ impl Descript {
         })
     }
 
-    /// `[target].bindgroup[N].name/default/addid`（着せ替えパーツ定義）をパースする
+    /// `[target].bindgroup[N].name/default/addid`（着せ替えパーツ定義: sakura.bindgroup, kero.bindgroup, char.bindgroup）をパースする
     pub fn bind_groups(&self, target: &str) -> Vec<BindGroup> {
         let prefix = format!("{target}.bindgroup");
         let mut groups: BTreeMap<u32, BindGroup> = BTreeMap::new();

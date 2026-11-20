@@ -94,7 +94,7 @@ describe("Balloon Skin & Typography Cycle 10 Enhancements (Slot-10)", () => {
 						cssVars[k] = v;
 					},
 				},
-			};
+			} as unknown as HTMLElement;
 
 			applyGroupProperties(
 				mockRoot,
@@ -120,7 +120,7 @@ describe("Balloon Skin & Typography Cycle 10 Enhancements (Slot-10)", () => {
 						cssVars[k] = v;
 					},
 				},
-			};
+			} as unknown as HTMLElement;
 
 			applyGroupProperties(
 				mockRoot,
@@ -146,7 +146,7 @@ describe("Balloon Skin & Typography Cycle 10 Enhancements (Slot-10)", () => {
 						cssVars[k] = v;
 					},
 				},
-			};
+			} as unknown as HTMLElement;
 
 			applyGroupProperties(
 				mockRoot,
@@ -170,7 +170,7 @@ describe("Balloon Skin & Typography Cycle 10 Enhancements (Slot-10)", () => {
 						cssVars[k] = v;
 					},
 				},
-			};
+			} as unknown as HTMLElement;
 
 			applyGroupProperties(
 				mockRoot,

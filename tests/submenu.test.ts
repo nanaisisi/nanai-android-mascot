@@ -1,18 +1,63 @@
 import assert from "node:assert/strict";
 import { test } from "vitest";
 
-globalThis.window = globalThis;
-globalThis.localStorage = { getItem: () => "ivory", setItem: () => {} };
+interface MockSubmenuElement {
+	innerHTML: string;
+	lastChild?: MockSubmenuElement;
+	className?: string;
+	style: Record<string, string>;
+	dataset?: Record<string, string>;
+	_listeners?: Record<string, (ev: unknown) => void>;
+	appendChild(child: MockSubmenuElement): void;
+	querySelectorAll?: () => unknown[];
+	addEventListener?(type: string, cb: (ev: unknown) => void): void;
+	click?: () => Promise<void> | void;
+}
 
-const documentListeners = {};
-const globalListeners = {};
-const tauriListeners = {};
+interface TauriInvokeArgs {
+	event?: string;
+	handler?: (ev: unknown) => Promise<void> | void;
+	[key: string]: unknown;
+}
+
+interface MockTauriInternals {
+	metadata: {
+		currentWindow: { label: string; startDragging: () => Promise<void> };
+	};
+	invoke: (cmd: string, args?: TauriInvokeArgs) => Promise<unknown>;
+	transformCallback: (cb: unknown) => unknown;
+	plugins: {
+		event: {
+			listen: (
+				event: string,
+				cb: (ev: unknown) => Promise<void> | void,
+			) => Promise<() => void>;
+			emit: () => Promise<void>;
+		};
+	};
+}
+
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
+globalThis.localStorage = {
+	getItem: () => "ivory",
+	setItem: () => {},
+	length: 0,
+	clear: () => {},
+	key: () => null,
+	removeItem: () => {},
+} as Storage;
+
+const documentListeners: Record<string, (ev: unknown) => void> = {};
+const globalListeners: Record<string, (ev?: unknown) => void> = {};
+const tauriListeners: Record<string, (ev: unknown) => Promise<void> | void> =
+	{};
+const cachedElements: Record<string, MockSubmenuElement> = {};
 
 let emitShouldFail = false;
 
 globalThis.document = {
-	body: { classList: { add() {}, remove(..._args) {}, toggle() {} } },
-	addEventListener(type, cb) {
+	body: { classList: { add() {}, remove(..._args: string[]) {}, toggle() {} } },
+	addEventListener(type: string, cb: (ev: unknown) => void) {
 		documentListeners[type] = cb;
 	},
 	documentElement: {
@@ -20,48 +65,54 @@ globalThis.document = {
 		getAttribute: () => "default",
 		style: {
 			setProperty() {},
-			removeProperty() {},
+			removeProperty() {
+				return "";
+			},
 		},
 	},
-	getElementById(_id) {
-		if (!this._cachedElements) this._cachedElements = {};
-		if (!this._cachedElements[_id]) {
-			this._cachedElements[_id] = {
+	getElementById(id: string) {
+		if (!cachedElements[id]) {
+			cachedElements[id] = {
 				innerHTML: "",
-				appendChild(child) {
+				appendChild(child: MockSubmenuElement) {
 					this.lastChild = child;
 				},
 				style: {},
 				querySelectorAll: () => [],
 			};
 		}
-		return this._cachedElements[_id];
+		return cachedElements[id];
 	},
-	createElement: (_tag) => ({
+	createElement: (_tag: string): MockSubmenuElement => ({
 		className: "",
 		innerHTML: "",
 		appendChild() {},
 		style: {},
 		dataset: {},
 		_listeners: {},
-		addEventListener(type, cb) {
+		addEventListener(type: string, cb: (ev: unknown) => void) {
+			if (!this._listeners) this._listeners = {};
 			this._listeners[type] = cb;
 		},
 		click() {
 			this._listeners?.click?.({ stopPropagation() {} });
 		},
 	}),
-};
-globalThis.addEventListener = (type, cb) => {
+} as unknown as Document;
+globalThis.addEventListener = ((type: string, cb: (ev?: unknown) => void) => {
 	globalListeners[type] = cb;
+}) as unknown as typeof globalThis.addEventListener;
+
+const tauriGlobal = globalThis as unknown as {
+	__TAURI_INTERNALS__?: MockTauriInternals;
 };
 
-globalThis.__TAURI_INTERNALS__ = {
+const mockTauriInternals: MockTauriInternals = {
 	metadata: {
 		currentWindow: { label: "submenu", startDragging: async () => {} },
 	},
-	invoke: async (cmd, args) => {
-		if (cmd === "plugin:event|listen") {
+	invoke: async (cmd: string, args?: TauriInvokeArgs) => {
+		if (cmd === "plugin:event|listen" && args?.event && args?.handler) {
 			tauriListeners[args.event] = args.handler;
 			return 1;
 		}
@@ -73,10 +124,13 @@ globalThis.__TAURI_INTERNALS__ = {
 		if (cmd === "hide_submenu_window") return;
 		if (cmd === "notify_submenu_ready") return;
 	},
-	transformCallback: (cb) => cb,
+	transformCallback: (cb: unknown) => cb,
 	plugins: {
 		event: {
-			listen: async (event, cb) => {
+			listen: async (
+				event: string,
+				cb: (ev: unknown) => Promise<void> | void,
+			) => {
 				tauriListeners[event] = cb;
 				return () => {};
 			},
@@ -84,10 +138,11 @@ globalThis.__TAURI_INTERNALS__ = {
 		},
 	},
 };
+tauriGlobal.__TAURI_INTERNALS__ = mockTauriInternals;
 
 let notifySubmenuShouldFail = false;
-globalThis.__TAURI_INTERNALS__.invoke = async (cmd, args) => {
-	if (cmd === "plugin:event|listen") {
+mockTauriInternals.invoke = async (cmd: string, args?: TauriInvokeArgs) => {
+	if (cmd === "plugin:event|listen" && args?.event && args?.handler) {
 		tauriListeners[args.event] = args.handler;
 		return 1;
 	}
@@ -182,7 +237,9 @@ test("submenu event handlers, Tauri sync listeners, and DOMContentLoaded init", 
 
 	// 5. Test dispatchSubmenuAction via renderer generated element clicks
 	await tauriListeners["set-submenu-type"]?.({ payload: { type: "ghost" } });
-	const submenuContainer = document.getElementById("submenu-content");
+	const submenuContainer = document.getElementById(
+		"submenu-content",
+	) as unknown as MockSubmenuElement | null;
 	if (submenuContainer?.lastChild?.click) {
 		await submenuContainer.lastChild.click();
 	}
@@ -199,12 +256,12 @@ test("submenu event handlers, Tauri sync listeners, and DOMContentLoaded init", 
 	await tauriListeners["sync-menu-scope"]?.({ payload: 0 });
 
 	// Click in non-tauri mode
-	const origTauri = globalThis.__TAURI_INTERNALS__;
-	delete globalThis.__TAURI_INTERNALS__;
+	const origTauri = tauriGlobal.__TAURI_INTERNALS__;
+	delete tauriGlobal.__TAURI_INTERNALS__;
 	if (submenuContainer?.lastChild?.click) {
 		await submenuContainer.lastChild.click();
 	}
-	globalThis.__TAURI_INTERNALS__ = origTauri;
+	tauriGlobal.__TAURI_INTERNALS__ = origTauri;
 
 	assert.ok(true);
 });

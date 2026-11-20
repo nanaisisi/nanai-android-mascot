@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { shioriNotifyMethods } from "../../ui/ts/ghost/shiori-notify.js";
 import {
+	createMockNotifyObj,
 	createMockShioriController,
 	type MockShioriController,
 } from "./helpers.js";
@@ -13,10 +13,7 @@ describe("shiori-notify HEADLINE & RSS protocols", () => {
 	});
 
 	it("sends OnHeadlinesenseBegin with siteName and url", async () => {
-		const notifyObj = {
-			...shioriNotifyMethods,
-			sendShioriNotify: mockController.sendShioriNotify,
-		};
+		const notifyObj = createMockNotifyObj(mockController);
 
 		await notifyObj.sendHeadlineSenseBegin(
 			"Test Site",
@@ -29,10 +26,7 @@ describe("shiori-notify HEADLINE & RSS protocols", () => {
 	});
 
 	it("sends OnHeadlinesense.OnFind with phase and content", async () => {
-		const notifyObj = {
-			...shioriNotifyMethods,
-			sendShioriNotify: mockController.sendShioriNotify,
-		};
+		const notifyObj = createMockNotifyObj(mockController);
 
 		await notifyObj.sendHeadlineSenseOnFind(
 			"Test Site",
@@ -52,10 +46,7 @@ describe("shiori-notify HEADLINE & RSS protocols", () => {
 	});
 
 	it("sends OnHeadlinesenseComplete with reason", async () => {
-		const notifyObj = {
-			...shioriNotifyMethods,
-			sendShioriNotify: mockController.sendShioriNotify,
-		};
+		const notifyObj = createMockNotifyObj(mockController);
 
 		await notifyObj.sendHeadlineSenseComplete("no update");
 		expect(mockController.sendShioriNotify).toHaveBeenCalledWith(
@@ -65,10 +56,7 @@ describe("shiori-notify HEADLINE & RSS protocols", () => {
 	});
 
 	it("sends OnHeadlinesenseFailure with reason", async () => {
-		const notifyObj = {
-			...shioriNotifyMethods,
-			sendShioriNotify: mockController.sendShioriNotify,
-		};
+		const notifyObj = createMockNotifyObj(mockController);
 
 		await notifyObj.sendHeadlineSenseFailure("can't open");
 		expect(mockController.sendShioriNotify).toHaveBeenCalledWith(
@@ -78,10 +66,7 @@ describe("shiori-notify HEADLINE & RSS protocols", () => {
 	});
 
 	it("sends OnRSSBegin, OnRSSComplete (no update & with entries), and OnRSSFailure", async () => {
-		const notifyObj = {
-			...shioriNotifyMethods,
-			sendShioriNotify: mockController.sendShioriNotify,
-		};
+		const notifyObj = createMockNotifyObj(mockController);
 
 		await notifyObj.sendRssBegin("RSS Site", "https://example.com/feed.xml");
 		expect(mockController.sendShioriNotify).toHaveBeenCalledWith("OnRSSBegin", [

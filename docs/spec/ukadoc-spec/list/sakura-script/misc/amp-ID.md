@@ -2,7 +2,7 @@
 
 - **規格**: [amp-ID.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/misc/amp-ID/) (ukadoc-spec/list/sakura-script/misc/amp-ID.md)
 - **検索語**: \&[ID]
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -10,4 +10,4 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/parser/mod.rs:113` `// \&[ID] entity / property interpolation (\&[amp], \&[lt], \&[gt], \&[quot], \&`
+- `crates/ui/src/script/parser/executor.rs:127` `// \&[ID] entity / property interpolation (\&[amp], \&[lt], \&[gt], \&[quot], \&`

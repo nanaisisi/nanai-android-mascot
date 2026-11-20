@@ -2,7 +2,7 @@
 
 - **規格**: [OnAnchorEnter.md](https://ukatech.shillest.net/ukadoc-spec/list/shiori-event/choice/OnAnchorEnter/) (ukadoc-spec/list/shiori-event/choice/OnAnchorEnter.md)
 - **検索語**: OnAnchorEnter
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -13,6 +13,8 @@
 
 ## 実装箇所
 
-- `ui/js/ghost/shiori-notify.js:23` `* - OnAnchorEnter, OnAnchorHover, OnAnchorSelect, OnAnchorSelectEx`
-- `ui/js/ghost/sakura-play/handlers.js:121` `app.ghostController?.sendShioriEvent("OnAnchorEnter", [`
-- `ui/js/ghost/sakura-play/handlers.js:128` `app.ghostController?.sendShioriEvent("OnAnchorEnter", []);`
+- `crates/nanai-core/src/shiori_protocol_helpers/events/input.rs:101` `/// OnAnchorEnter イベントリクエスト構築 (ukadoc-spec/list/shiori-event/choice/OnAnchorEnte`
+- `ui/ts/ghost/shiori-protocol.ts:155` `ANCHOR_ENTER: "OnAnchorEnter",`
+- `crates/nanai-core/src/shiori_protocol_helpers/events/input.rs:106` `event_id: "OnAnchorEnter",`
+- `crates/nanai-core/src/shiori_protocol_helpers/tests/events.rs:34` `assert!(anchor_enter.contains("ID: OnAnchorEnter"));`
+- `ui/ts/ghost/sakura-script.ts` `addAnchorToBalloon` (`mouseenter` / `mouseleave` で `OnAnchorEnter` を送信)

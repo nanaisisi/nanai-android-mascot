@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-globalThis.window = globalThis;
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
 
 import {
 	handleBiffCommand,
@@ -8,6 +8,7 @@ import {
 	handleHourTimeSignal,
 	handleOpenSystemTarget,
 } from "../../ui/ts/ghost/command-handler/system/target.js";
+import type { SakuraCommandHandler } from "../../ui/ts/ghost/sakura-command-handler.js";
 
 describe("system/target.js", () => {
 	it("handleBiffCommand triggers email check", async () => {
@@ -20,23 +21,23 @@ describe("system/target.js", () => {
 					},
 				},
 			},
-		};
+		} as unknown as SakuraCommandHandler;
 
 		await handleBiffCommand(handler, ["biff"]);
 		expect(checked).toBe(true);
 	});
 
 	it("handleExecuteSntpCommand fires OnSNTP events", async () => {
-		const events = [];
+		const events: Array<{ ev: string; args: string[] }> = [];
 		const handler = {
 			app: {
 				ghostController: {
-					sendShioriEvent: async (ev, args) => {
+					sendShioriEvent: async (ev: string, args: string[]) => {
 						events.push({ ev, args });
 					},
 				},
 			},
-		};
+		} as unknown as SakuraCommandHandler;
 
 		await handleExecuteSntpCommand(handler, ["executesntp"]);
 		const names = events.map((e) => e.ev);
@@ -55,11 +56,12 @@ describe("system/target.js", () => {
 	it("handleOpenSystemTarget handles explorer, browser, and modal dialogs", async () => {
 		let menuToggled = false;
 		let modalShown = "";
-		let openedUrl = "";
+		let openedUrl: string | URL | undefined = "";
 
 		const originalOpen = globalThis.open;
-		globalThis.open = (url) => {
+		globalThis.open = (url?: string | URL) => {
 			openedUrl = url;
+			return null;
 		};
 
 		const handler = {
@@ -68,12 +70,12 @@ describe("system/target.js", () => {
 					menuToggled = true;
 				},
 				modalManager: {
-					show: (id) => {
+					show: (id: string) => {
 						modalShown = id;
 					},
 				},
 			},
-		};
+		} as unknown as SakuraCommandHandler;
 
 		try {
 			await handleOpenSystemTarget(handler, ["open", "ghostexplorer"]);

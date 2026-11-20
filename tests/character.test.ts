@@ -46,10 +46,36 @@ const rootEl = {
 	style: {} as Record<string, string>,
 };
 
+const coordPopupEl = {
+	textContent: "",
+	style: { display: "none" } as Record<string, string>,
+};
+
+interface MockWindowState {
+	visible: boolean;
+	pos: { x: number; y: number };
+	size: { width: number; height: number };
+}
+
+let mockSelfPos: { x: number; y: number } | null = null;
+let mockSelfSize: { width: number; height: number } | null = null;
+let mockMonitors: Array<{
+	name: string | null;
+	scaleFactor: number;
+	position: { x: number; y: number };
+	size: { width: number; height: number };
+	workArea: {
+		position: { x: number; y: number };
+		size: { width: number; height: number };
+	};
+}> | null = null;
+let mockOtherWindows: Record<string, MockWindowState> | null = null;
+
 g.document = {
 	getElementById(id: string) {
 		if (id === "subchar-img") return imgEl;
 		if (id === "subchar-root") return rootEl;
+		if (id === "coord-popup") return coordPopupEl;
 		return null;
 	},
 	createElement(tag: string) {
@@ -94,11 +120,48 @@ g.__TAURI_INTERNALS__ = {
 		}
 		invokedCommands.push({ cmd, args });
 		if (cmd === "plugin:window|position") return { x: 100, y: 100 };
+		if (cmd === "plugin:window|outer_position") {
+			const label = (args as { label?: string } | undefined)?.label;
+			if (label && mockOtherWindows?.[label]) {
+				return mockOtherWindows[label].pos;
+			}
+			return mockSelfPos ?? { x: 100, y: 100 };
+		}
+		if (cmd === "plugin:window|outer_size") {
+			const label = (args as { label?: string } | undefined)?.label;
+			if (label && mockOtherWindows?.[label]) {
+				return mockOtherWindows[label].size;
+			}
+			return mockSelfSize ?? { width: 200, height: 360 };
+		}
+		if (cmd === "plugin:window|is_visible") {
+			const label = (args as { label?: string } | undefined)?.label;
+			if (label && mockOtherWindows?.[label]) {
+				return mockOtherWindows[label].visible;
+			}
+			return true;
+		}
+		if (cmd === "plugin:window|get_all_windows") {
+			if (!mockOtherWindows) return [];
+			return ["subchar_1", ...Object.keys(mockOtherWindows)];
+		}
+		if (cmd === "plugin:window|available_monitors") {
+			return mockMonitors ?? [];
+		}
+		if (
+			cmd === "plugin:window|current_monitor" ||
+			cmd === "plugin:window|primary_monitor"
+		) {
+			return mockMonitors?.[0] ?? null;
+		}
 		if (cmd === "plugin:window|set_position") return;
 		if (cmd === "plugin:window|start_dragging") return;
 		if (cmd === "show_menu_window") return;
+		if (cmd === "show_subchar_window") return;
 		if (cmd === "sync_character_balloon") return;
 		if (cmd === "set_character_scale") return;
+		if (cmd === "reset_character_positions") return;
+		if (cmd === "reset_balloon_positions") return;
 	},
 	transformCallback: (cb: unknown) => cb,
 	plugins: {
@@ -152,7 +215,7 @@ test("character window covers subchar image updates, pointer interactions, dragg
 	});
 	globalListeners.mouseup?.();
 
-	// 4. Test long press timer
+	// 4. Test long press timer (touch only; mouse holds must not open menu)
 	rootEl._listeners?.mousedown?.({
 		button: 0,
 		clientX: 10,
@@ -162,6 +225,12 @@ test("character window covers subchar image updates, pointer interactions, dragg
 	});
 	vi.advanceTimersByTime(700);
 	globalListeners.mouseup?.();
+
+	rootEl._listeners?.touchstart?.({
+		touches: [{ clientX: 10, clientY: 10, screenX: 10, screenY: 10 }],
+	});
+	vi.advanceTimersByTime(700);
+	globalListeners.touchend?.();
 
 	// 5. Test drag move
 	rootEl._listeners?.mousedown?.({ button: 0, clientX: 10, clientY: 10 });
@@ -198,12 +267,23 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 		vi.useFakeTimers();
 		vi.setSystemTime(fakeNow);
 		transparentAlpha = 255;
+		mockSelfPos = null;
+		mockSelfSize = null;
+		mockMonitors = null;
+		mockOtherWindows = null;
+		coordPopupEl.textContent = "";
+		coordPopupEl.style.display = "none";
 		rootEl._listeners?.mouseleave?.();
 		emittedEvents.length = 0;
 		invokedCommands.length = 0;
 	});
 
 	afterEach(() => {
+		mockSelfPos = null;
+		mockSelfSize = null;
+		mockMonitors = null;
+		mockOtherWindows = null;
+		globalListeners.blur?.();
 		rootEl._listeners?.mouseleave?.();
 		vi.useRealTimers();
 	});
@@ -700,7 +780,7 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 		).toHaveLength(1);
 	});
 
-	test("long press emits mouseup without talk, and multi-click resets on timeout or > 10px move", () => {
+	test("long press on touch opens menu and emits mouseup without talk; desktop mousedown hold does not open menu", () => {
 		const expectedRect = {
 			left: 0,
 			top: 0,
@@ -710,6 +790,7 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 			naturalHeight: 10,
 		};
 
+		// Desktop mousedown hold (>600ms) must NOT open context menu
 		rootEl._listeners?.mousedown?.({
 			button: 0,
 			clientX: 15,
@@ -720,8 +801,22 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 		vi.advanceTimersByTime(650);
 		expect(
 			invokedCommands.filter((c) => c.cmd === "show_menu_window"),
-		).toHaveLength(1);
+		).toHaveLength(0);
 		globalListeners.mouseup?.({ button: 0, clientX: 15, clientY: 15 });
+
+		// Touch long press (>600ms) opens context menu and suppresses talk on touchend
+		emittedEvents.length = 0;
+		invokedCommands.length = 0;
+		rootEl._listeners?.touchstart?.({
+			touches: [{ clientX: 15, clientY: 15, screenX: 115, screenY: 115 }],
+		});
+		vi.advanceTimersByTime(650);
+		expect(
+			invokedCommands.filter((c) => c.cmd === "show_menu_window"),
+		).toHaveLength(1);
+		globalListeners.touchend?.({
+			changedTouches: [{ clientX: 15, clientY: 15 }],
+		});
 		expect(getGhostEvents()).toContainEqual({
 			type: "mouseup",
 			scopeId: 1,
@@ -729,7 +824,7 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 			clientY: 15,
 			rect: expectedRect,
 			button: 0,
-			device: "mouse",
+			device: "touch",
 		});
 		expect(getMenuActions()).toHaveLength(0);
 
@@ -1093,6 +1188,484 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 			imgEl.height = 0;
 			imgEl.complete = false;
 			imgEl.onload = undefined;
+		}
+	});
+
+	test("snaps to Monitor workArea, visible Character windows, and Initial position while updating #coord-popup and honoring Ctrl bypass", async () => {
+		const flushMicrotasks = async () => {
+			for (let i = 0; i < 30; i++) {
+				await Promise.resolve();
+			}
+		};
+
+		// Setup monitor with 48px bottom taskbar (workArea height 1032 vs monitor height 1080)
+		mockMonitors = [
+			{
+				name: "Primary",
+				scaleFactor: 1,
+				position: { x: 0, y: 0 },
+				size: { width: 1920, height: 1080 },
+				workArea: {
+					position: { x: 0, y: 0 },
+					size: { width: 1920, height: 1032 },
+				},
+			},
+		];
+		mockSelfSize = { width: 200, height: 300 };
+
+		// Reset initial position to (1640, 732) so it doesn't interfere near target (1363, 842)
+		await listenCallbacks["character-positions-reset"]?.({
+			payload: { scopeId: 1, x: 1640, y: 732 },
+		});
+
+		// 1. Character snap: snap to visible subchar_window_0, ignoring balloon_window_0 & hidden subchar_window_2
+		mockOtherWindows = {
+			subchar_window_0: {
+				visible: true,
+				pos: { x: 1563, y: 800 },
+				size: { width: 200, height: 300 },
+			},
+			balloon_window_0: {
+				visible: true,
+				pos: { x: 1300, y: 845 },
+				size: { width: 280, height: 200 },
+			},
+			subchar_window_2: {
+				visible: false,
+				pos: { x: 1365, y: 845 },
+				size: { width: 200, height: 300 },
+			},
+		};
+
+		mockSelfPos = { x: 500, y: 500 };
+		rootEl._listeners?.mousedown?.({ button: 0, clientX: 20, clientY: 20 });
+		await flushMicrotasks();
+
+		// Drag near left of subchar_window_0: 1563 - 200 = 1363 (current x = 1368, within 12px)
+		mockSelfPos = { x: 1368, y: 842 };
+		globalListeners.mousemove?.({ clientX: 40, clientY: 40 });
+		await flushMicrotasks();
+
+		expect(coordPopupEl.style.display).toBe("block");
+		expect(coordPopupEl.textContent).toBe(
+			"1363,842 (Snap X:Character)\nPress Ctrl to disable",
+		);
+
+		// Releasing mouse commits snapped position via show_subchar_window
+		invokedCommands.length = 0;
+		globalListeners.mouseup?.({ button: 0, clientX: 40, clientY: 40 });
+		await flushMicrotasks();
+
+		expect(coordPopupEl.style.display).toBe("none");
+		expect(invokedCommands).toContainEqual({
+			cmd: "show_subchar_window",
+			args: {
+				params: { scope_id: 1, x: 1363, y: 842 },
+				scope_id: 1,
+				scopeId: 1,
+				x: 1363,
+				y: 842,
+			},
+		});
+
+		// 2. Monitor workArea bottom snap (workArea bottom = 1032 => y = 1032 - 300 = 732; monitor bottom would be 780)
+		// Also test Initial X snap together with Monitor Y snap
+		mockOtherWindows = {};
+		await listenCallbacks["character-positions-reset"]?.({
+			payload: { scopeId: 1, x: 500, y: 200 },
+		});
+		mockSelfPos = { x: 300, y: 300 };
+		rootEl._listeners?.mousedown?.({ button: 0, clientX: 10, clientY: 10 });
+		await flushMicrotasks();
+
+		mockSelfPos = { x: 506, y: 726 };
+		globalListeners.mousemove?.({ clientX: 30, clientY: 30 });
+		await flushMicrotasks();
+
+		expect(coordPopupEl.textContent).toBe(
+			"500,732 (Snap X:Initial, Snap Y:Monitor)\nPress Ctrl to disable",
+		);
+
+		// 3. Holding Ctrl (via event ctrlKey or keydown Control) disables snapping
+		invokedCommands.length = 0;
+		globalListeners.mousemove?.({ clientX: 35, clientY: 35, ctrlKey: true });
+		await flushMicrotasks();
+
+		expect(coordPopupEl.textContent).toBe("506,726\nPress Ctrl to disable");
+
+		// Releasing Ctrl via keyup restores snap on coordInterval tick
+		globalListeners.keyup?.({ key: "Control", ctrlKey: false });
+		await vi.advanceTimersByTimeAsync(60);
+		await flushMicrotasks();
+		expect(coordPopupEl.textContent).toBe(
+			"500,732 (Snap X:Initial, Snap Y:Monitor)\nPress Ctrl to disable",
+		);
+		// Dragging at unchanged position deduplicates redundant sync_character_balloon
+		expect(
+			invokedCommands.some((c) => c.cmd === "sync_character_balloon"),
+		).toBe(false);
+
+		// Pressing Ctrl via keydown mid-drag disables snap immediately
+		globalListeners.keydown?.({ key: "Control", ctrlKey: true });
+		await flushMicrotasks();
+		expect(coordPopupEl.textContent).toBe("506,726\nPress Ctrl to disable");
+
+		invokedCommands.length = 0;
+		globalListeners.mouseup?.({
+			button: 0,
+			clientX: 35,
+			clientY: 35,
+			ctrlKey: true,
+		});
+		await flushMicrotasks();
+		expect(invokedCommands.some((c) => c.cmd === "show_subchar_window")).toBe(
+			false,
+		);
+		globalListeners.keyup?.({ key: "Control", ctrlKey: false });
+
+		// 4. HiDPI scaleFactor (1.5) scales snap threshold (18 physical px) and allows unrestricted negative/offscreen coordinates
+		mockMonitors = [
+			{
+				name: "HiDPI",
+				scaleFactor: 1.5,
+				position: { x: 0, y: 0 },
+				size: { width: 3840, height: 2160 },
+				workArea: {
+					position: { x: 0, y: 0 },
+					size: { width: 3840, height: 2088 },
+				},
+			},
+		];
+		await listenCallbacks["character-positions-reset"]?.({
+			payload: { scopeId: 1, x: 2400, y: 1200 },
+		});
+		mockSelfPos = { x: 2400, y: 1200 };
+		rootEl._listeners?.mousedown?.({ button: 0, clientX: 10, clientY: 10 });
+		await flushMicrotasks();
+
+		// 15 physical px from left edge (0) is within 12 * 1.5 = 18px threshold; -250 is unrestricted offscreen Y
+		mockSelfPos = { x: 15, y: -250 };
+		globalListeners.mousemove?.({ clientX: 30, clientY: 30 });
+		await flushMicrotasks();
+		expect(coordPopupEl.textContent).toBe(
+			"0,-250 (Snap X:Monitor)\nPress Ctrl to disable",
+		);
+		globalListeners.mouseup?.({ button: 0, clientX: 30, clientY: 30 });
+		await flushMicrotasks();
+		expect(invokedCommands).toContainEqual({
+			cmd: "show_subchar_window",
+			args: {
+				params: { scope_id: 1, x: 0, y: -250 },
+				scope_id: 1,
+				scopeId: 1,
+				x: 0,
+				y: -250,
+			},
+		});
+	});
+
+	test("handles Ctrl+Shift+F12 (reset_character_positions) and Ctrl+Shift+F10 (reset_balloon_positions) shortcuts", async () => {
+		const preventF12 = vi.fn();
+		mockSelfPos = { x: 1180, y: 672 };
+
+		globalListeners.keydown?.({
+			key: "F12",
+			ctrlKey: true,
+			shiftKey: true,
+			altKey: false,
+			preventDefault: preventF12,
+		});
+		await Promise.resolve();
+
+		expect(preventF12).toHaveBeenCalledTimes(1);
+		expect(invokedCommands).toContainEqual({
+			cmd: "reset_character_positions",
+			args: {},
+		});
+
+		const preventF10 = vi.fn();
+		globalListeners.keydown?.({
+			key: "F10",
+			ctrlKey: true,
+			shiftKey: true,
+			altKey: false,
+			preventDefault: preventF10,
+		});
+		await Promise.resolve();
+
+		expect(preventF10).toHaveBeenCalledTimes(1);
+		expect(invokedCommands).toContainEqual({
+			cmd: "reset_balloon_positions",
+			args: {},
+		});
+	});
+
+	test("drag follow uses requestAnimationFrame, deduplicates #coord-popup writes, and coalesces sync_character_balloon", async () => {
+		const rafQueue: Array<{ id: number; cb: FrameRequestCallback }> = [];
+		let nextRafId = 1;
+		const origRaf = globalThis.requestAnimationFrame;
+		const origCancelRaf = globalThis.cancelAnimationFrame;
+		const cancelSpy = vi.fn((id: number) => {
+			const idx = rafQueue.findIndex((item) => item.id === id);
+			if (idx >= 0) rafQueue.splice(idx, 1);
+		});
+		globalThis.requestAnimationFrame = ((cb: FrameRequestCallback) => {
+			const id = nextRafId++;
+			rafQueue.push({ id, cb });
+			return id;
+		}) as typeof globalThis.requestAnimationFrame;
+		globalThis.cancelAnimationFrame =
+			cancelSpy as unknown as typeof globalThis.cancelAnimationFrame;
+
+		const coordPopupEl = document.getElementById("coord-popup") as HTMLElement;
+		let textWrites = 0;
+		let currentText = coordPopupEl.textContent ?? "";
+		const origDesc = Object.getOwnPropertyDescriptor(
+			coordPopupEl,
+			"textContent",
+		);
+		Object.defineProperty(coordPopupEl, "textContent", {
+			configurable: true,
+			get: () => currentText,
+			set: (v: string) => {
+				textWrites += 1;
+				currentText = v;
+			},
+		});
+
+		const balloonSync: { resolve: (() => void) | null } = { resolve: null };
+		const internals = (
+			globalThis as unknown as {
+				__TAURI_INTERNALS__: {
+					invoke: (cmd: string, args?: unknown) => Promise<unknown>;
+				};
+			}
+		).__TAURI_INTERNALS__;
+		const origInvoke = internals.invoke;
+		internals.invoke = (cmd: string, args?: unknown) => {
+			if (cmd === "sync_character_balloon") {
+				invokedCommands.push({ cmd, args });
+				return new Promise<void>((resolve) => {
+					balloonSync.resolve = resolve;
+				});
+			}
+			return origInvoke(cmd, args);
+		};
+
+		try {
+			invokedCommands.length = 0;
+			rootEl._listeners?.mousedown?.({ button: 0, clientX: 10, clientY: 10 });
+			globalListeners.mousemove?.({
+				button: 0,
+				buttons: 1,
+				clientX: 30,
+				clientY: 30,
+			});
+
+			const flush = async () => {
+				await vi.advanceTimersByTimeAsync(0);
+				for (let i = 0; i < 6; i++) {
+					await Promise.resolve();
+				}
+			};
+			expect(rafQueue).toHaveLength(1);
+
+			// Frame 0 (immediate on drag start) at (100, 200): writes popup once and starts 1 sync_character_balloon
+			await flush();
+			expect(textWrites).toBe(1);
+			expect(
+				invokedCommands.filter((c) => c.cmd === "sync_character_balloon"),
+			).toHaveLength(1);
+
+			// Frame 1 at same (100, 200): popup write & balloon sync are deduplicated
+			const f1 = rafQueue.shift();
+			f1?.cb(16);
+			await flush();
+			expect(textWrites).toBe(1);
+			expect(
+				invokedCommands.filter((c) => c.cmd === "sync_character_balloon"),
+			).toHaveLength(1);
+
+			// Frame 2 while Frame 0 sync is still in flight:
+			// no second concurrent sync_character_balloon is launched yet
+			const f2 = rafQueue.shift();
+			f2?.cb(32);
+			await flush();
+			expect(
+				invokedCommands.filter((c) => c.cmd === "sync_character_balloon"),
+			).toHaveLength(1);
+
+			// Resolving in-flight sync keeps coalesced count at 1 when position is unchanged
+			balloonSync.resolve?.();
+			await flush();
+			expect(
+				invokedCommands.filter((c) => c.cmd === "sync_character_balloon"),
+			).toHaveLength(1);
+
+			// Drag end cancels rAF loop
+			globalListeners.mouseup?.({ button: 0, clientX: 30, clientY: 30 });
+			expect(cancelSpy).toHaveBeenCalled();
+			expect(coordPopupEl.style.display).toBe("none");
+		} finally {
+			globalThis.requestAnimationFrame = origRaf;
+			globalThis.cancelAnimationFrame = origCancelRaf;
+			if (origDesc) {
+				Object.defineProperty(coordPopupEl, "textContent", origDesc);
+			}
+			internals.invoke = origInvoke;
+		}
+	});
+
+	test("renders and hides #subchar-collision-canvas on update-subchar-collisions-1 and rescales with character", async () => {
+		const doc = g.document as {
+			getElementById: (id: string) => unknown;
+			createElement: (tag: string) => unknown;
+		};
+		const rootAny = rootEl as unknown as {
+			appendChild?: (el: unknown) => void;
+		};
+		const origGetEl = doc.getElementById;
+		const origCreateEl = doc.createElement;
+		const origAppendChild = rootAny.appendChild;
+		const origNatW = imgEl.naturalWidth;
+		const origNatH = imgEl.naturalHeight;
+
+		const appended = new Map<string, Record<string, unknown>>();
+		const drawOps = {
+			strokeRects: [] as number[][],
+			fillRectCalls: 0,
+			fillTexts: [] as Array<{ text: string; x: number; y: number }>,
+			clearRects: 0,
+		};
+
+		rootAny.appendChild = (el: unknown) => {
+			const node = el as { id?: string };
+			if (node?.id) {
+				appended.set(node.id, node as unknown as Record<string, unknown>);
+			}
+		};
+		doc.getElementById = (id: string) => {
+			if (appended.has(id)) return appended.get(id);
+			return origGetEl(id);
+		};
+		doc.createElement = (tag: string) => {
+			if (tag === "canvas") {
+				return {
+					id: "",
+					className: "",
+					width: 0,
+					height: 0,
+					style: {} as Record<string, string>,
+					getContext() {
+						return {
+							strokeStyle: "",
+							fillStyle: "",
+							lineWidth: 1,
+							font: "",
+							clearRect() {
+								drawOps.clearRects += 1;
+							},
+							fillRect() {
+								drawOps.fillRectCalls += 1;
+							},
+							strokeRect(x: number, y: number, w: number, h: number) {
+								drawOps.strokeRects.push([x, y, w, h]);
+							},
+							measureText(t: string) {
+								return { width: t.length * 6 };
+							},
+							fillText(text: string, x: number, y: number) {
+								drawOps.fillTexts.push({ text, x, y });
+							},
+							drawImage() {},
+							getImageData: () => ({ data: [255, 255, 255, transparentAlpha] }),
+						};
+					},
+				};
+			}
+			return origCreateEl(tag);
+		};
+
+		try {
+			await listenCallbacks["character-scale-changed"]?.({
+				payload: { scale: 1 },
+			});
+			imgEl.naturalWidth = 100;
+			imgEl.naturalHeight = 200;
+			await listenCallbacks["update-subchar-image-1"]?.({
+				payload: { src: "collision-test.png" },
+			});
+			imgEl.onload?.();
+
+			await listenCallbacks["update-subchar-collisions-1"]?.({
+				payload: {
+					visible: true,
+					collisions: [
+						{
+							name: "Head",
+							shape: { type: "Rect", x1: 10, y1: 10, x2: 50, y2: 50 },
+						},
+					],
+				},
+			});
+
+			const canvas = appended.get("subchar-collision-canvas") as
+				| {
+						id: string;
+						className: string;
+						width: number;
+						height: number;
+						style: Record<string, string>;
+				  }
+				| undefined;
+			assert.ok(canvas);
+			assert.equal(canvas.className, "collision-overlay-canvas");
+			assert.equal(canvas.style.display, "block");
+			assert.equal(canvas.width, 100);
+			assert.equal(canvas.height, 200);
+			assert.equal(drawOps.fillRectCalls, 0);
+			assert.deepEqual(drawOps.strokeRects, [
+				[1, 1, 98, 198],
+				[10, 10, 40, 40],
+			]);
+			assert.equal(drawOps.fillTexts[0]?.text, "Head");
+
+			// Rescaling character to 2x updates both window & part collision outlines
+			drawOps.strokeRects.length = 0;
+			await listenCallbacks["character-scale-changed"]?.({
+				payload: { scale: 2 },
+			});
+			assert.equal(canvas.width, 200);
+			assert.equal(canvas.height, 400);
+			assert.equal(drawOps.fillRectCalls, 0);
+			assert.deepEqual(drawOps.strokeRects, [
+				[1, 1, 198, 398],
+				[20, 20, 80, 80],
+			]);
+
+			// Empty part collisions with visible: true still keeps window boundary visible
+			drawOps.strokeRects.length = 0;
+			await listenCallbacks["update-subchar-collisions-1"]?.({
+				payload: { visible: true, collisions: [] },
+			});
+			assert.equal(canvas.style.display, "block");
+			assert.equal(drawOps.fillRectCalls, 0);
+			assert.deepEqual(drawOps.strokeRects, [[1, 1, 198, 398]]);
+
+			// Hiding collisions hides the canvas cleanly
+			await listenCallbacks["update-subchar-collisions-1"]?.({
+				payload: { visible: false, collisions: [] },
+			});
+			assert.equal(canvas.style.display, "none");
+		} finally {
+			doc.getElementById = origGetEl;
+			doc.createElement = origCreateEl;
+			rootAny.appendChild = origAppendChild;
+			imgEl.naturalWidth = origNatW;
+			imgEl.naturalHeight = origNatH;
+			await listenCallbacks["character-scale-changed"]?.({
+				payload: { scale: 1 },
+			});
 		}
 	});
 });

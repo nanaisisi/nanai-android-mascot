@@ -3,12 +3,19 @@
  * @brief ipinput の表示・制御処理
  */
 
+import type {
+	ActiveDialogBox,
+	ModalDialogControllerContext,
+} from "../../modal-dialog-ui.js";
+
 export function openIpInput(
-	this: unknown,
-	params: string | unknown[],
-	scope: unknown,
-) {
-	const id = params[0] || "IpInput";
+	this: ModalDialogControllerContext,
+	params: readonly unknown[] | string = [],
+	scope?: number,
+): HTMLDivElement | null {
+	const rawId = params[0];
+	const id =
+		typeof rawId === "string" && rawId ? rawId : String(rawId || "IpInput");
 	let timeoutMs = 0;
 	const ipParts = ["", "", "", ""];
 	let noClose = false;
@@ -47,7 +54,7 @@ export function openIpInput(
 	form.style.alignItems = "center";
 	form.style.gap = "0.15rem";
 
-	const inputs: { focus: () => unknown }[] | HTMLInputElement[] = [];
+	const inputs: HTMLInputElement[] = [];
 	for (let i = 0; i < 4; i++) {
 		const field = document.createElement("input");
 		field.type = "number";
@@ -95,7 +102,7 @@ export function openIpInput(
 	submitBtn.className = "balloon-choice-btn";
 	submitBtn.style.marginTop = "0";
 
-	let timer: number | null | undefined = null;
+	let timer: ReturnType<typeof setTimeout> | null = null;
 	const boxKey = `inputbox:${id}`;
 
 	const cleanup = (force = false) => {
@@ -121,13 +128,13 @@ export function openIpInput(
 			.join(",");
 		cleanup();
 		if (id.startsWith("On")) {
-			await this.app.ghostController?.sendShioriEvent(id, [
+			await this.app?.ghostController?.sendShioriEvent?.(id, [
 				val,
 				"",
 				...references,
 			]);
 		} else {
-			await this.app.ghostController?.sendShioriEvent("OnUserInput", [
+			await this.app?.ghostController?.sendShioriEvent?.("OnUserInput", [
 				id,
 				val,
 				"",
@@ -138,7 +145,7 @@ export function openIpInput(
 
 	const cancel = async (reason = "close") => {
 		cleanup(true);
-		await this.app.ghostController?.sendShioriEvent("OnUserInputCancel", [
+		await this.app?.ghostController?.sendShioriEvent?.("OnUserInputCancel", [
 			id,
 			reason,
 			"",
@@ -171,7 +178,7 @@ export function openIpInput(
 		}, timeoutMs);
 	}
 
-	const boxEntry = {
+	const boxEntry: ActiveDialogBox = {
 		id,
 		type: "ipinput",
 		form,

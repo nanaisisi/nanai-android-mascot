@@ -1,12 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-globalThis.window = globalThis;
+globalThis.window = globalThis as unknown as Window & typeof globalThis;
 
 import {
 	clearAllScriptTimers,
 	handleNotifyCommand,
 	handleTimerRaiseCommand,
 } from "../../ui/ts/ghost/command-handler/system/timer.js";
+import type { SakuraCommandHandler } from "../../ui/ts/ghost/sakura-command-handler.js";
 
 describe("system/timer.js", () => {
 	beforeEach(() => {
@@ -20,16 +21,16 @@ describe("system/timer.js", () => {
 	});
 
 	it("handleNotifyCommand sends notify or event without throwing", async () => {
-		const calls = [];
+		const calls: Array<{ type: string; ev: string; refs: string[] }> = [];
 		const handlerWithNotify = {
 			app: {
 				ghostController: {
-					sendShioriNotify: async (ev, refs) => {
+					sendShioriNotify: async (ev: string, refs: string[]) => {
 						calls.push({ type: "notify", ev, refs });
 					},
 				},
 			},
-		};
+		} as unknown as SakuraCommandHandler;
 
 		await handleNotifyCommand(handlerWithNotify, [
 			"notify",
@@ -46,12 +47,12 @@ describe("system/timer.js", () => {
 		const handlerWithEvent = {
 			app: {
 				ghostController: {
-					sendShioriEvent: async (ev, refs) => {
+					sendShioriEvent: async (ev: string, refs: string[]) => {
 						calls.push({ type: "event", ev, refs });
 					},
 				},
 			},
-		};
+		} as unknown as SakuraCommandHandler;
 		await handleNotifyCommand(handlerWithEvent, [
 			"notify",
 			"OnTestFallback",
@@ -75,7 +76,7 @@ describe("system/timer.js", () => {
 					},
 				},
 			},
-		};
+		} as unknown as SakuraCommandHandler;
 		await handleNotifyCommand(handlerFail, ["notify", "OnFail"]);
 		expect(warnSpy).toHaveBeenCalledWith(
 			"Notify event failed (OnFail):",
@@ -84,16 +85,16 @@ describe("system/timer.js", () => {
 	});
 
 	it("handleTimerRaiseCommand schedules timeout and interval correctly", async () => {
-		const fired = [];
+		const fired: Array<{ ev: string; refs: string[] }> = [];
 		const handler = {
 			app: {
 				ghostController: {
-					sendShioriEvent: async (ev, refs) => {
+					sendShioriEvent: async (ev: string, refs: string[]) => {
 						fired.push({ ev, refs });
 					},
 				},
 			},
-		};
+		} as unknown as SakuraCommandHandler;
 
 		// 1. One-shot timeout (repeatFlag = 1)
 		await handleTimerRaiseCommand(handler, [

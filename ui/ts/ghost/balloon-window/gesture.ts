@@ -2,6 +2,7 @@
  * バルーンウィンドウのマウスドラッグおよびモバイルタッチ・ピンチズームジェスチャー管理モジュール
  */
 
+import { Window } from "@tauri-apps/api/window";
 import {
 	emit,
 	getCurrentWindowPosition,
@@ -13,6 +14,70 @@ import { showBalloonContextMenu } from "../../ui/balloon-context-menu.js";
 import { updateBalloonWindowScale } from "./scale.js";
 
 const boundGestureBoxes = new WeakSet<object>();
+
+export const BALLOON_RESET_HINT_TEXT = "Reset: Ctrl+Shift+F10";
+
+/**
+ * バルーンのキャラクター基準オフセット表示行を生成
+ */
+export function formatBalloonOffsetText(
+	offsetX: number,
+	offsetY: number,
+): string {
+	const roundedX = Math.round(offsetX);
+	const roundedY = Math.round(offsetY);
+	return `Offset: ${roundedX},${roundedY}`;
+}
+
+/**
+ * `#coord-popup` へ2行構成のオフセット情報とリセットヒントを安全に描画
+ */
+export function renderBalloonCoordPopup(
+	el: HTMLElement | null,
+	offsetX: number,
+	offsetY: number,
+): void {
+	if (!el) return;
+	const line1Text = formatBalloonOffsetText(offsetX, offsetY);
+	const line2Text = BALLOON_RESET_HINT_TEXT;
+
+	if (
+		typeof document !== "undefined" &&
+		typeof document.createElement === "function" &&
+		typeof el.replaceChildren === "function"
+	) {
+		const line1 = document.createElement("div");
+		line1.className = "coord-popup-line";
+		line1.textContent = line1Text;
+
+		const line2 = document.createElement("div");
+		line2.className = "coord-popup-hint";
+		line2.textContent = line2Text;
+
+		el.replaceChildren(line1, line2);
+	} else if (
+		typeof document !== "undefined" &&
+		typeof document.createElement === "function" &&
+		typeof el.appendChild === "function"
+	) {
+		el.textContent = "";
+		const line1 = document.createElement("div");
+		line1.className = "coord-popup-line";
+		line1.textContent = line1Text;
+
+		const line2 = document.createElement("div");
+		line2.className = "coord-popup-hint";
+		line2.textContent = line2Text;
+
+		el.appendChild(line1);
+		el.appendChild(line2);
+	} else {
+		el.textContent = `${line1Text}\n${line2Text}`;
+	}
+	if (el.style) {
+		el.style.display = "block";
+	}
+}
 
 export interface WindowGestureOptions {
 	scopeId: number;
@@ -41,23 +106,122 @@ export function setupWindowGestures(
 	boundGestureBoxes.add(balloonBox);
 
 	let coordPopupEl: HTMLElement | null = null;
+	let coordRafId: number | null = null;
+	let cachedCharWindow: Window | null = null;
+	let dragStartBalloonPos: { x: number; y: number } | null = null;
+	let lastRenderedOffset: { x: number; y: number } | null = null;
+	let isDragging = false;
+	let isTouchDragging = false;
+	let activeDragCleanup: (() => void) | null = null;
+
+	async function getOwningCharacterPosition(): Promise<{
+		x: number;
+		y: number;
+	} | null> {
+		if (!isTauriAvailable()) return null;
+		const charLabel = `subchar_window_${scopeId}`;
+		try {
+			if (!cachedCharWindow) {
+				cachedCharWindow = await Window.getByLabel(charLabel);
+			}
+			if (!cachedCharWindow) return null;
+			const pos = await cachedCharWindow.outerPosition();
+			if (
+				pos &&
+				typeof pos.x === "number" &&
+				typeof pos.y === "number" &&
+				Number.isFinite(pos.x) &&
+				Number.isFinite(pos.y)
+			) {
+				return { x: pos.x, y: pos.y };
+			}
+		} catch (_e) {
+			cachedCharWindow = null;
+		}
+		return null;
+	}
+
 	async function updateCoordPopup() {
-		if (!coordPopupEl) {
+		if (!coordPopupEl && typeof document !== "undefined") {
 			coordPopupEl = document.getElementById("coord-popup");
 		}
-		if (coordPopupEl) {
-			try {
-				const pos = await getCurrentWindowPosition();
-				if (pos) {
-					coordPopupEl.textContent = `X: ${pos.x}, Y: ${pos.y}`;
-					coordPopupEl.style.display = "block";
+		if (!coordPopupEl) return;
+		try {
+			const [pos, charPos] = await Promise.all([
+				getCurrentWindowPosition(),
+				getOwningCharacterPosition(),
+			]);
+			if (!isDragging && !isTouchDragging) return;
+			if (!pos) return;
+
+			let offsetX: number;
+			let offsetY: number;
+			if (charPos) {
+				offsetX = pos.x - charPos.x;
+				offsetY = pos.y - charPos.y;
+			} else {
+				if (!dragStartBalloonPos) {
+					dragStartBalloonPos = pos;
 				}
-			} catch (_e) {}
+				offsetX = pos.x - dragStartBalloonPos.x;
+				offsetY = pos.y - dragStartBalloonPos.y;
+			}
+			if (
+				lastRenderedOffset &&
+				lastRenderedOffset.x === offsetX &&
+				lastRenderedOffset.y === offsetY
+			) {
+				return;
+			}
+			lastRenderedOffset = { x: offsetX, y: offsetY };
+			renderBalloonCoordPopup(coordPopupEl, offsetX, offsetY);
+		} catch (_e) {}
+	}
+
+	function hideCoordPopup() {
+		if (coordPopupEl?.style) {
+			coordPopupEl.style.display = "none";
 		}
 	}
-	function hideCoordPopup() {
-		if (coordPopupEl) {
-			coordPopupEl.style.display = "none";
+
+	function stopCoordLoop() {
+		if (coordRafId !== null) {
+			if (typeof cancelAnimationFrame === "function") {
+				cancelAnimationFrame(coordRafId);
+			}
+			coordRafId = null;
+		}
+	}
+
+	function scheduleCoordUpdate() {
+		if (!isDragging && !isTouchDragging) return;
+		if (coordRafId !== null) return;
+		if (typeof requestAnimationFrame !== "function") {
+			void updateCoordPopup();
+			return;
+		}
+		coordRafId = requestAnimationFrame(() => {
+			coordRafId = null;
+			if (!isDragging && !isTouchDragging) return;
+			void updateCoordPopup().finally(() => {
+				if (isDragging || isTouchDragging) {
+					scheduleCoordUpdate();
+				}
+			});
+		});
+	}
+
+	function finishMouseDrag() {
+		const wasDragging = isDragging;
+		isDragging = false;
+		dragStartBalloonPos = null;
+		lastRenderedOffset = null;
+		stopCoordLoop();
+		activeDragCleanup?.();
+		activeDragCleanup = null;
+		hideCoordPopup();
+		if (wasDragging && isTauriAvailable()) {
+			void invoke("save_balloon_offset_from_position", { scopeId });
 		}
 	}
 
@@ -110,38 +274,53 @@ export function setupWindowGestures(
 	}
 
 	// ドラッグ移動 (Tauri v2 startDragging)
-	let isDragging = false;
 	balloonBox.addEventListener("mousedown", (e: MouseEvent) => {
 		if (e.button === 0 && !getIsBalloonDontMove()) {
 			isDragging = true;
+			dragStartBalloonPos = null;
+			lastRenderedOffset = null;
 			void startDraggingWindow();
 			void updateCoordPopup();
+			scheduleCoordUpdate();
 			const onMove = () => {
-				if (isDragging) void updateCoordPopup();
+				if (isDragging) scheduleCoordUpdate();
 			};
 			const winTarget =
 				typeof window !== "undefined" &&
 				typeof window.addEventListener === "function"
 					? window
-					: typeof document !== "undefined"
+					: typeof document !== "undefined" &&
+							typeof document.addEventListener === "function"
 						? document
-						: globalThis;
+						: null;
 			const onUp = () => {
-				isDragging = false;
-				hideCoordPopup();
-				winTarget.removeEventListener("mousemove", onMove);
-				winTarget.removeEventListener("mouseup", onUp);
+				finishMouseDrag();
 			};
-			winTarget.addEventListener("mousemove", onMove);
-			winTarget.addEventListener("mouseup", onUp);
+			const onBlur = () => {
+				finishMouseDrag();
+			};
+			activeDragCleanup?.();
+			activeDragCleanup = () => {
+				winTarget?.removeEventListener?.("mousemove", onMove);
+				winTarget?.removeEventListener?.("mouseup", onUp);
+				winTarget?.removeEventListener?.("blur", onBlur);
+			};
+			winTarget?.addEventListener?.("mousemove", onMove);
+			winTarget?.addEventListener?.("mouseup", onUp);
+			winTarget?.addEventListener?.("blur", onBlur);
 		}
 	});
 
 	balloonBox.addEventListener("mouseup", () => {
 		if (!getIsBalloonDontMove()) {
-			hideCoordPopup();
-			if (isTauriAvailable()) {
-				void invoke("save_balloon_offset_from_position", { scopeId });
+			if (isDragging) {
+				finishMouseDrag();
+			} else {
+				stopCoordLoop();
+				hideCoordPopup();
+				if (isTauriAvailable()) {
+					void invoke("save_balloon_offset_from_position", { scopeId });
+				}
 			}
 		}
 	});
@@ -149,7 +328,6 @@ export function setupWindowGestures(
 	// モバイル/タッチ操作対応 (Slot-10 Cycle 3)
 	let touchStartDistance = 0;
 	let lastTouchTapTime = 0;
-	let isTouchDragging = false;
 	let pinchInitialScale = 1;
 
 	balloonBox.addEventListener(
@@ -178,7 +356,11 @@ export function setupWindowGestures(
 				lastTouchTapTime = now;
 				if (!getIsBalloonDontMove()) {
 					isTouchDragging = true;
+					dragStartBalloonPos = null;
+					lastRenderedOffset = null;
 					void startDraggingWindow();
+					void updateCoordPopup();
+					scheduleCoordUpdate();
 				}
 			} else if (e.touches.length === 2) {
 				// ピンチ操作の初期距離記録
@@ -232,10 +414,29 @@ export function setupWindowGestures(
 				touchStartDistance = 0;
 				if (isTouchDragging) {
 					isTouchDragging = false;
+					dragStartBalloonPos = null;
+					lastRenderedOffset = null;
+					stopCoordLoop();
+					hideCoordPopup();
 					if (isTauriAvailable()) {
 						void invoke("save_balloon_offset_from_position", { scopeId });
 					}
 				}
+			}
+		},
+		{ passive: true },
+	);
+
+	balloonBox.addEventListener(
+		"touchcancel",
+		() => {
+			touchStartDistance = 0;
+			if (isTouchDragging) {
+				isTouchDragging = false;
+				dragStartBalloonPos = null;
+				lastRenderedOffset = null;
+				stopCoordLoop();
+				hideCoordPopup();
 			}
 		},
 		{ passive: true },

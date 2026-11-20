@@ -1,15 +1,20 @@
 import assert from "node:assert/strict";
 import { describe, it } from "vitest";
 import { SakuraCommandHandler } from "../../ui/ts/ghost/sakura-command-handler.js";
-import { createMockApp, setupMockDom } from "./helpers.js";
+import {
+	createMockApp,
+	createMockPlayer,
+	type MockCommandEvent,
+	setupMockDom,
+} from "./helpers.js";
 
 setupMockDom();
 
 describe("SakuraCommandHandler - Basic Commands", () => {
 	it("handles raise, bind, anim, dressup, update, tray/time, and open commands", async () => {
-		const eventsSent = [];
+		const eventsSent: MockCommandEvent[] = [];
 		const mockApp = createMockApp(eventsSent);
-		const player = { currentScope: 0, app: mockApp };
+		const player = createMockPlayer(mockApp);
 		const handler = new SakuraCommandHandler(player);
 
 		// 1. raise command

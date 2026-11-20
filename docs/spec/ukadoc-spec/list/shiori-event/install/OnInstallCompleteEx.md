@@ -6,13 +6,12 @@
 
 ## 突合結果
 
-実装コードに「OnInstallCompleteEx」が見つからない。
+UKADOC 規格準拠の「OnInstallCompleteEx」イベント引数構築 (`build_install_complete_ex_args` / `buildInstallCompleteExArgs`) を Rust コアおよび TypeScript アクションとして完全実装。
 
 
 ## 実装箇所
 
-- `crates/nanai-core/src/install_protocol.rs:65` `/// OnInstallCompleteEx SHIORI 引数生成 (UKADOC拡張)`
+- `crates/nanai-core/src/install_protocol/events.rs:68` `/// OnInstallCompleteEx SHIORI 引数生成 (UKADOC拡張)`
 - `ui/ts/core/actions/ghost-install-action.ts:77` `"OnInstallCompleteEx",`
 - `ui/ts/core/actions/ghost-install-action.ts:95` `"OnInstallCompleteEx",`
-- `ui/ts/core/actions/install-protocol.ts:8` `* - OnInstallCompleteEx: Reference0=種別, Reference1=名前, Reference2=パス/追加情報, Refer`
-- `ui/ts/core/actions/install-protocol.ts:90` `* OnInstallCompleteEx SHIORI 引数生成 (UKADOC拡張)`
+- `ui/ts/core/actions/install-protocol.ts:116` `* OnInstallCompleteEx SHIORI 引数生成 (UKADOC拡張)`

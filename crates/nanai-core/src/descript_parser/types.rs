@@ -78,6 +78,11 @@ impl DescriptManifest {
         self.get("readme")
     }
 
+    /// [readme.charset,文字コード]: 明示指定されたリードミー文字コード (未指定時は None を返し、呼び出し側・OSシステム標準設定に委ねる)
+    pub fn readme_charset(&self) -> Option<&str> {
+        self.get("readme.charset").or_else(|| self.get("charset"))
+    }
+
     /// インストール受け入れゴースト名一覧 (`install.accept`)
     pub fn accept_list(&self) -> Vec<String> {
         if let Some(val) = self.get("install.accept") {
@@ -212,15 +217,108 @@ impl DescriptManifest {
             .and_then(|v| v.parse::<i32>().ok())
     }
 
-    /// デスクトップ位置揃え設定 (`seriko.alignmenttodesktop`)
+    /// デスクトップ位置揃え設定 (`seriko.alignmenttodesktop`, `sakura.seriko.alignmenttodesktop`, `kero.seriko.alignmenttodesktop`)
     pub fn alignment_to_desktop(&self) -> Option<&str> {
         self.get("seriko.alignmenttodesktop")
             .or_else(|| self.get("sakura.seriko.alignmenttodesktop"))
+            .or_else(|| self.get("kero.seriko.alignmenttodesktop"))
+    }
+
+    /// Kero側デスクトップ位置揃え設定 (`kero.seriko.alignmenttodesktop`)
+    pub fn kero_alignment_to_desktop(&self) -> Option<&str> {
+        self.get("kero.seriko.alignmenttodesktop")
+    }
+
+    /// [seriko.defaultsurfacedirectoryname,ディレクトリ名]: デフォルトサーフィスディレクトリ名
+    pub fn default_surface_directory_name(&self) -> Option<&str> {
+        self.get("seriko.defaultsurfacedirectoryname")
     }
 
     /// SSTP COMMUNICATE 許可判定 (`sstp.allowcommunicate`)
     pub fn is_sstp_communicate_allowed(&self) -> bool {
         self.get("sstp.allowcommunicate")
+            .map(|v| v != "0" && v != "false")
+            .unwrap_or(true)
+    }
+
+    /// [char*.name,名前]: キャラクター別名前
+    pub fn char_name(&self, index: u32) -> Option<&str> {
+        let key = format!("char{}.name", index);
+        self.get(&key)
+    }
+
+    /// [char*.seriko.defaultsurface,数値], [char*.balloon.defaultsurface,数値]: キャラクター別デフォルトサーフィスID
+    pub fn char_default_surface(&self, index: u32) -> Option<i32> {
+        let key1 = format!("char{}.seriko.defaultsurface", index);
+        let key2 = format!("char{}.defaultsurface", index);
+        self.get(&key1)
+            .or_else(|| self.get(&key2))
+            .and_then(|v| v.parse::<i32>().ok())
+    }
+
+    /// [char*.defaultx,X座標], [char*.defaulty,Y座標], [char*.defaultleft,X座標], [char*.defaulttop,Y座標]: キャラクター別デフォルト座標
+    pub fn char_default_pos(&self, index: u32) -> Option<(i32, i32)> {
+        let x_key1 = format!("char{}.defaultx", index);
+        let x_key2 = format!("char{}.defaultleft", index);
+        let y_key1 = format!("char{}.defaulty", index);
+        let y_key2 = format!("char{}.defaulttop", index);
+        let x = self
+            .get(&x_key1)
+            .or_else(|| self.get(&x_key2))
+            .and_then(|v| v.parse::<i32>().ok())?;
+        let y = self
+            .get(&y_key1)
+            .or_else(|| self.get(&y_key2))
+            .and_then(|v| v.parse::<i32>().ok())?;
+        Some((x, y))
+    }
+
+    /// [char*.seriko.alignmenttodesktop,位置情報]: キャラクター別デスクトップ位置揃え設定
+    pub fn char_alignment_to_desktop(&self, index: u32) -> Option<&str> {
+        let key = format!("char{}.seriko.alignmenttodesktop", index);
+        self.get(&key)
+    }
+
+    /// [don't need onmousemove,数値]: `don't need onmousemove` 判定
+    pub fn dont_need_onmousemove(&self) -> bool {
+        self.get("don't need onmousemove")
+            .map(|v| v == "1" || v.eq_ignore_ascii_case("true"))
+            .unwrap_or(false)
+    }
+
+    /// [don't need bind,数値]: `don't need bind` 判定
+    pub fn dont_need_bind(&self) -> bool {
+        self.get("don't need bind")
+            .map(|v| v == "1" || v.eq_ignore_ascii_case("true"))
+            .unwrap_or(false)
+    }
+
+    /// [don't need seriko talk,数値]: `don't need seriko talk` 判定
+    pub fn dont_need_seriko_talk(&self) -> bool {
+        self.get("don't need seriko talk")
+            .map(|v| v == "1" || v.eq_ignore_ascii_case("true"))
+            .unwrap_or(false)
+    }
+
+    /// [sakura.icon.frame.color.r/g/b,数値]: Sakura 側アイコン枠色 (RGB)
+    pub fn sakura_icon_frame_color_rgb(&self) -> Option<(u8, u8, u8)> {
+        let r = self.get("sakura.icon.frame.color.r")?.parse::<u8>().ok()?;
+        let g = self.get("sakura.icon.frame.color.g")?.parse::<u8>().ok()?;
+        let b = self.get("sakura.icon.frame.color.b")?.parse::<u8>().ok()?;
+        Some((r, g, b))
+    }
+
+    /// [kero.icon.frame.color.r/g/b,数値]: Kero 側アイコン枠色 (RGB)
+    pub fn kero_icon_frame_color_rgb(&self) -> Option<(u8, u8, u8)> {
+        let r = self.get("kero.icon.frame.color.r")?.parse::<u8>().ok()?;
+        let g = self.get("kero.icon.frame.color.g")?.parse::<u8>().ok()?;
+        let b = self.get("kero.icon.frame.color.b")?.parse::<u8>().ok()?;
+        Some((r, g, b))
+    }
+
+    /// [name.allowoverride,数値]: シェル名オーバーライド許可判定 (既定値 1)
+    pub fn is_name_allow_override(&self) -> bool {
+        self.get("name.allowoverride")
             .map(|v| v != "0" && v != "false")
             .unwrap_or(true)
     }

@@ -1,15 +1,28 @@
 /**
  * Surface Compositor facade (powered by Pure Rust / WASM surface compositor)
  */
-import { wasmBridge } from "../core/wasm-bridge.js";
+import {
+	type SurfaceCompositionPlan,
+	type SurfaceElement,
+	wasmBridge,
+} from "../core/wasm-bridge.js";
 
-interface ChromaKeyOptions {
+export interface ChromaKeyOptions {
 	useSelfAlpha?: boolean;
 	paintTransparentRegionBlack?: boolean;
 }
 
-function loadImageHelper(src: string): Promise<HTMLImageElement | null> {
-	if (!src || typeof document === "undefined") return Promise.resolve(null);
+export interface ComposedLayerInput {
+	file: string;
+	x?: number;
+	y?: number;
+	type?: string;
+}
+
+export function loadLayerImage(src: string): Promise<HTMLImageElement | null> {
+	if (!src || typeof document === "undefined" || typeof Image === "undefined") {
+		return Promise.resolve(null);
+	}
 	return new Promise((resolve) => {
 		const img = new Image();
 		if (!src.startsWith("data:")) {
@@ -19,6 +32,84 @@ function loadImageHelper(src: string): Promise<HTMLImageElement | null> {
 		img.onerror = () => resolve(null);
 		img.src = src;
 	});
+}
+
+const COMPOSITE_METHOD_MAP: Record<string, GlobalCompositeOperation> = {
+	add: "lighter",
+	addition: "lighter",
+	"blend-add": "lighter",
+	"blend-add-fast": "lighter",
+	multiply: "multiply",
+	"blend-multiply": "multiply",
+	"blend-multiply-fast": "multiply",
+	screen: "screen",
+	"blend-screen": "screen",
+	"blend-screen-fast": "screen",
+	"blend-overlay": "overlay",
+	"blend-overlay-fast": "overlay",
+	"blend-darken": "darken",
+	"blend-darken-fast": "darken",
+	"blend-lighten": "lighten",
+	"blend-lighten-fast": "lighten",
+	"blend-color-dodge": "color-dodge",
+	"blend-color-dodge-fast": "color-dodge",
+	"blend-color-burn": "color-burn",
+	"blend-color-burn-fast": "color-burn",
+	"blend-hard-light": "hard-light",
+	"blend-hard-light-fast": "hard-light",
+	"blend-soft-light": "soft-light",
+	"blend-soft-light-fast": "soft-light",
+	"blend-difference": "difference",
+	"blend-difference-fast": "difference",
+	"blend-exclusion": "exclusion",
+	"blend-exclusion-fast": "exclusion",
+	"blend-hue": "hue",
+	"blend-hue-fast": "hue",
+	"blend-saturation": "saturation",
+	"blend-saturation-fast": "saturation",
+	"blend-color": "color",
+	"blend-color-fast": "color",
+	"blend-luminosity": "luminosity",
+	"blend-luminosity-fast": "luminosity",
+	reduce: "destination-in",
+};
+
+/**
+ * Resolve a SERIKO draw method name to a Canvas2D `globalCompositeOperation`.
+ */
+export function resolveCompositeOperation(
+	method: string | undefined,
+): GlobalCompositeOperation {
+	const normalized = String(method ?? "overlay")
+		.trim()
+		.toLowerCase();
+	return COMPOSITE_METHOD_MAP[normalized] ?? "source-over";
+}
+
+export function drawComposedLayer(
+	ctx: CanvasRenderingContext2D,
+	img: HTMLImageElement,
+	layer: ComposedLayerInput,
+): void {
+	const x = Number(layer.x ?? 0);
+	const y = Number(layer.y ?? 0);
+	const method = String(layer.type ?? "overlay")
+		.trim()
+		.toLowerCase();
+
+	if (method === "replace") {
+		const w = img.naturalWidth || img.width || 0;
+		const h = img.naturalHeight || img.height || 0;
+		if (w > 0 && h > 0) {
+			ctx.clearRect(x, y, w, h);
+		}
+		ctx.globalCompositeOperation = "source-over";
+	} else {
+		ctx.globalCompositeOperation = resolveCompositeOperation(method);
+	}
+
+	ctx.drawImage(img, x, y);
+	ctx.globalCompositeOperation = "source-over";
 }
 
 export async function processChromaKey(
@@ -35,8 +126,9 @@ export async function processChromaKey(
 	const paintBlack = Boolean(options?.paintTransparentRegionBlack);
 	const cacheKey = `${imageSrc}_${pnaSrc || ""}_${useSelfAlpha}_${paintBlack}`;
 
-	if (cache?.has(cacheKey)) {
-		return cache.get(cacheKey)!;
+	const cached = cache?.get(cacheKey);
+	if (cached !== undefined) {
+		return cached;
 	}
 
 	if (
@@ -48,8 +140,8 @@ export async function processChromaKey(
 
 	try {
 		const [img, pnaImg] = await Promise.all([
-			loadImageHelper(imageSrc),
-			pnaSrc ? loadImageHelper(pnaSrc) : Promise.resolve(null),
+			loadLayerImage(imageSrc),
+			pnaSrc ? loadLayerImage(pnaSrc) : Promise.resolve(null),
 		]);
 
 		if (!img) {
@@ -154,9 +246,9 @@ export async function processChromaKey(
 
 export function computeSurfaceCompositionPlan(
 	surfaceId: number,
-	elements: unknown[],
+	elements: SurfaceElement[] | unknown[],
 	activeBinds: number[] = [],
-) {
+): SurfaceCompositionPlan | null {
 	return wasmBridge.computeSurfaceCompositionPlan(
 		surfaceId,
 		elements,

@@ -140,3 +140,42 @@ fn test_parse_sakura_script_slash_prefix() {
     assert_eq!(tokens[5], SakuraToken::Scope(1));
     assert_eq!(tokens[6], SakuraToken::Surface(0));
 }
+
+#[test]
+fn test_parse_sakura_script_marker() {
+    let script = "\\![*]選択肢";
+    let tokens = parse_sakura_script(script);
+    assert_eq!(tokens[0], SakuraToken::Marker);
+    assert_eq!(tokens[1], SakuraToken::Text("選択肢".to_string()));
+}
+
+#[test]
+fn test_parse_sakura_script_clear_arg() {
+    let script = "\\c[line,1]\\c[char,5]\\C[line,2]";
+    let tokens = parse_sakura_script(script);
+    assert_eq!(
+        tokens[0],
+        SakuraToken::ClearArg {
+            arg: "line,1".to_string()
+        }
+    );
+    assert_eq!(
+        tokens[1],
+        SakuraToken::ClearArg {
+            arg: "char,5".to_string()
+        }
+    );
+    assert_eq!(
+        tokens[2],
+        SakuraToken::ClearArg {
+            arg: "line,2".to_string()
+        }
+    );
+}
+
+#[test]
+fn test_expand_sakura_env_pct_star() {
+    let ctx = SakuraEnvContext::default();
+    let expanded = expand_sakura_environment_variables("%*選択肢", &ctx);
+    assert_eq!(expanded, "\\![*]選択肢");
+}

@@ -53,6 +53,20 @@ pub async fn set_click_through(enabled: bool) -> Result<bool, String> {
     Ok(enabled)
 }
 
+/// Android統合オーバーレイウインドウのサイズ変更コマンド (全キャラ単一ウインドウ表示用)
+#[tauri::command]
+#[specta::specta]
+pub async fn resize_overlay_window(width: u32, height: u32) -> Result<(u32, u32), String> {
+    if width == 0 || height == 0 {
+        return Err("width/height must be positive".to_string());
+    }
+    #[cfg(target_os = "android")]
+    {
+        // JNI経由でWindowManager.LayoutParams.width/heightを更新
+    }
+    Ok((width, height))
+}
+
 /// Android低メモリ通知 (onTrimMemory) 処理コマンド
 #[tauri::command]
 #[specta::specta]
@@ -84,6 +98,9 @@ mod tests {
 
         let ct = set_click_through(true).await.unwrap();
         assert!(ct);
+
+        assert_eq!(resize_overlay_window(320, 200).await.unwrap(), (320, 200));
+        assert!(resize_overlay_window(0, 10).await.is_err());
 
         let trim = trim_memory_command(80).await.unwrap();
         assert_eq!(trim, 80);

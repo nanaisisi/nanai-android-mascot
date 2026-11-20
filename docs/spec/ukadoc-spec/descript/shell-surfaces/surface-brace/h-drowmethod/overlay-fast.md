@@ -7,7 +7,8 @@
 
 ## 実装箇所
 
-- `crates/ui/src/surfaces/types/draw.rs:43` `"overlayfast" | "fast" | "overlay-fast" => Self::OverlayFast,`
-- `crates/ui/src/surfaces/types/draw.rs:174` `assert_eq!(DrawMethod::parse("overlay-fast"), DrawMethod::OverlayFast);`
-- `ui/js/surface/surface-load.js:99` `// [blend-overlay-fast]`
-- `ui/js/surface/surface-load.js:118` `// [overlay-fast]`
+- `crates/nanai-surface/src/types/draw/method.rs:62` `"overlayfast" | "fast" | "overlay-fast" => Self::OverlayFast,`
+- `ui/ts/surface/surface-compositor.ts:49` `"blend-overlay-fast": "overlay",`
+- `tests/surface-compositor.test.ts:19` `expect(resolveCompositeOperation("blend-overlay-fast")).toBe("overlay");`
+- `crates/nanai-surface/src/types/draw/tests.rs:128` `assert_eq!(DrawMethod::parse("overlay-fast"), DrawMethod::OverlayFast);`
+- `tests/surface-compositor.test.ts:70` `type: "blend-overlay-fast",`

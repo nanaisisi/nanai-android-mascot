@@ -5,7 +5,7 @@ import { AppConfig, loadAppConfig } from "../ui/ts/core/config.js";
 test("loadAppConfig covers success with full properties, null config, and error catch handling", async () => {
 	// 1. Success with full config
 	globalThis.__TAURI_INTERNALS__ = {
-		invoke: async (cmd) => {
+		invoke: async (cmd: string) => {
 			if (cmd === "get_app_config") {
 				return {
 					paths: { defaultGhostDir: "custom/ghost" },
@@ -23,8 +23,8 @@ test("loadAppConfig covers success with full properties, null config, and error 
 	assert.equal(AppConfig.paths.defaultGhostDir, "custom/ghost");
 	assert.equal(AppConfig.timing.randomTalkMin, 12345);
 	assert.equal(AppConfig.scale.ghostDefault, 1.2);
-	assert.equal(AppConfig.shiori.customField, "val");
-	assert.equal(AppConfig.state.active, true);
+	assert.equal(AppConfig.shiori?.customField, "val");
+	assert.equal(AppConfig.state?.active, true);
 
 	// 2. Success with null config
 	globalThis.__TAURI_INTERNALS__ = {

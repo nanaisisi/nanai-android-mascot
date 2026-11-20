@@ -362,6 +362,28 @@ body {
 	margin: 0 2px;
 }
 
+/* バルーンボタン画像 (ok_button, cancel_button, mode_button) */
+.balloon-ok-btn {
+	background-image: var(--balloon-ok-button-image, none);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+.balloon-cancel-btn {
+	background-image: var(--balloon-cancel-button-image, none);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+.balloon-mode-btn {
+	background-image: var(--balloon-mode-button-image, none);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
 /* SSTPマーカー (sstpmarker.filename) */
 .sstp-marker {
 	display: inline-block;
@@ -372,6 +394,43 @@ body {
 	background-size: contain;
 	vertical-align: middle;
 	margin: 0 2px;
+}
+
+/* オンラインマーカー (onlinemarker.filename) */
+.online-marker {
+	display: inline-block;
+	position: absolute;
+	left: var(--balloon-online-x, 8px);
+	top: var(--balloon-online-y, 8px);
+	width: var(--balloon-online-width, 16px);
+	height: var(--balloon-online-height, 16px);
+	background-image: var(--balloon-online-image, none);
+	background-repeat: no-repeat;
+	background-size: contain;
+	pointer-events: none;
+	z-index: 95;
+}
+
+/* バルーンボタン画像 (ok_button, cancel_button, mode_button) */
+.balloon-ok-btn {
+	background-image: var(--balloon-ok-button-image, none);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+.balloon-cancel-btn {
+	background-image: var(--balloon-cancel-button-image, none);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
+}
+
+.balloon-mode-btn {
+	background-image: var(--balloon-mode-button-image, none);
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: contain;
 }
 
 /* コミュニケートボックス (communicatebox.*) */
@@ -410,16 +469,32 @@ body {
 	top: 4px;
 	left: 50%;
 	transform: translateX(-50%);
+	width: max-content;
 	max-width: calc(100% - 8px);
 	overflow: hidden;
-	text-overflow: ellipsis;
 	background: rgba(0, 0, 0, 0.8);
 	color: #ffffff;
-	padding: 2px 6px;
+	padding: 3px 8px;
 	border-radius: 4px;
 	font-size: 11px;
-	white-space: nowrap;
+	line-height: 1.3;
+	text-align: center;
+	white-space: normal;
 	pointer-events: none;
 	z-index: 9999;
 	font-family: sans-serif;
+}
+
+.coord-popup-line {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.coord-popup-hint {
+	font-size: 10px;
+	opacity: 0.8;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }

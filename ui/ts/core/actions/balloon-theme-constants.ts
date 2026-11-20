@@ -1,8 +1,8 @@
-export const BALLOON_THEMES = ["nsm", "nsm_vertical"];
+export const BALLOON_THEMES = ["nam", "nam_vertical"];
 
 export const THEME_LABELS = {
-	nsm: "NAMデフォルト+",
-	nsm_vertical: "NAMデフォルト+(頭上)",
+	nam: "NAMデフォルト+",
+	nam_vertical: "NAMデフォルト+(頭上)",
 };
 
 export const BALLOON_SCALE_MAP = {

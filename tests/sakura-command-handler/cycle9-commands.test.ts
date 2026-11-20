@@ -5,13 +5,18 @@ import {
 	clearAllScriptTimers,
 	SakuraCommandHandler,
 } from "../../ui/ts/ghost/sakura-command-handler.js";
-import { createMockApp, setupMockDom } from "./helpers.js";
+import {
+	createMockApp,
+	createMockPlayer,
+	type MockCommandEvent,
+	setupMockDom,
+} from "./helpers.js";
 
 setupMockDom();
 
 describe("SakuraCommandHandler - Cycle 9 Extended Commands", () => {
 	it("handles timernotify and timernotifyother commands", async () => {
-		const eventsSent: unknown[] = [];
+		const eventsSent: MockCommandEvent[] = [];
 		const mockApp = createMockApp(eventsSent);
 		mockApp.ghostController.sendShioriNotify = async (
 			ev: string,
@@ -27,7 +32,7 @@ describe("SakuraCommandHandler - Cycle 9 Extended Commands", () => {
 			eventsSent.push({ type: "notifyOther", ghost, ev, refs });
 		};
 
-		const player = { currentScope: 0, app: mockApp };
+		const player = createMockPlayer(mockApp);
 		const handler = new SakuraCommandHandler(player);
 
 		// 1. timernotify with timeout
@@ -48,7 +53,7 @@ describe("SakuraCommandHandler - Cycle 9 Extended Commands", () => {
 				(e) =>
 					e.type === "notify" &&
 					e.ev === "OnTestNotify" &&
-					e.refs[0] === "refA",
+					e.refs?.[0] === "refA",
 			),
 		);
 
@@ -68,7 +73,7 @@ describe("SakuraCommandHandler - Cycle 9 Extended Commands", () => {
 					e.type === "notifyOther" &&
 					e.ghost === "TargetGhost" &&
 					e.ev === "OnTargetEvent" &&
-					e.refs[0] === "arg1",
+					e.refs?.[0] === "arg1",
 			),
 		);
 
@@ -77,7 +82,7 @@ describe("SakuraCommandHandler - Cycle 9 Extended Commands", () => {
 	});
 
 	it("handles plugin timer and event commands (timerraiseplugin, timernotifyplugin, raiseplugin, notifyplugin)", async () => {
-		const eventsSent: unknown[] = [];
+		const eventsSent: MockCommandEvent[] = [];
 		const mockApp = createMockApp(eventsSent);
 		mockApp.ghostController.sendPluginEvent = async (
 			plugin: string,
@@ -88,7 +93,7 @@ describe("SakuraCommandHandler - Cycle 9 Extended Commands", () => {
 			eventsSent.push({ plugin, ev, refs, isNotify });
 		};
 
-		const player = { currentScope: 0, app: mockApp };
+		const player = createMockPlayer(mockApp);
 		const handler = new SakuraCommandHandler(player);
 
 		// Plugin timers
@@ -134,16 +139,16 @@ describe("SakuraCommandHandler - Cycle 9 Extended Commands", () => {
 	});
 
 	it("handles execute commands (execute:*, execute,emptyrecyclebin, filewatch, ping, nslookup, schedule-add)", async () => {
-		const eventsSent: unknown[] = [];
+		const eventsSent: MockCommandEvent[] = [];
 		const mockApp = createMockApp(eventsSent);
 		mockApp.ghostController.sendShioriEvent = async (
 			ev: string,
-			refs: string[],
+			refs: unknown[],
 		) => {
-			eventsSent.push({ ev, refs });
+			eventsSent.push({ ev, refs: refs as string[] });
 		};
 
-		const player = { currentScope: 0, app: mockApp };
+		const player = createMockPlayer(mockApp);
 		const handler = new SakuraCommandHandler(player);
 
 		// execute,emptyrecyclebin
@@ -166,8 +171,8 @@ describe("SakuraCommandHandler - Cycle 9 Extended Commands", () => {
 			eventsSent.some(
 				(e) =>
 					e.ev === "OnScheduleAdd" &&
-					e.refs[0] === "2026-11-08" &&
-					e.refs[2] === "Meeting",
+					e.refs?.[0] === "2026-11-08" &&
+					e.refs?.[2] === "Meeting",
 			),
 		);
 

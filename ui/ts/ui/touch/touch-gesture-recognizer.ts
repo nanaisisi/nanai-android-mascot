@@ -1,11 +1,14 @@
-// biome-ignore-all lint/suspicious/noExplicitAny: dynamic gesture interop
 /**
  * @file touch-gesture-recognizer.js
  * @description Slot-12 タッチジェスチャー認識エンジン (Pinch, Drag, Stroke, LongPress, Tap)
  * Contract: TouchGestureEvent ディスパッチ, ドメインイベント連携
  */
 
-import { TouchGestureEvent } from "./touch-gesture-event.js";
+import {
+	type TouchEventLike,
+	TouchGestureEvent,
+	type TouchGestureEventDetail,
+} from "./touch-gesture-event.js";
 import {
 	handleDragEndAndSnap,
 	processMultiTouchMove,
@@ -24,28 +27,45 @@ export {
 	getTouchDistance,
 } from "./touch-helpers.js";
 
+export interface TouchGestureOptions {
+	longPressDelay: number;
+	strokeThreshold: number;
+	slopThreshold: number;
+	doubleTapDelay: number;
+	doubleTapDistance: number;
+	minScale: number;
+	maxScale: number;
+	swipeMinDistance: number;
+	swipeMinVelocity: number;
+	twoFingerTapDelay: number;
+	throttleWithRaf: boolean;
+	snapThreshold: number;
+	screenWidth: number;
+}
+
+export type TouchGestureHandler = (event: TouchGestureEvent) => void;
+
+export interface TouchElementLike {
+	addEventListener?: (
+		type: string,
+		listener: EventListener,
+		options?: boolean | AddEventListenerOptions,
+	) => void;
+	removeEventListener?: (
+		type: string,
+		listener: EventListener,
+		options?: boolean | EventListenerOptions,
+	) => void;
+}
+
 /**
  * タッチジェスチャー認識クラス
  */
 export class TouchGestureRecognizer {
-	element: unknown;
-	options: {
-		longPressDelay: unknown;
-		strokeThreshold: unknown;
-		slopThreshold: unknown;
-		doubleTapDelay: unknown;
-		doubleTapDistance: unknown;
-		minScale: unknown;
-		maxScale: unknown;
-		swipeMinDistance: unknown;
-		swipeMinVelocity: unknown;
-		twoFingerTapDelay: unknown;
-		throttleWithRaf: unknown;
-		snapThreshold: unknown;
-		screenWidth: unknown;
-	};
-	_listeners: Map<unknown, unknown>;
-	_activeTouches: Map<unknown, unknown>;
+	element: TouchElementLike | null | undefined;
+	options: TouchGestureOptions;
+	_listeners: Map<string, Set<TouchGestureHandler>>;
+	_activeTouches: Map<number, unknown>;
 	_isPinching: boolean;
 	_isDragging: boolean;
 	_dockState: string;
@@ -63,7 +83,7 @@ export class TouchGestureRecognizer {
 	_accumulatedStroke: number;
 	_hasMoved: boolean;
 	_strokeTriggered: boolean;
-	_longPressTimer: null;
+	_longPressTimer: ReturnType<typeof setTimeout> | null;
 	_longPressTriggered: boolean;
 	_twoFingerStartTime: number;
 	_twoFingerMoved: boolean;
@@ -71,17 +91,17 @@ export class TouchGestureRecognizer {
 	_lastTapTime: number;
 	_lastTapX: number;
 	_lastTapY: number;
-	_rafId: null;
-	_pendingMoveEvent: null;
-	_boundTouchStart: (e: unknown) => void;
-	_boundTouchMove: (e: unknown) => void;
-	_boundTouchEnd: (e: {
-		touches?: string | unknown[];
-		changedTouches?: unknown[];
-	}) => void;
-	_boundTouchCancel: () => void;
+	_rafId: number | null;
+	_pendingMoveEvent: TouchEvent | TouchEventLike | null;
+	_boundTouchStart: EventListener;
+	_boundTouchMove: EventListener;
+	_boundTouchEnd: EventListener;
+	_boundTouchCancel: EventListener;
 
-	constructor(element: unknown, options: unknown = {}) {
+	constructor(
+		element: TouchElementLike | null | undefined,
+		options: Partial<TouchGestureOptions> = {},
+	) {
 		this.element = element;
 		this.options = {
 			longPressDelay: options.longPressDelay ?? 600,
@@ -140,56 +160,41 @@ export class TouchGestureRecognizer {
 		this._rafId = null;
 		this._pendingMoveEvent = null;
 
-		this._boundTouchStart = this._handleTouchStart.bind(this);
-		this._boundTouchMove = this._handleTouchMove.bind(this);
-		this._boundTouchEnd = this._handleTouchEnd.bind(this);
-		this._boundTouchCancel = this._handleTouchCancel.bind(this);
+		this._boundTouchStart = this._handleTouchStart.bind(this) as EventListener;
+		this._boundTouchMove = this._handleTouchMove.bind(this) as EventListener;
+		this._boundTouchEnd = this._handleTouchEnd.bind(this) as EventListener;
+		this._boundTouchCancel = this._handleTouchCancel.bind(
+			this,
+		) as EventListener;
 
-		if (
-			this.element &&
-			typeof (this.element as unknown).addEventListener === "function"
-		) {
-			(this.element as unknown).addEventListener(
-				"touchstart",
-				this._boundTouchStart,
-				{
-					passive: false,
-				},
-			);
-			(this.element as unknown).addEventListener(
-				"touchmove",
-				this._boundTouchMove,
-				{
-					passive: false,
-				},
-			);
-			(this.element as unknown).addEventListener(
-				"touchend",
-				this._boundTouchEnd,
-				{
-					passive: false,
-				},
-			);
-			(this.element as unknown).addEventListener(
-				"touchcancel",
-				this._boundTouchCancel,
-				{
-					passive: false,
-				},
-			);
+		if (this.element && typeof this.element.addEventListener === "function") {
+			this.element.addEventListener("touchstart", this._boundTouchStart, {
+				passive: false,
+			});
+			this.element.addEventListener("touchmove", this._boundTouchMove, {
+				passive: false,
+			});
+			this.element.addEventListener("touchend", this._boundTouchEnd, {
+				passive: false,
+			});
+			this.element.addEventListener("touchcancel", this._boundTouchCancel, {
+				passive: false,
+			});
 		}
 	}
 
-	on(type: unknown, handler: unknown) {
-		if (!this._listeners.has(type)) {
-			this._listeners.set(type, new Set());
+	on(type: string, handler: TouchGestureHandler) {
+		let set = this._listeners.get(type);
+		if (!set) {
+			set = new Set();
+			this._listeners.set(type, set);
 		}
-		(this._listeners.get(type) as Set<any>).add(handler);
+		set.add(handler);
 		return () => this.off(type, handler);
 	}
 
-	off(type: unknown, handler: unknown) {
-		const set = this._listeners.get(type) as Set<any> | undefined;
+	off(type: string, handler: TouchGestureHandler) {
+		const set = this._listeners.get(type);
 		if (set) {
 			set.delete(handler);
 			if (set.size === 0) {
@@ -198,9 +203,9 @@ export class TouchGestureRecognizer {
 		}
 	}
 
-	emit(type: unknown, detail = {}) {
-		const event = new TouchGestureEvent(type as string, detail);
-		const set = this._listeners.get(type) as Set<any> | undefined;
+	emit(type: string, detail: TouchGestureEventDetail = {}): TouchGestureEvent {
+		const event = new TouchGestureEvent(type, detail);
+		const set = this._listeners.get(type);
 		if (set) {
 			for (const handler of set) {
 				try {
@@ -228,17 +233,19 @@ export class TouchGestureRecognizer {
 
 	/**
 	 * ジェスチャー認識オプションを取得
-	 * @returns {object}
+	 * @returns {TouchGestureOptions}
 	 */
-	getGestureOptions() {
+	getGestureOptions(): TouchGestureOptions {
 		return { ...this.options };
 	}
 
 	/**
 	 * ジェスチャー認識オプションを動的に設定
-	 * @param {object} options
+	 * @param {Partial<TouchGestureOptions>} options
 	 */
-	setGestureOptions(options: unknown = {}) {
+	setGestureOptions(
+		options: Partial<TouchGestureOptions> = {},
+	): TouchGestureOptions {
 		if (options.longPressDelay !== undefined) {
 			const delay = Number(options.longPressDelay);
 			if (Number.isFinite(delay) && delay >= 0) {
@@ -339,24 +346,12 @@ export class TouchGestureRecognizer {
 		this.reset();
 		if (
 			this.element &&
-			typeof (this.element as unknown).removeEventListener === "function"
+			typeof this.element.removeEventListener === "function"
 		) {
-			(this.element as unknown).removeEventListener(
-				"touchstart",
-				this._boundTouchStart,
-			);
-			(this.element as unknown).removeEventListener(
-				"touchmove",
-				this._boundTouchMove,
-			);
-			(this.element as unknown).removeEventListener(
-				"touchend",
-				this._boundTouchEnd,
-			);
-			(this.element as unknown).removeEventListener(
-				"touchcancel",
-				this._boundTouchCancel,
-			);
+			this.element.removeEventListener("touchstart", this._boundTouchStart);
+			this.element.removeEventListener("touchmove", this._boundTouchMove);
+			this.element.removeEventListener("touchend", this._boundTouchEnd);
+			this.element.removeEventListener("touchcancel", this._boundTouchCancel);
 		}
 		this._listeners.clear();
 		this._activeTouches.clear();
@@ -366,17 +361,17 @@ export class TouchGestureRecognizer {
 		clearLongPressTimer(this);
 	}
 
-	_handleTouchStart(e: unknown) {
+	_handleTouchStart(e: TouchEvent | TouchEventLike) {
 		handleTouchStartEvent(this, e);
 	}
 
-	_handleTouchMove(e: unknown) {
+	_handleTouchMove(e: TouchEvent | TouchEventLike | null | undefined) {
 		if (!e) return;
 		if (
 			this.options.throttleWithRaf &&
 			typeof requestAnimationFrame === "function"
 		) {
-			this._pendingMoveEvent = e as unknown;
+			this._pendingMoveEvent = e;
 			if (this._rafId === null) {
 				this._rafId = requestAnimationFrame(() => {
 					this._rafId = null;
@@ -385,15 +380,16 @@ export class TouchGestureRecognizer {
 						this._pendingMoveEvent = null;
 						this._processTouchMove(ev);
 					}
-				}) as unknown;
+				});
 			}
 		} else {
-			this._processTouchMove(e as unknown);
+			this._processTouchMove(e);
 		}
 	}
 
-	_processTouchMove(e: { touches: unknown }) {
-		const touches = e.touches as unknown[];
+	_processTouchMove(e: TouchEvent | TouchEventLike) {
+		const touches = e.touches;
+		if (!touches) return;
 		if (touches.length === 1) {
 			processSingleTouchMove(this, e);
 		} else if (touches.length >= 2) {
@@ -401,10 +397,7 @@ export class TouchGestureRecognizer {
 		}
 	}
 
-	_handleTouchEnd(e: {
-		touches?: string | unknown[];
-		changedTouches?: unknown[];
-	}) {
+	_handleTouchEnd(e: TouchEvent | TouchEventLike) {
 		this._clearLongPressTimer();
 
 		// 2本指タップ判定

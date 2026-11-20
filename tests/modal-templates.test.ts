@@ -6,7 +6,9 @@ const { modalTemplates } = await import("../ui/ts/ui/modal-templates.js");
 test("modalTemplates exports aggregated HTML templates", () => {
 	assert.ok(modalTemplates);
 	assert.equal(typeof modalTemplates, "object");
-	const keys = Object.keys(modalTemplates);
+	const keys = Object.keys(modalTemplates) as Array<
+		keyof typeof modalTemplates
+	>;
 	assert.ok(keys.length > 0);
 	for (const key of keys) {
 		assert.equal(typeof modalTemplates[key], "string");

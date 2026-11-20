@@ -93,6 +93,10 @@ pub async fn show_menu_window(
             target_y = target_y.max(screen_y).min(max_y);
         }
 
+        if let Some(sub_win) = app_handle.get_webview_window("submenu_window") {
+            let _ = sub_win.hide();
+        }
+
         if let Some(menu_win) = app_handle.get_webview_window("menu_window") {
             let _ = menu_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
                 width: win_width,

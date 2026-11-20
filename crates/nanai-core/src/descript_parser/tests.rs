@@ -78,3 +78,15 @@ fn test_parse_descript_balloon_detailed_properties() {
     assert_eq!(manifest.origin_pos(), Some((5, 10)));
     assert_eq!(manifest.word_wrap_point(), Some(180));
 }
+
+#[test]
+fn test_readme_charset_os_default_fallback() {
+    let empty_manifest = parse_descript_text("readme,readme.txt\n");
+    assert_eq!(empty_manifest.readme_charset(), None);
+
+    let charset_manifest = parse_descript_text("charset,UTF-8\nreadme,readme.txt\n");
+    assert_eq!(charset_manifest.readme_charset(), Some("UTF-8"));
+
+    let explicit_manifest = parse_descript_text("readme.charset,UTF-8\ncharset,Shift_JIS\n");
+    assert_eq!(explicit_manifest.readme_charset(), Some("UTF-8"));
+}

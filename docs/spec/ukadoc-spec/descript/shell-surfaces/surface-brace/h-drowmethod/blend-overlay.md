@@ -7,6 +7,8 @@
 
 ## 実装箇所
 
-- `ui/js/surface/surface-load.js:99` `// [blend-overlay-fast]`
-- `ui/js/surface/surface-load.js:100` `// [blend-overlay]`
-- `ui/js/surface/compositor/layer.js:45` `} else if (method === "blend-overlay" || method === "blend-softlight") {`
+- `ui/ts/surface/surface-compositor.ts:48` `"blend-overlay": "overlay",`
+- `tests/surface-compositor.test.ts:18` `expect(resolveCompositeOperation("blend-overlay")).toBe("overlay");`
+- `ui/ts/surface/surface-compositor.ts:49` `"blend-overlay-fast": "overlay",`
+- `tests/surface-compositor.test.ts:19` `expect(resolveCompositeOperation("blend-overlay-fast")).toBe("overlay");`
+- `tests/surface-compositor.test.ts:70` `type: "blend-overlay-fast",`

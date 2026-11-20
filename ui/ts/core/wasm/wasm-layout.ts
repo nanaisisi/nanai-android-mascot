@@ -9,6 +9,12 @@ import type {
 	ValidRectLayoutResult,
 } from "./wasm-types.js";
 
+function toOptionalInt(value: number | undefined): number | null {
+	return typeof value === "number" && Number.isFinite(value)
+		? Math.trunc(value)
+		: null;
+}
+
 export function computeValidRectLayoutWasm(
 	validrectLeft?: number,
 	validrectTop?: number,
@@ -20,22 +26,32 @@ export function computeValidRectLayoutWasm(
 	scopeId = 0,
 ): ValidRectLayoutResult | null {
 	const core = wasmMemory.getWasmCore();
-	if (!core?.wasm_compute_validrect_layout) return null;
+	if (
+		!core?.wasm_compute_validrect_layout ||
+		!core?.Wasm_compute_validrect_layoutParams
+	) {
+		return null;
+	}
 
+	const params = new core.Wasm_compute_validrect_layoutParams(
+		toOptionalInt(validrectLeft),
+		toOptionalInt(validrectTop),
+		toOptionalInt(validrectRight),
+		toOptionalInt(validrectBottom),
+		borderRepeat ?? null,
+		balloonImage ?? null,
+		bgImageUrl ?? null,
+		Number.isFinite(scopeId) ? Math.max(0, Math.trunc(scopeId)) : 0,
+	);
 	try {
 		return core.wasm_compute_validrect_layout(
-			validrectLeft,
-			validrectTop,
-			validrectRight,
-			validrectBottom,
-			borderRepeat,
-			balloonImage,
-			bgImageUrl,
-			scopeId,
+			params,
 		) as ValidRectLayoutResult | null;
 	} catch (err) {
 		console.warn("⚠️ [WASM Layout] computeValidRectLayout エラー:", err);
 		return null;
+	} finally {
+		params.free();
 	}
 }
 
@@ -47,19 +63,29 @@ export function computeBalloonTextLayoutWasm(
 	paddingX: number,
 ): BalloonLayoutResult | null {
 	const core = wasmMemory.getWasmCore();
-	if (!core?.wasm_compute_balloon_text_layout) return null;
+	if (
+		!core?.wasm_compute_balloon_text_layout ||
+		!core?.Wasm_compute_balloon_text_layoutParams
+	) {
+		return null;
+	}
 
+	const params = new core.Wasm_compute_balloon_text_layoutParams(
+		text,
+		maxWidth,
+		fontSize,
+		lineHeight,
+		paddingX,
+	);
 	try {
 		return core.wasm_compute_balloon_text_layout(
-			text,
-			maxWidth,
-			fontSize,
-			lineHeight,
-			paddingX,
+			params,
 		) as BalloonLayoutResult | null;
 	} catch (err) {
 		console.warn("⚠️ [WASM Layout] computeBalloonTextLayout エラー:", err);
 		return null;
+	} finally {
+		params.free();
 	}
 }
 

@@ -2,7 +2,7 @@
 
 - **規格**: [collision-sort.md](https://ukatech.shillest.net/ukadoc-spec/descript/shell-surfaces/descript-brace/collision-sort/) (ukadoc-spec/descript/shell-surfaces/descript-brace/collision-sort.md)
 - **検索語**: collision-sort
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
@@ -10,6 +10,6 @@
 
 ## 実装箇所
 
-- `crates/ui/src/surfaces/parser/helpers/lines.rs:31` `"collision-sort" | "collision.sort" => txt.collision_sort = Some(SortKind::parse`
-- `crates/ui/src/surfaces/tests/collision_tests.rs:213` `collision-sort,descend`
-- `crates/ui/src/surfaces/tests/parser_tests/parser_edge_cases.rs:74` `collision-sort,id`
+- `crates/nanai-core/src/surfaces_parser/parser/core.rs:38` `if k_norm == "collision-sort" || k_norm == "collision.sort" {`
+- `tests/surface-collision-detection.test.ts:360` `collision-sort,descend`
+- `crates/nanai-surface/src/parser/helpers/lines.rs:31` `"collision-sort" | "collision.sort" => txt.collision_sort = Some(SortKind::parse`

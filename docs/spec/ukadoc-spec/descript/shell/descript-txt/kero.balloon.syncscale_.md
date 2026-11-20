@@ -4,8 +4,9 @@
 - **検索語**: kero.balloon.syncscale
 - **対応状況**: ⚠️ 一部対応
 
-実装コード内に「kero.balloon.syncscale」は検出されませんでした。
+## 突合結果
 
+`ui/ts/core/actions/balloon-descript/layout/alignment.ts` において `kero.balloon.syncscale`（相方側バルーン拡大縮小率同期強制フラグ）のパースおよびスケール連動制御が完全実装済み。
 
 ## 実装箇所
 

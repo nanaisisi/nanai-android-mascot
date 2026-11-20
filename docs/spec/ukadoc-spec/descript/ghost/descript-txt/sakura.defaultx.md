@@ -6,9 +6,12 @@
 
 ## 突合結果
 
-`src-tauri/src/ghost/scan/directory.rs` において `sakura.defaultx` キーをパース・参照する実装が行われている。
+`crates/nanai-core/src/descript_parser/types.rs` の `sakura_default_pos()` および SHIORI セーフティプロパティ評価系において `sakura.defaultx` のパース・参照が完全実装済み。
 
 ## 実装箇所
 
-- `src-tauri/src/shiori/property/evaluator/static_rules.rs:38` `"sakura.defaultleft" | "sakura.defaulttop" | "sakura.defaultx" | "sakura.default`
+- `crates/nanai-core/src/descript_parser/tests.rs:61` `let content = "sakura.defaultx,100\nsakura.defaulty,200\nkero.defaultx,300\nkero`
+- `src-tauri/src/shiori/property/evaluator/static_rules.rs:40` `"sakura.defaultleft" | "sakura.defaulttop" | "sakura.defaultx" | "sakura.default`
+- `crates/nanai-core/src/descript_parser/types.rs:98` `/// Sakura側のデフォルト座標 (`sakura.defaultx`, `sakura.defaulty`)`
+- `crates/nanai-core/src/descript_parser/types.rs:101` `.get("sakura.defaultx")`
 - `crates/ui/src/descript/tests.rs:6` `sakura.defaultx,120\r\nsakura.defaulty,240\r\n\`

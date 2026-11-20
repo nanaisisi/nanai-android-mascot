@@ -11,14 +11,23 @@ pub enum InstallIdentifier {
     Balloon,
     Plugin,
     Headline,
-    Package,
+    Rss,
     Supplement,
+    #[serde(rename = "ghost with balloon")]
+    GhostWithBalloon,
+    #[serde(rename = "shell with balloon")]
+    ShellWithBalloon,
+    Package,
+    Language,
     #[serde(rename = "calendar.skin")]
     CalendarSkin,
     #[serde(rename = "calendar.plugin")]
     CalendarPlugin,
     Profile,
     Taromime,
+    #[serde(rename = "ghost_or_shell")]
+    GhostOrShell,
+    Unknown,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Tsify)]
@@ -26,8 +35,12 @@ pub enum InstallIdentifier {
 pub enum InstallFailureReason {
     Unsupported,
     Extraction,
+    Unlha32,
     #[serde(rename = "unlha32 error")]
     Unlha32Error,
+    #[serde(rename = "invalid type")]
+    InvalidType,
+    Password,
     Artificial,
     #[serde(rename = "write error")]
     WriteError,
@@ -44,19 +57,28 @@ pub const INSTALL_IDENTIFIERS: &[&str] = &[
     "balloon",
     "plugin",
     "headline",
-    "package",
+    "rss",
     "supplement",
+    "ghost with balloon",
+    "shell with balloon",
+    "package",
+    "language",
     "calendar.skin",
     "calendar.plugin",
     "profile",
     "taromime",
+    "ghost_or_shell",
+    "unknown",
 ];
 
 /// UKADOC仕様: インストールの失敗理由 (Install Reasons of Failure)
 pub const INSTALL_FAILURE_REASONS: &[&str] = &[
     "unsupported",
     "extraction",
+    "unlha32",
     "unlha32 error",
+    "invalid type",
+    "password",
     "artificial",
     "write error",
     "invalid path",

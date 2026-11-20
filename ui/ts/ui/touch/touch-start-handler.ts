@@ -1,45 +1,37 @@
+import type { TouchEventLike } from "./touch-gesture-event.js";
 import {
 	getTouchAngle,
 	getTouchCenter,
 	getTouchDistance,
 } from "./touch-helpers.js";
-import { startLongPressTimer } from "./touch-tap-handler.js";
+import {
+	startLongPressTimer,
+	type TouchRecognizerTarget,
+} from "./touch-tap-handler.js";
 
-export interface TouchStateRecognizer {
+export interface TouchStateRecognizer extends TouchRecognizerTarget {
 	_clearLongPressTimer: () => void;
-	_startX: number;
-	_startY: number;
-	_startTime: number;
-	_lastX: number;
-	_lastY: number;
-	_lastTime: number;
 	_vx: number;
 	_vy: number;
-	_hasMoved: boolean;
 	_isDragging: boolean;
 	_accumulatedStroke: number;
-	_strokeTriggered: boolean;
-	_longPressTriggered: boolean;
-	_isPinching: boolean;
 	_initialPinchDist: number;
 	_initialAngle: number;
 	_lastPinchScale: number;
-	_twoFingerStartTime: number;
-	_twoFingerMoved: boolean;
-	_twoFingerCenter: { x: number; y: number };
-	[key: string]: unknown;
 }
 
 export function handleTouchStartEvent(
 	recognizer: TouchStateRecognizer,
-	e: TouchEvent,
+	e: TouchEvent | TouchEventLike,
 ) {
 	const touches = e.touches;
+	if (!touches) return;
 	recognizer._clearLongPressTimer();
 
 	if (touches.length === 1) {
 		// シングルタッチの開始
 		const t = touches[0];
+		if (!t) return;
 		const now = Date.now();
 		recognizer._startX = t.clientX;
 		recognizer._startY = t.clientY;

@@ -59,34 +59,251 @@ fn resolve_show_balloon_args(
 }
 
 #[cfg(any(desktop, test))]
-#[allow(clippy::too_many_arguments)]
-fn clamp_logical_position(
+#[derive(Debug, Clone, Copy, PartialEq)]
+struct LogicalWorkArea {
     x: f64,
     y: f64,
     width: f64,
     height: f64,
     mon_x: f64,
     mon_y: f64,
-    mon_w: f64,
-    mon_h: f64,
+    mon_width: f64,
+    mon_height: f64,
+    scale_factor: f64,
+}
+
+#[cfg(any(desktop, test))]
+impl LogicalWorkArea {
+    #[allow(clippy::too_many_arguments)]
+    fn from_physical_rects(
+        work_x: i32,
+        work_y: i32,
+        work_w: u32,
+        work_h: u32,
+        mon_x: i32,
+        mon_y: i32,
+        mon_w: u32,
+        mon_h: u32,
+        scale_factor: f64,
+    ) -> Self {
+        let safe_scale = safe_scale_factor(scale_factor);
+        Self {
+            x: work_x as f64 / safe_scale,
+            y: work_y as f64 / safe_scale,
+            width: work_w as f64 / safe_scale,
+            height: work_h as f64 / safe_scale,
+            mon_x: mon_x as f64 / safe_scale,
+            mon_y: mon_y as f64 / safe_scale,
+            mon_width: mon_w as f64 / safe_scale,
+            mon_height: mon_h as f64 / safe_scale,
+            scale_factor: safe_scale,
+        }
+    }
+
+    fn default_fallback() -> Self {
+        Self {
+            x: 0.0,
+            y: 0.0,
+            width: 1920.0,
+            height: 1080.0,
+            mon_x: 0.0,
+            mon_y: 0.0,
+            mon_width: 1920.0,
+            mon_height: 1080.0,
+            scale_factor: 1.0,
+        }
+    }
+}
+
+#[cfg(any(desktop, test))]
+fn safe_scale_factor(scale: f64) -> f64 {
+    if scale > 0.0 && scale.is_finite() {
+        scale
+    } else {
+        1.0
+    }
+}
+
+/// バルーンの論理座標をクランプする（X軸は無制限、Y軸のみタスクバー除外ワークスペース内に絶対クランプ）
+#[cfg(any(desktop, test))]
+fn clamp_logical_position_y_only(
+    x: f64,
+    y: f64,
+    height: f64,
+    work_y: f64,
+    work_h: f64,
 ) -> (f64, f64) {
-    let max_x = (mon_x + mon_w - width).max(mon_x);
-    let max_y = (mon_y + mon_h - height).max(mon_y);
-    (x.clamp(mon_x, max_x), y.clamp(mon_y, max_y))
+    let clamped_y = if !y.is_finite() || !height.is_finite() || work_h <= 0.0 || height >= work_h {
+        work_y
+    } else {
+        let max_y = (work_y + work_h - height).max(work_y);
+        y.clamp(work_y, max_y)
+    };
+    (x, clamped_y)
+}
+
+#[cfg(any(desktop, test))]
+fn needs_vertical_clamp(y: f64, height: f64, work_y: f64, work_h: f64) -> bool {
+    if !y.is_finite() {
+        return true;
+    }
+    let (_, clamped_y) = clamp_logical_position_y_only(0.0, y, height, work_y, work_h);
+    (clamped_y - y).abs() > 1e-6
+}
+
+#[cfg(any(desktop, test))]
+fn select_best_rect_index(rects: &[(f64, f64, f64, f64)], x: f64, y: f64) -> Option<usize> {
+    if rects.is_empty() {
+        return None;
+    }
+    if let Some((idx, _)) = rects
+        .iter()
+        .enumerate()
+        .find(|(_, (rx, ry, rw, rh))| x >= *rx && x < *rx + *rw && y >= *ry && y < *ry + *rh)
+    {
+        return Some(idx);
+    }
+    rects
+        .iter()
+        .enumerate()
+        .min_by(|(_, a), (_, b)| {
+            let dist = |(rx, ry, rw, rh): &(f64, f64, f64, f64)| -> (f64, f64) {
+                let dx = if x < *rx {
+                    *rx - x
+                } else if x > *rx + *rw {
+                    x - (*rx + *rw)
+                } else {
+                    0.0
+                };
+                let dy = if y < *ry {
+                    *ry - y
+                } else if y > *ry + *rh {
+                    y - (*ry + *rh)
+                } else {
+                    0.0
+                };
+                (dx, dy)
+            };
+            dist(a)
+                .partial_cmp(&dist(b))
+                .unwrap_or(std::cmp::Ordering::Equal)
+        })
+        .map(|(idx, _)| idx)
 }
 
 #[cfg(desktop)]
-fn monitor_logical_bounds(monitor: &tauri::Monitor) -> (f64, f64, f64, f64) {
-    let scale = monitor.scale_factor();
-    let safe_scale = if scale > 0.0 { scale } else { 1.0 };
+fn monitor_logical_work_area(monitor: &tauri::Monitor) -> LogicalWorkArea {
+    let work = monitor.work_area();
     let pos = monitor.position();
     let size = monitor.size();
-    (
-        pos.x as f64 / safe_scale,
-        pos.y as f64 / safe_scale,
-        size.width as f64 / safe_scale,
-        size.height as f64 / safe_scale,
+    LogicalWorkArea::from_physical_rects(
+        work.position.x,
+        work.position.y,
+        work.size.width,
+        work.size.height,
+        pos.x,
+        pos.y,
+        size.width,
+        size.height,
+        monitor.scale_factor(),
     )
+}
+
+#[cfg(desktop)]
+fn window_scale_factor(win: &tauri::WebviewWindow, fallback: f64) -> f64 {
+    win.scale_factor()
+        .ok()
+        .filter(|s| *s > 0.0 && s.is_finite())
+        .or_else(|| {
+            win.current_monitor()
+                .ok()
+                .flatten()
+                .map(|m| m.scale_factor())
+                .filter(|s| *s > 0.0 && s.is_finite())
+        })
+        .unwrap_or_else(|| safe_scale_factor(fallback))
+}
+
+#[cfg(desktop)]
+fn select_monitor_for_physical_point(
+    app_handle: &tauri::AppHandle,
+    px: f64,
+    py: f64,
+) -> Option<tauri::Monitor> {
+    let monitors = app_handle.available_monitors().ok()?;
+    let rects: Vec<(f64, f64, f64, f64)> = monitors
+        .iter()
+        .map(|m| {
+            let p = m.position();
+            let s = m.size();
+            (p.x as f64, p.y as f64, s.width as f64, s.height as f64)
+        })
+        .collect();
+    select_best_rect_index(&rects, px, py).and_then(|idx| monitors.into_iter().nth(idx))
+}
+
+#[cfg(desktop)]
+fn select_monitor_for_logical_point(
+    app_handle: &tauri::AppHandle,
+    lx: f64,
+    ly: f64,
+) -> Option<tauri::Monitor> {
+    let monitors = app_handle.available_monitors().ok()?;
+    let rects: Vec<(f64, f64, f64, f64)> = monitors
+        .iter()
+        .map(|m| {
+            let area = monitor_logical_work_area(m);
+            (area.mon_x, area.mon_y, area.mon_width, area.mon_height)
+        })
+        .collect();
+    select_best_rect_index(&rects, lx, ly).and_then(|idx| monitors.into_iter().nth(idx))
+}
+
+#[cfg(desktop)]
+fn monitor_from_window_center(
+    app_handle: &tauri::AppHandle,
+    win: &tauri::WebviewWindow,
+) -> Option<tauri::Monitor> {
+    win.current_monitor().ok().flatten().or_else(|| {
+        let pos = win.outer_position().ok()?;
+        let size = win.outer_size().ok()?;
+        let cx = pos.x as f64 + (size.width as f64) / 2.0;
+        let cy = pos.y as f64 + (size.height as f64) / 2.0;
+        select_monitor_for_physical_point(app_handle, cx, cy)
+    })
+}
+
+#[cfg(any(desktop, test))]
+fn compute_default_logical_balloon_pos(
+    scope_id: i32,
+    char_x: f64,
+    char_y: f64,
+    char_width: f64,
+    balloon_width: f64,
+    work_x: f64,
+    work_w: f64,
+) -> (f64, f64) {
+    let raw_x = if scope_id == 0 {
+        let overflows_right = char_x + char_width - 10.0 + balloon_width > work_x + work_w;
+        if overflows_right {
+            char_x - balloon_width + 10.0
+        } else {
+            char_x + char_width - 20.0
+        }
+    } else {
+        char_x - balloon_width + 20.0
+    };
+    (raw_x, char_y - 20.0)
+}
+
+#[cfg(desktop)]
+fn restore_menu_focus_if_visible(app_handle: &tauri::AppHandle) {
+    use tauri::Manager;
+    if let Some(menu_win) = app_handle.get_webview_window("menu_window")
+        && menu_win.is_visible().unwrap_or(false)
+    {
+        let _ = menu_win.set_focus();
+    }
 }
 
 /// 独立バルーン（スコープ N）ウィンドウ表示コマンド
@@ -134,27 +351,24 @@ pub async fn show_balloon_window(
         let char_win = app_handle.get_webview_window(&char_label);
         let existing_balloon = app_handle.get_webview_window(&label);
 
-        let monitor_opt = char_win
+        let fallback_monitor = char_win
             .as_ref()
-            .and_then(|w| w.current_monitor().ok().flatten())
+            .and_then(|w| monitor_from_window_center(&app_handle, w))
             .or_else(|| {
                 existing_balloon
                     .as_ref()
-                    .and_then(|w| w.current_monitor().ok().flatten())
+                    .and_then(|w| monitor_from_window_center(&app_handle, w))
             })
             .or_else(|| app_handle.primary_monitor().ok().flatten());
-        let (mon_x, mon_y, mon_w, mon_h) = monitor_opt
+        let fallback_work_area = fallback_monitor
             .as_ref()
-            .map(monitor_logical_bounds)
-            .unwrap_or((0.0, 0.0, 1920.0, 1080.0));
+            .map(monitor_logical_work_area)
+            .unwrap_or_else(LogicalWorkArea::default_fallback);
 
         let balloon_scale = existing_balloon
             .as_ref()
-            .and_then(|w| w.current_monitor().ok().flatten())
-            .or_else(|| monitor_opt.clone())
-            .map(|m| m.scale_factor())
-            .filter(|s| *s > 0.0)
-            .unwrap_or(1.0);
+            .map(|w| window_scale_factor(w, fallback_work_area.scale_factor))
+            .unwrap_or(fallback_work_area.scale_factor);
         let existing_logical_size = existing_balloon.as_ref().and_then(|w| {
             w.outer_size().ok().and_then(|sz| {
                 if sz.width > 0 && sz.height > 0 {
@@ -174,83 +388,166 @@ pub async fn show_balloon_window(
             .or_else(|| existing_logical_size.map(|(_, h)| h))
             .unwrap_or(200.0);
 
-        let compute_clamped_pos = || {
+        let compute_clamped_pos = || -> (f64, f64, f64) {
+            let saved_offset = if p_x.is_none() && p_y.is_none() {
+                app_handle
+                    .try_state::<crate::common::state::AppState>()
+                    .and_then(|st| st.balloon_offsets.lock().get(&s_id).copied())
+            } else {
+                None
+            };
+
+            if let (Some((ox, oy)), Some(cw)) = (saved_offset, char_win.as_ref())
+                && let Ok(char_pos) = cw.outer_position()
+            {
+                let raw_phys_x = char_pos.x + ox;
+                let raw_phys_y = char_pos.y + oy;
+                let char_scale = window_scale_factor(cw, fallback_work_area.scale_factor);
+                let target_mon = select_monitor_for_physical_point(
+                    &app_handle,
+                    raw_phys_x as f64 + (actual_w * char_scale) / 2.0,
+                    raw_phys_y as f64 + (actual_h * char_scale) / 2.0,
+                )
+                .or_else(|| monitor_from_window_center(&app_handle, cw))
+                .or_else(|| fallback_monitor.clone());
+                let work = target_mon
+                    .as_ref()
+                    .map(monitor_logical_work_area)
+                    .unwrap_or(fallback_work_area);
+                let raw_lx = raw_phys_x as f64 / work.scale_factor;
+                let raw_ly = raw_phys_y as f64 / work.scale_factor;
+                let (cx, cy) =
+                    clamp_logical_position_y_only(raw_lx, raw_ly, actual_h, work.y, work.height);
+                return (cx, cy, work.scale_factor);
+            }
+
             let (raw_x, raw_y) = if let (Some(px), Some(py)) = (p_x, p_y) {
                 (px, py)
             } else {
                 let (def_x, def_y) = if let Some(ref cw) = char_win {
                     if let Ok(pos) = cw.outer_position() {
-                        let scale = cw
-                            .current_monitor()
+                        let cw_mon = monitor_from_window_center(&app_handle, cw)
+                            .or_else(|| fallback_monitor.clone());
+                        let cw_work = cw_mon
+                            .as_ref()
+                            .map(monitor_logical_work_area)
+                            .unwrap_or(fallback_work_area);
+                        let char_scale = window_scale_factor(cw, cw_work.scale_factor);
+                        let base_x = pos.x as f64 / char_scale;
+                        let base_y = pos.y as f64 / char_scale;
+                        let char_width = cw
+                            .outer_size()
                             .ok()
-                            .flatten()
-                            .map(|m| m.scale_factor())
-                            .filter(|s| *s > 0.0)
-                            .unwrap_or(1.0);
-                        let base_x = pos.x as f64 / scale;
-                        let base_y = pos.y as f64 / scale;
-                        let char_size = cw.outer_size().unwrap_or(tauri::PhysicalSize {
-                            width: 200,
-                            height: 360,
-                        });
-                        let char_width = char_size.width as f64 / scale;
+                            .filter(|sz| sz.width > 0)
+                            .map(|sz| sz.width as f64 / char_scale)
+                            .unwrap_or(200.0);
 
-                        let mut rx = base_x + char_width + 10.0;
-                        if rx + actual_w > mon_x + mon_w - 20.0 {
-                            rx = base_x - actual_w - 10.0;
-                        }
-                        let ry = base_y - 40.0;
-                        (rx, ry)
+                        compute_default_logical_balloon_pos(
+                            s_id,
+                            base_x,
+                            base_y,
+                            char_width,
+                            actual_w,
+                            cw_work.x,
+                            cw_work.width,
+                        )
                     } else {
-                        (mon_x + 200.0 + (s_id as f64 * 220.0), mon_y + 100.0)
+                        (
+                            fallback_work_area.x + 200.0 + (s_id as f64 * 220.0),
+                            fallback_work_area.y + 100.0,
+                        )
                     }
                 } else {
-                    (mon_x + 200.0 + (s_id as f64 * 220.0), mon_y + 100.0)
+                    (
+                        fallback_work_area.x + 200.0 + (s_id as f64 * 220.0),
+                        fallback_work_area.y + 100.0,
+                    )
                 };
                 (p_x.unwrap_or(def_x), p_y.unwrap_or(def_y))
             };
-            clamp_logical_position(raw_x, raw_y, actual_w, actual_h, mon_x, mon_y, mon_w, mon_h)
+
+            let target_mon = select_monitor_for_logical_point(
+                &app_handle,
+                raw_x + actual_w / 2.0,
+                raw_y + actual_h / 2.0,
+            )
+            .or_else(|| fallback_monitor.clone());
+            let work = target_mon
+                .as_ref()
+                .map(monitor_logical_work_area)
+                .unwrap_or(fallback_work_area);
+            let (cx, cy) =
+                clamp_logical_position_y_only(raw_x, raw_y, actual_h, work.y, work.height);
+            (cx, cy, work.scale_factor)
         };
 
         if let Some(balloon_win) = existing_balloon {
             let is_visible = balloon_win.is_visible().unwrap_or(false);
-            let (target_x, target_y, should_set_pos) =
+            let (target_x, target_y, target_phys_pos) =
                 if is_visible && p_x.is_none() && p_y.is_none() {
                     if let Ok(pos) = balloon_win.outer_position() {
-                        let cur_x = pos.x as f64 / balloon_scale;
-                        let cur_y = pos.y as f64 / balloon_scale;
-                        let out_of_bounds = cur_x < mon_x
-                            || cur_y < mon_y
-                            || cur_x + actual_w > mon_x + mon_w
-                            || cur_y + actual_h > mon_y + mon_h;
-                        if out_of_bounds {
-                            let (cx, cy) = clamp_logical_position(
-                                cur_x, cur_y, actual_w, actual_h, mon_x, mon_y, mon_w, mon_h,
+                        let win_mon = monitor_from_window_center(&app_handle, &balloon_win)
+                            .or_else(|| fallback_monitor.clone());
+                        let work = win_mon
+                            .as_ref()
+                            .map(monitor_logical_work_area)
+                            .unwrap_or(fallback_work_area);
+                        let win_scale = window_scale_factor(&balloon_win, work.scale_factor);
+                        let cur_x = pos.x as f64 / win_scale;
+                        let cur_y = pos.y as f64 / win_scale;
+                        if needs_vertical_clamp(cur_y, actual_h, work.y, work.height) {
+                            let (_, cy) = clamp_logical_position_y_only(
+                                cur_x,
+                                cur_y,
+                                actual_h,
+                                work.y,
+                                work.height,
                             );
-                            (cx, cy, true)
+                            let clamped_phys_y = (cy * work.scale_factor).round() as i32;
+                            (
+                                cur_x,
+                                cy,
+                                Some(tauri::PhysicalPosition {
+                                    x: pos.x,
+                                    y: clamped_phys_y,
+                                }),
+                            )
                         } else {
-                            (cur_x, cur_y, false)
+                            (cur_x, cur_y, None)
                         }
                     } else {
-                        let (cx, cy) = compute_clamped_pos();
-                        (cx, cy, true)
+                        let (cx, cy, scale) = compute_clamped_pos();
+                        (
+                            cx,
+                            cy,
+                            Some(tauri::PhysicalPosition {
+                                x: (cx * scale).round() as i32,
+                                y: (cy * scale).round() as i32,
+                            }),
+                        )
                     }
                 } else {
-                    let (cx, cy) = compute_clamped_pos();
-                    (cx, cy, true)
+                    let (cx, cy, scale) = compute_clamped_pos();
+                    (
+                        cx,
+                        cy,
+                        Some(tauri::PhysicalPosition {
+                            x: (cx * scale).round() as i32,
+                            y: (cy * scale).round() as i32,
+                        }),
+                    )
                 };
 
-            if should_set_pos {
-                let _ =
-                    balloon_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
-                        x: target_x,
-                        y: target_y,
-                    }));
+            if let Some(phys_pos) = target_phys_pos {
+                let _ = balloon_win.set_position(tauri::Position::Physical(phys_pos));
             }
 
-            let _ = balloon_win.unminimize();
-            let _ = balloon_win.set_always_on_top(true);
-            let _ = balloon_win.show();
+            if !is_visible {
+                let _ = balloon_win.unminimize();
+                let _ = balloon_win.set_always_on_top(true);
+                let _ = balloon_win.show();
+                restore_menu_focus_if_visible(&app_handle);
+            }
             println!(
                 "✅ [Rust Window] 既存の balloon_window_{} を表示: x={}, y={}",
                 s_id, target_x, target_y
@@ -264,7 +561,7 @@ pub async fn show_balloon_window(
                 );
             }
         } else {
-            let (target_x, target_y) = compute_clamped_pos();
+            let (target_x, target_y, target_scale) = compute_clamped_pos();
 
             let title = format!("Nanai Mascot - Balloon {}", s_id);
             let theme_query = t_val
@@ -295,9 +592,14 @@ pub async fn show_balloon_window(
                 e.to_string()
             })?;
 
+            let _ = balloon_win.set_position(tauri::Position::Physical(tauri::PhysicalPosition {
+                x: (target_x * target_scale).round() as i32,
+                y: (target_y * target_scale).round() as i32,
+            }));
             let _ = balloon_win.unminimize();
             let _ = balloon_win.set_always_on_top(true);
             let _ = balloon_win.show();
+            restore_menu_focus_if_visible(&app_handle);
             println!(
                 "🎉 [Rust Window] 新規 balloon_window_{} を構築・表示: x={}, y={}",
                 s_id, target_x, target_y
@@ -389,36 +691,30 @@ pub async fn resize_balloon_window(
                     width: target_width,
                     height: target_height,
                 }));
-                let monitor_opt = balloon_win
-                    .current_monitor()
-                    .ok()
-                    .flatten()
+                let char_label = format!("subchar_window_{}", target_scope);
+                let monitor_opt = monitor_from_window_center(&app_handle, &balloon_win)
+                    .or_else(|| {
+                        app_handle
+                            .get_webview_window(&char_label)
+                            .and_then(|cw| monitor_from_window_center(&app_handle, &cw))
+                    })
                     .or_else(|| app_handle.primary_monitor().ok().flatten());
                 if let (Ok(pos), Some(monitor)) = (balloon_win.outer_position(), monitor_opt) {
-                    let (mon_x, mon_y, mon_w, mon_h) = monitor_logical_bounds(&monitor);
-                    let scale = monitor.scale_factor();
-                    let safe_scale = if scale > 0.0 { scale } else { 1.0 };
-                    let pos_x = pos.x as f64 / safe_scale;
-                    let pos_y = pos.y as f64 / safe_scale;
-                    if pos_x + target_width > mon_x + mon_w
-                        || pos_y + target_height > mon_y + mon_h
-                        || pos_x < mon_x
-                        || pos_y < mon_y
-                    {
-                        let (clamped_x, clamped_y) = clamp_logical_position(
-                            pos_x,
+                    let work = monitor_logical_work_area(&monitor);
+                    let pos_y = pos.y as f64 / work.scale_factor;
+                    if needs_vertical_clamp(pos_y, target_height, work.y, work.height) {
+                        let (_, clamped_y) = clamp_logical_position_y_only(
+                            pos.x as f64 / work.scale_factor,
                             pos_y,
-                            target_width,
                             target_height,
-                            mon_x,
-                            mon_y,
-                            mon_w,
-                            mon_h,
+                            work.y,
+                            work.height,
                         );
-                        let _ = balloon_win.set_position(tauri::Position::Logical(
-                            tauri::LogicalPosition {
-                                x: clamped_x,
-                                y: clamped_y,
+                        let clamped_phys_y = (clamped_y * work.scale_factor).round() as i32;
+                        let _ = balloon_win.set_position(tauri::Position::Physical(
+                            tauri::PhysicalPosition {
+                                x: pos.x,
+                                y: clamped_phys_y,
                             },
                         ));
                     }
@@ -574,7 +870,7 @@ mod tests {
         );
 
         let snake: ShowBalloonWindowParams =
-            serde_json::from_str(r#"{"scope_id": 1, "theme": "nsm"}"#).unwrap();
+            serde_json::from_str(r#"{"scope_id": 1, "theme": "nam"}"#).unwrap();
         assert_eq!(
             resolve_show_balloon_args(
                 Some(snake),
@@ -588,7 +884,7 @@ mod tests {
             ),
             (
                 1,
-                Some("nsm".to_string()),
+                Some("nam".to_string()),
                 Some(10.0),
                 Some(20.0),
                 None,
@@ -618,13 +914,78 @@ mod tests {
             )
         );
 
+        // 1. 通常高さでのYクランプ（タスクバー除外 work_area のみ）とX軸無制限の確認
         assert_eq!(
-            clamp_logical_position(1800.0, 950.0, 280.0, 200.0, 0.0, 0.0, 1920.0, 1080.0),
-            (1640.0, 880.0)
+            clamp_logical_position_y_only(1800.0, 950.0, 200.0, 0.0, 1040.0),
+            (1800.0, 840.0)
         );
         assert_eq!(
-            clamp_logical_position(-1950.0, -40.0, 280.0, 200.0, -1920.0, 0.0, 1920.0, 1080.0),
-            (-1920.0, 0.0)
+            clamp_logical_position_y_only(2500.0, 500.0, 200.0, 0.0, 1040.0),
+            (2500.0, 500.0)
+        );
+        assert_eq!(
+            clamp_logical_position_y_only(-500.0, -40.0, 200.0, 0.0, 1040.0),
+            (-500.0, 0.0)
+        );
+
+        // 2. 非ゼロ work_area.position (例: 上部タスクバー work_y=40) と縦長ウィンドウ (height >= work_height)
+        assert_eq!(
+            clamp_logical_position_y_only(-300.0, 10.0, 200.0, 40.0, 1000.0),
+            (-300.0, 40.0)
+        );
+        assert_eq!(
+            clamp_logical_position_y_only(-300.0, 900.0, 200.0, 40.0, 1000.0),
+            (-300.0, 840.0)
+        );
+        assert_eq!(
+            clamp_logical_position_y_only(3000.0, 200.0, 1200.0, 40.0, 1000.0),
+            (3000.0, 40.0)
+        );
+        assert_eq!(
+            clamp_logical_position_y_only(100.0, 50.0, 1000.0, 40.0, 1000.0),
+            (100.0, 40.0)
+        );
+    }
+
+    #[test]
+    fn hidpi_work_area_and_monitor_selection_cover_unrestricted_x_and_multi_monitor() {
+        // HiDPI 1.5x (物理 work_area: x=1920, y=60, w=2880, h=1560 -> 論理: x=1280, y=40, w=1920, h=1040)
+        let hidpi =
+            LogicalWorkArea::from_physical_rects(1920, 60, 2880, 1560, 1920, 0, 2880, 1620, 1.5);
+        assert_eq!(hidpi.x, 1280.0);
+        assert_eq!(hidpi.y, 40.0);
+        assert_eq!(hidpi.width, 1920.0);
+        assert_eq!(hidpi.height, 1040.0);
+        assert_eq!(hidpi.scale_factor, 1.5);
+
+        // 下部クランプ: work_bottom(1080) - height(200) = 880; 左端はみ出しX(-150)は維持
+        assert_eq!(
+            clamp_logical_position_y_only(-150.0, 920.0, 200.0, hidpi.y, hidpi.height),
+            (-150.0, 880.0)
+        );
+        assert!(needs_vertical_clamp(920.0, 200.0, hidpi.y, hidpi.height));
+        assert!(!needs_vertical_clamp(500.0, 200.0, hidpi.y, hidpi.height));
+
+        // 不正 scale_factor のフォールバック
+        let invalid_scale =
+            LogicalWorkArea::from_physical_rects(0, 40, 1920, 1040, 0, 0, 1920, 1080, 0.0);
+        assert_eq!(invalid_scale.scale_factor, 1.0);
+        assert_eq!(invalid_scale.y, 40.0);
+
+        // マルチモニター選択: Xが画面外でも最寄りモニターを選択し、上下位置にも対応
+        let monitors = vec![(0.0, 0.0, 1920.0, 1080.0), (1920.0, 100.0, 1920.0, 900.0)];
+        assert_eq!(select_best_rect_index(&monitors, -200.0, 500.0), Some(0));
+        assert_eq!(select_best_rect_index(&monitors, 2100.0, 50.0), Some(1));
+        assert_eq!(select_best_rect_index(&monitors, 4000.0, 500.0), Some(1));
+
+        // デフォルト位置: scope 0 はワークスペース右端あふれで左反転、scope 1 は左側配置（X無制限）
+        assert_eq!(
+            compute_default_logical_balloon_pos(0, 1600.0, 600.0, 200.0, 280.0, 0.0, 1840.0),
+            (1330.0, 580.0)
+        );
+        assert_eq!(
+            compute_default_logical_balloon_pos(1, 0.0, 600.0, 200.0, 280.0, 0.0, 1840.0),
+            (-260.0, 580.0)
         );
     }
 }

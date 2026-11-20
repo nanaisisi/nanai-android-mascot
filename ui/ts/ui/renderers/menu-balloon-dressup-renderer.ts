@@ -1,13 +1,63 @@
+import type { MenuRendererContext } from "./menu-ghost-shell-renderer.js";
+
+export interface BalloonMenuItem {
+	dir_name?: string;
+	name?: string;
+	[key: string]: unknown;
+}
+
+export interface DressupCategoryPart {
+	part: string;
+	on?: boolean;
+	number?: number;
+	thumbnail?: string | null;
+}
+
+export interface DressupCategory {
+	category: string;
+	options?: string[];
+	parts: DressupCategoryPart[];
+}
+
+export interface DressupScopeData {
+	categories?: DressupCategory[];
+}
+
+export interface DressupMenuPayload {
+	sakura?: DressupScopeData | null;
+	kero?: DressupScopeData | null;
+	categories?: DressupCategory[];
+}
+
+export interface RecentGhostItem {
+	name?: string;
+	hasSubmenu?: boolean;
+	subitems?: unknown[];
+	shells?: unknown[];
+	action?: string;
+	[key: string]: unknown;
+}
+
+export type RecentGhostInput = string | RecentGhostItem | null | undefined;
+
+export interface DressupMenuContext extends MenuRendererContext {
+	dressupData: DressupMenuPayload | null;
+}
+
 /**
  * @file menu-balloon-dressup-renderer.js
  * @brief バルーン、着せ替え、最近使ったものサブメニューの描画ロジック
  */
 export const menuBalloonDressupRenderer = {
 	/**
-	 * @param {unknown[]} balloons
-	 * @param {string | null} currentBalloonTheme
+	 * @param {BalloonMenuItem[] | null | undefined} balloons
+	 * @param {string | null | undefined} currentBalloonTheme
 	 */
-	renderBalloonSubmenu(balloons: unknown[], currentBalloonTheme: string) {
+	renderBalloonSubmenu(
+		this: DressupMenuContext,
+		balloons: BalloonMenuItem[] | null | undefined,
+		currentBalloonTheme?: string | null,
+	) {
 		const container = document.getElementById("balloon-submenu");
 		if (!container) return;
 
@@ -19,7 +69,7 @@ export const menuBalloonDressupRenderer = {
 			(typeof localStorage !== "undefined"
 				? localStorage.getItem("nanai_balloon_theme")
 				: null) ||
-			"nsm";
+			"nam";
 
 		container.innerHTML = `
 			<button type="button" class="menu-item" id="balloon-cycle-btn">
@@ -37,7 +87,7 @@ export const menuBalloonDressupRenderer = {
 		}
 
 		if (balloons && balloons.length > 0) {
-			balloons.forEach((balloon: { dir_name: unknown; name: unknown }) => {
+			balloons.forEach((balloon) => {
 				const currentNorm = String(activeTheme || "")
 					.trim()
 					.toLowerCase();
@@ -63,8 +113,8 @@ export const menuBalloonDressupRenderer = {
 			});
 		} else {
 			const fallbackThemes = [
-				{ id: "nsm", label: "NAMデフォルト+" },
-				{ id: "nsm_vertical", label: "NAMデフォルト+(頭上)" },
+				{ id: "nam", label: "NAMデフォルト+" },
+				{ id: "nam_vertical", label: "NAMデフォルト+(頭上)" },
 			];
 			fallbackThemes.forEach((t) => {
 				const currentNorm = String(activeTheme || "")
@@ -89,10 +139,14 @@ export const menuBalloonDressupRenderer = {
 	},
 
 	/**
-	 * @param {{ sakura: object, kero: object }} dressup
+	 * @param {DressupMenuPayload | null | undefined} dressup
 	 * @param {number} [scope]
 	 */
-	renderDressupSubmenu(dressup: unknown, scope = 0) {
+	renderDressupSubmenu(
+		this: DressupMenuContext,
+		dressup?: DressupMenuPayload | null,
+		scope = 0,
+	) {
 		const container = document.getElementById("dressup-submenu");
 		if (!container) return;
 
@@ -139,9 +193,12 @@ export const menuBalloonDressupRenderer = {
 	},
 
 	/**
-	 * @param {string[]} [recentGhosts]
+	 * @param {RecentGhostInput[]} [recentGhosts]
 	 */
-	renderRecentSubmenu(recentGhosts = []) {
+	renderRecentSubmenu(
+		this: DressupMenuContext,
+		recentGhosts: RecentGhostInput[] = [],
+	) {
 		const container = document.getElementById("recent-submenu");
 		if (!container) return;
 

@@ -35,7 +35,12 @@ pub fn shell_manifest(
 ) -> Result<ShellManifest, String> {
     let shell_dir = resolve_shell_dir(&ghost_name, &shell_name, &app_handle)?;
     let shell = Shell::load(&shell_dir).map_err(|e| e.to_string())?;
-    Ok(shell.manifest())
+    let _alias_table = crate::ghost::scan::shell::alias::read_shell_alias_txt(&shell_dir);
+    let seriko = crate::ghost::scan::read_descript_file(&shell_dir.join("descript.txt"))
+        .map(|props| crate::ghost::scan::shell::seriko::extract_shell_seriko_config(&props));
+    let mut manifest = shell.manifest();
+    manifest.set_seriko(seriko);
+    Ok(manifest)
 }
 
 #[derive(serde::Serialize)]
@@ -163,4 +168,75 @@ pub fn surface_composition_plan(
     let shell = Shell::load(&shell_dir).map_err(|e| e.to_string())?;
     let plan = shell.composition_plan(params.surface_id(), params.binds().unwrap_or(&[]));
     Ok(plan.map(CompositionPlanSnapshot::snapshot))
+}
+
+/// shell/<name>/readme.txt を読み込む（存在しなければ None）。
+pub fn read_shell_readme(shell_dir: &std::path::Path) -> Option<String> {
+    for f in ["readme.txt", "Readme.txt", "README.TXT"] {
+        let p = shell_dir.join(f);
+        if p.is_file() {
+            return super::open_text_file(&p).ok();
+        }
+    }
+    None
+}
+
+/// shell/<name>/thumbnail.png を探索してパスを返す。
+pub fn find_shell_thumbnail(shell_dir: &std::path::Path) -> Option<PathBuf> {
+    for f in ["thumbnail.png", "Thumbnail.png", "THUMBNAIL.PNG"] {
+        let p = shell_dir.join(f);
+        if p.is_file() {
+            return Some(p);
+        }
+    }
+    None
+}
+
+#[tauri::command]
+pub fn get_shell_readme(
+    ghost_name: String,
+    shell_name: String,
+    app_handle: tauri::AppHandle,
+) -> Result<Option<String>, String> {
+    let dir = resolve_shell_dir(&ghost_name, &shell_name, &app_handle)?;
+    Ok(read_shell_readme(&dir))
+}
+
+/// thumbnail.png を data URL で返す。
+#[tauri::command]
+pub fn get_shell_thumbnail(
+    ghost_name: String,
+    shell_name: String,
+    app_handle: tauri::AppHandle,
+) -> Result<Option<String>, String> {
+    use base64::Engine;
+    let dir = resolve_shell_dir(&ghost_name, &shell_name, &app_handle)?;
+    match find_shell_thumbnail(&dir) {
+        Some(p) => {
+            let bytes = std::fs::read(&p).map_err(|e| e.to_string())?;
+            Ok(Some(format!(
+                "data:image/png;base64,{}",
+                base64::engine::general_purpose::STANDARD.encode(bytes)
+            )))
+        }
+        None => Ok(None),
+    }
+}
+
+#[cfg(test)]
+mod shell_extra_tests {
+    use super::*;
+
+    #[test]
+    fn readme_and_thumbnail_loaded_from_files() {
+        let d = std::env::temp_dir().join(format!("nanai_shell_t_{}", std::process::id()));
+        std::fs::create_dir_all(&d).unwrap();
+        assert!(read_shell_readme(&d).is_none());
+        assert!(find_shell_thumbnail(&d).is_none());
+        std::fs::write(d.join("readme.txt"), "hello").unwrap();
+        std::fs::write(d.join("thumbnail.png"), [0u8]).unwrap();
+        assert_eq!(read_shell_readme(&d).as_deref(), Some("hello"));
+        assert!(find_shell_thumbnail(&d).is_some());
+        let _ = std::fs::remove_dir_all(&d);
+    }
 }

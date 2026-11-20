@@ -2,7 +2,7 @@
 
 - **規格**: [pct-exh.md](https://ukatech.shillest.net/ukadoc-spec/list/sakura-script/environment-variable/pct-exh/) (ukadoc-spec/list/sakura-script/environment-variable/pct-exh.md)
 - **検索語**: %exh
-- **対応状況**: ✅ 実装済
+- **対応状況**: ⚠️ 一部対応
 
 ## 突合結果
 
@@ -11,5 +11,5 @@
 
 ## 実装箇所
 
-- `crates/ui/src/script/env.rs:43` `result = result.replace("%exh", "0");`
-- `ui/ts/ghost/command-handler/env.ts:217` `"%exh": "0",`
+- `crates/nanai-core/src/sakura_script/env.rs:225` `result = result.replace("%exh", "0");`
+- `ui/ts/ghost/command-handler/env.ts:285` `"%exh": "0",`

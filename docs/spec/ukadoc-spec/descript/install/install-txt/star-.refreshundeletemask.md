@@ -6,11 +6,11 @@
 
 ## 突合結果
 
-`src-tauri/src/commands/install/archive.rs` において `*.refreshundeletemask`（`ghost.refreshundeletemask` 等）をパース・参照する実装が行われている。
+`src-tauri/src/commands/install/archive/inspection/analyzer/resource_resolver.rs` および `postprocess.rs` において `*.refreshundeletemask`（`balloon.refreshundeletemask`, `ghost0.refreshundeletemask` 等）の解析および削除保護マスク適用が完全実装済み。
 
 ## 実装箇所
 
-- `src-tauri/src/commands/install/archive/inspection/tests.rs:12` `"balloon.refreshundeletemask".to_string(),`
-- `src-tauri/src/commands/install/archive/inspection/analyzer/resource_resolver.rs:21` `// 1. 無印 (例: balloon.directory, balloon.refresh, balloon.refreshundeletemask)`
-- `crates/ui/src/update/tests/definition_package.rs:133` `balloon0.refreshundeletemask,pref1.txt\n\`
 - `crates/ui/src/update/tests/installer_manifest.rs:33` `balloon.refreshundeletemask,balloon_pref.txt\r\n\`
+- `src-tauri/src/commands/install/archive/inspection/tests.rs:14` `"balloon.refreshundeletemask".to_string(),`
+- `crates/ui/src/update/tests/definition_package/updates_parser.rs:101` `balloon0.refreshundeletemask,pref1.txt\n\`
+- `src-tauri/src/commands/install/archive/inspection/analyzer/resource_resolver.rs:21` `// 1. 無印 (例: balloon.directory, balloon.refresh, balloon.refreshundeletemask)`

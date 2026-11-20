@@ -153,6 +153,25 @@ export interface RawCursorDefinition {
 	cursor: string;
 }
 
+export interface RawSurfTableEntry {
+	surface_id?: number;
+	name?: string;
+}
+
+export interface RawSurfTableGroup {
+	name?: string;
+	entries?: RawSurfTableEntry[];
+}
+
+export interface RawSurfaceTable {
+	charset?: string | null;
+	version?: number;
+	scope?: number | null;
+	options?: string[][];
+	groups?: RawSurfTableGroup[];
+	properties?: Record<string, string>;
+}
+
 export interface RawShellManifest {
 	name?: string;
 	craftman?: string | null;
@@ -162,6 +181,7 @@ export interface RawShellManifest {
 	aliases?: Record<string, number[]>;
 	kero_aliases?: Record<string, number[]>;
 	char_aliases?: Record<string | number, Record<string, number[]>>;
+	surface_table?: RawSurfaceTable | null;
 	sakura_bind_groups?: RawBindGroup[];
 	kero_bind_groups?: RawBindGroup[];
 	collision_sort?: EnumVariantInput;
@@ -600,4 +620,35 @@ export async function parseSurfacesTextWithRust(
 		console.warn("⚠️ Rust parse_surfaces_text 失敗:", err);
 		return null;
 	}
+}
+
+/**
+ * `surfacetable.txt` から `__disabled` グループを除外した表示用グループ一覧を返す
+ */
+export function getVisibleSurfaceTableGroups(
+	table: RawSurfaceTable | null | undefined,
+): RawSurfTableGroup[] {
+	if (!table?.groups) return [];
+	return table.groups.filter((g) => g.name !== "__disabled");
+}
+
+/**
+ * マニフェストの `surface_table` または `surfaces` からサーフィス番号の表示名を解決する
+ */
+export function getSurfaceDisplayName(
+	manifest: RawShellManifest | null | undefined,
+	surfaceId: number,
+): string | null {
+	if (!manifest) return null;
+	if (manifest.surface_table?.groups) {
+		for (const group of manifest.surface_table.groups) {
+			if (group.name === "__disabled") continue;
+			for (const entry of group.entries ?? []) {
+				if (entry.surface_id === surfaceId && entry.name) {
+					return entry.name;
+				}
+			}
+		}
+	}
+	return null;
 }

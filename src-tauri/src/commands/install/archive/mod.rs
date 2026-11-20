@@ -21,6 +21,12 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
 ) -> Result<GhostInfo, String> {
     let inspection = inspect_zip_archive(&mut zip, fallback_name, app_handle)?;
 
+    if inspection.kind() == "package"
+        && let Some(info) = try_extract_multi_package(&mut zip, &inspection, app_handle, password)?
+    {
+        return Ok(info);
+    }
+
     let target_base = resolve_asset_path(inspection.target_base_path(), app_handle)?;
     let target_dir = match inspection.kind() {
         "shell" => {
@@ -95,6 +101,126 @@ pub fn extract_ghost_archive_from_reader<R: std::io::Read + std::io::Seek>(
 
     let info = build_extracted_ghost_info(&target_dir, inspection.safe_dir_name());
     Ok(info)
+}
+
+fn try_extract_multi_package<R: std::io::Read + std::io::Seek>(
+    zip: &mut zip::ZipArchive<R>,
+    inspection: &inspection::InstallInspectionResult,
+    app_handle: &tauri::AppHandle,
+    password: Option<&str>,
+) -> Result<Option<GhostInfo>, String> {
+    use super::utils::{decode_zip_entry_name, parse_zip_entry_descript, sanitize_dir_name};
+
+    let root_prefix = inspection.root_prefix();
+    let mut sub_installs: Vec<(String, usize)> = Vec::new();
+
+    for i in 0..zip.len() {
+        if let Ok(entry) = zip.by_index(i) {
+            let name = decode_zip_entry_name(entry.name_raw()).replace('\\', "/");
+            let lower = name.to_lowercase();
+            if lower.ends_with("/install.txt")
+                && let Some(slash_idx) = name.rfind('/')
+            {
+                let sub_prefix = &name[..=slash_idx];
+                if sub_prefix.starts_with(root_prefix) && sub_prefix != root_prefix {
+                    sub_installs.push((sub_prefix.to_string(), i));
+                }
+            }
+        }
+    }
+
+    if sub_installs.is_empty() {
+        return Ok(None);
+    }
+
+    let mut primary_dir: Option<std::path::PathBuf> = None;
+    let mut primary_name = inspection.safe_dir_name().to_string();
+
+    for (sub_prefix, idx) in sub_installs {
+        let map = if let Ok(mut entry) = zip.by_index(idx) {
+            parse_zip_entry_descript(&mut entry)
+        } else {
+            continue;
+        };
+
+        let sub_name = map
+            .get("name")
+            .cloned()
+            .unwrap_or_else(|| inspection.ghost_name().to_string());
+        let sub_kind = inspection::normalize_install_kind(map.get("type").map(|s| s.as_str()));
+        let raw_dir = map
+            .get("directory")
+            .filter(|s| !s.trim().is_empty())
+            .map(|s| s.as_str())
+            .unwrap_or(&sub_name);
+        let safe_dir = sanitize_dir_name(raw_dir);
+        let alt_safe = sanitize_dir_name(&sub_name);
+        let accept = map.get("accept").map(|s| s.as_str());
+        let refresh = map.get("refresh").is_some_and(|v| v.trim() == "1");
+        let masks: Vec<String> = map
+            .get("refreshundeletemask")
+            .map(|v| {
+                v.split(':')
+                    .map(|s| s.trim().to_string())
+                    .filter(|s| !s.is_empty())
+                    .collect()
+            })
+            .unwrap_or_default();
+
+        let base_str = match sub_kind.as_str() {
+            "balloon" => "assets/balloon",
+            "shell" => "assets/shell",
+            "plugin" => "assets/plugin",
+            "headline" => "assets/headline",
+            _ => "assets/ghost",
+        };
+        let target_base = resolve_asset_path(base_str, app_handle)?;
+        let target_dir = match sub_kind.as_str() {
+            "shell" => {
+                let ghosts_base = resolve_asset_path("ghost", app_handle)?;
+                let matched = resolve_target_ghost_dir(&ghosts_base, accept).unwrap_or(target_base);
+                let shell_base = matched.join("shell");
+                if shell_base.join(&alt_safe).exists() {
+                    shell_base.join(&alt_safe)
+                } else {
+                    shell_base.join(&safe_dir)
+                }
+            }
+            "supplement" => {
+                let ghosts_base = resolve_asset_path("ghost", app_handle)?;
+                resolve_target_ghost_dir(&ghosts_base, accept).unwrap_or(target_base)
+            }
+            _ => {
+                if target_base.join(&alt_safe).exists() {
+                    target_base.join(&alt_safe)
+                } else {
+                    target_base.join(&safe_dir)
+                }
+            }
+        };
+
+        if !target_dir.exists() {
+            std::fs::create_dir_all(&target_dir)
+                .map_err(|e| format!("Failed to create destination dir: {}", e))?;
+        }
+        if refresh {
+            perform_refresh_cleanup(&target_dir, &masks);
+        }
+
+        extract_zip_entries(zip, &sub_prefix, &target_dir, &[], password)?;
+        if sub_kind == "balloon" {
+            flatten_balloon_directory(&target_dir)?;
+        }
+        process_delete_txt(&target_dir);
+
+        if primary_dir.is_none() || sub_kind == "ghost" {
+            primary_dir = Some(target_dir);
+            primary_name = safe_dir;
+        }
+    }
+
+    let final_dir = primary_dir.ok_or_else(|| "No sub-packages extracted".to_string())?;
+    Ok(Some(build_extracted_ghost_info(&final_dir, &primary_name)))
 }
 
 fn resolve_target_ghost_dir(

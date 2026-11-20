@@ -2,11 +2,11 @@
 
 - **規格**: [install.md](../../../../ukadoc-spec/manual/install.md) ([公式版](https://ukatech.shillest.net/ukadoc-spec/manual/install/))
 - **検索語**: buildInstallCompleteAllArgs
-- **対応状況**: ⚠️ 一部対応
+- **対応状況**: ✅ 実装済
 
 ## 突合結果
 
-`inspect_zip_archive` が `type,package` を受理し、`crates/nanai-core/src/install_protocol/helpers.rs`・`crates/ui/src/update/types/install.rs`・`ui/ts/core/actions/install-protocol.ts` に複数インストール判定および `OnInstallCompleteAll` 引数生成を実装済み。ただし実展開処理は最浅階層の単一 `install.txt` のみを解析しており、パッケージ内各サブディレクトリにある個別 `install.txt` を再帰的に処理する多段展開は未実装。
+`inspect_zip_archive` が `type,package` を受理し、`crates/nanai-core/src/install_protocol/helpers.rs`・`crates/ui/src/update/types/install.rs`・`ui/ts/core/actions/install-protocol.ts` に複数インストール判定および `OnInstallCompleteAll` 引数生成を実装済み。実展開処理でも `try_extract_multi_package` により、パッケージ内各サブディレクトリにある個別 `install.txt` を順次解析・展開する多段展開に対応している。
 
 ## 実装箇所
 

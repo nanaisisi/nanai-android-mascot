@@ -6,7 +6,7 @@
 
 ## 突合結果
 
-`parse_surface_table` と `Shell::load` により `surfacetable.txt`（`charset`・`version`・`scope`・`option`・`group`・`__parts` 除外・`__disabled` グループ・名前解決）をパースし、`ShellManifest::surface_table` へ格納するバックエンド処理と単体テストを実装済み。一方、フロントエンド UI（`ui/ts/` のサーフィステスト機能等）での表示・利用は未接続。
+`parse_surface_table` と `Shell::load` により `surfacetable.txt`（`charset`・`version`・`scope`・`option`・`group`・`__parts` 除外・`__disabled` グループ・名前解決）をパースし、`ShellManifest::surface_table` へ格納するバックエンド処理と単体テストを実装済み。フロントエンド側も `ui/ts/surface/shell-manifest.ts` に `RawSurfaceTable` 型および `getVisibleSurfaceTableGroups` / `getSurfaceDisplayName` ヘルパーを実装済み（サーフィステスト専用 UI モーダルでの表示は未接続）。
 
 ## 実装箇所
 
@@ -16,3 +16,4 @@
 - `crates/ui/src/manifest/shell_manifest.rs:29` `pub(crate) surface_table: Option<SurfaceTable>,`
 - `crates/ui/src/shell/tests.rs:39` `let table = shell.surface_table.as_ref().unwrap();`
 - `crates/ui/src/surfacetable/tests.rs:98` `fn test_parse_mock_nanai_file() {`
+- `ui/ts/surface/shell-manifest.ts` `RawSurfaceTable`, `getVisibleSurfaceTableGroups`, `getSurfaceDisplayName`

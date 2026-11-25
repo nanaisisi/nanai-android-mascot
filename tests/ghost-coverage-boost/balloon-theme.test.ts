@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("balloon-window and balloon-window/theme edge cases", () => {
 	it("exercises balloon-window and balloon-window/theme edge branches", async () => {
@@ -60,6 +60,35 @@ describe("balloon-window and balloon-window/theme edge cases", () => {
 });
 
 describe("balloonp*def* and balloonc* skin loading", () => {
+	const origWindow = globalThis.window;
+	const origDocument = globalThis.document;
+	const origTauriInternals = (globalThis as Record<string, unknown>)
+		.__TAURI_INTERNALS__;
+
+	beforeEach(() => {
+		if (typeof globalThis.window === "undefined") {
+			(globalThis as unknown as Record<string, unknown>).window = globalThis;
+		}
+		if (typeof globalThis.document === "undefined") {
+			const cssMap = new Map<string, string>();
+			(globalThis as unknown as Record<string, unknown>).document = {
+				documentElement: {
+					style: {
+						setProperty: (k: string, v: string) => cssMap.set(k, v),
+						getPropertyValue: (k: string) => cssMap.get(k) ?? "",
+						removeProperty: (k: string) => cssMap.delete(k),
+					},
+				},
+			};
+		}
+	});
+
+	afterEach(() => {
+		(globalThis as unknown as Record<string, unknown>).window = origWindow;
+		(globalThis as unknown as Record<string, unknown>).document = origDocument;
+		(globalThis as Record<string, unknown>).__TAURI_INTERNALS__ =
+			origTauriInternals;
+	});
 	it("resolves balloonp2def0.png + balloonp2def0.pna and sets --balloon-inputbox-bg-image from balloonc0.png + balloonc0.pna", async () => {
 		const loadedFiles: string[] = [];
 		const mockInvoke = vi.fn(async (cmd: string, args?: { file?: string }) => {

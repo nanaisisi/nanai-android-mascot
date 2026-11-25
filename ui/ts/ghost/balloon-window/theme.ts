@@ -52,6 +52,13 @@ function clearCssProperty(el: HTMLElement | null, prop: string) {
 	}
 }
 
+function setCssProperty(el: HTMLElement | null, prop: string, value: string) {
+	if (!el?.style) return;
+	if (typeof el.style.setProperty === "function") {
+		el.style.setProperty(prop, value);
+	}
+}
+
 function readCssProperty(el: HTMLElement | null, prop: string): string {
 	if (!el?.style) return "";
 	if (typeof el.style.getPropertyValue === "function") {
@@ -332,19 +339,15 @@ export async function loadBalloonSkinImages(
 				}).catch(() => null)) as string | null);
 		}
 		const ballooncImage = await processChromaKey(ballooncRaw, ballooncPna);
-		if (typeof document !== "undefined" && document.documentElement?.style) {
-			document.documentElement.style.setProperty(
+		if (typeof document !== "undefined") {
+			setCssProperty(
+				document.documentElement,
 				"--balloon-inputbox-bg-image",
 				`url("${ballooncImage}")`,
 			);
 		}
-	} else if (
-		typeof document !== "undefined" &&
-		document.documentElement?.style
-	) {
-		document.documentElement.style.removeProperty(
-			"--balloon-inputbox-bg-image",
-		);
+	} else if (typeof document !== "undefined") {
+		clearCssProperty(document.documentElement, "--balloon-inputbox-bg-image");
 	}
 
 	return bgImage;
@@ -468,7 +471,7 @@ export async function applyBalloonDescript({
 
 			root.style.setProperty("--balloon-bg-image", `url("${bgImage}")`);
 			if (balloonBox?.style) {
-				balloonBox.style.setProperty("--balloon-bg-image", `url("${bgImage}")`);
+				setCssProperty(balloonBox, "--balloon-bg-image", `url("${bgImage}")`);
 				balloonBox.style.backgroundImage = `url("${bgImage}")`;
 			}
 		}
@@ -508,13 +511,13 @@ export async function applyBalloonDescript({
 		root.style.setProperty("--balloon-min-height", `${baseHeight}px`);
 		root.style.setProperty("--balloon-max-height", `${baseHeight}px`);
 		if (balloonBox?.style) {
-			balloonBox.style.setProperty("--balloon-padding", paddingValue);
+			setCssProperty(balloonBox, "--balloon-padding", paddingValue);
 			balloonBox.style.padding = paddingValue;
-			balloonBox.style.setProperty("--balloon-max-width", "100%");
-			balloonBox.style.setProperty("--balloon-width", `${baseWidth}px`);
-			balloonBox.style.setProperty("--balloon-height", `${baseHeight}px`);
-			balloonBox.style.setProperty("--balloon-min-height", `${baseHeight}px`);
-			balloonBox.style.setProperty("--balloon-max-height", `${baseHeight}px`);
+			setCssProperty(balloonBox, "--balloon-max-width", "100%");
+			setCssProperty(balloonBox, "--balloon-width", `${baseWidth}px`);
+			setCssProperty(balloonBox, "--balloon-height", `${baseHeight}px`);
+			setCssProperty(balloonBox, "--balloon-min-height", `${baseHeight}px`);
+			setCssProperty(balloonBox, "--balloon-max-height", `${baseHeight}px`);
 		}
 
 		const textEl = document.getElementById("balloon-text");
@@ -591,17 +594,15 @@ export async function applyBalloonDescript({
 								const arrowDims = await getImageDimensions(processed);
 								const cssUrl = `url("${processed}")`;
 								root.style.setProperty(imageVar, cssUrl);
-								balloonBox?.style?.setProperty(imageVar, cssUrl);
+								setCssProperty(balloonBox, imageVar, cssUrl);
 								if (arrowDims.width > 0) {
 									root.style.setProperty(widthVar, `${arrowDims.width}px`);
-									balloonBox?.style?.setProperty(
-										widthVar,
-										`${arrowDims.width}px`,
-									);
+									setCssProperty(balloonBox, widthVar, `${arrowDims.width}px`);
 								}
 								if (arrowDims.height > 0) {
 									root.style.setProperty(heightVar, `${arrowDims.height}px`);
-									balloonBox?.style?.setProperty(
+									setCssProperty(
+										balloonBox,
 										heightVar,
 										`${arrowDims.height}px`,
 									);

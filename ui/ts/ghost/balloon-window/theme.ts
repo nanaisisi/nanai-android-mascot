@@ -284,8 +284,24 @@ export async function loadBalloonSkinImages(
 		}
 	}
 
+	const chromaOptions =
+		typeof document !== "undefined"
+			? {
+					useSelfAlpha:
+						readCssProperty(
+							document.documentElement,
+							"--balloon-use-self-alpha",
+						) === "1",
+					paintTransparentRegionBlack:
+						readCssProperty(
+							document.documentElement,
+							"--balloon-paint-black",
+						) === "1",
+				}
+			: {};
+
 	const bgImage = bgImageRaw
-		? await processChromaKey(bgImageRaw, pnaImage)
+		? await processChromaKey(bgImageRaw, pnaImage, undefined, chromaOptions)
 		: null;
 
 	// オプションアセット (balloonc, arrow0/1, sstp, online) のロード試行
@@ -338,7 +354,12 @@ export async function loadBalloonSkinImages(
 					file: "balloonc.pna",
 				}).catch(() => null)) as string | null);
 		}
-		const ballooncImage = await processChromaKey(ballooncRaw, ballooncPna);
+		const ballooncImage = await processChromaKey(
+			ballooncRaw,
+			ballooncPna,
+			undefined,
+			chromaOptions,
+		);
 		if (typeof document !== "undefined") {
 			setCssProperty(
 				document.documentElement,
@@ -443,6 +464,53 @@ export async function applyBalloonDescript({
 		applyLayoutProperties(balloonBox || root, props, instanceContext);
 		applyFontProperties(balloonBox || root, props, instanceContext);
 		applyAssetProperties(balloonBox || root, props, instanceContext);
+
+		const styleSource = balloonBox || root;
+		const overlayOutside =
+			readCssProperty(styleSource, "--balloon-overlay-outside") === "1";
+		const useInputAlpha =
+			readCssProperty(styleSource, "--balloon-use-input-alpha") === "1";
+		const disableFont =
+			readCssProperty(styleSource, "--balloon-disable-font") === "1";
+		const balloonAlignment = readCssProperty(
+			styleSource,
+			"--balloon-alignment",
+		);
+		const balloonSyncScale =
+			readCssProperty(styleSource, "--balloon-syncscale") === "1";
+		const balloonOffsetX = readCssProperty(styleSource, "--balloon-offset-x");
+		const balloonOffsetY = readCssProperty(styleSource, "--balloon-offset-y");
+		const balloonWindowPosX = readCssProperty(
+			styleSource,
+			"--balloon-windowpos-x",
+		);
+		const balloonWindowPosY = readCssProperty(
+			styleSource,
+			"--balloon-windowpos-y",
+		);
+		const fontOutline =
+			readCssProperty(styleSource, "--balloon-font-outline") === "1";
+		if (balloonBox) {
+			if (balloonBox.style) {
+				balloonBox.style.overflow = overlayOutside ? "visible" : "";
+			}
+			if (balloonBox.dataset) {
+				balloonBox.dataset.overlayOutside = overlayOutside ? "1" : "0";
+				balloonBox.dataset.useInputAlpha = useInputAlpha ? "1" : "0";
+				balloonBox.dataset.disableFont = disableFont ? "1" : "0";
+				balloonBox.dataset.balloonAlignment = balloonAlignment;
+				balloonBox.dataset.balloonSyncScale = balloonSyncScale ? "1" : "0";
+				balloonBox.dataset.balloonOffsetX = balloonOffsetX;
+				balloonBox.dataset.balloonOffsetY = balloonOffsetY;
+				balloonBox.dataset.balloonWindowPosX = balloonWindowPosX;
+				balloonBox.dataset.balloonWindowPosY = balloonWindowPosY;
+				balloonBox.dataset.fontOutline = fontOutline ? "1" : "0";
+			}
+		}
+		if (disableFont) {
+			clearCssProperty(root, "--balloon-font-family");
+			clearCssProperty(balloonBox, "--balloon-font-family");
+		}
 
 		const isBalloonDontMove =
 			props["balloon.dontmove"] === "1" ||

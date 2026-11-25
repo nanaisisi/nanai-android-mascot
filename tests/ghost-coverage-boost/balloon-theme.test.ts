@@ -131,6 +131,165 @@ describe("balloonp*def* and balloonc* skin loading", () => {
 		).toContain("data:image/png;base64,c0");
 	});
 
+	it("reads --balloon-use-self-alpha and --balloon-paint-black during skin loading", async () => {
+		document.documentElement.style.setProperty("--balloon-use-self-alpha", "1");
+		document.documentElement.style.setProperty("--balloon-paint-black", "1");
+
+		const mockInvoke = vi.fn(async (cmd: string, args?: { file?: string }) => {
+			if (cmd === "load_balloon_image" && args?.file === "balloons0.png") {
+				return "data:image/png;base64,alpha_black";
+			}
+			return null;
+		});
+
+		(globalThis as Record<string, unknown>).__TAURI_INTERNALS__ = {
+			metadata: { currentWindow: { label: "balloon_window_0" } },
+			invoke: mockInvoke,
+		};
+		(window as unknown as Record<string, unknown>).__TAURI_INTERNALS__ = {
+			metadata: { currentWindow: { label: "balloon_window_0" } },
+			invoke: mockInvoke,
+		};
+
+		const { loadBalloonSkinImages } = await import(
+			"../../ui/ts/ghost/balloon-window/theme.js"
+		);
+		const bg = await loadBalloonSkinImages("ivory", 0, "left");
+		expect(bg).toBe("data:image/png;base64,alpha_black");
+	});
+
+	it("applies --balloon-overlay-outside, --balloon-use-input-alpha, and --balloon-disable-font", async () => {
+		const cssMap = new Map<string, string>();
+		const balloonBox = {
+			style: {
+				overflow: "",
+				backgroundImage: "",
+				padding: "",
+				setProperty: (k: string, v: string) => cssMap.set(k, v),
+				getPropertyValue: (k: string) => cssMap.get(k) ?? "",
+				removeProperty: (k: string) => cssMap.delete(k),
+			},
+			dataset: {} as Record<string, string>,
+		};
+		(globalThis as unknown as Record<string, unknown>).document = {
+			documentElement: {
+				setAttribute: () => {},
+				style: {
+					setProperty: (k: string, v: string) => cssMap.set(k, v),
+					getPropertyValue: (k: string) => cssMap.get(k) ?? "",
+					removeProperty: (k: string) => cssMap.delete(k),
+				},
+			},
+			body: { className: "" },
+			getElementById: (id: string) =>
+				id === "balloon-box" ? balloonBox : null,
+			querySelector: () => null,
+		};
+
+		const mockInvoke = vi.fn(async (cmd: string) => {
+			if (cmd === "balloon_manifest") {
+				return {
+					"font.name": "Meiryo",
+					"disable.font": "1",
+					use_input_alpha: "1",
+					overlay_outside_balloon: "1",
+				};
+			}
+			return null;
+		});
+		(globalThis as Record<string, unknown>).__TAURI_INTERNALS__ = {
+			metadata: { currentWindow: { label: "balloon_window_0" } },
+			invoke: mockInvoke,
+		};
+		(window as unknown as Record<string, unknown>).__TAURI_INTERNALS__ = {
+			metadata: { currentWindow: { label: "balloon_window_0" } },
+			invoke: mockInvoke,
+		};
+
+		const { applyBalloonDescript } = await import(
+			"../../ui/ts/ghost/balloon-window/theme.js"
+		);
+		await applyBalloonDescript({
+			theme: "nam",
+			scopeId: 0,
+			currentUserScale: 1.0,
+		});
+
+		expect(balloonBox.style.overflow).toBe("visible");
+		expect(balloonBox.dataset.overlayOutside).toBe("1");
+		expect(balloonBox.dataset.useInputAlpha).toBe("1");
+		expect(balloonBox.dataset.disableFont).toBe("1");
+	});
+
+	it("applies alignment, syncscale, offset, windowposition, and font.outline to balloonBox dataset", async () => {
+		const cssMap = new Map<string, string>();
+		const balloonBox = {
+			style: {
+				overflow: "",
+				backgroundImage: "",
+				padding: "",
+				setProperty: (k: string, v: string) => cssMap.set(k, v),
+				getPropertyValue: (k: string) => cssMap.get(k) ?? "",
+				removeProperty: (k: string) => cssMap.delete(k),
+			},
+			dataset: {} as Record<string, string>,
+		};
+		(globalThis as unknown as Record<string, unknown>).document = {
+			documentElement: {
+				setAttribute: () => {},
+				style: {
+					setProperty: (k: string, v: string) => cssMap.set(k, v),
+					getPropertyValue: (k: string) => cssMap.get(k) ?? "",
+					removeProperty: (k: string) => cssMap.delete(k),
+				},
+			},
+			body: { className: "" },
+			getElementById: (id: string) =>
+				id === "balloon-box" ? balloonBox : null,
+			querySelector: () => null,
+		};
+
+		const mockInvoke = vi.fn(async (cmd: string) => {
+			if (cmd === "balloon_manifest") {
+				return {
+					"balloon.alignment": "top",
+					"balloon.syncscale": "1",
+					"balloon.offsetx": "12",
+					"balloon.offsety": "-8",
+					"windowposition.x": "30",
+					"windowposition.y": "40",
+					"font.outline": "1",
+				};
+			}
+			return null;
+		});
+		(globalThis as Record<string, unknown>).__TAURI_INTERNALS__ = {
+			metadata: { currentWindow: { label: "balloon_window_0" } },
+			invoke: mockInvoke,
+		};
+		(window as unknown as Record<string, unknown>).__TAURI_INTERNALS__ = {
+			metadata: { currentWindow: { label: "balloon_window_0" } },
+			invoke: mockInvoke,
+		};
+
+		const { applyBalloonDescript } = await import(
+			"../../ui/ts/ghost/balloon-window/theme.js"
+		);
+		await applyBalloonDescript({
+			theme: "nam",
+			scopeId: 0,
+			currentUserScale: 1.0,
+		});
+
+		expect(balloonBox.dataset.balloonAlignment).toBe("top");
+		expect(balloonBox.dataset.balloonSyncScale).toBe("1");
+		expect(balloonBox.dataset.balloonOffsetX).toBe("12px");
+		expect(balloonBox.dataset.balloonOffsetY).toBe("-8px");
+		expect(balloonBox.dataset.balloonWindowPosX).toBe("30px");
+		expect(balloonBox.dataset.balloonWindowPosY).toBe("40px");
+		expect(balloonBox.dataset.fontOutline).toBe("1");
+	});
+
 	it("falls back to balloonk0.png when balloonp2def* is absent and clears --balloon-inputbox-bg-image when balloonc0.png is absent", async () => {
 		const loadedFiles: string[] = [];
 		const mockInvoke = vi.fn(async (cmd: string, args?: { file?: string }) => {

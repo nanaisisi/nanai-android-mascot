@@ -6,7 +6,7 @@ import { projectRoot, setHasError } from "./config.ts";
  * Phase B 解消対象の Write-only `--balloon-*` CSS 変数ラチェット上限。
  * 既実装の消費側接続を進めるたびにこの上限を引き下げる。
  */
-export const MAX_UNCONSUMED_BALLOON_CSS_VARS = 17;
+export const MAX_UNCONSUMED_BALLOON_CSS_VARS = 5;
 
 const METADATA_ONLY_VARS = new Set([
 	"--balloon-id",

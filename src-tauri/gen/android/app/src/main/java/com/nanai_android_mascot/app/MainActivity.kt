@@ -15,12 +15,15 @@ import androidx.core.content.ContextCompat
 import java.lang.ref.WeakReference
 
 class MainActivity : TauriActivity() {
+  private var hasPromptedOverlayThisSession = false
+  private var isOverlayDialogShowing = false
+
   override fun onCreate(savedInstanceState: Bundle?) {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
     currentActivity = WeakReference(this)
     requestNotificationPermission()
-    requestOverlayPermission(savedInstanceState == null)
+    requestOverlayPermission()
   }
 
   override fun onDestroy() {
@@ -34,12 +37,15 @@ class MainActivity : TauriActivity() {
     super.onResume()
     handleServiceIntent(intent)
     if (Settings.canDrawOverlays(this)) {
+      hasPromptedOverlayThisSession = false
       val intent = Intent(this, NanaiForegroundService::class.java)
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         startForegroundService(intent)
       } else {
         startService(intent)
       }
+    } else if (!hasPromptedOverlayThisSession) {
+      requestOverlayPermission()
     }
   }
 
@@ -78,12 +84,15 @@ class MainActivity : TauriActivity() {
     }
   }
 
-  private fun requestOverlayPermission(isFirstCreation: Boolean) {
-    if (!Settings.canDrawOverlays(this) && isFirstCreation) {
+  private fun requestOverlayPermission() {
+    if (!Settings.canDrawOverlays(this) && !isOverlayDialogShowing) {
+      hasPromptedOverlayThisSession = true
+      isOverlayDialogShowing = true
       AlertDialog.Builder(this)
         .setTitle("画面最前面表示の権限について")
         .setMessage("マスコットを他のアプリの上に表示するため、「他のアプリの上に重ねて表示」権限が必要です。次の画面で許可してください。")
         .setPositiveButton("設定を開く") { _, _ ->
+          isOverlayDialogShowing = false
           startActivity(
             Intent(
               Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
@@ -91,7 +100,12 @@ class MainActivity : TauriActivity() {
             )
           )
         }
-        .setNegativeButton("あとで", null)
+        .setNegativeButton("あとで") { _, _ ->
+          isOverlayDialogShowing = false
+        }
+        .setOnCancelListener {
+          isOverlayDialogShowing = false
+        }
         .show()
     }
   }

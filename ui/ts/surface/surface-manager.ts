@@ -14,7 +14,13 @@ import {
 } from "./bind-menu.js";
 import {
 	collisionRecord,
+	getAlignmentToDesktop,
+	getSerikoDpi,
+	getSerikoDpiScale,
+	getSerikoStickyWindows,
+	getSerikoZOrder,
 	getShellManifest,
+	isSerikoCrossfadeDisabled,
 	manifestToSurfaceData,
 	parseSurfacesTextWithRust,
 	type RawShellManifest,
@@ -594,6 +600,8 @@ function scanSurfacesTxt(
 		iconRects,
 		collisionSort,
 		animationSort,
+		nodragCollisions,
+		nocontextmenuCollisions,
 	};
 }
 
@@ -992,6 +1000,37 @@ export class SurfaceManager {
 			useSelfAlpha,
 			paintTransparentRegionBlack,
 		});
+	}
+
+	getSerikoDpi(): number {
+		return getSerikoDpi(this.shellManifest as RawShellManifest | null);
+	}
+
+	getSerikoDpiScale(): number {
+		return getSerikoDpiScale(this.shellManifest as RawShellManifest | null);
+	}
+
+	isSerikoCrossfadeDisabled(): boolean {
+		return isSerikoCrossfadeDisabled(
+			this.shellManifest as RawShellManifest | null,
+		);
+	}
+
+	getSerikoZOrder(): number[] {
+		return getSerikoZOrder(this.shellManifest as RawShellManifest | null);
+	}
+
+	getSerikoStickyWindows(): number[] {
+		return getSerikoStickyWindows(
+			this.shellManifest as RawShellManifest | null,
+		);
+	}
+
+	getAlignmentToDesktop(scopeId = 0): string | undefined {
+		return getAlignmentToDesktop(
+			this.shellManifest as RawShellManifest | null,
+			scopeId,
+		);
 	}
 
 	activeBindAnimationIds(scopeId = 0): number[] {

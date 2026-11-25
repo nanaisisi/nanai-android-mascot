@@ -128,6 +128,13 @@ fn test_property_evaluation() {
         evaluate_property_query("currentghost.seriko.surfacelist.all"),
         "0,1,10"
     );
+    assert_eq!(evaluate_property_query("currentghost.seriko.zorder"), "");
+    assert_eq!(
+        evaluate_property_query("currentghost.seriko.sticky-window"),
+        ""
+    );
+    assert_eq!(evaluate_property_query("currentghost.status"), "");
+    assert_eq!(evaluate_property_query("currentghost.sound.count"), "0");
     assert_eq!(
         evaluate_property_query("callsstpsendboxbutton.caption"),
         "1"

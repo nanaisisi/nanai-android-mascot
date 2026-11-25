@@ -309,7 +309,7 @@ export const menuThemeRenderer = {
 					applyAlignment(mt.background_alignment, "menu-bg");
 					if (
 						!mt.background_color &&
-						rootStyle.getPropertyValue("--menu-bg-repeat") !== "repeat"
+						rootStyle.getPropertyValue?.("--menu-bg-repeat") !== "repeat"
 					) {
 						const cachedBg = assetCache.get(bgUrl, "menu");
 						if (cachedBg) {

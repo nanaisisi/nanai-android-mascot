@@ -299,7 +299,11 @@ export const ghostSurfaceMethods = {
 	},
 
 	applyGhostCursor() {
-		if (typeof document === "undefined") return;
+		if (
+			typeof document === "undefined" ||
+			typeof document.querySelectorAll !== "function"
+		)
+			return;
 		const cursors = this.currentGhost?.assets?.cursors;
 		const cursorValue =
 			Array.isArray(cursors) && cursors.length > 0

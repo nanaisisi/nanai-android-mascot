@@ -252,7 +252,8 @@ export function createNativeDragSession() {
 		nativeWindowOrigin = null;
 		snapCtx = null;
 		const popup =
-			typeof document !== "undefined"
+			typeof document !== "undefined" &&
+			typeof document.getElementById === "function"
 				? document.getElementById("coord-popup")
 				: null;
 		if (popup) {

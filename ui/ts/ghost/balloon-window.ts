@@ -563,7 +563,7 @@ export function initBalloonWindow() {
 		className: string,
 		visible: boolean,
 	): void {
-		if (!balloonBox) return;
+		if (!balloonBox || typeof balloonBox.querySelector !== "function") return;
 		const existing = balloonBox.querySelector(`.${className}`);
 		if (visible) {
 			if (!existing) {

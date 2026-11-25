@@ -84,6 +84,10 @@ pub struct ParsedSurfacesManifest {
     pub(crate) animations: BTreeMap<String, Vec<AnimationOutput>>,
     pub(crate) collision_sort: String,
     pub(crate) animation_sort: String,
+    #[serde(default)]
+    pub(crate) nodrag_collisions: BTreeMap<String, Vec<String>>,
+    #[serde(default)]
+    pub(crate) nocontextmenu_collisions: BTreeMap<String, Vec<String>>,
 }
 
 impl ParsedSurfacesManifest {
@@ -105,5 +109,13 @@ impl ParsedSurfacesManifest {
 
     pub fn animation_sort(&self) -> &str {
         &self.animation_sort
+    }
+
+    pub fn nodrag_collisions(&self) -> &BTreeMap<String, Vec<String>> {
+        &self.nodrag_collisions
+    }
+
+    pub fn nocontextmenu_collisions(&self) -> &BTreeMap<String, Vec<String>> {
+        &self.nocontextmenu_collisions
     }
 }

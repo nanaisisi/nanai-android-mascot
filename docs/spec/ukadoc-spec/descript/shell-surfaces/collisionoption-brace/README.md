@@ -2,6 +2,6 @@
 
 | 項目 | 検索語 | 対応状況 |
 | :--- | :----- | :------: |
-| [collisionoptionブレス記述例](introduction_collisionoptionbrace.md) | collisionoption | ❌ 未実装 |
-| [nocontextmenu*,当たり判定名](nocontextmenu-star.md) | nocontextmenu | ❌ 未実装 |
-| [nodrag*,当たり判定名](nodrag-star.md) | nodrag | ❌ 未実装 |
+| [collisionoptionブレス記述例](introduction_collisionoptionbrace.md) | collisionoption | ✅ 実装済 |
+| [nocontextmenu*,当たり判定名](nocontextmenu-star.md) | nocontextmenu | ✅ 実装済 |
+| [nodrag*,当たり判定名](nodrag-star.md) | nodrag | ✅ 実装済 |

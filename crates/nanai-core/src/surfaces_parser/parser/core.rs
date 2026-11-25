@@ -16,12 +16,53 @@ pub fn parse_surfaces_txt(text: &str) -> ParsedSurfacesManifest {
     let mut animations: BTreeMap<String, Vec<AnimationOutput>> = BTreeMap::new();
     let mut collision_sort = "none".to_string();
     let mut animation_sort = "none".to_string();
+    let mut nodrag_collisions: BTreeMap<String, Vec<String>> = BTreeMap::new();
+    let mut nocontextmenu_collisions: BTreeMap<String, Vec<String>> = BTreeMap::new();
 
     let mut current_surfaces: Vec<String> = vec!["default".to_string()];
+    let mut current_collisionoption_scope: Option<String> = None;
 
     for line in text.lines() {
         let trimmed = line.trim();
-        if trimmed.is_empty() || trimmed.starts_with("//") || trimmed == "{" || trimmed == "}" {
+        if trimmed == "}" {
+            current_collisionoption_scope = None;
+            continue;
+        }
+        if trimmed.is_empty() || trimmed.starts_with("//") || trimmed == "{" {
+            continue;
+        }
+
+        let header_no_brace = trimmed.trim_end_matches('{').trim();
+        let lower_header = header_no_brace.to_ascii_lowercase();
+        if let Some(scope_raw) = lower_header.strip_suffix(".collisionoption") {
+            let scope = scope_raw.trim().to_string();
+            if !scope.is_empty() {
+                current_collisionoption_scope = Some(scope);
+                continue;
+            }
+        }
+
+        if let Some(scope) = current_collisionoption_scope.as_ref() {
+            if let Some((key, val)) = trimmed.split_once(',') {
+                let k_norm = key.trim().to_ascii_lowercase();
+                let target_name = val.trim().to_string();
+                if !target_name.is_empty() {
+                    if k_norm.starts_with("nodrag") {
+                        nodrag_collisions
+                            .entry(scope.clone())
+                            .or_default()
+                            .push(target_name);
+                        continue;
+                    }
+                    if k_norm.starts_with("nocontextmenu") {
+                        nocontextmenu_collisions
+                            .entry(scope.clone())
+                            .or_default()
+                            .push(target_name);
+                        continue;
+                    }
+                }
+            }
             continue;
         }
 
@@ -80,5 +121,7 @@ pub fn parse_surfaces_txt(text: &str) -> ParsedSurfacesManifest {
         animations,
         collision_sort,
         animation_sort,
+        nodrag_collisions,
+        nocontextmenu_collisions,
     }
 }

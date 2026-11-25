@@ -2,6 +2,7 @@ package com.nanai_android_mascot.app
 
 import android.Manifest
 import android.app.AlertDialog
+import android.app.WallpaperManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -24,10 +25,15 @@ class MainActivity : TauriActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
-    window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+    applyOsWallpaperBackground()
     currentActivity = WeakReference(this)
     requestNotificationPermission()
     requestOverlayPermission()
+  }
+
+  private fun applyOsWallpaperBackground() {
+    window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WALLPAPER)
+    window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
   }
 
   override fun onWebViewCreate(webView: WebView) {

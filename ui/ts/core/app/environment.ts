@@ -38,8 +38,7 @@ export function applyAndroidBackgroundImage(dataUrl?: string | null): void {
 		document.body.style.backgroundPosition = "center";
 		document.body.style.backgroundRepeat = "no-repeat";
 	} else {
-		document.body.style.backgroundImage =
-			"linear-gradient(135deg, #1e293b 0%, #0f172a 100%)";
+		document.body.style.backgroundImage = "";
 	}
 }
 

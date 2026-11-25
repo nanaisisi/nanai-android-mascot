@@ -30,11 +30,16 @@ class NanaiForegroundService : Service() {
   }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-    if (intent?.action == ACTION_STOP) {
-      removeOverlayWindow()
-      stopForeground(STOP_FOREGROUND_REMOVE)
-      stopSelf()
-      return START_NOT_STICKY
+    when (intent?.action) {
+      ACTION_STOP -> {
+        removeOverlayWindow()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
+        return START_NOT_STICKY
+      }
+      ACTION_REPOST_NOTIFICATION -> {
+        startForeground(NOTIFICATION_ID, buildNotification())
+      }
     }
     ensureOverlayWindow()
     return START_STICKY
@@ -149,13 +154,23 @@ class NanaiForegroundService : Service() {
       Intent(this, NanaiForegroundService::class.java).setAction(ACTION_STOP),
       PendingIntent.FLAG_UPDATE_CURRENT or pendingIntentImmutableFlag()
     )
+    val repostIntent = PendingIntent.getService(
+      this,
+      3,
+      Intent(this, NanaiForegroundService::class.java).setAction(ACTION_REPOST_NOTIFICATION),
+      PendingIntent.FLAG_UPDATE_CURRENT or pendingIntentImmutableFlag()
+    )
 
     return NotificationCompat.Builder(this, CHANNEL_ID)
       .setSmallIcon(android.R.drawable.ic_dialog_info)
       .setContentTitle("Nanai Android Mascot が常駐中")
       .setContentText("ゴースト: ナナイ (タップでメニュー表示)")
       .setContentIntent(contentIntent)
+      .setDeleteIntent(repostIntent)
       .setOngoing(true)
+      .setAutoCancel(false)
+      .setOnlyAlertOnce(true)
+      .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
       .addAction(android.R.drawable.ic_menu_view, "表示", contentIntent)
       .addAction(android.R.drawable.ic_menu_close_clear_cancel, "隠す", hideIntent)
       .addAction(android.R.drawable.ic_menu_close_clear_cancel, "終了", stopIntent)
@@ -187,5 +202,6 @@ class NanaiForegroundService : Service() {
     private const val CHANNEL_ID = "nanai_mascot_service"
     private const val NOTIFICATION_ID = 1001
     private const val ACTION_STOP = "com.nanai_android_mascot.app.STOP_SERVICE"
+    private const val ACTION_REPOST_NOTIFICATION = "com.nanai_android_mascot.app.REPOST_NOTIFICATION"
   }
 }

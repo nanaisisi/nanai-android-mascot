@@ -1,3 +1,3 @@
 type,ghost
-name,sample
-directory,sample
+name,mock_nanai
+directory,mock_nanai

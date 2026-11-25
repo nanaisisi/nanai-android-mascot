@@ -1,0 +1,42 @@
+# Files excluded when creating the .nar (gitignore syntax).
+# Used by SSP and by build-nar.ps1 of ukagaka-developer. .updateignore includes this file.
+# https://ukatech.shillest.net/ukadoc-spec/descript_install.html
+
+# git metadata
+.git
+.gitmodules
+
+# needed only by network updates (.updateignore includes it again)
+/delete.txt
+
+# network update files
+updates2.dau
+updates.txt
+
+# runtime data (SATORI writes the save data when the ghost is closed)
+profile/
+satori_savedata.txt
+satori_savedata.sat
+satori_savedata.tmp
+satori_savebackup.txt
+satori_savebackup.sat
+
+# files for developing the ghost with ukagaka-developer (not shipped in the nar or in network updates)
+/AGENTS.md
+/CLAUDE.md
+/GHOST.md
+/.mcp.json
+/.claude/
+/.agents/
+/build/
+
+# files of the repository (git, editor, GitHub); the nar does not need them
+/.github/
+/.gitignore
+/.gitattributes
+/.editorconfig
+/.narignore
+/.updateignore
+
+# balloon images of sstp.ps1 -Balloon, left only when the script was stopped midway
+/ghost/master/devkit-balloon-*/

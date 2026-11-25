@@ -113,7 +113,7 @@ test("settingsMethods coverage for loadSettings, applySettings, showBalloon, hid
 	delete globalThis.__TAURI_INTERNALS__;
 
 	// Test playSakuraScript
-	const res = mockApp.playSakuraScript("\\0Hello");
+	const res = await mockApp.playSakuraScript("\\0Hello");
 	assert.equal(res, "played:\\0Hello");
 
 	// Test startSecondTimer visibilitychange (visible & hidden branches)

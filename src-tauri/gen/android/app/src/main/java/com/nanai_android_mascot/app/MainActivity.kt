@@ -1,6 +1,7 @@
 package com.nanai_android_mascot.app
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -62,22 +63,36 @@ class MainActivity : TauriActivity() {
       ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) !=
         PackageManager.PERMISSION_GRANTED
     ) {
-      ActivityCompat.requestPermissions(
-        this,
-        arrayOf(Manifest.permission.POST_NOTIFICATIONS),
-        NOTIFICATION_PERMISSION_REQUEST_CODE
-      )
+      AlertDialog.Builder(this)
+        .setTitle("通知権限について")
+        .setMessage("マスコットをバックグラウンドで安定して常駐させるため、通知の表示権限が必要です。")
+        .setPositiveButton("許可する") { _, _ ->
+          ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+            NOTIFICATION_PERMISSION_REQUEST_CODE
+          )
+        }
+        .setNegativeButton("あとで", null)
+        .show()
     }
   }
 
   private fun requestOverlayPermission(isFirstCreation: Boolean) {
     if (!Settings.canDrawOverlays(this) && isFirstCreation) {
-      startActivity(
-        Intent(
-          Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-          Uri.parse("package:$packageName")
-        )
-      )
+      AlertDialog.Builder(this)
+        .setTitle("画面最前面表示の権限について")
+        .setMessage("マスコットを他のアプリの上に表示するため、「他のアプリの上に重ねて表示」権限が必要です。次の画面で許可してください。")
+        .setPositiveButton("設定を開く") { _, _ ->
+          startActivity(
+            Intent(
+              Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+              Uri.parse("package:$packageName")
+            )
+          )
+        }
+        .setNegativeButton("あとで", null)
+        .show()
     }
   }
 

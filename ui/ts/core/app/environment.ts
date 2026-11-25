@@ -1,5 +1,5 @@
 import { actionMethods } from "../app-actions.js";
-import { invoke, isTauriAvailable } from "../tauri-helper.js";
+import { invoke, isSinglePageUi, isTauriAvailable } from "../tauri-helper.js";
 
 export async function scanBalloons(appContext: {
 	scanBalloons?: () => Promise<unknown[]>;
@@ -26,12 +26,41 @@ export async function scanPlugins(appContext: {
 	}
 }
 
+const BG_STORAGE_KEY = "nanai_android_bg_image";
+
+export function applyAndroidBackgroundImage(dataUrl?: string | null): void {
+	if (typeof document === "undefined" || !document.body) return;
+	const url =
+		dataUrl !== undefined ? dataUrl : localStorage.getItem(BG_STORAGE_KEY);
+	if (url) {
+		document.body.style.backgroundImage = `url("${url}")`;
+		document.body.style.backgroundSize = "cover";
+		document.body.style.backgroundPosition = "center";
+		document.body.style.backgroundRepeat = "no-repeat";
+	} else {
+		document.body.style.backgroundImage =
+			"linear-gradient(135deg, #1e293b 0%, #0f172a 100%)";
+	}
+}
+
+export function saveAndroidBackgroundImage(dataUrl: string | null): void {
+	if (dataUrl) {
+		localStorage.setItem(BG_STORAGE_KEY, dataUrl);
+	} else {
+		localStorage.removeItem(BG_STORAGE_KEY);
+	}
+	applyAndroidBackgroundImage(dataUrl);
+}
+
 export function initUIEnvironment(appContext: {
 	elements: Record<string, HTMLElement | null>;
 }): void {
-	if (isTauriAvailable()) {
+	if (isTauriAvailable() && !isSinglePageUi()) {
 		const menuBtn = document.getElementById("menu-btn");
 		if (menuBtn) menuBtn.style.display = "none";
+	}
+	if (isSinglePageUi()) {
+		applyAndroidBackgroundImage();
 	}
 	const ids: Record<string, string> = {
 		ghostDisplay: "ghost-display",

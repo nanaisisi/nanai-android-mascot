@@ -4,11 +4,14 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Build
 import android.provider.Settings
 import android.view.WindowManager
+import android.webkit.WebView
 import androidx.activity.enableEdgeToEdge
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -21,9 +24,17 @@ class MainActivity : TauriActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
+    window.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     currentActivity = WeakReference(this)
     requestNotificationPermission()
     requestOverlayPermission()
+  }
+
+  override fun onWebViewCreate(webView: WebView) {
+    super.onWebViewCreate(webView)
+    webView.setBackgroundColor(Color.TRANSPARENT)
+    (webView.parent as? android.view.View)?.setBackgroundColor(Color.TRANSPARENT)
+    window.decorView.setBackgroundColor(Color.TRANSPARENT)
   }
 
   override fun onDestroy() {
@@ -163,16 +174,19 @@ class MainActivity : TauriActivity() {
     @JvmStatic
     fun applyOverlayTransparency(alpha: Float) {
       getInstance()?.setOverlayTransparency(alpha)
+      NanaiForegroundService.getInstance()?.updateOverlayTransparency(alpha)
     }
 
     @JvmStatic
     fun applyClickThrough(enabled: Boolean) {
       getInstance()?.setClickThrough(enabled)
+      NanaiForegroundService.getInstance()?.updateClickThrough(enabled)
     }
 
     @JvmStatic
     fun applyResizeOverlayWindow(width: Int, height: Int) {
       getInstance()?.resizeOverlayWindow(width, height)
+      NanaiForegroundService.getInstance()?.updateOverlaySize(width, height)
     }
 
     @JvmStatic

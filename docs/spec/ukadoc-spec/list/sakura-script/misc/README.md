@@ -74,5 +74,5 @@
 | [RSS絞り込みオプション \[2.8.92\]](notes_executerss.md) | notes_executerss.md | ✅ 実装済 |
 | [InductionMode](notes_inductionmode.md) | notes_inductionmode.md | ✅ 実装済 |
 | [PassiveMode](notes_passivemode.md) | notes_passivemode.md | ✅ 実装済 |
-| [\![timemachine,reset]](bang-timemachine-reset.md) | timemachine | ❌ 未実装 |
-| [\![timemachine,set,値]](bang-timemachine-set-value.md) | timemachine | ❌ 未実装 |
+| [\![timemachine,reset]](bang-timemachine-reset.md) | timemachine | ✅ 実装済 |
+| [\![timemachine,set,値]](bang-timemachine-set-value.md) | timemachine | ✅ 実装済 |

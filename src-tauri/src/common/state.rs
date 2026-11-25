@@ -12,6 +12,7 @@ pub struct AppState {
     pub(crate) is_dialog_open: Mutex<bool>,
     pub(crate) balloon_offsets: Mutex<std::collections::HashMap<i32, (i32, i32)>>,
     pub(crate) surface_images: Mutex<std::collections::HashMap<i32, String>>,
+    #[cfg(desktop)]
     pub(crate) tray_icon: Mutex<Option<tauri::tray::TrayIcon<tauri::Wry>>>,
     pub(crate) is_minimized: Mutex<bool>,
 }
@@ -30,6 +31,7 @@ impl AppState {
             is_dialog_open: Mutex::new(false),
             balloon_offsets: Mutex::new(std::collections::HashMap::new()),
             surface_images: Mutex::new(std::collections::HashMap::new()),
+            #[cfg(desktop)]
             tray_icon: Mutex::new(None),
             is_minimized: Mutex::new(false),
         }
@@ -66,6 +68,7 @@ impl AppState {
     pub fn surface_images(&self) -> &Mutex<std::collections::HashMap<i32, String>> {
         &self.surface_images
     }
+    #[cfg(desktop)]
     pub fn tray_icon(&self) -> &Mutex<Option<tauri::tray::TrayIcon<tauri::Wry>>> {
         &self.tray_icon
     }

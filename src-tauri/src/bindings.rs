@@ -1,12 +1,12 @@
 //! Specta TypeScript 型定義バインディング自動生成処理
 
-#[cfg(debug_assertions)]
+#[cfg(all(debug_assertions, not(target_os = "android")))]
 use specta_typescript::Typescript;
-#[cfg(debug_assertions)]
+#[cfg(all(debug_assertions, not(target_os = "android")))]
 use tauri_specta::{Builder as SpectaBuilder, collect_commands};
 
 pub fn export_typescript_bindings() {
-    #[cfg(debug_assertions)]
+    #[cfg(all(debug_assertions, not(target_os = "android")))]
     {
         let specta_builder = SpectaBuilder::<tauri::Wry>::new().commands(collect_commands![
             crate::commands::window::test_command,

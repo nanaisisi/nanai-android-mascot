@@ -3,20 +3,19 @@
 #[cfg(target_os = "android")]
 fn call_main_activity_static(
     method: &str,
-    sig: &str,
+    sig: jni::signature::MethodSignature<'_, '_>,
     args: &[jni::objects::JValue],
 ) -> Result<(), String> {
     let ctx = ndk_context::android_context();
     let vm = unsafe { jni::JavaVM::from_raw(ctx.vm().cast()) };
-    let mut env = vm
-        .attach_current_thread()
-        .map_err(|e| format!("JNIスレッドアタッチ失敗: {e}"))?;
-    let class = env
-        .find_class("com/nanai_android_mascot/app/MainActivity")
-        .map_err(|e| format!("MainActivityクラス検索失敗: {e}"))?;
-    env.call_static_method(class, method, sig, args)
-        .map_err(|e| format!("MainActivity.{method} 呼び出し失敗: {e}"))?;
-    Ok(())
+    vm.attach_current_thread(|env| -> jni::errors::Result<()> {
+        let class = env.find_class(jni::strings::JNIString::from(
+            "com/nanai_android_mascot/app/MainActivity",
+        ))?;
+        env.call_static_method(class, jni::strings::JNIString::from(method), sig, args)?;
+        Ok(())
+    })
+    .map_err(|e| format!("MainActivity.{method} 呼び出し失敗: {e}"))
 }
 
 /// Androidオーバーレイ権限リクエスト・案内コマンド
@@ -42,7 +41,7 @@ pub async fn setup_foreground_service(enabled: bool) -> Result<String, String> {
     {
         call_main_activity_static(
             "applyForegroundService",
-            "(Z)V",
+            jni::jni_sig!((enabled: jboolean) -> void),
             &[jni::objects::JValue::Bool(enabled)],
         )?;
         Ok(format!("Android常駐サービスを切り替えました: {}", enabled))
@@ -62,7 +61,7 @@ pub async fn set_overlay_transparency(alpha: f64) -> Result<f64, String> {
     {
         call_main_activity_static(
             "applyOverlayTransparency",
-            "(F)V",
+            jni::jni_sig!((alpha: jfloat) -> void),
             &[jni::objects::JValue::Float(clamped as f32)],
         )?;
     }
@@ -77,7 +76,7 @@ pub async fn set_click_through(enabled: bool) -> Result<bool, String> {
     {
         call_main_activity_static(
             "applyClickThrough",
-            "(Z)V",
+            jni::jni_sig!((enabled: jboolean) -> void),
             &[jni::objects::JValue::Bool(enabled)],
         )?;
     }
@@ -95,7 +94,7 @@ pub async fn resize_overlay_window(width: u32, height: u32) -> Result<(u32, u32)
     {
         call_main_activity_static(
             "applyResizeOverlayWindow",
-            "(II)V",
+            jni::jni_sig!((width: jint, height: jint) -> void),
             &[
                 jni::objects::JValue::Int(width as i32),
                 jni::objects::JValue::Int(height as i32),

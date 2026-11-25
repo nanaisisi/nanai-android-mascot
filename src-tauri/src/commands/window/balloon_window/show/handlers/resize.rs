@@ -1,5 +1,7 @@
 use super::super::geometry::*;
-use super::params::{ResizeBalloonWindowParams, resolve_resize_balloon_args};
+use super::params::ResizeBalloonWindowParams;
+#[cfg(desktop)]
+use super::params::resolve_resize_balloon_args;
 
 #[allow(non_snake_case)]
 #[cfg_attr(not(desktop), allow(unused_variables))]

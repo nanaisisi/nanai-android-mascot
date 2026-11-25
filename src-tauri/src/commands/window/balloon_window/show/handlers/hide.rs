@@ -1,4 +1,6 @@
-use super::params::{HideBalloonWindowParams, resolve_hide_balloon_scope};
+use super::params::HideBalloonWindowParams;
+#[cfg(desktop)]
+use super::params::resolve_hide_balloon_scope;
 
 #[allow(non_snake_case)]
 #[cfg_attr(not(desktop), allow(unused_variables))]

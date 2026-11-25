@@ -1,3 +1,4 @@
+#[cfg(desktop)]
 use super::geometry::{compute_default_character_position, monitor_logical_work_area};
 use super::types::{ShowCharacterWindowParams, ShowSubcharWindowParams};
 

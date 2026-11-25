@@ -38,74 +38,82 @@ impl ShioriDynamicEngine {
             return Err("SHIORI is not loaded".to_string());
         }
 
-        let bytes = request_str.as_bytes();
-        let mut len = bytes.len() as i64;
-
-        if let Some(host) = &self.host {
-            let (_, data) = host.lock().map_err(|e| e.to_string())?.call(2, bytes)?;
-            if data.is_empty() {
-                return Ok("SHIORI/3.0 204 No Content\r\nCharset: UTF-8\r\n\r\n".to_string());
-            }
-            let (cow, _, had_errors) = encoding_rs::UTF_8.decode(&data);
-            return Ok(if had_errors {
-                encoding_rs::SHIFT_JIS.decode(&data).0.into_owned()
-            } else {
-                cow.into_owned()
-            });
+        #[cfg(not(windows))]
+        {
+            let _ = request_str;
+            Err("Dynamic SHIORI DLL is only supported on Windows".to_string())
         }
-        let (_, _, fn_request) = self.fns.ok_or("not loaded")?;
 
         #[cfg(windows)]
-        unsafe {
-            let hmem = GlobalAlloc(GMEM_FIXED, bytes.len() + 1);
-            if hmem.is_null() {
-                return Err("GlobalAlloc failed".to_string());
+        {
+            let bytes = request_str.as_bytes();
+            let mut len = bytes.len() as i64;
+
+            if let Some(host) = &self.host {
+                let (_, data) = host.lock().map_err(|e| e.to_string())?.call(2, bytes)?;
+                if data.is_empty() {
+                    return Ok("SHIORI/3.0 204 No Content\r\nCharset: UTF-8\r\n\r\n".to_string());
+                }
+                let (cow, _, had_errors) = encoding_rs::UTF_8.decode(&data);
+                return Ok(if had_errors {
+                    encoding_rs::SHIFT_JIS.decode(&data).0.into_owned()
+                } else {
+                    cow.into_owned()
+                });
             }
-            std::ptr::copy_nonoverlapping(bytes.as_ptr(), hmem as *mut u8, bytes.len());
-            *(hmem as *mut u8).add(bytes.len()) = 0;
+            let (_, _, fn_request) = self.fns.ok_or("not loaded")?;
 
-            let result_hmem = (fn_request)(hmem, &mut len);
-            GlobalFree(hmem);
+            unsafe {
+                let hmem = GlobalAlloc(GMEM_FIXED, bytes.len() + 1);
+                if hmem.is_null() {
+                    return Err("GlobalAlloc failed".to_string());
+                }
+                std::ptr::copy_nonoverlapping(bytes.as_ptr(), hmem as *mut u8, bytes.len());
+                *(hmem as *mut u8).add(bytes.len()) = 0;
 
-            if result_hmem.is_null() || len <= 0 {
-                return Ok("SHIORI/3.0 204 No Content\r\nCharset: UTF-8\r\n\r\n".to_string());
+                let result_hmem = (fn_request)(hmem, &mut len);
+                GlobalFree(hmem);
+
+                if result_hmem.is_null() || len <= 0 {
+                    return Ok("SHIORI/3.0 204 No Content\r\nCharset: UTF-8\r\n\r\n".to_string());
+                }
+
+                let slice = std::slice::from_raw_parts(result_hmem as *const u8, len as usize);
+                let (cow, _, had_errors) = encoding_rs::UTF_8.decode(slice);
+                let response = if had_errors {
+                    let (sjis_cow, _, _) = encoding_rs::SHIFT_JIS.decode(slice);
+                    sjis_cow.into_owned()
+                } else {
+                    cow.into_owned()
+                };
+
+                GlobalFree(result_hmem);
+                Ok(response)
             }
 
-            let slice = std::slice::from_raw_parts(result_hmem as *const u8, len as usize);
-            let (cow, _, had_errors) = encoding_rs::UTF_8.decode(slice);
-            let response = if had_errors {
-                let (sjis_cow, _, _) = encoding_rs::SHIFT_JIS.decode(slice);
-                sjis_cow.into_owned()
-            } else {
-                cow.into_owned()
-            };
+            #[cfg(not(windows))]
+            unsafe {
+                let mut buf = bytes.to_vec();
+                buf.push(0);
+                let ptr = buf.as_mut_ptr() as Hglobal;
+                let result_ptr = (fn_request)(ptr, &mut len);
 
-            GlobalFree(result_hmem);
-            Ok(response)
-        }
+                if result_ptr.is_null() || len <= 0 {
+                    return Ok("SHIORI/3.0 204 No Content\r\nCharset: UTF-8\r\n\r\n".to_string());
+                }
 
-        #[cfg(not(windows))]
-        unsafe {
-            let mut buf = bytes.to_vec();
-            buf.push(0);
-            let ptr = buf.as_mut_ptr() as Hglobal;
-            let result_ptr = (fn_request)(ptr, &mut len);
+                let slice = std::slice::from_raw_parts(result_ptr as *const u8, len as usize);
+                let (cow, _, had_errors) = encoding_rs::UTF_8.decode(slice);
+                let response = if had_errors {
+                    let (sjis_cow, _, _) = encoding_rs::SHIFT_JIS.decode(slice);
+                    sjis_cow.into_owned()
+                } else {
+                    cow.into_owned()
+                };
 
-            if result_ptr.is_null() || len <= 0 {
-                return Ok("SHIORI/3.0 204 No Content\r\nCharset: UTF-8\r\n\r\n".to_string());
+                libc::free(result_ptr);
+                Ok(response)
             }
-
-            let slice = std::slice::from_raw_parts(result_ptr as *const u8, len as usize);
-            let (cow, _, had_errors) = encoding_rs::UTF_8.decode(slice);
-            let response = if had_errors {
-                let (sjis_cow, _, _) = encoding_rs::SHIFT_JIS.decode(slice);
-                sjis_cow.into_owned()
-            } else {
-                cow.into_owned()
-            };
-
-            libc::free(result_ptr);
-            Ok(response)
         }
     }
 }

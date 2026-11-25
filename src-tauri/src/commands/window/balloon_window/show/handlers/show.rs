@@ -1,6 +1,8 @@
 use super::super::geometry::*;
 use super::lock::{BALLOON_CREATION_LOCKS, BalloonLockGuard};
-use super::params::{ShowBalloonWindowParams, resolve_show_balloon_args};
+use super::params::ShowBalloonWindowParams;
+#[cfg(desktop)]
+use super::params::resolve_show_balloon_args;
 use tauri::Emitter;
 
 #[cfg(desktop)]

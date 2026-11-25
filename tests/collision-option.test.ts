@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { afterEach, describe, it } from "vitest";
 import { setupGhostDragging } from "../ui/ts/surface/interaction/drag-handler.js";
 import { surfaceCollisionMethods } from "../ui/ts/surface/surface-collision.js";
+import { SurfaceManager } from "../ui/ts/surface/surface-manager.js";
 
 describe("collisionoption-brace (nodrag* / nocontextmenu*)", () => {
 	it("checks nodrag and nocontextmenu collisions per scope case-insensitively", () => {
@@ -111,5 +112,18 @@ describe("nodrag* drag suppression in setupGhostDragging", () => {
 		handle.cleanup();
 		assert.equal(mouseDownCount, 1);
 		assert.equal(dragStartCount, 0);
+	});
+});
+
+describe("SurfaceManager collisionoption-brace end-to-end", () => {
+	it("parses sakura/kero collisionoption blocks and resolves nodrag/nocontextmenu", async () => {
+		const sm = new SurfaceManager();
+		await sm.parseSurfacesTxt(
+			"sakura.collisionoption\n{\nnodrag0,Knob\nnocontextmenu0,Head\n}\nkero.collisionoption {\nnodrag0,Tail\n}\n",
+		);
+		assert.equal(sm.isNoDragCollision(0, "knob"), true);
+		assert.equal(sm.isNoDragCollision(1, "tail"), true);
+		assert.equal(sm.isNoContextMenuCollision(0, "head"), true);
+		assert.equal(sm.isNoContextMenuCollision(1, "head"), false);
 	});
 });

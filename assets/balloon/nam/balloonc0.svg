@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="120" viewBox="0 0 280 120">
+  <title>Balloon Communicate / InputBox</title>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f0f5fc"/>
+    </linearGradient>
+  </defs>
+  <rect width="280" height="120" fill="#00ff00"/>
+  <rect x="0.5" y="0.5" width="279" height="119" rx="11.5" ry="11.5" fill="url(#bg)" stroke="#2b579a" stroke-width="1"/>
+</svg>

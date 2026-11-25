@@ -38,3 +38,34 @@ Nanai Android Mascot における「バルーン（吹き出し）スキン規�
 
 - **画面端・はみ出し自動補正**: 画面端にキャラクターが移動した際、バルーンが画面外へ見切れないよう自動で左右反転・位置補正。
 - **タップによるスキップ**: バルーン領域タップで表示中テキストを一括全文表示。
+
+---
+
+## 4. バルーン画像アセット・オプション設定規約
+
+ベースウェアおよび同梱バルーン（[assets/balloon/nam](../../../assets/balloon/nam/) 等）で扱う画像ファイルとオプション定義ファイルの用途・解決規約です。
+
+- **実装箇所**:
+  - `../../../src-tauri/src/commands/shell/balloon/image.rs`: 画像探索・フォールバック・`.pna` 合成
+  - `../../../src-tauri/src/commands/shell/balloon/manifest.rs`: スコープ・`balloon_id`・入力ボックス別の設定ファイル解決
+  - `../../../ui/css/balloon-window.css`: `arrow0` / `arrow1` および `online` マーカーの CSS 変数展開
+
+### 4.1 画像ファイル名と用途
+
+| ファイル名（拡張子除く） | 対象 / 用途 | 備考・フォールバック |
+| :--- | :--- | :--- |
+| `balloons0` / `balloons1` | 本体（`\0`）通常バルーン（左右向き） | `balloons0` 不在時は `balloons` へフォールバック |
+| `balloons2` / `balloons3` | 本体（`\0`）大きめ・縦長バルーン（`\b[2]` 用） | 選択肢一覧や長文向け |
+| `balloonk0` / `balloonk1` | 相方（`\1`）通常バルーン（左右向き） | `balloonk0` 不在時は `balloonk` へフォールバック |
+| `balloonk2` / `balloonk3` | 相方（`\1`）大きめ・縦長バルーン（`\b[2]` 用） | 選択肢一覧や長文向け |
+| `balloonc0` 〜 `balloonc5` | 入力ボックス（`inputbox` 等）・コミュニケート枠 | `is_input_box` 時に使用、`balloonc0` 不在時は `balloonc` へフォールバック |
+| `balloonp*` | 3人目以降（`\p[2]`〜）用バルーン | 不在時は `balloonk` / `balloons` 系へフォールバック |
+| `arrow0` / `arrow1` | スクロール矢印（`arrow0`=上、`arrow1`=下） | `--balloon-arrow0-image` / `--balloon-arrow1-image` で使用 |
+| `online` / `online0` 〜 `online3` | オンラインマーカー | `.online-marker`（`--balloon-online-image`）で使用 |
+| `sstp` | SSTP 受信時マーカー | 標準バルーン構成ファイル |
+
+### 4.2 対応拡張子・透過（`.pna`）とオプション設定解決
+
+- **拡張子探索順**: 指定パスのファイルが存在しない場合、同一ステムで `png` / `bmp` / `jpg` / `jpeg` / `gif` / `svg`（大文字拡張子含む）の順に探索します。
+- **`.pna` アルファ合成**: 画像ファイルと同名・同階層の `.pna`（または `.PNA`）が存在する場合、ルマ値をアルファチャンネルとして合成し PNG Data URL として返します。
+- **オプション設定ファイル解決**: `descript.txt` を基準に、`is_input_box` 時は `balloonc<id>s.txt` → `balloonc0s.txt` → `ballooncs.txt`、通常時はスコープ（`balloons` / `balloonk` / `balloonp<scope>def<id>s.txt`）および `balloon_id`（`2` の場合は `*2s.txt` / `*ss.txt`）に応じて段階的にマージします。

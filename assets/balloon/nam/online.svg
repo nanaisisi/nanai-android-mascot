@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <title>Online Marker</title>
+  <rect width="16" height="16" fill="#00ff00"/>
+  <circle cx="8" cy="8" r="5" fill="#10b981" stroke="#2b579a" stroke-width="1.5"/>
+</svg>

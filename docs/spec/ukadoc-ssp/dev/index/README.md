@@ -6,9 +6,9 @@
 | :--- | :----- | :------: |
 | [最初にやるべきこと](item-01.md) | dev-palette | ✅ 実装済 |
 | [設定の調整](item-02.md) | dev-palette | ✅ 実装済 |
-| [本体設定 - [ゴースト(1)](../config/ghost.md)](item-03.md) | dev-palette | ✅ 実装済 |
-| [本体設定 - [開発/その他](../config/dev.md)](item-04.md) | dev-palette | ✅ 実装済 |
-| [本体設定 - [フォルダ](../config/folder.md)](item-05.md) | dev-palette | ✅ 実装済 |
+| [本体設定 - ゴースト(1)](item-03.md) | dev-palette | ✅ 実装済 |
+| [本体設定 - 開発/その他](item-04.md) | dev-palette | ✅ 実装済 |
+| [本体設定 - フォルダ](item-05.md) | dev-palette | ✅ 実装済 |
 | [開発者用機能の説明](item-06.md) | dev-palette | ✅ 実装済 |
 | [1,スクリプトログ](item-07.md) | dev-palette | ✅ 実装済 |
 | [2,制限モード強制解除](item-08.md) | dev-palette | ✅ 実装済 |

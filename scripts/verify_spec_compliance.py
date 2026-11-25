@@ -146,6 +146,12 @@ def main():
             if "Android 非対応" in text or "Android非対応" in text:
                 android_unsupported_count += 1
         print(f"Platform Matrix   : Windows-only-notes={win_only_count}, Android-unsupported={android_unsupported_count}")
+        al = report.layer_summary.get("assurance_levels")
+        if al:
+            print(
+                f"Assurance Levels  : L0={al.get('L0', 0)}, L1={al.get('L1', 0)}, "
+                f"L2(unverified)={al.get('L2_unverified', 0)}, L3={al.get('L3', 0)}, L4={al.get('L4', 0)}"
+            )
 
         # docs/ukadoc-spec と docs/ukadoc-ssp との差分検出 (各ターゲット正規化相対パス + カテゴリ別集計)
         for src_name in ("ukadoc-spec", "ukadoc-ssp"):
@@ -261,6 +267,24 @@ def main():
         print(f"WARNING: {len(report.regressions)} regressions detected!")
         for reg in report.regressions:
             print(f"  - {reg['path']} ({reg['keyword']}): {reg['previous_status']} -> {reg['new_status']}")
+
+    if args.strict_lists and report.list_audit:
+        la = report.list_audit
+        defects = (
+            la.get("corrupted_rows_count", 0)
+            + la.get("broken_links_count", 0)
+            + la.get("unlisted_leaf_specs_count", 0)
+            + la.get("missing_impl_paths_count", 0)
+        )
+        if defects > 0:
+            print(
+                f"ERROR: --strict-lists detected {defects} comparison list defect(s) "
+                f"(corrupted={la.get('corrupted_rows_count', 0)}, "
+                f"broken_links={la.get('broken_links_count', 0)}, "
+                f"unlisted={la.get('unlisted_leaf_specs_count', 0)}, "
+                f"missing_impl={la.get('missing_impl_paths_count', 0)})."
+            )
+            sys.exit(1)
 
     if args.fail_on_regression and report.regressions:
         sys.exit(1)

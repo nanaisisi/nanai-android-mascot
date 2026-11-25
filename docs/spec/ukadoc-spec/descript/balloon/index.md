@@ -12,9 +12,9 @@
 
 | カテゴリ / 規格ファイル                                                | 概要・対象領域                                                                                     |     対応状況     | 関連実装コード                                                                                                          |
 | :--------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------- | :--------------: | :---------------------------------------------------------------------------------------------------------------------- |
-| **[descript.txt 仕様項目一覧](descript-txt/index.md)**                 | フォント、アンカー、カーソル、有効領域、アセット、表示位置、縦書き等のプロパティ定義 (全 162 項目) | ✅ 対応済 (100%) | `src-tauri/src/commands/shell/balloon.rs`, `ui/ts/core/actions/balloon-descript/` (`font.ts`, `layout.ts`, `assets.ts`) |
+| **[descript.txt 仕様項目一覧](descript-txt/index.md)**                 | フォント、アンカー、カーソル、有効領域、アセット、表示位置、縦書き等のプロパティ定義 (全 162 項目) | ✅ 対応済 (100%) | `src-tauri/src/commands/shell/balloon/mod.rs`, `ui/ts/core/actions/balloon-descript/` (`font.ts`, `layout.ts`, `assets.ts`) |
 | **[個別オプション指定 (balloons*s.txt 等)](balloonsoption/index.md)**  | スコープ別吹出し・矢印・マーカー各種アセットファイル指定 (全 6 項目)                               | ✅ 対応済 (100%) | `ui/ts/ghost/balloon-window.ts`, `ui/ts/core/actions/balloon-descript/assets.ts`                                        |
-| **[推奨ゴースト定義 (recommended-ghost)](recommended-ghost/index.md)** | バルーン固有の推奨・指定ゴースト設定 (`recommended.ghost` 等 全 3 項目)                            | ✅ 対応済 (100%) | `src-tauri/src/commands/shell/balloon.rs`, `ui/ts/core/actions/balloon-descript/assets.ts`                              |
+| **[推奨ゴースト定義 (recommended-ghost)](recommended-ghost/index.md)** | バルーン固有の推奨・指定ゴースト設定 (`recommended.ghost` 等 全 3 項目)                            | ✅ 対応済 (100%) | `src-tauri/src/commands/shell/balloon/mod.rs`, `ui/ts/core/actions/balloon-descript/assets.ts`                              |
 
 ---
 

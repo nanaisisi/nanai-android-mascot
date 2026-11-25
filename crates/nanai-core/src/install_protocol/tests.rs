@@ -130,11 +130,31 @@ fn test_multi_resource_install() {
 fn test_wasm_install_abi() {
     assert_eq!(
         wasm_parse_install_error_reason("zip-slip detected"),
-        5 // invalid path
+        8 // invalid path
     );
 
     assert_eq!(
         wasm_parse_install_error_reason("cancel by user"),
-        3 // artificial
+        6 // artificial
+    );
+
+    assert_eq!(
+        wasm_parse_install_error_reason("password required"),
+        5 // password
+    );
+
+    assert_eq!(
+        wasm_parse_install_error_reason("unsupported archive"),
+        0 // unsupported
+    );
+
+    assert_eq!(
+        wasm_parse_install_error_reason("permission denied"),
+        7 // write error
+    );
+
+    assert_eq!(
+        wasm_parse_install_error_reason("invalid format"),
+        9 // format error
     );
 }

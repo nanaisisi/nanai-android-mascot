@@ -12,4 +12,4 @@
 
 | カテゴリ / 規格ファイル                                | 概要・対象領域                                       |     対応状況     | 関連実装コード                                                    |
 | :----------------------------------------------------- | :--------------------------------------------------- | :--------------: | :---------------------------------------------------------------- |
-| **[descript.txt 仕様項目一覧](descript-txt/index.md)** | ヘッドライン名、ID、URL、文字コード設定 (全 14 項目) | ✅ 対応済 (100%) | `src-tauri/src/commands/ext.rs`, `src-tauri/src/common/models.rs` |
+| **[descript.txt 仕様項目一覧](descript-txt/index.md)** | ヘッドライン名、ID、URL、文字コード設定 (全 14 項目) | ✅ 対応済 (100%) | `src-tauri/src/commands/ext.rs`, `src-tauri/src/common/models/mod.rs` |

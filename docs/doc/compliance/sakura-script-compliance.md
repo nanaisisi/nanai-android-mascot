@@ -12,9 +12,9 @@ Nanai Android Mascot における「さくらスクリプト（Sakura Script）�
 - **プロトコル規格**: さくらスクリプト（Sakura Script Specification）
 - **対応度**: **96%**
 - **主要実装ファイル**:
-  - `../../../crates/nanai-core/src/sakura_script.rs`: さくらスクリプトのパーサー（Rust 統一実装。`parse_sakura_script` Tauri コマンドとして公開）
+  - `../../../crates/nanai-core/src/sakura_script/mod.rs`: さくらスクリプトのパーサー（Rust 統一実装。`parse_sakura_script` Tauri コマンドとして公開）
   - `../../../ui/ts/ghost/sakura-script.ts`: スクリプトキューイングおよび実行制御
-  - `../../../ui/ts/ghost/sakura-play.ts`: トークン列の非同期文字送り再生
+  - `../../../ui/ts/ghost/sakura-script.ts`: トークン列の非同期文字送り再生
   - `../../../ui/ts/ghost/sakura-command-handler.ts`: `\![...]` 拡張コマンドのディスパッチ
 
 ---

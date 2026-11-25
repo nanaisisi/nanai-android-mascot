@@ -47,6 +47,7 @@
 
 - **[ghost-loading-and-animation-policy.md](doc/design/cache-and-async/ghost-loading-and-animation-policy.md)** - ゴースト読み込み・バナー・会話表示・サーフィス描画の負荷対策コンセプト
 - **[implementation-plan-and-spec.md](doc/design/planning/implementation-plan-and-spec.md)** - 次期フェーズ実装計画 & 統合技術仕様書 (Phase 2+)
+- **[spec-implementation-and-assurance-plan.md](doc/design/planning/spec-implementation-and-assurance-plan.md)** - 仕様実装・動作保証 通貫計画（保証レベル L0〜L4・Phase A〜F）
 - **[pending-issues-and-roadmap.md](doc/design/planning/pending-issues-and-roadmap.md)** - 検討事項・仕様化ロードマップ（全体概要）
 - **[mockup-and-android-spec.md](doc/design/ui/mockup-and-android-spec.md)** - UI/UX & モックアップ仕様書（PCシミュレーション・モバイル画面設計）
 - **[ui-and-menu-spec.md](doc/design/ui/ui-and-menu-spec.md)** - 標準UI & 拡張メニュー仕様書

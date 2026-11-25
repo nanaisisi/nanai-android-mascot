@@ -38,3 +38,5 @@
 | [point.kinoko.centery.md](point.kinoko.centery.md)                     | point.kinoko.centery.md                 |  ✅ 実装済 (surface-load.ts)  |
 | [sakura.balloon.offsetx.md](sakura.balloon.offsetx.md)                 | sakura.balloon.offsetx.md               |  ✅ 実装済 (surface-load.ts)  |
 | [sakura.balloon.offsety.md](sakura.balloon.offsety.md)                 | sakura.balloon.offsety.md               |  ✅ 実装済 (surface-load.ts)  |
+| [point.osuwaripos.x.md](point.osuwaripos.x.md) | point.osuwaripos.x | ❌ 未実装 |
+| [point.osuwaripos.y.md](point.osuwaripos.y.md) | point.osuwaripos.y | ❌ 未実装 |

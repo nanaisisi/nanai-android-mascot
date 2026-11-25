@@ -69,7 +69,7 @@ body {
 }
 
 .balloon:active {
-	cursor: grabbing;
+	cursor: var(--balloon-cursor-grip, grabbing);
 }
 
 .balloon-text {
@@ -164,7 +164,7 @@ body {
 	border: none;
 	border-radius: 2px;
 	box-shadow: none;
-	cursor: pointer;
+	cursor: var(--balloon-cursor-hand, pointer);
 	user-select: none;
 	-webkit-user-select: none;
 	transition:
@@ -232,7 +232,7 @@ body {
 	);
 	background: var(--balloon-anchor-notselect-brush-color, transparent);
 	outline: 1px solid var(--balloon-anchor-notselect-pen-color, transparent);
-	cursor: pointer;
+	cursor: var(--balloon-cursor-hand, pointer);
 	mix-blend-mode: var(--balloon-anchor-blendmethod, normal);
 }
 
@@ -269,7 +269,7 @@ body {
 	background-repeat: no-repeat;
 	background-size: contain;
 	background-position: center;
-	cursor: pointer;
+	cursor: var(--balloon-cursor-hand, pointer);
 	z-index: 100;
 	pointer-events: auto;
 	user-select: none;
@@ -330,6 +330,8 @@ body {
 /* クリック待ちマーカー (clickwaitmarker.filename) */
 .clickwait-marker {
 	display: inline-block;
+	left: var(--balloon-clickwait-x, auto);
+	top: var(--balloon-clickwait-y, auto);
 	width: var(--balloon-clickwait-width, 16px);
 	height: var(--balloon-clickwait-height, 16px);
 	background-image: var(--balloon-clickwait-image, none);
@@ -387,6 +389,8 @@ body {
 /* SSTPマーカー (sstpmarker.filename) */
 .sstp-marker {
 	display: inline-block;
+	left: var(--balloon-sstpmarker-x, auto);
+	top: var(--balloon-sstpmarker-y, auto);
 	width: var(--balloon-sstpmarker-width, 16px);
 	height: var(--balloon-sstpmarker-height, 16px);
 	background-image: var(--balloon-sstpmarker-image, none);
@@ -457,11 +461,47 @@ body {
 
 /* カスタムマウスカーソル (mousecursor.*) */
 .balloon {
-	cursor: var(--balloon-cursor-arrow, auto);
+	cursor: var(--balloon-cursor-arrow, var(--balloon-cursor-default, auto));
+}
+.balloon[data-loading="true"],
+.balloon.is-waiting {
+	cursor: var(--balloon-cursor-wait, wait);
 }
 .balloon-text,
 .balloon-text * {
 	cursor: var(--balloon-cursor-text, text);
+}
+
+/* SSTP メッセージ (sstpmessage.*) */
+.sstp-message {
+	position: absolute;
+	left: var(--balloon-sstpmessage-x, auto);
+	right: var(--balloon-sstpmessage-xr, auto);
+	top: var(--balloon-sstpmessage-y, auto);
+	bottom: var(--balloon-sstpmessage-yb, auto);
+	color: var(--balloon-sstp-font-color, var(--balloon-text-color, #111111));
+	font-family: var(
+		--balloon-sstp-font-family,
+		var(--balloon-font-family, inherit)
+	);
+	font-size: var(--balloon-sstp-font-size, 0.75rem);
+	pointer-events: none;
+}
+
+/* バルーン番号 (number.*) */
+.balloon-number {
+	position: absolute;
+	left: var(--balloon-number-x, auto);
+	right: var(--balloon-number-xr, auto);
+	top: var(--balloon-number-y, auto);
+	bottom: var(--balloon-number-yb, auto);
+	color: var(--balloon-number-color, var(--balloon-text-color, #111111));
+	font-family: var(
+		--balloon-number-font-family,
+		var(--balloon-font-family, inherit)
+	);
+	font-size: var(--balloon-number-font-size, 0.75rem);
+	pointer-events: none;
 }
 
 .coord-popup {

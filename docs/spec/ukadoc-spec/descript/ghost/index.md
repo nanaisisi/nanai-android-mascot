@@ -19,4 +19,4 @@
 
 ## 2. 実装およびコメントアノテーション保証
 
-[厳密コード検証システム規定](../../../../doc/developer/strict-code-verification-system.md) に基づき、上記の全サブカテゴリに含まれる全仕様項目は、該当ソースコードファイル内のコメントとして **`// [項目名,タイトル]: ...`** 形式で 1 回以上直接アノテーションされており、単体テスト (`tests/ghost.test.ts`, `tests/ghost-loading.test.ts`) にて 100% 正常動作が確認・担保されている。
+[厳密コード検証システム規定](../../../../doc/developer/strict-code-verification-system.md) に基づき、上記の全サブカテゴリに含まれる全仕様項目は、該当ソースコードファイル内のコメントとして **`// [項目名,タイトル]: ...`** 形式で 1 回以上直接アノテーションされており、単体テスト (`tests/ghost-actions.test.ts`, `tests/ghost-loading.test.ts`) にて 100% 正常動作が確認・担保されている。

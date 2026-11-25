@@ -89,6 +89,14 @@ export class BalloonDragManager {
 					? String((targetEl as { tagName?: unknown }).tagName ?? "")
 					: "";
 			if (tagName === "A" || tagName === "BUTTON") return false;
+			if (
+				typeof document !== "undefined" &&
+				document.documentElement?.style
+					?.getPropertyValue("--balloon-dontmove")
+					?.trim() === "1"
+			) {
+				return false;
+			}
 			isBalloonDragging = true;
 			bStartX = clientX;
 			bStartY = clientY;

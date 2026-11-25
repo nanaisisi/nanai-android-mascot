@@ -108,3 +108,38 @@
 | [seriko.use_self_alpha,値](seriko.use_self_alpha.md)                                           | seriko.use_self_alpha                 |      ⚠️ 一部対応 (shell.rs)      |
 | [seriko.zorder,スコープID,スコープID,...](seriko.zorder.md)                                    | seriko.zorder                         |            ❌ 未実装             |
 | [type,種別](type.md)                                                                           | type                                  |       ✅ 実装済 (shell.rs)       |
+| [balloon.defaultsurface,数値](balloon.defaultsurface.md) | balloon.defaultsurface | ⚠️ 一部対応 |
+| [balloon,バルーン名](balloon.md) | balloon | ✅ 実装済 |
+| [char\*.balloon.alignment,位置情報](char-star-.balloon.alignment.md) | char\*.balloon.alignment | ❌ 未実装 |
+| [char\*.balloon.defaultsurface,数値](char-star-.balloon.defaultsurface.md) | char\*.balloon.defaultsurface | ❌ 未実装 |
+| [char\*.balloon.offsetx,座標](char-star-.balloon.offsetx.md) | char\*.balloon.offsetx | ❌ 未実装 |
+| [char\*.balloon.offsety,座標](char-star-.balloon.offsety.md) | char\*.balloon.offsety | ❌ 未実装 |
+| [char\*.seriko.defaultsurface,数値](char-star-.seriko.defaultsurface.md) | char\*.seriko.defaultsurface | ❌ 未実装 |
+| [cursor,ファイル名 / mousecursor,ファイル名](cursor.md) | cursor | ✅ 実装済 |
+| [default.balloon.path,パス](default.balloon.path.md) | default.balloon.path | ⚠️ 一部対応 |
+| [don't need bind,数値](don-t-2.md) | don't need bind | ⚠️ 一部対応 |
+| [don't need seriko talk,数値](don-t-3.md) | don't need seriko talk | ⚠️ 一部対応 |
+| [don't need onmousemove,数値](don-t.md) | don't need onmousemove | ⚠️ 一部対応 |
+| [githubrepo,URL](githubrepo.md) | githubrepo | ⚠️ 一部対応 |
+| [kero.balloon.defaultsurface,数値](kero.balloon.defaultsurface.md) | kero.balloon.defaultsurface | ⚠️ 一部対応 |
+| [kero.seriko.defaultsurface,数値](kero.seriko.defaultsurface.md) | kero.seriko.defaultsurface | ⚠️ 一部対応 |
+| [menu.background.color,色](menu.background.color.md) | menu.background.color | ✅ 実装済 |
+| [menu.foreground.color,色](menu.foreground.color.md) | menu.foreground.color | ⚠️ 一部対応 |
+| [menu.sidebar.color,色](menu.sidebar.color.md) | menu.sidebar.color | ❌ 未実装 |
+| [menu.sidebar.font.color,色](menu.sidebar.font.color.md) | menu.sidebar.font.color | ❌ 未実装 |
+| [menu.sidebar.text,文字列](menu.sidebar.text.md) | menu.sidebar.text | ❌ 未実装 |
+| [menu.sidebar.width,数値](menu.sidebar.width.md) | menu.sidebar.width | ❌ 未実装 |
+| [metainfo,URL](metainfo.md) | metainfo | ❌ 未実装 |
+| [mousecursor.arrow,ファイル名](mousecursor.arrow.md) | mousecursor.arrow | ✅ 実装済 |
+| [mousecursor.grip,ファイル名](mousecursor.grip.md) | mousecursor.grip | ⚠️ 一部対応 |
+| [mousecursor.hand,ファイル名](mousecursor.hand.md) | mousecursor.hand | ⚠️ 一部対応 |
+| [mousecursor.text,ファイル名](mousecursor.text.md) | mousecursor.text | ⚠️ 一部対応 |
+| [mousecursor.wait,ファイル名](mousecursor.wait.md) | mousecursor.wait | ⚠️ 一部対応 |
+| [sakura.balloon.defaultsurface,数値](sakura.balloon.defaultsurface.md) | sakura.balloon.defaultsurface | ⚠️ 一部対応 |
+| [sakura.friend.name,名前](sakura.friend.name.md) | sakura.friend.name | ❌ 未実装 |
+| [sakura.seriko.defaultsurface,数値](sakura.seriko.defaultsurface.md) | sakura.seriko.defaultsurface | ⚠️ 一部対応 |
+| [shiori.logo.align,位置情報](shiori.logo.align.md) | shiori.logo.align | ⚠️ 一部対応 |
+| [shiori.logo.file,ファイル名](shiori.logo.file.md) | shiori.logo.file | ⚠️ 一部対応 |
+| [shiori.logo.x,X座標](shiori.logo.x.md) | shiori.logo.x | ⚠️ 一部対応 |
+| [shiori.logo.y,Y座標](shiori.logo.y.md) | shiori.logo.y | ⚠️ 一部対応 |
+| [uuid_base,文字列](uuid_base.md) | uuid_base | ❌ 未実装 |

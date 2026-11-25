@@ -45,6 +45,13 @@ def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_ca
     regressions = []
     category_stats = {}
     layer_summary = init_layer_summary()
+    layer_summary["assurance_levels"] = {
+        "L0": 0,
+        "L1": 0,
+        "L2_unverified": 0,
+        "L3": 0,
+        "L4": 0,
+    }
 
     prepped_codebase = []
     for item in codebase:
@@ -196,6 +203,20 @@ def process_audit_files(codebase, docs_dir='docs/spec', dry_run=False, target_ca
         else:
             category_stats[cat]["❌"] += 1
         category_stats[cat]["合計"] += 1
+
+        assurance_m = re.search(r'-\s*\*\*保証レベル\*\*:\s*(L[0-4])', content)
+        if assurance_m:
+            al = assurance_m.group(1)
+            if al == "L2":
+                layer_summary["assurance_levels"]["L2_unverified"] += 1
+            elif al in layer_summary["assurance_levels"]:
+                layer_summary["assurance_levels"][al] += 1
+        elif "❌" in new_status:
+            layer_summary["assurance_levels"]["L0"] += 1
+        elif "✅" in new_status:
+            layer_summary["assurance_levels"]["L2_unverified"] += 1
+        else:
+            layer_summary["assurance_levels"]["L1"] += 1
 
     end_time = datetime.datetime.now(datetime.timezone.utc)
     perf_stats["elapsed_seconds"] = round((end_time - start_time).total_seconds(), 3)

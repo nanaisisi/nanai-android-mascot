@@ -145,7 +145,26 @@ flowchart TD
 
 ---
 
-## 6. 関連ドキュメント
+## 6. サブモジュールリポジトリ更新追従ワークフロー
+
+本リポジトリは公式仕様・独自仕様・SHIORI C++ エンジンの計 7 つの Git サブモジュールを参照している。サブモジュール更新時は以下の種別別ゲートを通して整合性を維持する。
+
+| サブモジュール | 種別 | 更新時の確認ゲート |
+| :--- | :--- | :--- |
+| `docs/ukadoc-spec` / `docs/ukadoc-ssp` | 公式仕様正本 | `npm run verify:spec` で `ukadoc-spec Diff` / `ukadoc-ssp Diff` / `Heading Diff` を検出し、新規・変更ページを `docs/spec/` と `index.md` / `SUMMARY.md` へ反映 |
+| `docs/doc-nam-spec` / `docs/doc-ssp-spec` | 独自・SSP 仕様群 | 参照リンク整合と `npm run verify:spec` を確認 |
+| `cpp/yaya-shiori` / `cpp/satoriya-shiori` / `cpp/kawari` | SHIORI C++ エンジン | `npm run test:rust` および `cargo check --tests --manifest-path src-tauri/Cargo.toml` で `cc` 静的リンク・FFI 互換を検証 |
+
+### 標準更新手順
+
+1. `npm run verify:submodules` で全サブモジュールの現在状態（`clean` / `modified` / `uninitialized`）を確認する。
+2. 対象サブモジュールを `git submodule update --remote <path>` で更新する（**`--remote --recursive` は子サブモジュールが親のピン留めコミットと乖離し親サブモジュールを汚すため禁止**）。
+3. 子サブモジュールの同期が必要な場合は、`--remote` を付けずに `git submodule update --recursive <path>` を実行し、親が指定するコミットにのみ追従させる。
+4. 上記の種別別確認ゲート（`npm run verify:spec` または `npm run test:rust`）を実行し、差分・破損がないことを確認してからコミットする。
+
+---
+
+## 7. 関連ドキュメント
 
 - [SUMMARY.md](../../../spec/SUMMARY.md)
 - [strict-code-verification-system.md](../../developer/strict-code-verification-system.md)

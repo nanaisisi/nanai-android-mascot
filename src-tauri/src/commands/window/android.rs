@@ -7,8 +7,7 @@ fn call_main_activity_static(
     args: &[jni::objects::JValue],
 ) -> Result<(), String> {
     let ctx = ndk_context::android_context();
-    let vm = unsafe { jni::JavaVM::from_raw(ctx.vm().cast()) }
-        .map_err(|e| format!("JavaVM取得失敗: {e}"))?;
+    let vm = unsafe { jni::JavaVM::from_raw(ctx.vm().cast()) };
     let mut env = vm
         .attach_current_thread()
         .map_err(|e| format!("JNIスレッドアタッチ失敗: {e}"))?;
@@ -44,7 +43,7 @@ pub async fn setup_foreground_service(enabled: bool) -> Result<String, String> {
         call_main_activity_static(
             "applyForegroundService",
             "(Z)V",
-            &[jni::objects::JValue::Bool(u8::from(enabled))],
+            &[jni::objects::JValue::Bool(enabled)],
         )?;
         Ok(format!("Android常駐サービスを切り替えました: {}", enabled))
     }
@@ -79,7 +78,7 @@ pub async fn set_click_through(enabled: bool) -> Result<bool, String> {
         call_main_activity_static(
             "applyClickThrough",
             "(Z)V",
-            &[jni::objects::JValue::Bool(u8::from(enabled))],
+            &[jni::objects::JValue::Bool(enabled)],
         )?;
     }
     Ok(enabled)

@@ -264,7 +264,7 @@ export const ghostShioriMethods = {
 				}
 			}
 			const parsed = fromRustResponse(rawRes as Record<string, unknown>);
-			const statusText = parsed?.statusCode ?? "unknown";
+			const statusText = parsed?.status ?? "unknown";
 			const valueText = typeof parsed?.value === "string" ? parsed.value : "";
 			recordScriptLog(
 				"shiori",

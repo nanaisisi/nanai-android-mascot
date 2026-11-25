@@ -131,4 +131,27 @@ export const systemTemplates = {
       </div>
     </div>
   `,
+	"script-log-modal-content": `
+    <div class="ssp-settings-dialog">
+      <div class="ssp-settings-header" style="display: flex; justify-content: space-between; align-items: center; background: #0078d7; color: white; padding: 4px 8px;">
+        <h2 style="font-size: 14px; margin: 0; font-weight: bold;">スクリプトログ</h2>
+        <button type="button" id="close-script-log-btn" style="background: transparent; border: none; color: white; cursor: pointer; font-size: 13px;">✖</button>
+      </div>
+      <div class="form-section" style="padding: 10px; font-size: 12px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap;">
+          <label for="script-log-filter">種別:</label>
+          <select id="script-log-filter">
+            <option value="all">すべて</option>
+            <option value="shiori">SHIORI</option>
+            <option value="sakura">さくらスクリプト</option>
+            <option value="error">エラー</option>
+          </select>
+          <button type="button" id="script-log-copy-btn">コピー</button>
+          <button type="button" id="script-log-clear-btn">クリア</button>
+          <span id="script-log-count" style="color: #555; font-size: 11px; margin-left: auto;">0 件</span>
+        </div>
+        <div id="script-log-list" style="max-height: 340px; overflow-y: auto; border: 1px solid #ddd; padding: 6px; background: #1e1e1e; color: #e0e0e0; font-family: Consolas, monospace; font-size: 11px; line-height: 1.45;"></div>
+      </div>
+    </div>
+  `,
 };

@@ -1,3 +1,9 @@
+import {
+	clearScriptLogs,
+	getScriptLogs,
+	type ScriptLogKind,
+	subscribeScriptLogs,
+} from "../core/diagnostics/script-log.js";
 import { invoke, isTauriAvailable } from "../core/tauri-helper.js";
 import {
 	getSurfaceDisplayName,
@@ -661,5 +667,91 @@ export class ModalSettingsHandlers {
 			section.appendChild(list);
 			groupsEl.appendChild(section);
 		}
+	}
+
+	setupScriptLogListeners() {
+		const filterEl = document.getElementById(
+			"script-log-filter",
+		) as HTMLSelectElement | null;
+		const listEl = document.getElementById("script-log-list");
+		const countEl = document.getElementById("script-log-count");
+		const clearBtn = document.getElementById("script-log-clear-btn");
+		const copyBtn = document.getElementById("script-log-copy-btn");
+		const closeBtn = document.getElementById("close-script-log-btn");
+
+		const getFilter = (): ScriptLogKind | "all" => {
+			const val = filterEl?.value;
+			if (val === "shiori" || val === "sakura" || val === "error") {
+				return val;
+			}
+			return "all";
+		};
+
+		const render = () => {
+			const logs = getScriptLogs(getFilter());
+			if (countEl) {
+				countEl.textContent = `${logs.length} 件`;
+			}
+			if (!listEl) return;
+			if (logs.length === 0) {
+				listEl.innerHTML =
+					'<div style="color: #888;">ログはまだありません。</div>';
+				return;
+			}
+			listEl.innerHTML = logs
+				.slice()
+				.reverse()
+				.map((entry) => {
+					const badgeColor =
+						entry.kind === "error"
+							? "#f48771"
+							: entry.kind === "shiori"
+								? "#4fc1ff"
+								: "#b5cea8";
+					const detailHtml = entry.detail
+						? `<div style="color: #cccccc; white-space: pre-wrap; word-break: break-all; margin-top: 2px;">${escapeHtml(entry.detail)}</div>`
+						: "";
+					return `<div style="padding: 4px 0; border-bottom: 1px solid #333;">
+            <div>
+              <span style="color: #888;">[${escapeHtml(entry.timestamp)}]</span>
+              <span style="color: ${badgeColor}; font-weight: bold;">[${escapeHtml(entry.kind.toUpperCase())}]</span>
+              <span>${escapeHtml(entry.title)}</span>
+            </div>
+            ${detailHtml}
+          </div>`;
+				})
+				.join("");
+		};
+
+		const unsubscribe = subscribeScriptLogs(() => {
+			if (!document.getElementById("script-log-list")) {
+				unsubscribe();
+				return;
+			}
+			render();
+		});
+
+		closeBtn?.addEventListener("click", () => {
+			unsubscribe();
+			this.manager.hide();
+		});
+		filterEl?.addEventListener("change", render);
+		clearBtn?.addEventListener("click", () => {
+			clearScriptLogs();
+		});
+		copyBtn?.addEventListener("click", () => {
+			const logs = getScriptLogs(getFilter());
+			const text = logs
+				.map(
+					(e) =>
+						`[${e.timestamp}] [${e.kind.toUpperCase()}] ${e.title}${e.detail ? `\n${e.detail}` : ""}`,
+				)
+				.join("\n");
+			if (navigator?.clipboard?.writeText) {
+				void navigator.clipboard.writeText(text).catch(() => {});
+			}
+		});
+
+		render();
 	}
 }

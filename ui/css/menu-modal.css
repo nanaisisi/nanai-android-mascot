@@ -71,7 +71,7 @@
 	display: block;
 	border: none;
 	width: 100%;
-	height: max-content;
+	height: min(75vh, 32rem);
 	max-height: 85vh;
 	background: transparent;
 	pointer-events: auto;

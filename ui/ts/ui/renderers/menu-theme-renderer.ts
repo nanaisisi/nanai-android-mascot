@@ -15,6 +15,10 @@ export interface ShellMenuTheme {
 	background_bitmap?: string;
 	foreground_bitmap?: string;
 	sidebar_bitmap?: string;
+	sidebar_color?: string;
+	sidebar_font_color?: string;
+	sidebar_text?: string;
+	sidebar_width?: number | string;
 	background_alignment?: string;
 	foreground_alignment?: string;
 	sidebar_alignment?: string;
@@ -35,6 +39,10 @@ export const SHIORI_MENU_RESOURCE_MAP: ReadonlyArray<{
 	{ resource: "menu.background.bitmap.filename", field: "background_bitmap" },
 	{ resource: "menu.foreground.bitmap.filename", field: "foreground_bitmap" },
 	{ resource: "menu.sidebar.bitmap.filename", field: "sidebar_bitmap" },
+	{ resource: "menu.sidebar.color", field: "sidebar_color" },
+	{ resource: "menu.sidebar.font.color", field: "sidebar_font_color" },
+	{ resource: "menu.sidebar.text", field: "sidebar_text" },
+	{ resource: "menu.sidebar.width", field: "sidebar_width" },
 	{ resource: "menu.background.alignment", field: "background_alignment" },
 	{ resource: "menu.foreground.alignment", field: "foreground_alignment" },
 	{ resource: "menu.sidebar.alignment", field: "sidebar_alignment" },
@@ -303,7 +311,18 @@ export const menuThemeRenderer = {
 				Boolean(shioriResources?.["menu.sidebar.bitmap.filename"]?.trim()),
 			);
 
-			const applyStyles = () => {
+			const parsedSidebarWidth = Number.parseInt(
+				String(mt.sidebar_width ?? ""),
+				10,
+			);
+			const explicitSidebarWidth =
+				Number.isFinite(parsedSidebarWidth) && parsedSidebarWidth > 0
+					? `${parsedSidebarWidth}px`
+					: null;
+			const sidebarLabelEl = document.getElementById?.("menu-sidebar-label");
+			const customSidebarText = mt.sidebar_text?.trim() || "";
+
+			const applyStyles = (sideLoadFailed = false) => {
 				if (bgUrl) {
 					rootStyle.setProperty("--menu-bg-image", `url("${bgUrl}")`);
 					applyAlignment(mt.background_alignment, "menu-bg");
@@ -337,7 +356,24 @@ export const menuThemeRenderer = {
 					rootStyle.removeProperty("--menu-fg-repeat");
 				}
 
-				if (sideUrl) {
+				if (mt.sidebar_color) {
+					rootStyle.setProperty("--menu-sidebar-bg", mt.sidebar_color);
+				} else {
+					rootStyle.removeProperty("--menu-sidebar-bg");
+				}
+
+				if (mt.sidebar_font_color) {
+					rootStyle.setProperty("--menu-sidebar-color", mt.sidebar_font_color);
+				} else {
+					rootStyle.removeProperty("--menu-sidebar-color");
+				}
+
+				if (sidebarLabelEl) {
+					sidebarLabelEl.textContent = customSidebarText || "NANAI";
+				}
+
+				const hasActiveSidebarImage = Boolean(sideUrl) && !sideLoadFailed;
+				if (hasActiveSidebarImage && sideUrl) {
 					rootStyle.setProperty("--menu-sidebar-image", `url("${sideUrl}")`);
 					const sideAlign = String(mt.sidebar_alignment || "top").toLowerCase();
 					rootStyle.setProperty(
@@ -345,8 +381,11 @@ export const menuThemeRenderer = {
 						sideAlign.includes("bottom") ? "left bottom" : "left top",
 					);
 					document.body.classList.add("has-sidebar");
+					document.body.classList.remove("has-sidebar-custom");
 					const cachedImg = assetCache.get(sideUrl, "menu");
-					if (cachedImg && cachedImg.naturalWidth > 0) {
+					if (explicitSidebarWidth) {
+						rootStyle.setProperty("--menu-sidebar-width", explicitSidebarWidth);
+					} else if (cachedImg && cachedImg.naturalWidth > 0) {
 						rootStyle.setProperty(
 							"--menu-sidebar-width",
 							`${cachedImg.naturalWidth}px`,
@@ -357,21 +396,34 @@ export const menuThemeRenderer = {
 				} else {
 					rootStyle.removeProperty("--menu-sidebar-image");
 					rootStyle.removeProperty("--menu-sidebar-position");
-					rootStyle.removeProperty("--menu-sidebar-width");
 					document.body.classList.remove("has-sidebar");
+					if (explicitSidebarWidth) {
+						rootStyle.setProperty("--menu-sidebar-width", explicitSidebarWidth);
+					} else {
+						rootStyle.removeProperty("--menu-sidebar-width");
+					}
+					if (customSidebarText || mt.sidebar_color) {
+						document.body.classList.add("has-sidebar-custom");
+					} else {
+						document.body.classList.remove("has-sidebar-custom");
+					}
 				}
 			};
 
 			// 即時適用
-			applyStyles();
+			applyStyles(false);
 
 			// 事前ロード完了時に幅の再計算と確定適用
 			void Promise.all([
 				preloadImage(bgUrl),
 				preloadImage(fgUrl),
 				preloadImage(sideUrl),
-			]).then(() => {
-				applyStyles();
+			]).then(([, , sideImg]) => {
+				const sideLoadFailed =
+					Boolean(sideUrl) &&
+					typeof Image !== "undefined" &&
+					(!sideImg || sideImg.naturalWidth <= 0);
+				applyStyles(sideLoadFailed);
 			});
 		} else {
 			rootStyle.removeProperty("--balloon-bg");
@@ -392,7 +444,14 @@ export const menuThemeRenderer = {
 			rootStyle.removeProperty("--menu-sidebar-image");
 			rootStyle.removeProperty("--menu-sidebar-position");
 			rootStyle.removeProperty("--menu-sidebar-width");
+			rootStyle.removeProperty("--menu-sidebar-bg");
+			rootStyle.removeProperty("--menu-sidebar-color");
 			document.body.classList.remove("has-sidebar");
+			document.body.classList.remove("has-sidebar-custom");
+			const sidebarLabelEl = document.getElementById?.("menu-sidebar-label");
+			if (sidebarLabelEl) {
+				sidebarLabelEl.textContent = "NANAI";
+			}
 		}
 	},
 };

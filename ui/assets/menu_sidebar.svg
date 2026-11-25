@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="360" viewBox="0 0 24 360">
+  <defs>
+    <linearGradient id="sidebar-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#334155" />
+      <stop offset="55%" stop-color="#1e293b" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="accent-dot" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+  </defs>
+  <rect width="24" height="360" fill="url(#sidebar-bg)" />
+  <rect x="23" width="1" height="360" fill="#ffffff" fill-opacity="0.12" />
+  <circle cx="12" cy="292" r="2.8" fill="url(#accent-dot)" />
+  <text
+    x="12"
+    y="346"
+    fill="#f1f5f9"
+    fill-opacity="0.92"
+    font-family="Segoe UI, Meiryo, sans-serif"
+    font-size="10"
+    font-weight="700"
+    letter-spacing="2"
+    text-anchor="start"
+    dominant-baseline="central"
+    transform="rotate(-90 12 346)"
+  >NANAI</text>
+</svg>

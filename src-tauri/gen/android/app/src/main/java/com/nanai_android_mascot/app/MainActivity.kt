@@ -16,6 +16,7 @@ import android.webkit.WebView
 import androidx.activity.enableEdgeToEdge
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import java.io.File
 import java.lang.ref.WeakReference
 
 class MainActivity : TauriActivity() {
@@ -23,12 +24,41 @@ class MainActivity : TauriActivity() {
   private var isOverlayDialogShowing = false
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    extractBundledGhostIfNeeded()
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
     applyOsWallpaperBackground()
     currentActivity = WeakReference(this)
     requestNotificationPermission()
     requestOverlayPermission()
+  }
+
+  private fun extractBundledGhostIfNeeded() {
+    val targetRoot = File(filesDir, "ghost/mock_nanai")
+    if (File(targetRoot, "ghost/master/descript.txt").exists()) return
+    val assetCandidates = listOf("_up_/assets/ghost/mock_nanai", "assets/ghost/mock_nanai", "ghost/mock_nanai")
+    for (assetBase in assetCandidates) {
+      val list = try { assets.list(assetBase) } catch (_: Exception) { null }
+      if (!list.isNullOrEmpty()) {
+        copyAssetDir(assetBase, targetRoot)
+        break
+      }
+    }
+  }
+
+  private fun copyAssetDir(assetPath: String, destDir: File) {
+    val children = assets.list(assetPath) ?: return
+    if (children.isEmpty()) {
+      destDir.parentFile?.mkdirs()
+      assets.open(assetPath).use { input ->
+        destDir.outputStream().use { output -> input.copyTo(output) }
+      }
+      return
+    }
+    destDir.mkdirs()
+    for (child in children) {
+      copyAssetDir("$assetPath/$child", File(destDir, child))
+    }
   }
 
   private fun applyOsWallpaperBackground() {

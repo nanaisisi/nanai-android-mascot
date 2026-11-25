@@ -1,6 +1,11 @@
 import type { NanaiAndroidMascotApp } from "../../main.js";
 import { AppConfig } from "../core/config.js";
-import { emit, invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import {
+	emit,
+	invoke,
+	isSinglePageUi,
+	isTauriAvailable,
+} from "../core/tauri-helper.js";
 import { dressupMenuPayload } from "../surface/bind-menu.js";
 
 type MenuAppContext = NanaiAndroidMascotApp & {
@@ -15,7 +20,7 @@ export const menuMethods = {
 		scope: number = 0,
 	) {
 		const app = this as unknown as MenuAppContext;
-		if (isTauriAvailable()) {
+		if (isTauriAvailable() && !isSinglePageUi()) {
 			const winCoords = globalThis as unknown as {
 				screenX?: number;
 				screenY?: number;
@@ -81,14 +86,24 @@ export const menuMethods = {
 		// descript 内のメニュースキン設定を自動抽出して構造化
 		const menuThemeFromManifest = {
 			background_bitmap:
+				manifestDescript["menu.background.bitmap.filename"] ||
 				manifestDescript["menu.background.bitmap"] ||
 				manifestDescript["menu.bg.bitmap"] ||
 				"menu_background.png",
 			sidebar_bitmap:
-				manifestDescript["menu.sidebar.bitmap"] || "menu_sidebar.png",
-			foreground_bitmap: manifestDescript["menu.foreground.bitmap"] || "",
+				manifestDescript["menu.sidebar.bitmap.filename"] ||
+				manifestDescript["menu.sidebar.bitmap"] ||
+				"menu_sidebar.png",
+			foreground_bitmap:
+				manifestDescript["menu.foreground.bitmap.filename"] ||
+				manifestDescript["menu.foreground.bitmap"] ||
+				"",
 			background_color: manifestDescript["menu.background.color"] || "",
 			foreground_color: manifestDescript["menu.foreground.color"] || "",
+			sidebar_color: manifestDescript["menu.sidebar.color"] || "",
+			sidebar_font_color: manifestDescript["menu.sidebar.font.color"] || "",
+			sidebar_text: manifestDescript["menu.sidebar.text"] || "",
+			sidebar_width: manifestDescript["menu.sidebar.width"] || "",
 			background_alignment:
 				manifestDescript["menu.background.alignment"] || "top,left",
 			sidebar_alignment:
@@ -118,7 +133,7 @@ export const menuMethods = {
 			);
 		} catch (_err) {}
 
-		if (isTauriAvailable()) {
+		if (isTauriAvailable() && !isSinglePageUi()) {
 			if (!app.availableBalloons || app.availableBalloons.length === 0) {
 				await app.scanBalloons?.();
 			}
@@ -185,7 +200,7 @@ export const menuMethods = {
 
 	hideMenu() {
 		const app = this as unknown as MenuAppContext;
-		if (isTauriAvailable()) {
+		if (isTauriAvailable() && !isSinglePageUi()) {
 			void invoke("hide_menu_window").catch(() => {});
 		}
 		const menuContainer = app.elements.menuContainer;

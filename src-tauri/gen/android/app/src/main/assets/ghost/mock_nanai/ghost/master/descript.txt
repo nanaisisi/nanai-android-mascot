@@ -1,0 +1,12 @@
+charset,Shift_JIS
+type,ghost
+name,mock_nanai
+craftman,ghostmaster
+craftmanw,‚²[‚·‚Æ‚Ü‚·‚½[
+sakura.name,‚¿‚¥‚Á‚©
+kero.name,‚Ä‚·‚½
+
+
+
+
+shiori,satori.dll

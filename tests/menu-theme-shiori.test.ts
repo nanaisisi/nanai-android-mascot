@@ -122,4 +122,47 @@ describe("menu-theme-renderer SHIORI Resource priority & edge-color fallback", (
 			"rgb(12, 34, 56)",
 		);
 	});
+
+	it("applies custom menu.sidebar.* properties and falls back to NANAI baseware sidebar", () => {
+		const labelEl = { textContent: "NANAI" };
+		(
+			mockDoc as unknown as {
+				getElementById?: (id: string) => unknown;
+			}
+		).getElementById = (id: string) =>
+			id === "menu-sidebar-label" ? labelEl : null;
+
+		menuThemeRenderer.applyShellTheme({
+			path: "C:/ghosts/test/shell/master",
+			menu_theme: {
+				sidebar_color: "rgb(30, 40, 50)",
+				sidebar_font_color: "rgb(220, 230, 240)",
+				sidebar_text: "TEST-GHOST",
+				sidebar_width: "26",
+			},
+		});
+
+		const style = mockDoc.documentElement.style;
+		expect(style.getPropertyValue("--menu-sidebar-bg")).toBe("rgb(30, 40, 50)");
+		expect(style.getPropertyValue("--menu-sidebar-color")).toBe(
+			"rgb(220, 230, 240)",
+		);
+		expect(style.getPropertyValue("--menu-sidebar-width")).toBe("26px");
+		expect(labelEl.textContent).toBe("TEST-GHOST");
+		expect(Array.from(mockDoc.body.classList)).toContain("has-sidebar-custom");
+		expect(Array.from(mockDoc.body.classList)).not.toContain("has-sidebar");
+
+		// サイドバー設定のないテーマへ切り替えるとベースウェアデフォルト ("NANAI") に戻る
+		menuThemeRenderer.applyShellTheme({
+			path: "C:/ghosts/test/shell/plain",
+			menu_theme: {},
+		});
+		expect(style.getPropertyValue("--menu-sidebar-bg")).toBe("");
+		expect(style.getPropertyValue("--menu-sidebar-color")).toBe("");
+		expect(style.getPropertyValue("--menu-sidebar-width")).toBe("");
+		expect(labelEl.textContent).toBe("NANAI");
+		expect(Array.from(mockDoc.body.classList)).not.toContain(
+			"has-sidebar-custom",
+		);
+	});
 });

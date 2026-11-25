@@ -36,6 +36,10 @@ pub fn extract_shell_menu_theme(
     let dis_font_col = parse_color("menu.disable.font.color");
     let sep_col = parse_color("menu.separator.color");
     let frame_col = parse_color("menu.frame.color");
+    let side_color = parse_color("menu.sidebar.color");
+    let side_font_color = parse_color("menu.sidebar.font.color");
+    let side_text = merged.get("menu.sidebar.text").cloned();
+    let side_width = merged.get("menu.sidebar.width").cloned();
     let font_name = merged.get("menu.font.name").cloned();
     let font_height = merged.get("menu.font.height").cloned();
 
@@ -94,6 +98,10 @@ pub fn extract_shell_menu_theme(
         || bg_bmp.is_some()
         || fg_bmp.is_some()
         || side_bmp.is_some()
+        || side_color.is_some()
+        || side_font_color.is_some()
+        || side_text.is_some()
+        || side_width.is_some()
     {
         Some(ShellMenuTheme {
             background_color: bg_color,
@@ -106,6 +114,10 @@ pub fn extract_shell_menu_theme(
             background_bitmap: bg_bmp,
             foreground_bitmap: fg_bmp,
             sidebar_bitmap: side_bmp,
+            sidebar_color: side_color,
+            sidebar_font_color: side_font_color,
+            sidebar_text: side_text,
+            sidebar_width: side_width,
             background_alignment: bg_align,
             foreground_alignment: fg_align,
             sidebar_alignment: side_align,

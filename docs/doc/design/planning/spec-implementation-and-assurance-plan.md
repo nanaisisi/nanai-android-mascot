@@ -36,7 +36,7 @@
 1. **キーワード出現一致のみの自動判定**: `scripts/compliance/audit_processor.py` が本番コードとテストに検索語が出現するだけで `✅ 実装済` と判定しており、存在しない旧パス（`ui/js/`）参照の残留や `verify:spec` の未解消警告（Broken Links: 3 / Unlisted Leaf Specs: 43 / Missing Impl Paths: 22）が残存している。
 2. **Write-only 実装の混在**: `ui/ts/core/actions/balloon-descript/` が設定する `--balloon-*` CSS 変数 **88 個のうち 41 個** が `ui/` 内の他 CSS/TS/HTML から一切参照されておらず、`tests/balloon-descript/all-properties/descript-test.ts` は CSS 変数への代入のみを検証している。
 3. **Rust 単体テストの未実行**: Rust テストは **161 ファイル・471 件**存在するが、`scripts/verification/build-and-test.ts` は `cargo check` のみ実行しており、Windows 環境制約（`0xc0000139` / `.cargo/config.toml` の `sccache`）により実実行による成否が未検証である。
-4. **TS/UI テストのモック中心構成と実行時プローブ不足**: `ui/ts/ui/compliance/runner.ts` のプローブは 6 件のみでモック依存であり、同梱ゴースト（`mock_nanai` / `emily4` / `CLDSP2+` / `DE10_3001`）を通じた実 DOM・実 Canvas・実 IPC の通貫検証が未整備である。
+4. **TS/UI テストのモック中心構成と実行時プローブ不足**: `ui/ts/ui/compliance/runner.ts` のプローブは 6 件のみでモック依存であり、同梱基準ゴースト（`assets/ghost/mock_nanai`）およびローカル検証用ゴースト（非同梱）を通じた実 DOM・実 Canvas・実 IPC の通貫検証が未整備である。
 
 ---
 
@@ -99,8 +99,8 @@ flowchart TD
 - **具体的タスク**:
   1. **Conformance Ghost 整備**: 主要タグ・バルーン `descript`・サーフィス合成・当たり判定・着せ替え・選択肢・エラー系を網羅発火する検証用ゴーストを整備する。
   2. **実ブラウザ / Tauri 実アプリ自動 E2E**: `getComputedStyle`・Canvas ピクセル比較・実ウィンドウ矩形・実 SHIORI 往復を自動検証し、モック単体テストを補完・置換する。
-  3. **同梱実ゴースト回帰スイート**: `mock_nanai` / `emily4` / `CLDSP2+` / `DE10_3001` の起動・初回会話・クリック・着せ替え・バルーン表示・終了を自動スモークテスト化する。
-- **完了条件**: 基準ゴースト 4 体の回帰スイートが自動実行で PASS すること。
+  3. **同梱基準ゴースト回帰スイート**: 同梱の `assets/ghost/mock_nanai` の起動・初回会話・クリック・着せ替え・バルーン表示・終了を自動スモークテスト化する（非同梱のローカル配置ゴーストは任意の手動/ローカル検証対象とする）。
+- **完了条件**: 基準ゴースト（`mock_nanai`）の回帰スイートが自動実行で PASS すること。
 
 ### Phase D: コア未実装・一部対応の垂直スライス実装
 

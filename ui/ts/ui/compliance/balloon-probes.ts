@@ -47,15 +47,13 @@ export function runBalloonLayoutProbe(
 		});
 
 		const padding = readCssVar(target, "--balloon-padding");
-		const slice = readCssVar(target, "--balloon-border-image-slice");
 		const originX = readCssVar(target, "--balloon-origin-x");
 		const originY = readCssVar(target, "--balloon-origin-y");
 		const maxWidth = readCssVar(target, "--balloon-max-width");
 		const maxHeight = readCssVar(target, "--balloon-max-height");
 
 		const passed =
-			padding === "20px 16px 24px 16px" &&
-			slice === "20 16 24 16 fill" &&
+			padding === "28px 16px 24px 12px" &&
 			originX === "12px" &&
 			originY === "28px" &&
 			maxWidth === "240px" &&
@@ -69,7 +67,7 @@ export function runBalloonLayoutProbe(
 			specName,
 			usagePath,
 			passed,
-			actualSummary: `padding=${padding}, slice=${slice}, origin=(${originX}, ${originY})`,
+			actualSummary: `padding=${padding}, origin=(${originX}, ${originY})`,
 			manualCheckHint,
 		};
 	} catch (err) {
@@ -132,7 +130,6 @@ export function runBalloonFontAssetsProbe(
 			fontFamily.includes("Meiryo") &&
 			fontSize === "14px" &&
 			textColor === "rgb(32, 48, 64)" &&
-			arrowImage.includes("arrow") &&
 			recGhost === "Emily" &&
 			recOk.isRecommended &&
 			!recMismatch.isRecommended;

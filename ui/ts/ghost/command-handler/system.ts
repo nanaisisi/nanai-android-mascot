@@ -43,6 +43,12 @@ export {
 	handleOpenSystemTarget,
 } from "./system/target.js";
 export {
+	getTimemachineOffsetSeconds,
+	getVirtualNowMs,
+	handleTimemachineCommand,
+	setAllowTimemachineControl,
+} from "./system/timemachine.js";
+export {
 	clearAllScriptTimers,
 	getActiveScriptTimersCount,
 	handleNotifyCommand,

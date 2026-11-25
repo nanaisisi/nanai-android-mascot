@@ -56,6 +56,18 @@ pub(super) fn evaluate_static_property(q: &str) -> Option<String> {
         "readmebuttoncaption" | "updatebuttoncaption" | "vanishbuttoncaption" => "1",
         "currentghost.seriko.surfacelist.defined" => "0,1,10",
         "currentghost.seriko.surfacelist.all" => "0,1,10",
+        "currentghost.seriko.zorder" => "",
+        "currentghost.seriko.sticky-window" => "",
+        "currentghost.status" => "",
+        "currentghost.sound.count" => "0",
+        "currentghost.sound" => "",
+        "currentghost.mousecursor"
+        | "currentghost.mousecursor.arrow"
+        | "currentghost.mousecursor.grip"
+        | "currentghost.mousecursor.hand"
+        | "currentghost.mousecursor.text"
+        | "currentghost.mousecursor.wait" => "",
+        "activeghostlist.current" => "",
         "update_time" => "",
         "sakura.bind.menu" | "kero.bind.menu" | "sakura.menu" | "kero.menu" => "auto",
         "menu.font.name" => "sans-serif",

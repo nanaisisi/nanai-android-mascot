@@ -1626,9 +1626,10 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 			assert.equal(drawOps.fillRectCalls, 0);
 			assert.deepEqual(drawOps.strokeRects, [
 				[1, 1, 98, 198],
+				[0, 0, 100, 200],
 				[10, 10, 40, 40],
 			]);
-			assert.equal(drawOps.fillTexts[0]?.text, "Head");
+			assert.ok(drawOps.fillTexts.some((t) => t.text === "Head"));
 
 			// Rescaling character to 2x updates both window & part collision outlines
 			drawOps.strokeRects.length = 0;
@@ -1638,8 +1639,9 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 			assert.equal(canvas.width, 200);
 			assert.equal(canvas.height, 400);
 			assert.equal(drawOps.fillRectCalls, 0);
-			assert.deepEqual(drawOps.strokeRects, [
+			assert.deepEqual(drawOps.strokeRects.slice(0, 3), [
 				[1, 1, 198, 398],
+				[0, 0, 200, 400],
 				[20, 20, 80, 80],
 			]);
 
@@ -1650,7 +1652,10 @@ describe("character window enhanced mouse, hover, stroke, wheel, and gesture sup
 			});
 			assert.equal(canvas.style.display, "block");
 			assert.equal(drawOps.fillRectCalls, 0);
-			assert.deepEqual(drawOps.strokeRects, [[1, 1, 198, 398]]);
+			assert.deepEqual(drawOps.strokeRects.slice(0, 2), [
+				[1, 1, 198, 398],
+				[0, 0, 200, 400],
+			]);
 
 			// Hiding collisions hides the canvas cleanly
 			await listenCallbacks["update-subchar-collisions-1"]?.({

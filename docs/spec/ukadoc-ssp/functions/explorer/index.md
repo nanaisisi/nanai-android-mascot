@@ -1,11 +1,20 @@
 # エクスプローラ
 
-- **規格**: [functions/explorer/index.md](https://ukatech.shillest.net/ukadoc-ssp/functions/explorer/index/) (ukadoc-ssp/functions/explorer/index.md)
+- **規格**: [explorer/index.md](../../../../../docs/ukadoc-ssp/functions/explorer/index.md) ([公式版](https://ukatech.shillest.net/ukadoc-ssp/functions/explorer/))
 - **対応状況**: ✅ 実装済
 
-## 突合結果
-
 ゴースト・バルーン一覧モーダル、切り替え基盤
+
+| 仕様項目 | 対応状況 | 実装・備考 |
+| :--- | :---: | :--- |
+| [基本操作](index/section-01.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/explorer/index.md の「基本操作」 |
+| [上部の各メニュー](index/section-02.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/explorer/index.md の「上部の各メニュー」 |
+| [ファイル](index/section-03.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/explorer/index.md の「ファイル」 |
+| [編集](index/section-04.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/explorer/index.md の「編集」 |
+| [種類](index/section-05.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/explorer/index.md の「種類」 |
+| [機能](index/section-06.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/explorer/index.md の「機能」 |
+| [設定](index/section-07.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/explorer/index.md の「設定」 |
+| [下部のボタン](index/section-08.md) | ✅ 実装済 | docs/ukadoc-ssp/functions/explorer/index.md の「下部のボタン」 |
 
 ## 実装箇所
 

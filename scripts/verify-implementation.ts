@@ -9,6 +9,7 @@ import { runLicensesAndGuide } from "./verification/licenses-and-guide.ts";
 import { runListAndComparisonAudit } from "./verification/list-audit.ts";
 import { runModuleExistenceCheck } from "./verification/module-check.ts";
 import { runSpecAuditVerification } from "./verification/spec-audit.ts";
+import { runWiringAudit } from "./verification/wiring-audit.ts";
 
 console.log("==================================================");
 console.log("🚀 Nanai Android Mascot - 実装確認スクリプト");
@@ -18,6 +19,7 @@ runBuildAndTestVerification();
 runSpecAuditVerification();
 runModuleExistenceCheck();
 runListAndComparisonAudit();
+runWiringAudit();
 runLicensesAndGuide();
 
 console.log("==================================================");

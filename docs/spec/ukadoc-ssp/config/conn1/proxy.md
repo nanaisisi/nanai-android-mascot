@@ -1,0 +1,19 @@
+# プロキシサーバ(Proxy)の設定
+
+- **規格**: [conn1.md](../../../../ukadoc-ssp/config/conn1.md) ([公式版](https://ukatech.shillest.net/ukadoc-ssp/config/conn1/))
+- **検索語**: proxy
+- **対応状況**: ✅ 実装済
+
+## 突合結果
+
+Windows プロキシ自動利用・手動プロキシサーバ指定・認証設定は未実装。
+
+
+## 実装箇所
+
+- `crates/ui/src/script/parser/tests.rs:74` `\\![set,proxy,127.0.0.1,8080]\`
+- `ui/ts/core/actions/menu-action-dispatcher.ts:233` `if (action === "toggle-proxy") {`
+- `ui/ts/ui/submenu-renderer.ts:424` `{ action: "toggle-proxy", label: "プロキシサーバを有効にする(X)" },`
+- `tests/android-bridge/platform-overlay.test.ts:146` `it("supports backward compatibility proxy getters, setters, and utility methods"`
+- `crates/ui/src/script/parser/brackets/handlers/raiselike/settings/handlers.rs:79` `"proxy" => {`
+- `ui/ts/ui/renderers/menu-caption-switches.ts:110` `id: "switch-proxy-btn",`

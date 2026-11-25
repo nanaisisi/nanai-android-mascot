@@ -15,7 +15,7 @@ Nanai Android Mascot における「サーフィス定義（`surfaces.txt`）」
   - `../../../ui/ts/surface/surface.ts`: HTML5 Canvas 2D による合成・拡大縮小・当たり判定
   - `../../../ui/ts/surface/surface-compositor.ts`: `overlayfast`, `blend-*` (multiply/screen/overlay/add), PNA 8bit アルファマスク合成
   - `../../../ui/ts/surface/interaction.ts`: タッチ/クリック座標変換および部位判定
-  - `../../../src-tauri/src/commands/file.rs`: 画像ファイル（PNG/BMP/PNA）および `surfaces.txt` のエンコード自動判別読込
+  - `../../../src-tauri/src/commands/file/mod.rs`: 画像ファイル（PNG/BMP/PNA）および `surfaces.txt` のエンコード自動判別読込
 
 ---
 

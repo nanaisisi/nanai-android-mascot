@@ -256,13 +256,7 @@ export function handleMenuActionImpl(
 		return;
 	}
 	if (action === "script-log" || action === "show-script-log") {
-		if (isTauriAvailable()) {
-			void invoke("show_ssp_log_window").catch(() => {
-				context.modalManager?.show?.("plugins-modal-content");
-			});
-		} else {
-			context.modalManager?.show?.("plugins-modal-content");
-		}
+		context.modalManager?.show?.("script-log-modal-content");
 		return;
 	}
 	if (
@@ -333,13 +327,7 @@ export function handleMenuActionImpl(
 		return;
 	}
 	if (action === "show-error-log" || action === "error-log") {
-		if (isTauriAvailable()) {
-			void invoke("show_ssp_log_window").catch(() => {
-				context.modalManager?.show?.("plugins-modal-content");
-			});
-		} else {
-			context.modalManager?.show?.("plugins-modal-content");
-		}
+		context.modalManager?.show?.("script-log-modal-content");
 		return;
 	}
 	if (action === "seriko-inspector") {

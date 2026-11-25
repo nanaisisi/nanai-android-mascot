@@ -36,3 +36,30 @@ collisionex2,leg,polygon,0,0,10,0,10,20
     assert_eq!(manifest.collisions()["0"][1].name(), "bust");
     assert_eq!(manifest.collisions()["0"][2].name(), "leg");
 }
+
+#[test]
+fn test_parse_collisionoption_brace() {
+    let txt = r#"
+sakura.collisionoption
+{
+nodrag0,Knob
+nocontextmenu0,Head
+}
+kero.collisionoption {
+nodrag0,Tail
+}
+"#;
+    let parsed = parse_surfaces_txt(txt);
+    assert_eq!(
+        parsed.nodrag_collisions().get("sakura"),
+        Some(&vec!["Knob".to_string()])
+    );
+    assert_eq!(
+        parsed.nocontextmenu_collisions().get("sakura"),
+        Some(&vec!["Head".to_string()])
+    );
+    assert_eq!(
+        parsed.nodrag_collisions().get("kero"),
+        Some(&vec!["Tail".to_string()])
+    );
+}

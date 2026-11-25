@@ -166,3 +166,6 @@
 | [windowposition.x,座標](windowposition.x.md)                                       | windowposition.x                    |         ✅ 実装済 (balloon-descript.ts)          |
 | [windowposition.y,座標](windowposition.y.md)                                       | windowposition.y                    |         ✅ 実装済 (balloon-descript.ts)          |
 | [windowposition.limit,0/1](windowposition.limit.md)                                | windowposition.limit                |         ✅ 実装済 (balloon-descript.ts)          |
+| [githubrepo,URL](githubrepo.md) | githubrepo | ⚠️ 一部対応 |
+| [metainfo,URL](metainfo.md) | metainfo | ❌ 未実装 |
+| [uuid_base,文字列](uuid_base.md) | uuid_base | ❌ 未実装 |

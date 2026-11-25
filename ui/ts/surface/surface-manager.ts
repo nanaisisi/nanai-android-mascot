@@ -14,7 +14,13 @@ import {
 } from "./bind-menu.js";
 import {
 	collisionRecord,
+	getAlignmentToDesktop,
+	getSerikoDpi,
+	getSerikoDpiScale,
+	getSerikoStickyWindows,
+	getSerikoZOrder,
 	getShellManifest,
+	isSerikoCrossfadeDisabled,
 	manifestToSurfaceData,
 	parseSurfacesTextWithRust,
 	type RawShellManifest,
@@ -188,6 +194,8 @@ export interface ParsedSurfacesTxtData {
 	charAliases: Record<number, Record<string, number[]>>;
 	cursors: Record<string, CursorDefinitionRecord[]>;
 	tooltips: Record<string, Record<string, string>>;
+	nodragCollisions?: Record<string, string[]>;
+	nocontextmenuCollisions?: Record<string, string[]>;
 	names: Record<string, string>;
 	iconRects: Record<string, number[]>;
 	collisionSort: string;
@@ -334,13 +342,21 @@ function scanSurfacesTxt(
 	const charAliases: Record<number, Record<string, number[]>> = {};
 	const cursors: Record<string, CursorDefinitionRecord[]> = {};
 	const tooltips: Record<string, Record<string, string>> = {};
+	const nodragCollisions: Record<string, string[]> = {};
+	const nocontextmenuCollisions: Record<string, string[]> = {};
 	const names: Record<string, string> = {};
 	const iconRects: Record<string, number[]> = {};
 	let collisionSort = "none";
 	let animationSort = "none";
 
 	let currentSurfaces = ["default"];
-	let blockType: "surface" | "alias" | "cursor" | "tooltip" | null = null;
+	let blockType:
+		| "surface"
+		| "alias"
+		| "cursor"
+		| "tooltip"
+		| "collisionoption"
+		| null = null;
 	let blockScope = "sakura";
 
 	for (const rawLine of text.split(/\r?\n/)) {
@@ -348,6 +364,35 @@ function scanSurfacesTxt(
 		if (!trimmed || trimmed.startsWith("//") || trimmed === "{") continue;
 		if (trimmed === "}") {
 			blockType = null;
+			continue;
+		}
+
+		const colOptMatch = trimmed
+			.replace(/\{$/, "")
+			.trim()
+			.match(/^([a-z0-9_]+)\.collisionoption$/i);
+		if (colOptMatch) {
+			blockType = "collisionoption";
+			blockScope = colOptMatch[1].toLowerCase();
+			continue;
+		}
+
+		if (blockType === "collisionoption") {
+			const commaIdx = trimmed.indexOf(",");
+			if (commaIdx > 0) {
+				const k = trimmed.slice(0, commaIdx).trim().toLowerCase();
+				const v = trimmed.slice(commaIdx + 1).trim();
+				if (v) {
+					if (k.startsWith("nodrag")) {
+						nodragCollisions[blockScope] = nodragCollisions[blockScope] || [];
+						nodragCollisions[blockScope].push(v);
+					} else if (k.startsWith("nocontextmenu")) {
+						nocontextmenuCollisions[blockScope] =
+							nocontextmenuCollisions[blockScope] || [];
+						nocontextmenuCollisions[blockScope].push(v);
+					}
+				}
+			}
 			continue;
 		}
 
@@ -555,6 +600,8 @@ function scanSurfacesTxt(
 		iconRects,
 		collisionSort,
 		animationSort,
+		nodragCollisions,
+		nocontextmenuCollisions,
 	};
 }
 
@@ -610,6 +657,8 @@ function normalizeWasmSurfacesResult(
 		charAliases: meta.charAliases,
 		cursors: meta.cursors,
 		tooltips: meta.tooltips,
+		nodragCollisions: meta.nodragCollisions,
+		nocontextmenuCollisions: meta.nocontextmenuCollisions,
 		names: meta.names,
 		iconRects: meta.iconRects,
 		collisionSort: String(
@@ -678,6 +727,8 @@ export class SurfaceManager {
 	charAliases: Record<number | string, Record<string, number[]>>;
 	cursors: Record<string, CursorDefinitionRecord[]>;
 	tooltips: Record<string, Record<string, string>>;
+	nodragCollisions?: Record<string, string[]>;
+	nocontextmenuCollisions?: Record<string, string[]>;
 	names: Record<string, string>;
 	iconRects: Record<string, number[]>;
 	collisionSort: string;
@@ -769,6 +820,25 @@ export class SurfaceManager {
 		this.currentSurfaceIds.set(scopeId, surfaceId);
 	}
 
+	isNoDragCollision(scopeId: number | string, collisionName: string): boolean {
+		return surfaceCollisionMethods.isNoDragCollision.call(
+			{ nodragCollisions: this.nodragCollisions } as never,
+			scopeId,
+			collisionName,
+		);
+	}
+
+	isNoContextMenuCollision(
+		scopeId: number | string,
+		collisionName: string,
+	): boolean {
+		return surfaceCollisionMethods.isNoContextMenuCollision.call(
+			{ nocontextmenuCollisions: this.nocontextmenuCollisions } as never,
+			scopeId,
+			collisionName,
+		);
+	}
+
 	load(): void {}
 
 	render(): void {}
@@ -841,6 +911,8 @@ export class SurfaceManager {
 		this.charAliases = data.charAliases ?? {};
 		this.cursors = data.cursors ?? {};
 		this.tooltips = data.tooltips ?? {};
+		this.nodragCollisions = data.nodragCollisions ?? {};
+		this.nocontextmenuCollisions = data.nocontextmenuCollisions ?? {};
 		this.names = data.names ?? {};
 		this.iconRects = data.iconRects ?? {};
 		this.collisionSort = data.collisionSort ?? "none";
@@ -898,6 +970,8 @@ export class SurfaceManager {
 					charAliases: meta.charAliases,
 					cursors: meta.cursors,
 					tooltips: meta.tooltips,
+					nodragCollisions: meta.nodragCollisions,
+					nocontextmenuCollisions: meta.nocontextmenuCollisions,
 					names: meta.names,
 					iconRects: meta.iconRects,
 					collisionSort: meta.collisionSort,
@@ -926,6 +1000,37 @@ export class SurfaceManager {
 			useSelfAlpha,
 			paintTransparentRegionBlack,
 		});
+	}
+
+	getSerikoDpi(): number {
+		return getSerikoDpi(this.shellManifest as RawShellManifest | null);
+	}
+
+	getSerikoDpiScale(): number {
+		return getSerikoDpiScale(this.shellManifest as RawShellManifest | null);
+	}
+
+	isSerikoCrossfadeDisabled(): boolean {
+		return isSerikoCrossfadeDisabled(
+			this.shellManifest as RawShellManifest | null,
+		);
+	}
+
+	getSerikoZOrder(): number[] {
+		return getSerikoZOrder(this.shellManifest as RawShellManifest | null);
+	}
+
+	getSerikoStickyWindows(): number[] {
+		return getSerikoStickyWindows(
+			this.shellManifest as RawShellManifest | null,
+		);
+	}
+
+	getAlignmentToDesktop(scopeId = 0): string | undefined {
+		return getAlignmentToDesktop(
+			this.shellManifest as RawShellManifest | null,
+			scopeId,
+		);
 	}
 
 	activeBindAnimationIds(scopeId = 0): number[] {

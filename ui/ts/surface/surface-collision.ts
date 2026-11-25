@@ -512,4 +512,46 @@ export const surfaceCollisionMethods = {
 		}
 		return null;
 	},
+
+	isNoDragCollision(
+		this: SurfaceCollisionContext & {
+			nodragCollisions?: Record<string, string[]>;
+		},
+		scopeId: number | string,
+		collisionName: string,
+	): boolean {
+		if (!this.nodragCollisions || !collisionName) return false;
+		const colLower = String(collisionName).toLowerCase();
+		for (const key of resolveScopeKeys(scopeId)) {
+			const list = this.nodragCollisions[key];
+			if (
+				Array.isArray(list) &&
+				list.some((n) => String(n).toLowerCase() === colLower)
+			) {
+				return true;
+			}
+		}
+		return false;
+	},
+
+	isNoContextMenuCollision(
+		this: SurfaceCollisionContext & {
+			nocontextmenuCollisions?: Record<string, string[]>;
+		},
+		scopeId: number | string,
+		collisionName: string,
+	): boolean {
+		if (!this.nocontextmenuCollisions || !collisionName) return false;
+		const colLower = String(collisionName).toLowerCase();
+		for (const key of resolveScopeKeys(scopeId)) {
+			const list = this.nocontextmenuCollisions[key];
+			if (
+				Array.isArray(list) &&
+				list.some((n) => String(n).toLowerCase() === colLower)
+			) {
+				return true;
+			}
+		}
+		return false;
+	},
 };

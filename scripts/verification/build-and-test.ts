@@ -1,11 +1,13 @@
 import { runStepCommand } from "./config.ts";
 
 export function runBuildAndTestVerification(): void {
-	console.log("1️⃣ [Cargo Check] Rust バックエンド & FFI コンパイル検証...");
+	console.log(
+		"1️⃣ [Rust Tests & Check] 純 Rust クレート実テスト & src-tauri コンパイル検証...",
+	);
 	runStepCommand(
-		"cargo check",
-		"✅ Cargo Check: エラーなしでビルド成功!\n",
-		"❌ Cargo Check: コンパイルエラーが発生しました。\n",
+		"node scripts/run-rust-tests.mjs",
+		"✅ Rust Tests & Check: 純 Rust テスト & src-tauri 検証成功!\n",
+		"❌ Rust Tests & Check: Rust テストまたはコンパイル検証に失敗しました。\n",
 	);
 
 	console.log(

@@ -62,6 +62,7 @@ export interface DragOptions {
 	) => unknown;
 	onGhostDragStart?: (x: number, y: number, rect: unknown) => unknown;
 	onGhostDragEnd?: (x: number, y: number, rect: unknown) => unknown;
+	isNoDragAtPoint?: (x: number, y: number, rect: unknown) => boolean;
 	onGhostMouseEx?: (
 		type: "down" | "up",
 		x: number,
@@ -182,6 +183,7 @@ export function setupGhostDragging(
 		onGhostMouseUp,
 		onGhostDragStart,
 		onGhostDragEnd,
+		isNoDragAtPoint,
 		onGhostMouseEx,
 		onGhostMouseClickEx,
 		onGhostMultipleClick,
@@ -334,6 +336,11 @@ export function setupGhostDragging(
 			const button = e.button !== undefined ? e.button : 0;
 			const device = normalizePointerDevice(e);
 			onGhostMouseDown(clientX, clientY, rect, button, device);
+		}
+		if (isNoDragAtPoint?.(clientX, clientY, rect)) {
+			dragInternalState.isInteracting = false;
+			nativeDrag.reset();
+			return;
 		}
 
 		const isTouch = Boolean(

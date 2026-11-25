@@ -7,16 +7,26 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Build
 import android.provider.Settings
+import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import java.lang.ref.WeakReference
 
 class MainActivity : TauriActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
+    currentActivity = WeakReference(this)
     requestNotificationPermission()
     requestOverlayPermission(savedInstanceState == null)
+  }
+
+  override fun onDestroy() {
+    if (currentActivity?.get() === this) {
+      currentActivity = null
+    }
+    super.onDestroy()
   }
 
   override fun onResume() {
@@ -71,7 +81,74 @@ class MainActivity : TauriActivity() {
     }
   }
 
+  fun setupForegroundService(enabled: Boolean) {
+    val serviceIntent = Intent(this, NanaiForegroundService::class.java)
+    if (enabled && Settings.canDrawOverlays(this)) {
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        startForegroundService(serviceIntent)
+      } else {
+        startService(serviceIntent)
+      }
+    } else if (!enabled) {
+      stopService(serviceIntent)
+    }
+  }
+
+  fun setOverlayTransparency(alpha: Float) {
+    val clamped = alpha.coerceIn(0.0f, 1.0f)
+    runOnUiThread {
+      val params = window.attributes
+      params.alpha = clamped
+      window.attributes = params
+    }
+  }
+
+  fun setClickThrough(enabled: Boolean) {
+    runOnUiThread {
+      if (enabled) {
+        window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+      } else {
+        window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+      }
+    }
+  }
+
+  fun resizeOverlayWindow(width: Int, height: Int) {
+    if (width <= 0 || height <= 0) return
+    runOnUiThread {
+      window.setLayout(width, height)
+    }
+  }
+
+  override fun onTrimMemory(level: Int) {
+    super.onTrimMemory(level)
+  }
+
   companion object {
     private const val NOTIFICATION_PERMISSION_REQUEST_CODE = 1001
+    private var currentActivity: WeakReference<MainActivity>? = null
+
+    @JvmStatic
+    fun getInstance(): MainActivity? = currentActivity?.get()
+
+    @JvmStatic
+    fun applyOverlayTransparency(alpha: Float) {
+      getInstance()?.setOverlayTransparency(alpha)
+    }
+
+    @JvmStatic
+    fun applyClickThrough(enabled: Boolean) {
+      getInstance()?.setClickThrough(enabled)
+    }
+
+    @JvmStatic
+    fun applyResizeOverlayWindow(width: Int, height: Int) {
+      getInstance()?.resizeOverlayWindow(width, height)
+    }
+
+    @JvmStatic
+    fun applyForegroundService(enabled: Boolean) {
+      getInstance()?.setupForegroundService(enabled)
+    }
   }
 }

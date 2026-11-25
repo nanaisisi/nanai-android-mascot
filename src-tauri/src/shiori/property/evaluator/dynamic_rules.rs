@@ -52,6 +52,64 @@ pub(super) fn evaluate_dynamic_property(
         return "1".to_string();
     }
 
+    if q.starts_with("activeghostlist.index(")
+        || q.starts_with("currentghost.shelllist.index(")
+        || q.starts_with("currentghost.sound.index(")
+    {
+        return String::new();
+    }
+
+    if q.starts_with("currentghost.seriko.cursor.scope(")
+        || q.starts_with("currentghost.seriko.tooltip.scope(")
+    {
+        return if q.ends_with(".count") {
+            "0".to_string()
+        } else {
+            String::new()
+        };
+    }
+
+    if q.starts_with("developer.log.") {
+        return if q.ends_with(".count") {
+            "0".to_string()
+        } else {
+            String::new()
+        };
+    }
+
+    if q.starts_with("headlinelist.index(") || q.starts_with("pluginlist.index(") {
+        return String::new();
+    }
+
+    if q.starts_with("history.ghost")
+        || q.starts_with("history.headline")
+        || q.starts_with("history.plugin")
+    {
+        return if q.ends_with(".count") {
+            "0".to_string()
+        } else {
+            String::new()
+        };
+    }
+
+    if q.starts_with("rateofuselist") {
+        return if q.ends_with(".count")
+            || q.ends_with(".bootminute")
+            || q.ends_with(".bootminutemonthly")
+            || q.ends_with(".bootminuteweekly")
+            || q.ends_with(".boottime")
+            || q.ends_with(".boottimemonthly")
+            || q.ends_with(".boottimeweekly")
+            || q.ends_with(".percent")
+            || q.ends_with(".percentmonthly")
+            || q.ends_with(".percentweekly")
+        {
+            "0".to_string()
+        } else {
+            String::new()
+        };
+    }
+
     format!("(unknown property: {})", raw_query)
 }
 

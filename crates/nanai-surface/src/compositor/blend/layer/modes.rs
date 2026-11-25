@@ -63,6 +63,11 @@ pub(crate) fn evaluate_blend_mode(params: Evaluate_blend_modeParams<'_>) -> (u8,
             (255 - ((255 - sg as u16) * (255 - dg as u16) / 255)) as u8,
             (255 - ((255 - sb as u16) * (255 - db as u16) / 255)) as u8,
         ),
+        "add" | "lighter" | "add-glow" => (
+            (sr as u16 + dr as u16).min(255) as u8,
+            (sg as u16 + dg as u16).min(255) as u8,
+            (sb as u16 + db as u16).min(255) as u8,
+        ),
         "overlay" => (
             if dr < 128 {
                 ((2 * sr as u16 * dr as u16) / 255) as u8
@@ -85,46 +90,98 @@ pub(crate) fn evaluate_blend_mode(params: Evaluate_blend_modeParams<'_>) -> (u8,
             std::cmp::min(sg, dg),
             std::cmp::min(sb, db),
         ),
+        "darker-color" => {
+            let lum_src = (sr as u32 * 299 + sg as u32 * 587 + sb as u32 * 114) / 1000;
+            let lum_dst = (dr as u32 * 299 + dg as u32 * 587 + db as u32 * 114) / 1000;
+            if lum_src < lum_dst {
+                (sr, sg, sb)
+            } else {
+                (dr, dg, db)
+            }
+        }
         "lighten" => (
             std::cmp::max(sr, dr),
             std::cmp::max(sg, dg),
             std::cmp::max(sb, db),
         ),
-        "colordodge" => (
-            if sr == 255 {
+        "lighter-color" => {
+            let lum_src = (sr as u32 * 299 + sg as u32 * 587 + sb as u32 * 114) / 1000;
+            let lum_dst = (dr as u32 * 299 + dg as u32 * 587 + db as u32 * 114) / 1000;
+            if lum_src > lum_dst {
+                (sr, sg, sb)
+            } else {
+                (dr, dg, db)
+            }
+        }
+        "subtract" | "sub" => (
+            (dr as i16 - sr as i16).max(0) as u8,
+            (dg as i16 - sg as i16).max(0) as u8,
+            (db as i16 - sb as i16).max(0) as u8,
+        ),
+        "divide" => (
+            if sr == 0 {
+                255
+            } else {
+                (((dr as u32) * 255) / (sr as u32)).min(255) as u8
+            },
+            if sg == 0 {
+                255
+            } else {
+                (((dg as u32) * 255) / (sg as u32)).min(255) as u8
+            },
+            if sb == 0 {
+                255
+            } else {
+                (((db as u32) * 255) / (sb as u32)).min(255) as u8
+            },
+        ),
+        "colordodge" | "color-dodge" | "color-dodge-glow" => (
+            if dr == 0 {
+                0
+            } else if sr == 255 {
                 255
             } else {
                 std::cmp::min(255, ((dr as u32 * 255) / (255 - sr as u32)) as u8)
             },
-            if sg == 255 {
+            if dg == 0 {
+                0
+            } else if sg == 255 {
                 255
             } else {
                 std::cmp::min(255, ((dg as u32 * 255) / (255 - sg as u32)) as u8)
             },
-            if sb == 255 {
+            if db == 0 {
+                0
+            } else if sb == 255 {
                 255
             } else {
                 std::cmp::min(255, ((db as u32 * 255) / (255 - sb as u32)) as u8)
             },
         ),
-        "colorburn" => (
-            if sr == 0 {
+        "colorburn" | "color-burn" => (
+            if dr == 255 {
+                255
+            } else if sr == 0 {
                 0
             } else {
                 255 - std::cmp::min(255, (((255 - dr as u32) * 255) / sr as u32) as u8)
             },
-            if sg == 0 {
+            if dg == 255 {
+                255
+            } else if sg == 0 {
                 0
             } else {
                 255 - std::cmp::min(255, (((255 - dg as u32) * 255) / sg as u32) as u8)
             },
-            if sb == 0 {
+            if db == 255 {
+                255
+            } else if sb == 0 {
                 0
             } else {
                 255 - std::cmp::min(255, (((255 - db as u32) * 255) / sb as u32) as u8)
             },
         ),
-        "hardlight" => (
+        "hardlight" | "hard-light" => (
             if sr < 128 {
                 ((2 * sr as u16 * dr as u16) / 255) as u8
             } else {
@@ -141,7 +198,7 @@ pub(crate) fn evaluate_blend_mode(params: Evaluate_blend_modeParams<'_>) -> (u8,
                 (255 - (2 * (255 - sb as u16) * (255 - db as u16) / 255)) as u8
             },
         ),
-        "softlight" => {
+        "softlight" | "soft-light" => {
             // SVG 1.1 / W3C Compositing and Blending softlight formula
             let f = |d: u8, s: u8| -> u8 {
                 let dc = d as f32 / 255.0;
@@ -202,6 +259,62 @@ pub(crate) fn evaluate_blend_mode(params: Evaluate_blend_modeParams<'_>) -> (u8,
             sg,
             sb,
         }),
+        "vivid-light" => {
+            let calc = |d: u8, s: u8| -> u8 {
+                if s < 128 {
+                    if d == 255 {
+                        255
+                    } else if s == 0 {
+                        0
+                    } else {
+                        let s2 = (s as i32) * 2;
+                        let inv_d = 255 - d as i32;
+                        (255 - (inv_d * 255) / s2).clamp(0, 255) as u8
+                    }
+                } else if d == 0 {
+                    0
+                } else if s == 255 {
+                    255
+                } else {
+                    let s_val = 2 * (s as u32 - 128);
+                    if s_val >= 255 {
+                        255
+                    } else {
+                        (((d as u32) * 255) / (255 - s_val)).min(255) as u8
+                    }
+                }
+            };
+            (calc(dr, sr), calc(dg, sg), calc(db, sb))
+        }
+        "linear-burn" => (
+            (dr as i32 + sr as i32 - 255).max(0) as u8,
+            (dg as i32 + sg as i32 - 255).max(0) as u8,
+            (db as i32 + sb as i32 - 255).max(0) as u8,
+        ),
+        "linear-light" => (
+            (dr as i32 + 2 * (sr as i32) - 255).clamp(0, 255) as u8,
+            (dg as i32 + 2 * (sg as i32) - 255).clamp(0, 255) as u8,
+            (db as i32 + 2 * (sb as i32) - 255).clamp(0, 255) as u8,
+        ),
+        "pin-light" => {
+            let calc = |d: u8, s: u8| -> u8 {
+                if s < 128 {
+                    d.min(2 * s)
+                } else {
+                    let s2 = 2 * (s as u16 - 128);
+                    (d as u16).max(s2).min(255) as u8
+                }
+            };
+            (calc(dr, sr), calc(dg, sg), calc(db, sb))
+        }
+        "hard-mix" => {
+            let calc = |d: u8, s: u8| -> u8 {
+                let linear_light = d as i32 + 2 * (s as i32) - 255;
+                if linear_light >= 128 { 255 } else { 0 }
+            };
+            (calc(dr, sr), calc(dg, sg), calc(db, sb))
+        }
+        "dither" => (sr, sg, sb),
         _ => (sr, sg, sb), // fallback to normal/source
     }
 }

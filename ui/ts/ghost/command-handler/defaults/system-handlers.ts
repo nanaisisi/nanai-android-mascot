@@ -29,6 +29,7 @@ import {
 	handleSetShioriDebugMode,
 	handleSetTaskTrayIcon,
 	handleSetTrayBalloon,
+	handleTimemachineCommand,
 	handleTimerNotifyCommand,
 	handleTimerPluginCommand,
 	handleTimerRaiseCommand,
@@ -38,6 +39,7 @@ import {
 import { handleWindowState, setAlignmentToDesktop } from "../window.js";
 
 export function registerSystemCommandHandlers() {
+	registerCommandHandler("timemachine", handleTimemachineCommand);
 	registerCommandHandler("set:alignmenttodesktop", async (handler, args) => {
 		handleSetAlignmentOnDesktop(handler, args);
 	});

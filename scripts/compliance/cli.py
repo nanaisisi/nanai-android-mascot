@@ -99,4 +99,8 @@ def parse_args():
         "--check-lists", action="store_true", dest="check_lists",
         help="Verify implementation comparison file lists, category tables, and referenced code paths."
     )
+    parser.add_argument(
+        "--strict-lists", action="store_true", dest="strict_lists",
+        help="Exit with non-zero status code if any comparison list defect (corrupted rows, broken links, unlisted specs, missing impl paths) is detected."
+    )
     return parser.parse_args()

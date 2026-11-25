@@ -820,6 +820,7 @@ Face,顔領域
 			[40, 30, 20, 10], // CheekBox bounding-box Ellipse converted to center-radius
 		]);
 		expect(ops.fillTexts.map((t) => t.text)).toEqual([
+			"initial",
 			"icon.rect",
 			"point.center",
 			"point.future.anchor",
@@ -895,7 +896,10 @@ Face,顔領域
 				[2, 2, 10, 10],
 				[40, 50, 20, 20],
 			]);
-			expect(ops.fillTexts.map((t) => t.text)).toEqual(["FuturePart"]);
+			expect(ops.fillTexts.map((t) => t.text)).toEqual([
+				"initial",
+				"FuturePart",
+			]);
 		} finally {
 			unregisterCollisionShapeSpec("diamond");
 			unregisterCollisionOverlayLayer("custom-window-guide");

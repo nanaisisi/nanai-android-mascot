@@ -128,6 +128,61 @@ fn test_property_evaluation() {
         evaluate_property_query("currentghost.seriko.surfacelist.all"),
         "0,1,10"
     );
+    assert_eq!(evaluate_property_query("currentghost.seriko.zorder"), "");
+    assert_eq!(
+        evaluate_property_query("currentghost.seriko.sticky-window"),
+        ""
+    );
+    assert_eq!(evaluate_property_query("currentghost.status"), "");
+    assert_eq!(evaluate_property_query("currentghost.sound.count"), "0");
+    assert_eq!(evaluate_property_query("currentghost.sound"), "");
+    assert_eq!(evaluate_property_query("currentghost.sound.index(0)"), "");
+    assert_eq!(evaluate_property_query("currentghost.mousecursor"), "");
+    assert_eq!(
+        evaluate_property_query("currentghost.mousecursor.arrow"),
+        ""
+    );
+    assert_eq!(evaluate_property_query("currentghost.mousecursor.hand"), "");
+    assert_eq!(evaluate_property_query("activeghostlist.current"), "");
+    assert_eq!(evaluate_property_query("activeghostlist.index(0)"), "");
+    assert_eq!(evaluate_property_query("activeghostlist.index(0).ext"), "");
+    assert_eq!(
+        evaluate_property_query("currentghost.shelllist.index(0)"),
+        ""
+    );
+    assert_eq!(
+        evaluate_property_query("currentghost.seriko.cursor.scope(0).mousehoverlist.count"),
+        "0"
+    );
+    assert_eq!(
+        evaluate_property_query("currentghost.seriko.cursor.scope(0).mousehoverlist.index(0).name"),
+        ""
+    );
+    assert_eq!(
+        evaluate_property_query("currentghost.seriko.tooltip.scope(0).textlist.count"),
+        "0"
+    );
+    assert_eq!(
+        evaluate_property_query("currentghost.seriko.tooltip.scope(0).textlist.index(0).text"),
+        ""
+    );
+    assert_eq!(evaluate_property_query("developer.log.error.count"), "0");
+    assert_eq!(evaluate_property_query("developer.log.error.index(0)"), "");
+    assert_eq!(evaluate_property_query("headlinelist.index(0)"), "");
+    assert_eq!(evaluate_property_query("pluginlist.index(0).ext"), "");
+    assert_eq!(evaluate_property_query("history.ghost.count"), "0");
+    assert_eq!(evaluate_property_query("history.ghost.index(0)"), "");
+    assert_eq!(evaluate_property_query("history.headline.count"), "0");
+    assert_eq!(evaluate_property_query("history.plugin.count"), "0");
+    assert_eq!(
+        evaluate_property_query("rateofuselist.index(0).bootminute"),
+        "0"
+    );
+    assert_eq!(
+        evaluate_property_query("rateofuselist.index(0).percent"),
+        "0"
+    );
+    assert_eq!(evaluate_property_query("rateofuselist.index(0).name"), "");
     assert_eq!(
         evaluate_property_query("callsstpsendboxbutton.caption"),
         "1"

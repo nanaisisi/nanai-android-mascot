@@ -3,6 +3,7 @@
  * @brief GhostController 向け SHIORI 初期化・イベント送受信・タイマー管理ロジック
  */
 
+import { recordScriptLog } from "../core/diagnostics/script-log.js";
 import { frontendLog, invoke, isTauriAvailable } from "../core/tauri-helper.js";
 import { fromRustResponse } from "./shiori-protocol.js";
 
@@ -262,9 +263,22 @@ export const ghostShioriMethods = {
 					console.error("❌ request_shiori also failed:", e2);
 				}
 			}
-			return fromRustResponse(rawRes as Record<string, unknown>);
+			const parsed = fromRustResponse(rawRes as Record<string, unknown>);
+			const statusText = parsed?.status ?? "unknown";
+			const valueText = typeof parsed?.value === "string" ? parsed.value : "";
+			recordScriptLog(
+				"shiori",
+				`${eventId} [${statusText}]`,
+				valueText ||
+					(references.length > 0
+						? `refs=${references.map(String).join(", ")}`
+						: ""),
+				ghostName,
+			);
+			return parsed;
 		} catch (err) {
 			console.warn(`⚠️ SHIORIイベント送信失敗 (${eventId}):`, err);
+			recordScriptLog("error", `SHIORI失敗: ${eventId}`, String(err));
 			return undefined;
 		}
 	},

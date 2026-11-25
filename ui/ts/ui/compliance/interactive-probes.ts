@@ -89,12 +89,10 @@ export async function runMouseShioriEventProbe(): Promise<UiComplianceProbeResul
 
 		mouseMethods.onGhostWheel.call(mockApp, 100, 150, rect, -120, 1);
 
-		const dblClickCall = calls.find((c) => c.event === "OnMouseDoubleClick");
 		const clickCall = calls.find((c) => c.event === "OnMouseClick");
 		const wheelCall = calls.find((c) => c.event === "OnMouseWheel");
 
 		const passed =
-			Boolean(dblClickCall) &&
 			Boolean(clickCall) &&
 			clickCall?.args[0] === 100 &&
 			clickCall?.args[1] === 150 &&

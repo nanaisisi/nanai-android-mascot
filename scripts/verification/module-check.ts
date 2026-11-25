@@ -7,8 +7,8 @@ export function runModuleExistenceCheck(): void {
 		"4️⃣ [UKADOC / UI Modules] 主要モジュール & UI検証ランナー実装確認...",
 	);
 	const checkFiles: string[] = [
-		"src-tauri/src/commands/shell/balloon.rs",
-		"src-tauri/src/commands/window/character_window.rs",
+		"src-tauri/src/commands/shell/balloon/mod.rs",
+		"src-tauri/src/commands/window/character_window/mod.rs",
 		"src-tauri/src/shiori/dynamic/host.rs",
 		"ui/ts/core/actions/balloon-descript/assets.ts",
 		"ui/ts/core/actions/balloon-descript/layout/rect.ts",

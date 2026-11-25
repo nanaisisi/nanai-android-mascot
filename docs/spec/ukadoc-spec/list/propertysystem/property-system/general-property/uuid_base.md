@@ -1,0 +1,9 @@
+# uuid_base
+
+- **規格**: [uuid_base.md](../../../../../../ukadoc-spec/list/propertysystem/property-system/general-property/uuid_base.md)
+- **検索語**: uuid_base
+- **対応状況**: ❌ 未実装
+
+## 突合結果
+
+未確認・未実装。

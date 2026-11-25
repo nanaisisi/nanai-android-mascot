@@ -5,7 +5,7 @@ export function runSpecAuditVerification(): void {
 		"3️⃣ [Spec Compliance & Layer Audit] UKADOC/SSP 仕様適合・レイヤー到達度・実装対照リスト監査...",
 	);
 	const auditOk = runStepCommand(
-		"python scripts/verify_spec_compliance.py --dry-run --check-layers --check-lists",
+		"python scripts/verify_spec_compliance.py --dry-run --check-layers --check-lists --strict-lists",
 		"",
 		"❌ Spec Compliance Audit: verify_spec_compliance.py でエラーが発生しました。",
 	);

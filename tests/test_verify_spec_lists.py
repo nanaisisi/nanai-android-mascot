@@ -126,6 +126,54 @@ class TestVerifySpecLists(unittest.TestCase):
         self.assertIn("Broken .md Links       : 0", cli_output)
         self.assertIn("Missing: 0", cli_output)
 
+    def test_strict_lists_exits_nonzero_on_defects_and_zero_when_clean(self):
+        comp_dir = os.path.join(self.docs_dir, 'compliance')
+        os.makedirs(comp_dir, exist_ok=True)
+        cat_readme = os.path.join(self.docs_dir, 'spec', 'README.md')
+        os.makedirs(os.path.dirname(cat_readme), exist_ok=True)
+
+        with open(os.path.join(self.docs_dir, 'spec', 'only.md'), 'w', encoding='utf-8') as f:
+            f.write("# Only\n\n- **検索語**: only_item\n- **対応状況**: ✅ 実装済\n")
+        with open(cat_readme, 'w', encoding='utf-8') as f:
+            f.write(
+                "# spec\n\n| 項目 | 検索語 | 対応状況 |\n| :--- | :----- | :------: |\n"
+                "| [MissingLink](missing.md) | only_item | ✅ 実装済 |\n"
+            )
+
+        codebase = [("crates/sample.rs", ["pub fn only_item() {}\n"])]
+        with mock.patch.object(
+            sys, 'argv',
+            [
+                'verify_spec_compliance.py', '--dry-run', '--check-lists', '--strict-lists',
+                '--docs-dir', self.docs_dir,
+                '--compliance-dir', comp_dir,
+                '--base-dir', self.test_dir,
+            ]
+        ):
+            with mock.patch('scripts.verify_spec_compliance.load_codebase', return_value=codebase):
+                with mock.patch('sys.stdout', io.StringIO()):
+                    with self.assertRaises(SystemExit) as cm:
+                        cli_main()
+                    self.assertEqual(cm.exception.code, 1)
+
+        with open(cat_readme, 'w', encoding='utf-8') as f:
+            f.write(
+                "# spec\n\n| 項目 | 検索語 | 対応状況 |\n| :--- | :----- | :------: |\n"
+                "| [Only](only.md) | only_item | ✅ 実装済 |\n"
+            )
+        with mock.patch.object(
+            sys, 'argv',
+            [
+                'verify_spec_compliance.py', '--dry-run', '--check-lists', '--strict-lists',
+                '--docs-dir', self.docs_dir,
+                '--compliance-dir', comp_dir,
+                '--base-dir', self.test_dir,
+            ]
+        ):
+            with mock.patch('scripts.verify_spec_compliance.load_codebase', return_value=codebase):
+                with mock.patch('sys.stdout', io.StringIO()):
+                    cli_main()
+
 
 if __name__ == '__main__':
     unittest.main()

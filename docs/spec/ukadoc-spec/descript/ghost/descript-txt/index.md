@@ -76,3 +76,6 @@
 | [sstp.alwaystranslate,数値](sstp.alwaystranslate.md)                                       | sstp.alwaystranslate               | ✅ 実装済 (directory.rs) |
 | [title,表示名](title.md)                                                                   | title                              | ✅ 対応済 (directory.rs) |
 | [type,種別](type.md)                                                                       | type                               | ✅ 対応済 (directory.rs) |
+| [githubrepo,URL](githubrepo.md) | githubrepo | ⚠️ 一部対応 |
+| [metainfo,URL](metainfo.md) | metainfo | ❌ 未実装 |
+| [uuid_base,文字列](uuid_base.md) | uuid_base | ❌ 未実装 |

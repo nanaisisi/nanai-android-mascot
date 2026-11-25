@@ -52,6 +52,13 @@ function clearCssProperty(el: HTMLElement | null, prop: string) {
 	}
 }
 
+function setCssProperty(el: HTMLElement | null, prop: string, value: string) {
+	if (!el?.style) return;
+	if (typeof el.style.setProperty === "function") {
+		el.style.setProperty(prop, value);
+	}
+}
+
 function readCssProperty(el: HTMLElement | null, prop: string): string {
 	if (!el?.style) return "";
 	if (typeof el.style.getPropertyValue === "function") {
@@ -277,8 +284,24 @@ export async function loadBalloonSkinImages(
 		}
 	}
 
+	const chromaOptions =
+		typeof document !== "undefined"
+			? {
+					useSelfAlpha:
+						readCssProperty(
+							document.documentElement,
+							"--balloon-use-self-alpha",
+						) === "1",
+					paintTransparentRegionBlack:
+						readCssProperty(
+							document.documentElement,
+							"--balloon-paint-black",
+						) === "1",
+				}
+			: {};
+
 	const bgImage = bgImageRaw
-		? await processChromaKey(bgImageRaw, pnaImage)
+		? await processChromaKey(bgImageRaw, pnaImage, undefined, chromaOptions)
 		: null;
 
 	// オプションアセット (balloonc, arrow0/1, sstp, online) のロード試行
@@ -331,20 +354,21 @@ export async function loadBalloonSkinImages(
 					file: "balloonc.pna",
 				}).catch(() => null)) as string | null);
 		}
-		const ballooncImage = await processChromaKey(ballooncRaw, ballooncPna);
-		if (typeof document !== "undefined" && document.documentElement?.style) {
-			document.documentElement.style.setProperty(
+		const ballooncImage = await processChromaKey(
+			ballooncRaw,
+			ballooncPna,
+			undefined,
+			chromaOptions,
+		);
+		if (typeof document !== "undefined") {
+			setCssProperty(
+				document.documentElement,
 				"--balloon-inputbox-bg-image",
 				`url("${ballooncImage}")`,
 			);
 		}
-	} else if (
-		typeof document !== "undefined" &&
-		document.documentElement?.style
-	) {
-		document.documentElement.style.removeProperty(
-			"--balloon-inputbox-bg-image",
-		);
+	} else if (typeof document !== "undefined") {
+		clearCssProperty(document.documentElement, "--balloon-inputbox-bg-image");
 	}
 
 	return bgImage;
@@ -441,6 +465,53 @@ export async function applyBalloonDescript({
 		applyFontProperties(balloonBox || root, props, instanceContext);
 		applyAssetProperties(balloonBox || root, props, instanceContext);
 
+		const styleSource = balloonBox || root;
+		const overlayOutside =
+			readCssProperty(styleSource, "--balloon-overlay-outside") === "1";
+		const useInputAlpha =
+			readCssProperty(styleSource, "--balloon-use-input-alpha") === "1";
+		const disableFont =
+			readCssProperty(styleSource, "--balloon-disable-font") === "1";
+		const balloonAlignment = readCssProperty(
+			styleSource,
+			"--balloon-alignment",
+		);
+		const balloonSyncScale =
+			readCssProperty(styleSource, "--balloon-syncscale") === "1";
+		const balloonOffsetX = readCssProperty(styleSource, "--balloon-offset-x");
+		const balloonOffsetY = readCssProperty(styleSource, "--balloon-offset-y");
+		const balloonWindowPosX = readCssProperty(
+			styleSource,
+			"--balloon-windowpos-x",
+		);
+		const balloonWindowPosY = readCssProperty(
+			styleSource,
+			"--balloon-windowpos-y",
+		);
+		const fontOutline =
+			readCssProperty(styleSource, "--balloon-font-outline") === "1";
+		if (balloonBox) {
+			if (balloonBox.style) {
+				balloonBox.style.overflow = overlayOutside ? "visible" : "";
+			}
+			if (balloonBox.dataset) {
+				balloonBox.dataset.overlayOutside = overlayOutside ? "1" : "0";
+				balloonBox.dataset.useInputAlpha = useInputAlpha ? "1" : "0";
+				balloonBox.dataset.disableFont = disableFont ? "1" : "0";
+				balloonBox.dataset.balloonAlignment = balloonAlignment;
+				balloonBox.dataset.balloonSyncScale = balloonSyncScale ? "1" : "0";
+				balloonBox.dataset.balloonOffsetX = balloonOffsetX;
+				balloonBox.dataset.balloonOffsetY = balloonOffsetY;
+				balloonBox.dataset.balloonWindowPosX = balloonWindowPosX;
+				balloonBox.dataset.balloonWindowPosY = balloonWindowPosY;
+				balloonBox.dataset.fontOutline = fontOutline ? "1" : "0";
+			}
+		}
+		if (disableFont) {
+			clearCssProperty(root, "--balloon-font-family");
+			clearCssProperty(balloonBox, "--balloon-font-family");
+		}
+
 		const isBalloonDontMove =
 			props["balloon.dontmove"] === "1" ||
 			Boolean(
@@ -468,7 +539,7 @@ export async function applyBalloonDescript({
 
 			root.style.setProperty("--balloon-bg-image", `url("${bgImage}")`);
 			if (balloonBox?.style) {
-				balloonBox.style.setProperty("--balloon-bg-image", `url("${bgImage}")`);
+				setCssProperty(balloonBox, "--balloon-bg-image", `url("${bgImage}")`);
 				balloonBox.style.backgroundImage = `url("${bgImage}")`;
 			}
 		}
@@ -508,13 +579,13 @@ export async function applyBalloonDescript({
 		root.style.setProperty("--balloon-min-height", `${baseHeight}px`);
 		root.style.setProperty("--balloon-max-height", `${baseHeight}px`);
 		if (balloonBox?.style) {
-			balloonBox.style.setProperty("--balloon-padding", paddingValue);
+			setCssProperty(balloonBox, "--balloon-padding", paddingValue);
 			balloonBox.style.padding = paddingValue;
-			balloonBox.style.setProperty("--balloon-max-width", "100%");
-			balloonBox.style.setProperty("--balloon-width", `${baseWidth}px`);
-			balloonBox.style.setProperty("--balloon-height", `${baseHeight}px`);
-			balloonBox.style.setProperty("--balloon-min-height", `${baseHeight}px`);
-			balloonBox.style.setProperty("--balloon-max-height", `${baseHeight}px`);
+			setCssProperty(balloonBox, "--balloon-max-width", "100%");
+			setCssProperty(balloonBox, "--balloon-width", `${baseWidth}px`);
+			setCssProperty(balloonBox, "--balloon-height", `${baseHeight}px`);
+			setCssProperty(balloonBox, "--balloon-min-height", `${baseHeight}px`);
+			setCssProperty(balloonBox, "--balloon-max-height", `${baseHeight}px`);
 		}
 
 		const textEl = document.getElementById("balloon-text");
@@ -591,17 +662,15 @@ export async function applyBalloonDescript({
 								const arrowDims = await getImageDimensions(processed);
 								const cssUrl = `url("${processed}")`;
 								root.style.setProperty(imageVar, cssUrl);
-								balloonBox?.style?.setProperty(imageVar, cssUrl);
+								setCssProperty(balloonBox, imageVar, cssUrl);
 								if (arrowDims.width > 0) {
 									root.style.setProperty(widthVar, `${arrowDims.width}px`);
-									balloonBox?.style?.setProperty(
-										widthVar,
-										`${arrowDims.width}px`,
-									);
+									setCssProperty(balloonBox, widthVar, `${arrowDims.width}px`);
 								}
 								if (arrowDims.height > 0) {
 									root.style.setProperty(heightVar, `${arrowDims.height}px`);
-									balloonBox?.style?.setProperty(
+									setCssProperty(
+										balloonBox,
 										heightVar,
 										`${arrowDims.height}px`,
 									);

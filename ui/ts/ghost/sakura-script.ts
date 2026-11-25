@@ -2,6 +2,7 @@
  * SakuraScriptPlayer facade (powered by Pure Rust / WASM core SakuraPlayerEngine)
  */
 import type { NanaiAndroidMascotApp } from "../../main.js";
+import { recordScriptLog } from "../core/diagnostics/script-log.js";
 import {
 	emit,
 	frontendLog,
@@ -148,6 +149,7 @@ export class SakuraScriptPlayer {
 		this.stop();
 		this.currentScript = script;
 		this.lastScript = script;
+		recordScriptLog("sakura", "SakuraScript", script);
 		this.currentScope = 0;
 		this.scopeBalloonIds.clear();
 		this.clearAllBalloons();

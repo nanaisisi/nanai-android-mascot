@@ -55,3 +55,7 @@ specta = { workspace = true, features = ["derive", "function"] }
 
 [target.'cfg(target_os = "windows")'.dependencies]
 windows-sys = { workspace = true }
+
+[target.'cfg(target_os = "android")'.dependencies]
+jni = "0.22.4"
+ndk-context = "0.1"

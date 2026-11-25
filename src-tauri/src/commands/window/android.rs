@@ -1,5 +1,25 @@
 #![allow(dead_code)]
 
+#[cfg(target_os = "android")]
+fn call_main_activity_static(
+    method: &str,
+    sig: &str,
+    args: &[jni::objects::JValue],
+) -> Result<(), String> {
+    let ctx = ndk_context::android_context();
+    let vm = unsafe { jni::JavaVM::from_raw(ctx.vm().cast()) }
+        .map_err(|e| format!("JavaVM取得失敗: {e}"))?;
+    let mut env = vm
+        .attach_current_thread()
+        .map_err(|e| format!("JNIスレッドアタッチ失敗: {e}"))?;
+    let class = env
+        .find_class("com/nanai_android_mascot/app/MainActivity")
+        .map_err(|e| format!("MainActivityクラス検索失敗: {e}"))?;
+    env.call_static_method(class, method, sig, args)
+        .map_err(|e| format!("MainActivity.{method} 呼び出し失敗: {e}"))?;
+    Ok(())
+}
+
 /// Androidオーバーレイ権限リクエスト・案内コマンド
 #[tauri::command]
 #[specta::specta]
@@ -21,7 +41,11 @@ pub async fn request_overlay_permission() -> Result<String, String> {
 pub async fn setup_foreground_service(enabled: bool) -> Result<String, String> {
     #[cfg(target_os = "android")]
     {
-        // JNI経由でNotificationChannel作成およびForegroundService起動
+        call_main_activity_static(
+            "applyForegroundService",
+            "(Z)V",
+            &[jni::objects::JValue::Bool(u8::from(enabled))],
+        )?;
         Ok(format!("Android常駐サービスを切り替えました: {}", enabled))
     }
     #[cfg(not(target_os = "android"))]
@@ -37,7 +61,11 @@ pub async fn set_overlay_transparency(alpha: f64) -> Result<f64, String> {
     let clamped = alpha.clamp(0.0, 1.0);
     #[cfg(target_os = "android")]
     {
-        // JNI経由でWindowLayoutParams.alphaを設定
+        call_main_activity_static(
+            "applyOverlayTransparency",
+            "(F)V",
+            &[jni::objects::JValue::Float(clamped as f32)],
+        )?;
     }
     Ok(clamped)
 }
@@ -48,7 +76,11 @@ pub async fn set_overlay_transparency(alpha: f64) -> Result<f64, String> {
 pub async fn set_click_through(enabled: bool) -> Result<bool, String> {
     #[cfg(target_os = "android")]
     {
-        // JNI経由でFLAG_NOT_TOUCHABLEを設定/解除
+        call_main_activity_static(
+            "applyClickThrough",
+            "(Z)V",
+            &[jni::objects::JValue::Bool(u8::from(enabled))],
+        )?;
     }
     Ok(enabled)
 }
@@ -62,7 +94,14 @@ pub async fn resize_overlay_window(width: u32, height: u32) -> Result<(u32, u32)
     }
     #[cfg(target_os = "android")]
     {
-        // JNI経由でWindowManager.LayoutParams.width/heightを更新
+        call_main_activity_static(
+            "applyResizeOverlayWindow",
+            "(II)V",
+            &[
+                jni::objects::JValue::Int(width as i32),
+                jni::objects::JValue::Int(height as i32),
+            ],
+        )?;
     }
     Ok((width, height))
 }

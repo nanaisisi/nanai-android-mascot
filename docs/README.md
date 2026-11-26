@@ -70,11 +70,13 @@
 ### 内部設計技術仕様書 (`doc/`)
 
 _(※現在各ドメインごとに整理中)_
+
 - **[standard-ghost-spec.md](doc/nam-spec/standard-ghost-spec.md)** - 公式サンプルキャラクター仕様書（モック & プチ）
 - **[sakura-script-and-balloon-spec.md](doc/nam-spec/sakura-script-and-balloon-spec.md)** - さくらスクリプトパーサー & バルーン文字送り仕様書
 - **[surfaces-and-collision-spec.md](doc/nam-spec/surfaces-and-collision-spec.md)** - surfaces.txt アニメーション合成 & 当たり判定仕様書
 - **[encoding-and-vfs-spec.md](doc/nam-spec/encoding-and-vfs-spec.md)** - 文字コード変換 (Shift_JIS ↔ UTF-8) & 仮想ファイルシステム (VFS) 仕様書
 - **[android-overlay-and-service-spec.md](doc/nam-spec/android-overlay-and-service-spec.md)** - Android システムオーバーレイ & 常駐生存仕様書
+- **[android-window-architecture.md](doc/nam-spec/android-window-architecture.md)** - Android ウインドウアーキテクチャおよびオーバーレイ提供方式の検討・計画（全5案比較・メニュー維持・独自仕様）
 - **[android-unified-overlay.md](doc/nam-spec/android-unified-overlay.md)** - Android 全キャラ単一ウインドウ統合表示（opt-in）
 - **[plugin-and-shiori-fallback-spec.md](doc/nam-spec/plugin-and-shiori-fallback-spec.md)** - プラグイン & SHIORI 読込み・代替読込み (Fallback) 仕様書
 - **[wasm-and-plugin-extensibility.md](doc/nam-spec/wasm-and-plugin-extensibility.md)** - WASM化指針 & JavaScript拡張システム仕様書

@@ -68,3 +68,4 @@ coverage-final/
 lcov.info
 assets/ghost/mock_nanai/ghost/master/satori_savebackup.txt
 assets/ghost/mock_nanai/ghost/master/satori_savedata.txt
+src-tauri/gen/android/app/src/main/assets/

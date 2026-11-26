@@ -1,5 +1,4 @@
 use crate::common::state::AppState;
-use crate::ui_adapter::shiori::ShioriEngine;
 
 /// 単一ゴーストを終了 (SSP準拠: そのゴーストのみ終了。残りが無ければプロセス終了)
 #[tauri::command]

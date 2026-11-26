@@ -1,4 +1,4 @@
-use crate::shiori::dynamic::ShioriDynamicEngine;
+use crate::ui_adapter::shiori::ShioriEngine;
 use parking_lot::Mutex;
 
 pub struct AppState {
@@ -6,8 +6,8 @@ pub struct AppState {
     pub(crate) current_ghost_name: Mutex<Option<String>>,
     pub(crate) window_mode: Mutex<String>,
     pub(crate) num_characters: Mutex<i32>,
-    pub(crate) shiori_engine: Mutex<Option<ShioriDynamicEngine>>,
-    pub(crate) ghost_engines: Mutex<std::collections::HashMap<String, ShioriDynamicEngine>>,
+    pub(crate) shiori_engine: Mutex<Option<Box<dyn ShioriEngine>>>,
+    pub(crate) ghost_engines: Mutex<std::collections::HashMap<String, Box<dyn ShioriEngine>>>,
     pub(crate) active_ghosts: Mutex<std::collections::HashMap<String, String>>,
     pub(crate) is_dialog_open: Mutex<bool>,
     pub(crate) balloon_offsets: Mutex<std::collections::HashMap<i32, (i32, i32)>>,
@@ -50,10 +50,12 @@ impl AppState {
     pub fn num_characters(&self) -> &Mutex<i32> {
         &self.num_characters
     }
-    pub fn shiori_engine(&self) -> &Mutex<Option<ShioriDynamicEngine>> {
+    pub fn shiori_engine(&self) -> &Mutex<Option<Box<dyn ShioriEngine>>> {
         &self.shiori_engine
     }
-    pub fn ghost_engines(&self) -> &Mutex<std::collections::HashMap<String, ShioriDynamicEngine>> {
+    pub fn ghost_engines(
+        &self,
+    ) -> &Mutex<std::collections::HashMap<String, Box<dyn ShioriEngine>>> {
         &self.ghost_engines
     }
     pub fn active_ghosts(&self) -> &Mutex<std::collections::HashMap<String, String>> {

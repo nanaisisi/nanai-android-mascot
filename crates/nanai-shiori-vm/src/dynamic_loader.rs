@@ -11,6 +11,7 @@ use std::sync::Mutex;
 /// Native SHIORI 3.0 Direct Engine Manager
 pub struct NativeShioriEngine {
     engine_name: String,
+    ghost_name: Option<String>,
     is_loaded: bool,
     lock: Mutex<()>,
 }
@@ -19,6 +20,7 @@ impl NativeShioriEngine {
     pub fn new(engine_name: &str) -> Self {
         Self {
             engine_name: engine_name.to_string(),
+            ghost_name: None,
             is_loaded: false,
             lock: Mutex::new(()),
         }
@@ -36,16 +38,18 @@ impl NativeShioriEngine {
         let path_str = dir_path.to_string_lossy();
         let _c_path = CString::new(path_str.as_bytes()).map_err(|e| e.to_string())?;
 
+        self.ghost_name = read_ghost_name_from_descript(&dir_path.join("descript.txt"));
+
         #[cfg(target_os = "android")]
         {
-            // Statically linked C++ execution path for Android
+            // Statically linked / fallback execution path for Android
             self.is_loaded = true;
             Ok(true)
         }
 
         #[cfg(not(target_os = "android"))]
         {
-            // Desktop / Windows FFI execution path
+            // Desktop / fallback execution path
             self.is_loaded = true;
             Ok(true)
         }
@@ -60,29 +64,90 @@ impl NativeShioriEngine {
         }
 
         if request_str.starts_with("NOTIFY") {
-            return Ok("SHIORI/3.0 204 No Content\r\nCharset: UTF-8\r\n\r\n".to_string());
+            return Ok(shiori_204());
         }
 
-        if request_str.contains("ID: version") {
-            return Ok(format!(
-                "SHIORI/3.0 200 OK\r\nCharset: UTF-8\r\nValue: Native Engine [{}]\r\n\r\n",
-                self.engine_name
-            ));
+        let event_id = extract_header(request_str, "ID");
+        match event_id.as_deref() {
+            Some("version") => Ok(shiori_200(&format!("Native Engine [{}]", self.engine_name))),
+            Some("name") => Ok(shiori_200(&self.engine_name)),
+            Some("craftman") | Some("craftmanw") => Ok(shiori_200("Nanai Project")),
+            Some("OnFirstBoot") | Some("OnBoot") | Some("OnGhostChanged") => {
+                let name = self.ghost_name.as_deref().unwrap_or("ゴースト");
+                Ok(shiori_200(&format!(
+                    "\\0\\s[0]{}を起動しました。\\1\\s[10]\\e",
+                    name
+                )))
+            }
+            Some("OnClose") | Some("OnGhostChanging") => {
+                Ok(shiori_200("\\0\\s[0]またね。\\w9\\-\\e"))
+            }
+            Some("OnRandomTalk") | Some("OnMouseDoubleClick") | Some("OnTeach") => {
+                Ok(shiori_200("\\0\\s[0]こんにちは。\\e"))
+            }
+            Some(
+                "OnSecondChange"
+                | "OnMinuteChange"
+                | "OnHourTimeSignal"
+                | "OnSurfaceChange"
+                | "OnOtherSurfaceChange"
+                | "OnSurfaceRestore"
+                | "OnMouseMove"
+                | "OnMouseHover"
+                | "OnMouseWheel"
+                | "OnBalloonTimeout"
+                | "OnBalloonClose"
+                | "OnBalloonBreak",
+            ) => Ok(shiori_204()),
+            _ => Ok(shiori_204()),
         }
-
-        Ok("SHIORI/3.0 200 OK\r\nCharset: UTF-8\r\nValue: \\0\\s[0]Direct Native SHIORI response\\e\r\n\r\n".to_string())
     }
 
     /// Direct SHIORI 3.0 unload
     pub fn unload(&mut self) -> Result<bool, String> {
         let _guard = self.lock.lock().map_err(|e| e.to_string())?;
         self.is_loaded = false;
+        self.ghost_name = None;
         Ok(true)
     }
 
     pub fn is_loaded(&self) -> bool {
         self.is_loaded
     }
+}
+
+fn shiori_200(value: &str) -> String {
+    format!("SHIORI/3.0 200 OK\r\nCharset: UTF-8\r\nValue: {value}\r\n\r\n")
+}
+
+fn shiori_204() -> String {
+    "SHIORI/3.0 204 No Content\r\nCharset: UTF-8\r\n\r\n".to_string()
+}
+
+fn extract_header(request_str: &str, key: &str) -> Option<String> {
+    let prefix = format!("{key}:");
+    for line in request_str.lines() {
+        let trimmed = line.trim();
+        if let Some(rest) = trimmed.strip_prefix(&prefix) {
+            return Some(rest.trim().to_string());
+        }
+    }
+    None
+}
+
+fn read_ghost_name_from_descript(path: &Path) -> Option<String> {
+    let bytes = std::fs::read(path).ok()?;
+    let text = String::from_utf8_lossy(&bytes);
+    for line in text.lines() {
+        let trimmed = line.trim();
+        if let Some(rest) = trimmed.strip_prefix("name,") {
+            let name = rest.trim();
+            if !name.is_empty() {
+                return Some(name.to_string());
+            }
+        }
+    }
+    None
 }
 
 #[cfg(test)]

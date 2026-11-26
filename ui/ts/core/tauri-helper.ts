@@ -71,7 +71,7 @@ export function isAndroidMobile(): boolean {
  * Windows ネイティブ透過マルチウィンドウ環境かどうかを判定
  */
 export function isNativeMultiWindow(): boolean {
-	return true;
+	return !isAndroidMobile();
 }
 
 /**

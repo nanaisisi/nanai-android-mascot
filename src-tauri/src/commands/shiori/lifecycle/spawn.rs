@@ -1,7 +1,6 @@
+use super::resolve_and_load_shiori_engine;
 use crate::commands::shiori::resolve_ghost_directory;
 use crate::common::state::AppState;
-use crate::shiori::dynamic::ShioriDynamicEngine;
-use crate::ui_adapter::shiori::ShioriEngine;
 use std::path::PathBuf;
 
 /// ゴーストを新規インスタンスとして追加起動 (マルチゴースト)
@@ -22,59 +21,11 @@ pub async fn spawn_ghost(
         .unwrap_or_else(|_| PathBuf::from(format!("assets/ghost/{}", ghost_name)));
     let ghost_master_dir = ghost_dir.join("ghost").join("master");
 
-    let mut candidates = Vec::new();
-
-    let descript_path = ghost_master_dir.join("descript.txt");
-    if let Some(map) = crate::ghost::scan::read_descript_file(&descript_path)
-        && let Some(shiori_filename) = map.get("shiori")
-    {
-        let rel_path = shiori_filename.trim();
-        if !rel_path.is_empty() {
-            candidates.push(ghost_master_dir.join(rel_path));
-            #[cfg(not(windows))]
-            {
-                if let Some(stem) = rel_path.strip_suffix(".dll") {
-                    let so_name = format!("{}.so", stem);
-                    candidates.push(ghost_master_dir.join(&so_name));
-                    candidates.push(ghost_master_dir.join(format!("lib{}", so_name)));
-                }
-            }
-        }
-    }
-
-    #[cfg(windows)]
-    {
-        candidates.push(ghost_master_dir.join("yaya.dll"));
-        candidates.push(ghost_master_dir.join("satori.dll"));
-        candidates.push(ghost_master_dir.join("kawari.dll"));
-        candidates.push(ghost_master_dir.join("shiori.dll"));
-        candidates.push(ghost_master_dir.join("satoriya.dll"));
-        candidates.push(ghost_master_dir.join("aya5.dll"));
-        candidates.push(ghost_master_dir.join("aya.dll"));
-    }
-    #[cfg(not(windows))]
-    {
-        candidates.push(ghost_master_dir.join("yaya.so"));
-        candidates.push(ghost_master_dir.join("libyaya.so"));
-        candidates.push(ghost_master_dir.join("satori.so"));
-        candidates.push(ghost_master_dir.join("libsatori.so"));
-        candidates.push(ghost_master_dir.join("kawari.so"));
-        candidates.push(ghost_master_dir.join("libkawari.so"));
-        candidates.push(ghost_master_dir.join("shiori.so"));
-        candidates.push(ghost_master_dir.join("libshiori.so"));
-    }
-
-    for cand in candidates {
-        if cand.exists()
-            && let Ok(mut engine) = ShioriDynamicEngine::load_library(&cand)
-            && engine.load(&ghost_master_dir).is_ok()
-        {
-            state
-                .ghost_engines
-                .lock()
-                .insert(instance_id.clone(), engine);
-            break;
-        }
+    if let Ok((engine, _)) = resolve_and_load_shiori_engine(&ghost_master_dir) {
+        state
+            .ghost_engines
+            .lock()
+            .insert(instance_id.clone(), engine);
     }
 
     state

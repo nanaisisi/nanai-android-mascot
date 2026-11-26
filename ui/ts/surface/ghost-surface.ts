@@ -7,6 +7,7 @@ import { AppConfig } from "../core/config.js";
 import {
 	convertFileSrc,
 	invoke,
+	isSinglePageUi,
 	isTauriAvailable,
 } from "../core/tauri-helper.js";
 import { showBalloonContextMenu } from "../ui/balloon-context-menu.js";
@@ -191,7 +192,8 @@ export const ghostSurfaceMethods = {
 			return;
 		}
 
-		if (isTauriAvailable()) {
+		const useMultiWindow = isTauriAvailable() && !isSinglePageUi();
+		if (useMultiWindow) {
 			if (slot) slot.style.display = "none";
 			if (container) container.style.display = "none";
 			// 既存のウィンドウが開いていない初回等の初期化時のみshow_subchar_windowを先行要求
@@ -233,31 +235,48 @@ export const ghostSurfaceMethods = {
 					() => null,
 				);
 
-			return await Promise.all([load(surfaceId), loadPna(surfaceId)])
-				.then(([dataUrl, pnaUrl]) => {
-					console.log(
-						`✨ [Surface] Tauri サーフィスアセットロード成功: scope=${scopeId}, surface=${surfaceId}, hasData=${Boolean(dataUrl)}`,
+			let tauriResult = null;
+			try {
+				const [dataUrl, pnaUrl] = await Promise.all([
+					load(surfaceId),
+					loadPna(surfaceId),
+				]);
+				console.log(
+					`✨ [Surface] Tauri サーフィスアセットロード成功: scope=${scopeId}, surface=${surfaceId}, hasData=${Boolean(dataUrl)}`,
+				);
+				tauriResult = await applyImageSrc(dataUrl, null, pnaUrl);
+			} catch (err) {
+				console.warn(
+					`⚠️ [Surface] load_surface_image 失敗 (scope=${scopeId}, surface=${surfaceId})、フォールバック(${fallbackSurface})へ移行:`,
+					err,
+				);
+				try {
+					const fallbackUrl = await load(fallbackSurface);
+					tauriResult = await applyImageSrc(fallbackUrl);
+				} catch (_err) {
+					console.error(
+						`❌ [Surface] サーフィスフォールバックも失敗 (scope=${scopeId}, fallback=${fallbackSurface}):`,
+						_err,
 					);
-					return applyImageSrc(dataUrl, null, pnaUrl);
-				})
-				.catch(async (err) => {
-					console.warn(
-						`⚠️ [Surface] load_surface_image 失敗 (scope=${scopeId}, surface=${surfaceId})、フォールバック(${fallbackSurface})へ移行:`,
-						err,
-					);
-					try {
-						const fallbackUrl = await load(fallbackSurface);
-						return await applyImageSrc(fallbackUrl);
-					} catch (_err) {
-						console.error(
-							`❌ [Surface] サーフィスフォールバックも失敗 (scope=${scopeId}, fallback=${fallbackSurface}):`,
-							_err,
-						);
-						if (img) img.style.display = "none";
-						if (!isMain && slot) slot.style.display = "none";
-						return null;
-					}
-				});
+					if (img) img.style.display = "none";
+					if (!isMain && slot) slot.style.display = "none";
+					return null;
+				}
+			}
+
+			if (!useMultiWindow) {
+				await notifySurfaceChangeEvents(
+					this,
+					scopeId,
+					surfaceId,
+					img,
+					isAnimationFrame,
+				);
+				if (this.currentGhost) {
+					this.currentGhost.currentSurface = surfaceId;
+				}
+			}
+			return tauriResult;
 		}
 
 		const imgUrl = convertFileSrc(

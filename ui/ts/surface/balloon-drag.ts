@@ -78,6 +78,8 @@ export class BalloonDragManager {
 		let bStartY = 0;
 		let bInitialLeft = 0;
 		let bInitialTop = 0;
+		let bParentLeft = 0;
+		let bParentTop = 0;
 
 		const onStart = (
 			clientX: number,
@@ -102,8 +104,13 @@ export class BalloonDragManager {
 			bStartY = clientY;
 
 			const rect = balloon.getBoundingClientRect();
-			bInitialLeft = rect.left + rect.width / 2;
-			bInitialTop = rect.top + rect.height / 2;
+			const parentRect = (
+				balloon.offsetParent as HTMLElement | null
+			)?.getBoundingClientRect?.() ?? { left: 0, top: 0 };
+			bParentLeft = parentRect.left;
+			bParentTop = parentRect.top;
+			bInitialLeft = rect.left - bParentLeft + rect.width / 2;
+			bInitialTop = rect.top - bParentTop + rect.height / 2;
 
 			balloon.style.cursor = "grabbing";
 			return true;
@@ -130,14 +137,18 @@ export class BalloonDragManager {
 
 					balloon.style.left = `${targetLeft}px`;
 					balloon.style.top = `${targetTop}px`;
+					const scaleMatch = balloon.style.transform?.match(/scale\([^)]+\)/);
+					balloon.style.transform = scaleMatch
+						? `translate(-50%, -50%) ${scaleMatch[0]}`
+						: "translate(-50%, -50%)";
 
 					// キャラクターの中心位置に対する相対オフセットを記録
 					const ghostRect = ghostTarget.getBoundingClientRect();
 					const ghostCenterX = ghostRect.left + ghostRect.width / 2;
 					const ghostCenterY = ghostRect.top + ghostRect.height / 2;
 
-					this.balloonOffsetX = targetLeft - ghostCenterX;
-					this.balloonOffsetY = targetTop - ghostCenterY;
+					this.balloonOffsetX = bParentLeft + targetLeft - ghostCenterX;
+					this.balloonOffsetY = bParentTop + targetTop - ghostCenterY;
 					this.interaction.balloonOffsetX = this.balloonOffsetX;
 					this.interaction.balloonOffsetY = this.balloonOffsetY;
 				});

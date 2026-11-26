@@ -82,16 +82,39 @@ test("renderSubmenuContent covers all submenu types (ghost, shell, dressup, ball
 		currentSubmenuType: "shell",
 		cachedGhosts: [],
 		currentGhostName: "",
-		cachedShells: ["master", { name: "alt", display_name: "Alternative" }],
-		currentShellName: "alt",
+		cachedShells: [],
+		currentShellName: null,
 		cachedDressup: null,
 		dressupScope: 0,
 		cachedBalloons: [],
 		currentBalloonTheme: "",
 		cachedRecentGhosts: [],
+		skipDirectInvoke: true,
+		hasSyncedShells: false,
 		dispatchSubmenuAction,
 	});
-	assert.ok(children.length > 0);
+	assert.equal(children.length, 0);
+
+	children.length = 0;
+	dispatched.length = 0;
+	renderSubmenuContent({
+		currentSubmenuType: "shell",
+		cachedGhosts: [],
+		currentGhostName: "",
+		cachedShells: ["master", { name: "alt", display_name: "Alternative" }],
+		currentShellName: null,
+		cachedDressup: null,
+		dressupScope: 0,
+		cachedBalloons: [],
+		currentBalloonTheme: "",
+		cachedRecentGhosts: [],
+		skipDirectInvoke: true,
+		hasSyncedShells: true,
+		dispatchSubmenuAction,
+	});
+	assert.equal(children.length, 2);
+	assert.ok(children[0].className.includes("is-current"));
+	assert.ok(children[0].innerHTML.includes("✓"));
 	children[1].click();
 	assert.equal(dispatched[0].action, "switch-shell");
 

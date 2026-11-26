@@ -1,13 +1,47 @@
 //! サーフィス画像および PNA マスク読み込みコマンド
 
 use super::helpers::{find_file_case_insensitive, process_chromakey_image_bytes};
-use crate::common::paths::{clean_verbatim_path, resolve_asset_path};
+use crate::common::paths::{
+    clean_verbatim_path, resolve_asset_path, resolve_ghost_directory, resolve_vfs_path,
+};
 use crate::common::win_icon::{
     CursorAssetData, decode_cursor_asset_from_bytes, encode_win_icon_or_cursor_data_url,
 };
 use base64::Engine;
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
+
+fn resolve_shell_dirs_from_ghost_root(base_ghost_path: &Path, sn: &str) -> (PathBuf, PathBuf) {
+    let shell_root = resolve_vfs_path(base_ghost_path, "shell")
+        .filter(|p| p.is_dir())
+        .unwrap_or_else(|| base_ghost_path.join("shell"));
+    let shell_dir = resolve_vfs_path(&shell_root, sn)
+        .filter(|p| p.is_dir())
+        .unwrap_or_else(|| shell_root.join(sn));
+    let master_dir = resolve_vfs_path(&shell_root, "master")
+        .filter(|p| p.is_dir())
+        .unwrap_or_else(|| shell_root.join("master"));
+    (shell_dir, master_dir)
+}
+
+fn resolve_ghost_and_shell_dirs(
+    gp: &str,
+    sn: &str,
+    app_handle: &tauri::AppHandle<tauri::Wry>,
+) -> (PathBuf, PathBuf, PathBuf) {
+    let clean_gp = clean_verbatim_path(gp);
+    let mut base_ghost_path =
+        resolve_asset_path(&clean_gp, app_handle).unwrap_or_else(|_| PathBuf::from(&clean_gp));
+    if !base_ghost_path.is_dir()
+        && let Some(ghost_name) = Path::new(&clean_gp).file_name().and_then(|n| n.to_str())
+        && !ghost_name.is_empty()
+        && let Ok(resolved_dir) = resolve_ghost_directory(ghost_name, app_handle)
+    {
+        base_ghost_path = resolved_dir;
+    }
+    let (shell_dir, master_dir) = resolve_shell_dirs_from_ghost_root(&base_ghost_path, sn);
+    (base_ghost_path, shell_dir, master_dir)
+}
 
 // サーフィス画像を読み込んでData URL (Base64) として返すコマンド
 #[tauri::command]
@@ -24,17 +58,13 @@ pub fn load_surface_image(
     let sn = shell_name.or(shellName).unwrap_or_default();
     let sid = surface_id.or(surfaceId).unwrap_or_else(|| "0".to_string());
 
-    let clean_gp = clean_verbatim_path(&gp);
-    let base_ghost_path =
-        resolve_asset_path(&clean_gp, &app_handle).unwrap_or_else(|_| PathBuf::from(&clean_gp));
+    let (base_ghost_path, shell_dir, master_dir) =
+        resolve_ghost_and_shell_dirs(&gp, &sn, &app_handle);
 
     println!(
         "🖼️ [Rust File] load_surface_image: ghost_path={}, shell={}, surface={}, base_path={:?}",
         gp, sn, sid, base_ghost_path
     );
-
-    let shell_dir = base_ghost_path.join("shell").join(&sn);
-    let master_dir = base_ghost_path.join("shell").join("master");
 
     let parsed_id = sid.parse::<u32>().ok();
     let candidates = build_surface_image_candidates(&shell_dir, &master_dir, &sid, parsed_id);
@@ -142,12 +172,8 @@ pub fn load_surface_pna(
     let sn = shell_name.or(shellName).unwrap_or_default();
     let sid = surface_id.or(surfaceId).unwrap_or_else(|| "0".to_string());
 
-    let clean_gp = clean_verbatim_path(&gp);
-    let base_ghost_path =
-        resolve_asset_path(&clean_gp, &app_handle).unwrap_or_else(|_| PathBuf::from(&clean_gp));
-
-    let shell_dir = base_ghost_path.join("shell").join(&sn);
-    let master_dir = base_ghost_path.join("shell").join("master");
+    let (_base_ghost_path, shell_dir, master_dir) =
+        resolve_ghost_and_shell_dirs(&gp, &sn, &app_handle);
     let parsed_id = sid.parse::<u32>().ok();
     let candidates = build_surface_pna_candidates(&shell_dir, &master_dir, &sid, parsed_id);
 
@@ -192,12 +218,11 @@ pub fn load_cursor_asset(
         }
         "shell" => {
             if let Some(gp) = ghost_path {
-                let clean_gp = clean_verbatim_path(&gp);
-                let base_gp = resolve_asset_path(&clean_gp, &app_handle)
-                    .unwrap_or_else(|_| PathBuf::from(&clean_gp));
                 let sn = shell_name.unwrap_or_else(|| "master".to_string());
-                search_paths.push(base_gp.join("shell").join(&sn).join(clean_file));
-                search_paths.push(base_gp.join("shell").join("master").join(clean_file));
+                let (base_gp, shell_dir, master_dir) =
+                    resolve_ghost_and_shell_dirs(&gp, &sn, &app_handle);
+                search_paths.push(shell_dir.join(clean_file));
+                search_paths.push(master_dir.join(clean_file));
                 search_paths.push(base_gp.join("ghost").join("master").join(clean_file));
             }
         }
@@ -372,8 +397,28 @@ fn is_apng(bytes: &[u8]) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::{build_surface_image_candidates, build_surface_pna_candidates, is_apng};
+    use super::{
+        build_surface_image_candidates, build_surface_pna_candidates, is_apng,
+        resolve_shell_dirs_from_ghost_root,
+    };
     use std::path::Path;
+
+    #[test]
+    fn test_case_insensitive_shell_dirs_from_ghost_root() {
+        let dir = std::env::temp_dir().join(format!("nam_shell_dirs_{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        let custom_shell = dir.join("Shell").join("AltShell");
+        let master_shell = dir.join("Shell").join("Master");
+        std::fs::create_dir_all(&custom_shell).unwrap();
+        std::fs::create_dir_all(&master_shell).unwrap();
+
+        let (resolved_shell, resolved_master) =
+            resolve_shell_dirs_from_ghost_root(&dir, "altshell");
+        assert_eq!(resolved_shell, custom_shell);
+        assert_eq!(resolved_master, master_shell);
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
 
     #[test]
     fn test_non_numeric_element_filename_resolution() {

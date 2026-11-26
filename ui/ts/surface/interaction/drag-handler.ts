@@ -45,6 +45,10 @@ export {
 	STROKE_THRESHOLD,
 };
 
+function resolveMoveTarget(target: HTMLElement): HTMLElement {
+	return (target.closest?.(".character-slot") as HTMLElement | null) ?? target;
+}
+
 export interface DragOptions {
 	onGhostMouseDown?: (
 		x: number,
@@ -329,8 +333,14 @@ export function setupGhostDragging(
 		lastY = clientY;
 
 		const rect = target.getBoundingClientRect();
-		initialLeft = rect.left + rect.width / 2;
-		initialTop = rect.top + rect.height / 2;
+		const moveTarget = resolveMoveTarget(target);
+		const moveRect =
+			moveTarget === target ? rect : moveTarget.getBoundingClientRect();
+		const parentRect = (
+			moveTarget.offsetParent as HTMLElement | null
+		)?.getBoundingClientRect?.() ?? { left: 0, top: 0 };
+		initialLeft = moveRect.left - parentRect.left + moveRect.width / 2;
+		initialTop = moveRect.top - parentRect.top + moveRect.height / 2;
 
 		if (onGhostMouseDown) {
 			const button = e.button !== undefined ? e.button : 0;
@@ -406,7 +416,8 @@ export function setupGhostDragging(
 			longPress.cancel();
 		}
 
-		const isDocked = isElementDocked(target);
+		const moveTarget = resolveMoveTarget(target);
+		const isDocked = isElementDocked(moveTarget);
 
 		if (!isDocked && !dragInternalState.isDragging) {
 			strokeTracker.addDistance(stepDist, clientX, clientY);
@@ -416,6 +427,14 @@ export function setupGhostDragging(
 			if (!dragInternalState.isDragging) {
 				dragInternalState.isDragging = true;
 				target.classList.add("is-dragging");
+				if (moveTarget !== target) {
+					moveTarget.classList.add("is-dragging");
+					if (target.style) {
+						target.style.left = "";
+						target.style.top = "";
+						target.style.transform = "";
+					}
+				}
 				if (onGhostDragStart) {
 					const rect = target.getBoundingClientRect();
 					onGhostDragStart(clientX, clientY, rect);
@@ -430,12 +449,17 @@ export function setupGhostDragging(
 				return;
 			}
 
+			const offsetParent = moveTarget.offsetParent as HTMLElement | null;
+			const boundsWidth = offsetParent?.clientWidth || globalThis.innerWidth;
+			const boundsHeight = offsetParent?.clientHeight || globalThis.innerHeight;
 			const { x: newX, y: newY } = calculateClampedCoordinates(
 				initialLeft,
 				initialTop,
 				deltaX,
 				deltaY,
 				DRAG_PADDING,
+				boundsWidth,
+				boundsHeight,
 			);
 
 			if (!rafPending) {
@@ -444,11 +468,13 @@ export function setupGhostDragging(
 					rafPending = false;
 					if (!dragInternalState.isInteracting && !dragInternalState.isDragging)
 						return;
-					target.style.left = `${newX}px`;
-					target.style.top = `${newY}px`;
-					target.style.transform = "translate(-50%, -50%)";
+					moveTarget.style.left = `${newX}px`;
+					moveTarget.style.top = `${newY}px`;
+					moveTarget.style.transform = "translate(-50%, -50%)";
 
-					context.updateFollowPosition?.(newX, newY);
+					if (moveTarget === target) {
+						context.updateFollowPosition?.(newX, newY);
+					}
 				});
 			}
 		}
@@ -543,10 +569,11 @@ export function setupGhostDragging(
 		}
 
 		rafPending = false;
+		const moveTarget = resolveMoveTarget(target);
 		handleGhostPointerUp(
 			evt,
 			dragInternalState,
-			target,
+			moveTarget,
 			longPress,
 			strokeTracker,
 			nativeDrag,
@@ -556,6 +583,9 @@ export function setupGhostDragging(
 			onGhostMouseUp,
 			leftClickTracker,
 		);
+		if (moveTarget !== target) {
+			target.classList.remove("is-dragging");
+		}
 	};
 
 	target.addEventListener("mousedown", onPointerDown as EventListener);

@@ -160,7 +160,7 @@ test("menuMethods covers toggleMenu, toggleHtmlMenu, syncMenuGhosts, hideMenu, a
 		transformCallback: (cb: unknown) => cb,
 	};
 	mockApp.cachedMenuCaptions = { "biffbutton.caption": "Check Mail" };
-	mockApp.syncMenuGhosts(0);
+	await mockApp.syncMenuGhosts(0);
 	assert.ok(emitted.length > 0);
 
 	delete globalThis.__TAURI_INTERNALS__;
@@ -212,6 +212,60 @@ test("menuMethods covers toggleMenu, toggleHtmlMenu, syncMenuGhosts, hideMenu, a
 		(p) => (p.msg as { type?: string })?.type === "sync-ghosts",
 	)?.msg as { ghosts?: Array<{ name: string }> } | undefined;
 	assert.deepEqual(rescannedGhostsMsg?.ghosts, [{ name: "mock_nanai" }]);
+
+	// Test syncMenuGhosts resolves shells from scanned gc.ghosts / get_ghost_info when currentGhost.shells is []
+	posted.length = 0;
+	mockApp.ghostController = {
+		ghosts: [
+			{
+				name: "mock_nanai",
+				shells: [{ name: "master", display_name: "Master" }],
+			} as unknown as { name: string },
+		],
+		currentGhost: { name: "mock_nanai", shells: [] },
+		shells: [],
+		currentShell: "master",
+	};
+	await mockApp.syncMenuGhosts(0);
+	const shellsFromScannedMsg = posted.find(
+		(p) => (p.msg as { type?: string })?.type === "sync-shells",
+	)?.msg as
+		| { shells?: Array<{ name?: string; display_name?: string }> }
+		| undefined;
+	assert.equal(shellsFromScannedMsg?.shells?.[0]?.name, "master");
+	assert.equal(shellsFromScannedMsg?.shells?.[0]?.display_name, "Master");
+
+	posted.length = 0;
+	globalThis.__TAURI_INTERNALS__ = {
+		invoke: async (cmd: string) => {
+			if (cmd === "get_ghost_info") {
+				return {
+					path: "/data/user/0/com.nanai_android_mascot.app/files/ghost/mock_nanai",
+					shells: [{ name: "master", display_name: "Resolved Master" }],
+				};
+			}
+			return undefined;
+		},
+		transformCallback: (cb: unknown) => cb,
+	};
+	mockApp.ghostController = {
+		ghosts: [{ name: "mock_nanai" }],
+		currentGhost: { name: "mock_nanai", shells: [] },
+		shells: [],
+		currentShell: "master",
+	};
+	await mockApp.syncMenuGhosts(0);
+	delete globalThis.__TAURI_INTERNALS__;
+	const shellsFromInfoMsg = posted.find(
+		(p) => (p.msg as { type?: string })?.type === "sync-shells",
+	)?.msg as
+		| { shells?: Array<{ name?: string; display_name?: string }> }
+		| undefined;
+	assert.equal(shellsFromInfoMsg?.shells?.[0]?.display_name, "Resolved Master");
+	assert.equal(
+		(mockApp.ghostController.currentGhost as { path?: string } | null)?.path,
+		"/data/user/0/com.nanai_android_mascot.app/files/ghost/mock_nanai",
+	);
 
 	assert.ok(true);
 });

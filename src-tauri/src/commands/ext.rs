@@ -10,8 +10,10 @@ pub async fn scan_plugins(app_handle: tauri::AppHandle) -> Result<Vec<PluginInfo
     let mut search_dirs = Vec::new();
 
     if let Ok(app_data_dir) = app_handle.path().app_data_dir() {
-        search_dirs.push(app_data_dir.join("userData").join("plugin"));
-        search_dirs.push(app_data_dir.join("plugin"));
+        for base in [app_data_dir.clone(), app_data_dir.join("files")] {
+            search_dirs.push(base.join("userData").join("plugin"));
+            search_dirs.push(base.join("plugin"));
+        }
     }
     if let Ok(current_dir) = std::env::current_dir() {
         search_dirs.push(current_dir.join("assets").join("plugin"));
@@ -75,8 +77,10 @@ pub async fn scan_headlines(app_handle: tauri::AppHandle) -> Result<Vec<Headline
     let mut search_dirs = Vec::new();
 
     if let Ok(app_data_dir) = app_handle.path().app_data_dir() {
-        search_dirs.push(app_data_dir.join("userData").join("headline"));
-        search_dirs.push(app_data_dir.join("headline"));
+        for base in [app_data_dir.clone(), app_data_dir.join("files")] {
+            search_dirs.push(base.join("userData").join("headline"));
+            search_dirs.push(base.join("headline"));
+        }
     }
     if let Ok(current_dir) = std::env::current_dir() {
         search_dirs.push(current_dir.join("assets").join("headline"));

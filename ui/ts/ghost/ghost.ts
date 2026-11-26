@@ -15,10 +15,17 @@ export interface GhostAssets {
 	icons?: string[];
 }
 
+export interface GhostShellMeta {
+	name: string;
+	display_name?: string;
+	path?: string;
+	menu_theme?: unknown;
+}
+
 export interface GhostInfo {
 	name: string;
 	path?: string;
-	shells?: string[];
+	shells?: Array<string | GhostShellMeta>;
 	assets?: GhostAssets;
 	[key: string]: unknown;
 }
@@ -92,6 +99,7 @@ export class GhostController {
 		shell: string,
 		id: number | string,
 	) => Promise<string>;
+	declare clearSurfaceAssetCache?: () => void;
 	declare updateSurface: (
 		surfaceId: number | string,
 		scopeId?: number,
@@ -242,19 +250,30 @@ export class GhostController {
 		this.currentGhost = ghost;
 		this.applyGhostCursor?.();
 
+		if (Array.isArray(ghost.shells) && ghost.shells.length > 0) {
+			this.shells = ghost.shells.map((s) =>
+				typeof s === "object" && s !== null && "name" in s ? s.name : String(s),
+			);
+		}
+
 		if (isTauriAvailable()) {
 			try {
 				const info = await invoke<{
-					shells?: unknown[];
+					path?: string;
+					shells?: Array<string | GhostShellMeta>;
 					recommended_balloon?: string;
 				}>("get_ghost_info", {
 					ghostName: ghost.name,
 				});
 				if (info) {
+					if (typeof info.path === "string" && info.path.length > 0) {
+						ghost.path = info.path;
+					}
 					if (Array.isArray(info.shells) && info.shells.length > 0) {
-						this.shells = info.shells.map((s: unknown) =>
+						ghost.shells = info.shells;
+						this.shells = info.shells.map((s) =>
 							typeof s === "object" && s !== null && "name" in s
-								? (s as { name: string }).name
+								? s.name
 								: String(s),
 						);
 					}
@@ -264,7 +283,9 @@ export class GhostController {
 					}
 				}
 			} catch (_e) {
-				this.shells = [AppConfig.paths.fallbackShellName];
+				if (!Array.isArray(ghost.shells) || ghost.shells.length === 0) {
+					this.shells = [AppConfig.paths.fallbackShellName];
+				}
 			}
 		}
 
@@ -318,6 +339,7 @@ export class GhostController {
 	async selectShell(shellName: string) {
 		const prevShell = this.currentShell || "";
 		this.currentShell = shellName;
+		this.clearSurfaceAssetCache?.();
 		if (this.currentGhost) {
 			try {
 				await (

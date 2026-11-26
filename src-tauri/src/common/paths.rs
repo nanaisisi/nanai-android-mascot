@@ -51,6 +51,10 @@ impl PathsInterface for AppPathResolver {
     }
 }
 
+fn expand_app_data_roots(app_data_dir: &Path) -> Vec<PathBuf> {
+    vec![app_data_dir.to_path_buf(), app_data_dir.join("files")]
+}
+
 fn strip_assets_prefix(clean: &str) -> Option<PathBuf> {
     if clean == "assets" {
         return Some(PathBuf::from("."));
@@ -106,9 +110,20 @@ pub fn resolve_asset_path(
             .join(&path),
     ];
 
+    if let Ok(app_dir) = app_handle.path().app_data_dir() {
+        for base in expand_app_data_roots(&app_dir) {
+            let candidate = base.join(&path);
+            if !path_candidates.contains(&candidate) {
+                path_candidates.push(candidate);
+            }
+        }
+    }
+
     if let Some(stripped) = strip_assets_prefix(&clean) {
         if let Ok(app_dir) = app_handle.path().app_data_dir() {
-            path_candidates.push(app_dir.join(&stripped));
+            for base in expand_app_data_roots(&app_dir) {
+                path_candidates.push(base.join(&stripped));
+            }
         }
         if let Ok(resource_dir) = app_handle.path().resource_dir() {
             path_candidates.push(resource_dir.join(&stripped));
@@ -161,8 +176,10 @@ pub fn resolve_ghost_directory(
 
     let mut roots = Vec::new();
     if let Ok(app_data_dir) = app_handle.path().app_data_dir() {
-        roots.push(app_data_dir.join("userData").join("ghost"));
-        roots.push(app_data_dir.join("ghost"));
+        for base in expand_app_data_roots(&app_data_dir) {
+            roots.push(base.join("userData").join("ghost"));
+            roots.push(base.join("ghost"));
+        }
     }
     for root in ["assets/ghost", "ghost"] {
         if let Ok(resolved_root) = resolve_asset_path(root, app_handle) {
@@ -300,5 +317,14 @@ mod tests {
         );
         assert_eq!(strip_assets_prefix("ghost/mock_nanai"), None);
         assert_eq!(strip_assets_prefix("assets"), Some(PathBuf::from(".")));
+    }
+
+    #[test]
+    fn test_expand_app_data_roots() {
+        let base = Path::new("/data/user/0/com.nanai_android_mascot.app");
+        assert_eq!(
+            expand_app_data_roots(base),
+            vec![base.to_path_buf(), base.join("files")]
+        );
     }
 }

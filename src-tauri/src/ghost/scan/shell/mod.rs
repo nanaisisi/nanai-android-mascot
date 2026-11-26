@@ -17,10 +17,19 @@ use theme::extract_shell_menu_theme;
 /// ゴースト内の全シェル（shell/ 配下）をスキャン
 pub fn scan_shells_from_ghost(ghost_dir: &Path) -> Vec<ShellInfo> {
     let mut shells = Vec::new();
-    let shell_base = ghost_dir.join("shell");
-    let ghost_master_dir = ghost_dir.join("ghost").join("master");
-    let master_descript = read_descript_file(&ghost_master_dir.join("descript.txt"))
-        .or_else(|| read_descript_file(&ghost_dir.join("descript.txt")))
+    let shell_base = nanai_vfs::resolve_vfs_path(ghost_dir, "shell")
+        .filter(|p| p.is_dir())
+        .unwrap_or_else(|| ghost_dir.join("shell"));
+    let ghost_master_dir = nanai_vfs::resolve_vfs_path(ghost_dir, "ghost")
+        .and_then(|g| nanai_vfs::resolve_vfs_path(&g, "master"))
+        .filter(|p| p.is_dir())
+        .unwrap_or_else(|| ghost_dir.join("ghost").join("master"));
+    let master_descript_path = nanai_vfs::resolve_vfs_path(&ghost_master_dir, "descript.txt")
+        .unwrap_or_else(|| ghost_master_dir.join("descript.txt"));
+    let root_descript_path = nanai_vfs::resolve_vfs_path(ghost_dir, "descript.txt")
+        .unwrap_or_else(|| ghost_dir.join("descript.txt"));
+    let master_descript = read_descript_file(&master_descript_path)
+        .or_else(|| read_descript_file(&root_descript_path))
         .unwrap_or_default();
 
     if let Ok(entries) = std::fs::read_dir(&shell_base) {
@@ -31,7 +40,8 @@ pub fn scan_shells_from_ghost(ghost_dir: &Path) -> Vec<ShellInfo> {
                 if !shell_name.starts_with('.') {
                     let mut display_name = None;
                     let mut menu_theme = None;
-                    let descript_path = path.join("descript.txt");
+                    let descript_path = nanai_vfs::resolve_vfs_path(&path, "descript.txt")
+                        .unwrap_or_else(|| path.join("descript.txt"));
                     let shell_map = read_descript_file(&descript_path);
 
                     let mut merged: HashMap<String, String> = master_descript.clone();
@@ -73,4 +83,29 @@ pub fn scan_shells_from_ghost(ghost_dir: &Path) -> Vec<ShellInfo> {
         });
     }
     shells
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn scans_mixed_case_shell_directories() {
+        let dir = std::env::temp_dir().join(format!("nam_scan_shell_{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        let shell_dir = dir.join("Shell").join("Master");
+        std::fs::create_dir_all(&shell_dir).unwrap();
+        std::fs::write(
+            shell_dir.join("Descript.txt"),
+            "type,shell\nname,CustomMaster\n",
+        )
+        .unwrap();
+
+        let shells = scan_shells_from_ghost(&dir);
+        assert_eq!(shells.len(), 1);
+        assert_eq!(shells[0].name, "Master");
+        assert_eq!(shells[0].display_name.as_deref(), Some("CustomMaster"));
+
+        let _ = std::fs::remove_dir_all(&dir);
+    }
 }

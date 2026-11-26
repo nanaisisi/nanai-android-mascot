@@ -11,11 +11,14 @@ fn resolve_shell_dir(
     app_handle: &tauri::AppHandle,
 ) -> Result<PathBuf, String> {
     if let Ok(ghost_dir) = resolve_ghost_directory(ghost_name, app_handle) {
-        let dir = ghost_dir.join("shell").join(shell_name);
+        let shell_root = resolve_vfs_path(&ghost_dir, "shell")
+            .filter(|p| p.is_dir())
+            .unwrap_or_else(|| ghost_dir.join("shell"));
+        let dir = shell_root.join(shell_name);
         if dir.is_dir() {
             return Ok(dir);
         }
-        if let Some(resolved_shell) = resolve_vfs_path(&ghost_dir.join("shell"), shell_name)
+        if let Some(resolved_shell) = resolve_vfs_path(&shell_root, shell_name)
             && resolved_shell.is_dir()
         {
             return Ok(resolved_shell);

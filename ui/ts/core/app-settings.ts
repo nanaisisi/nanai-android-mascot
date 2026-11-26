@@ -90,8 +90,13 @@ export const settingsMethods = {
 		const balloonPercent = parseInt(String(balloonScaleVal), 10) || 100;
 		const balloonDisplay = app.elements?.balloonDisplay;
 		if (balloonDisplay) {
-			balloonDisplay.style.transform = `translateX(-50%) scale(${balloonPercent / 100})`;
-			balloonDisplay.style.transformOrigin = "top left";
+			const translateToken = balloonDisplay.style.transform?.includes(
+				"translate(-50%, -50%)",
+			)
+				? "translate(-50%, -50%)"
+				: "translateX(-50%)";
+			balloonDisplay.style.transform = `${translateToken} scale(${balloonPercent / 100})`;
+			balloonDisplay.style.transformOrigin = "center center";
 		}
 
 		app.applyBalloonTheme?.();

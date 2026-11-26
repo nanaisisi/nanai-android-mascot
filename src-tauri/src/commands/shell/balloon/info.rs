@@ -51,13 +51,10 @@ pub fn scan_balloons(app_handle: tauri::AppHandle) -> Result<Vec<BalloonInfo>, S
     let mut search_paths = vec!["assets/balloon".to_string(), "balloon".to_string()];
 
     if let Ok(app_dir) = app_handle.path().app_data_dir() {
-        search_paths.push(
-            app_dir
-                .join("assets/balloon")
-                .to_string_lossy()
-                .into_owned(),
-        );
-        search_paths.push(app_dir.join("balloon").to_string_lossy().into_owned());
+        for base in [app_dir.clone(), app_dir.join("files")] {
+            search_paths.push(base.join("assets/balloon").to_string_lossy().into_owned());
+            search_paths.push(base.join("balloon").to_string_lossy().into_owned());
+        }
     }
 
     if let Ok(res_dir) = app_handle.path().resource_dir() {
@@ -70,7 +67,9 @@ pub fn scan_balloons(app_handle: tauri::AppHandle) -> Result<Vec<BalloonInfo>, S
         search_paths.push(res_dir.join("balloon").to_string_lossy().into_owned());
     }
 
-    if let Ok(ghosts) = std::fs::read_dir("assets/ghost") {
+    let ghosts_root = resolve_asset_path("assets/ghost", &app_handle)
+        .unwrap_or_else(|_| PathBuf::from("assets/ghost"));
+    if let Ok(ghosts) = std::fs::read_dir(&ghosts_root) {
         for entry in ghosts.flatten() {
             let path = entry.path();
             if path.is_dir() {
@@ -309,7 +308,9 @@ pub fn resolve_balloon_dir(name: &str, app_handle: &tauri::AppHandle) -> Result<
 
     let mut all_search_bases = search_bases;
 
-    if let Ok(ghosts) = std::fs::read_dir("assets/ghost") {
+    let ghosts_root = resolve_asset_path("assets/ghost", app_handle)
+        .unwrap_or_else(|_| PathBuf::from("assets/ghost"));
+    if let Ok(ghosts) = std::fs::read_dir(&ghosts_root) {
         for entry in ghosts.flatten() {
             let path = entry.path();
             if path.is_dir() {

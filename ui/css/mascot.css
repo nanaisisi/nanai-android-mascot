@@ -18,6 +18,7 @@
 	left: 50%;
 	top: 50%;
 	transform: translate(-50%, -50%);
+	transform-origin: center center;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -68,18 +69,22 @@
 }
 
 /* 画面端ドッキング（スナップ退避）状態 */
+.character-slot.is-docked-left,
 .ghost-display.is-docked-left {
 	left: 0;
 	transform: translate(-70%, -50%);
 	opacity: 1;
 }
 
+.character-slot.is-docked-right,
 .ghost-display.is-docked-right {
 	left: 100vw;
 	transform: translate(-30%, -50%);
 	opacity: 1;
 }
 
+.character-slot.is-docked-left:hover,
+.character-slot.is-docked-right:hover,
 .ghost-display.is-docked-left:hover,
 .ghost-display.is-docked-right:hover {
 	opacity: 1;
@@ -276,6 +281,7 @@
 	top: clamp(1rem, 5vh, 2.5rem);
 	left: 50%;
 	transform: translateX(-50%);
+	transform-origin: center center;
 	z-index: 100;
 	max-width: 90vw;
 }

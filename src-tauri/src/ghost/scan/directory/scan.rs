@@ -23,13 +23,15 @@ pub async fn scan_ghost_directory(
 
     let mut paths_to_scan = Vec::new();
     if let Ok(app_data_dir) = app_handle.path().app_data_dir() {
-        let user_ghost_dir = app_data_dir.join("userData").join("ghost");
-        if user_ghost_dir.exists() {
-            paths_to_scan.push(user_ghost_dir);
-        }
-        let alt_user_ghost_dir = app_data_dir.join("ghost");
-        if alt_user_ghost_dir.exists() && !paths_to_scan.contains(&alt_user_ghost_dir) {
-            paths_to_scan.push(alt_user_ghost_dir);
+        for base in [app_data_dir.clone(), app_data_dir.join("files")] {
+            let user_ghost_dir = base.join("userData").join("ghost");
+            if user_ghost_dir.exists() && !paths_to_scan.contains(&user_ghost_dir) {
+                paths_to_scan.push(user_ghost_dir);
+            }
+            let alt_user_ghost_dir = base.join("ghost");
+            if alt_user_ghost_dir.exists() && !paths_to_scan.contains(&alt_user_ghost_dir) {
+                paths_to_scan.push(alt_user_ghost_dir);
+            }
         }
     }
     if !paths_to_scan.contains(&ghost_path) {

@@ -184,6 +184,17 @@ export function setupContextMenuSync(
 				event.data.currentGhost,
 			);
 			renderer.renderCallGhostSubmenu(event.data.ghosts || []);
+			const syncedShells =
+				Array.isArray(event.data.shells) && event.data.shells.length > 0
+					? event.data.shells
+					: undefined;
+			if (syncedShells) {
+				renderer.renderShellSubmenu(
+					syncedShells,
+					event.data.currentShell || "master",
+					ghostName,
+				);
+			}
 			if (event.data.dressup) {
 				renderer.renderDressupSubmenu(
 					event.data.dressup,
@@ -197,6 +208,9 @@ export function setupContextMenuSync(
 			onDataSync?.({
 				ghosts: event.data.ghosts || [],
 				currentGhostName: ghostName ?? null,
+				shells: syncedShells,
+				currentShellName:
+					event.data.currentShell ?? (syncedShells ? "master" : undefined),
 				dressup: event.data.dressup,
 				dressupScope: event.data.scope ?? dispatcher.currentScope,
 				recentGhosts: event.data.recentGhosts || [],
@@ -207,18 +221,17 @@ export function setupContextMenuSync(
 				typeof event.data.currentGhost === "string"
 					? event.data.currentGhost
 					: event.data.currentGhost?.name;
-			renderer.renderShellSubmenu(
-				event.data.shells || ["master"],
-				event.data.currentShell || "master",
-				ghostName,
-			);
+			const shells =
+				Array.isArray(event.data.shells) && event.data.shells.length > 0
+					? event.data.shells
+					: ["master"];
+			const currentShell = event.data.currentShell || "master";
+			renderer.renderShellSubmenu(shells, currentShell, ghostName);
 			const activeShell =
-				event.data.shells?.find(
+				shells.find(
 					(s: MenuShellInput) =>
-						typeof s === "object" &&
-						s !== null &&
-						s.name === event.data.currentShell,
-				) || event.data.shells?.[0];
+						typeof s === "object" && s !== null && s.name === currentShell,
+				) || shells[0];
 			if (activeShell) {
 				renderer.applyShellTheme(activeShell);
 			}
@@ -226,8 +239,8 @@ export function setupContextMenuSync(
 				renderer.applyCaptions(event.data.captions);
 			}
 			onDataSync?.({
-				shells: event.data.shells || ["master"],
-				currentShellName: event.data.currentShell || "master",
+				shells,
+				currentShellName: currentShell,
 				currentGhostName: ghostName ?? undefined,
 			});
 		} else if (event.data?.type === "sync-menu-captions") {

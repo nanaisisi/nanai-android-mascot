@@ -27,14 +27,20 @@ export const ghostSurfaceLoaderMethods = {
 	): Promise<string> {
 		this._surfaceAssetCache ??= new Map();
 		const key = `${cmd}|${ghostPath}|${shellName}|${surfaceId}`;
-		let pending = this._surfaceAssetCache.get(key);
+		const cache = this._surfaceAssetCache;
+		let pending = cache.get(key);
 		if (!pending) {
 			pending = invoke<string>(cmd, {
 				ghostPath,
 				shellName,
 				surfaceId: String(surfaceId),
+			}).catch((err) => {
+				if (cache.get(key) === pending) {
+					cache.delete(key);
+				}
+				throw err;
 			});
-			this._surfaceAssetCache.set(key, pending);
+			cache.set(key, pending);
 			if (this._surfaceAssetCache.size > 64) {
 				const oldestKey = this._surfaceAssetCache.keys().next().value;
 				if (oldestKey !== undefined) {

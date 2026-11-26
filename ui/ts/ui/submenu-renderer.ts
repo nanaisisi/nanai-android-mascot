@@ -26,6 +26,7 @@ export interface SubmenuRenderOptions {
 	container?: HTMLElement | null;
 	skipDirectInvoke?: boolean;
 	hasSyncedBalloons?: boolean;
+	hasSyncedShells?: boolean;
 	dispatchSubmenuAction: (action: string, payload?: unknown) => void;
 }
 
@@ -47,6 +48,7 @@ export function renderSubmenuContent({
 	container: customContainer,
 	skipDirectInvoke = false,
 	hasSyncedBalloons = false,
+	hasSyncedShells = false,
 	dispatchSubmenuAction,
 }: SubmenuRenderOptions) {
 	const container =
@@ -80,6 +82,11 @@ export function renderSubmenuContent({
 			container.appendChild(btn);
 		});
 	} else if (currentSubmenuType === "shell") {
+		if (skipDirectInvoke && !hasSyncedShells && cachedShells.length === 0) {
+			container.innerHTML = `<div class="menu-item is-disabled"><span class="menu-item-indicator"></span><span class="menu-item-label">読み込み中...</span></div>`;
+			return;
+		}
+		const activeShell = currentShellName || "master";
 		(cachedShells.length > 0 ? cachedShells : ["master"]).forEach(
 			(shellItem) => {
 				const shellName =
@@ -90,7 +97,7 @@ export function renderSubmenuContent({
 					typeof shellItem === "object" && shellItem?.display_name
 						? shellItem.display_name
 						: shellName;
-				const isCurrent = shellName === currentShellName;
+				const isCurrent = shellName === activeShell;
 				const btn = document.createElement("button");
 				btn.type = "button";
 				btn.className = `menu-item${isCurrent ? " is-current" : ""}`;

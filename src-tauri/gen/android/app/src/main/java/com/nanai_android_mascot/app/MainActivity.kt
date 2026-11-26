@@ -36,7 +36,9 @@ class MainActivity : TauriActivity() {
 
   private fun extractBundledGhostIfNeeded() {
     val targetRoot = File(filesDir, "ghost/mock_nanai")
-    if (File(targetRoot, "ghost/master/descript.txt").exists()) return
+    if (File(targetRoot, "ghost/master/descript.txt").exists() &&
+      File(targetRoot, "shell/master/surfaces.txt").exists()
+    ) return
     val assetCandidates = listOf("_up_/assets/ghost/mock_nanai", "assets/ghost/mock_nanai", "ghost/mock_nanai")
     for (assetBase in assetCandidates) {
       val list = try { assets.list(assetBase) } catch (_: Exception) { null }

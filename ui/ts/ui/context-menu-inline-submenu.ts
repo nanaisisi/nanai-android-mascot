@@ -30,6 +30,7 @@ export class InlineSubmenuController {
 	private cachedRecentGhosts: RecentGhostInput[] = [];
 	private cachedPlugins: PluginMenuItem[] = [];
 	private hasSyncedBalloons = false;
+	private hasSyncedShells = false;
 	private activeType: string | null = null;
 	private activeTrigger: Element | null = null;
 
@@ -54,6 +55,7 @@ export class InlineSubmenuController {
 		}
 		if (patch.shells !== undefined) {
 			this.cachedShells = patch.shells;
+			this.hasSyncedShells = true;
 		}
 		if (patch.currentShellName !== undefined) {
 			this.currentShellName = patch.currentShellName;
@@ -118,7 +120,14 @@ export class InlineSubmenuController {
 		if (
 			((menuType === "ghost" || menuType === "call-ghost") &&
 				this.cachedGhosts.length === 0) ||
-			(menuType === "balloon" && this.cachedBalloons.length === 0)
+			(menuType === "shell" &&
+				(!this.hasSyncedShells || this.cachedShells.length === 0)) ||
+			(menuType === "dressup" && !this.cachedDressup) ||
+			(menuType === "balloon" && this.cachedBalloons.length === 0) ||
+			((menuType === "recent" || menuType === "ghost-history") &&
+				this.cachedRecentGhosts.length === 0) ||
+			((menuType === "plugin" || menuType === "plugins") &&
+				this.cachedPlugins.length === 0)
 		) {
 			void this.dispatcher.dispatchAction("request-sync");
 		}
@@ -214,6 +223,7 @@ export class InlineSubmenuController {
 			container: panelEl,
 			skipDirectInvoke: true,
 			hasSyncedBalloons: this.hasSyncedBalloons,
+			hasSyncedShells: this.hasSyncedShells,
 			dispatchSubmenuAction: (action, payload) => {
 				this.close(false);
 				void this.dispatcher.dispatchAction(action, payload);

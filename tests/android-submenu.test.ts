@@ -327,6 +327,45 @@ function dispatchKeydown(key: string) {
 test("Android shows SSP submenu beside existing main menu without replacing it", () => {
 	assert.equal(bodyEl.classList.contains("inline-submenu-mode"), true);
 
+	// Opening shell submenu before initial sync shows loading and requests sync, then live-updates on sync-shells
+	parentMessages.length = 0;
+	invokedCommands.length = 0;
+	byId.get("shell-btn")?.click();
+	assert.equal(inlinePanelEl.hidden, false);
+	assert.ok(inlinePanelEl.innerHTML.includes("読み込み中..."));
+	assert.equal(
+		parentMessages.some(
+			(p) => (p.msg as { action?: string })?.action === "request-sync",
+		),
+		true,
+	);
+	dispatchWindowMessage({
+		type: "sync-shells",
+		shells: [
+			{ name: "master", display_name: "Master" },
+			{ name: "alt", display_name: "Alt Shell" },
+		],
+		currentShell: "master",
+		currentGhost: "Nanai",
+	});
+	assert.equal(inlinePanelEl.hidden, false);
+	assert.equal(inlinePanelEl.children.length, 2);
+	assert.ok(inlinePanelEl.children[0].className.includes("is-current"));
+	assert.ok(inlinePanelEl.children[0].innerHTML.includes("✓"));
+	assert.ok(inlinePanelEl.children[1].innerHTML.includes("Alt Shell"));
+	parentMessages.length = 0;
+	inlinePanelEl.children[1].click();
+	assert.equal(parentMessages.length, 1);
+	assert.equal(
+		(parentMessages[0].msg as { action?: string; payload?: unknown })?.action,
+		"switch-shell",
+	);
+	assert.equal(
+		(parentMessages[0].msg as { action?: string; payload?: unknown })?.payload,
+		"alt",
+	);
+	assert.equal(inlinePanelEl.hidden, true);
+
 	// Opening balloon submenu before initial sync requests sync without direct invoke and live-renders on response
 	parentMessages.length = 0;
 	invokedCommands.length = 0;

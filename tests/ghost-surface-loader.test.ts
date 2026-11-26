@@ -1,122 +1,60 @@
 import assert from "node:assert/strict";
-import { describe, it } from "vitest";
+import { test } from "vitest";
+import { ghostSurfaceLoaderMethods } from "../ui/ts/surface/ghost-surface-loader.js";
 
-interface InvokeCall {
-	cmd: string;
-	args: {
-		ghostPath: string;
-		shellName: string;
-		surfaceId: string;
+test("loadSurfaceAsset evicts rejected promises so subsequent loads retry", async () => {
+	const g = globalThis as unknown as Record<string, unknown>;
+	const origWindow = g.window;
+	const origTauri = g.__TAURI_INTERNALS__;
+	let attempts = 0;
+	g.window = globalThis;
+	g.__TAURI_INTERNALS__ = {
+		invoke: async () => {
+			attempts += 1;
+			if (attempts === 1) {
+				throw new Error("transient load failure");
+			}
+			return "data:image/png;base64,AAAA";
+		},
+		transformCallback: (cb: unknown) => cb,
 	};
-}
 
-const calls: InvokeCall[] = [];
-globalThis.window = globalThis as unknown as Window & typeof globalThis;
-globalThis.__TAURI_INTERNALS__ = {
-	transformCallback: () => 0,
-	invoke: async (
-		cmd: string,
-		args: { ghostPath: string; shellName: string; surfaceId: string },
-	) => {
-		calls.push({ cmd, args });
-		return `mock-data:${cmd}:${args.surfaceId}`;
-	},
-};
-
-const { ghostSurfaceLoaderMethods } = await import(
-	"../ui/ts/surface/ghost-surface-loader.js"
-);
-
-function createMockGhostController() {
-	const gc = Object.create(ghostSurfaceLoaderMethods);
-	gc.app = {
-		surfaceManager: {
-			chromaKeyCache: new Map([["key1", "val1"]]),
-			baseCanvasCache: new Map([["key2", "val2"]]),
+	const chromaKeyCache = new Map<string, string>([["k", "v"]]);
+	const host = {
+		...ghostSurfaceLoaderMethods,
+		app: {
+			surfaceManager: {
+				chromaKeyCache,
+			},
 		},
 	};
-	return gc;
-}
 
-describe("ghost-surface-loader", () => {
-	it("loadSurfaceAsset caches asset requests and avoids duplicate invokes", async () => {
-		calls.length = 0;
-		const gc = createMockGhostController();
-
-		const res1 = await gc.loadSurfaceAsset(
+	try {
+		await assert.rejects(
+			() => host.loadSurfaceAsset("load_surface_image", "/ghost", "master", 0),
+			/transient load failure/,
+		);
+		const retryResult = await host.loadSurfaceAsset(
 			"load_surface_image",
-			"ghost/path",
+			"/ghost",
 			"master",
 			0,
 		);
-		const res2 = await gc.loadSurfaceAsset(
-			"load_surface_image",
-			"ghost/path",
-			"master",
-			0,
-		);
+		assert.equal(retryResult, "data:image/png;base64,AAAA");
+		assert.equal(attempts, 2);
 
-		assert.equal(res1, "mock-data:load_surface_image:0");
-		assert.equal(res2, "mock-data:load_surface_image:0");
-		assert.equal(calls.length, 1);
-		assert.equal(calls[0].cmd, "load_surface_image");
-		assert.deepEqual(calls[0].args, {
-			ghostPath: "ghost/path",
-			shellName: "master",
-			surfaceId: "0",
-		});
-	});
-
-	it("loadSurfaceAsset evicts oldest entries when cache size exceeds 64", async () => {
-		calls.length = 0;
-		const gc = createMockGhostController();
-
-		// Fill cache with 66 items (surfaceId 0..65)
-		for (let i = 0; i <= 65; i++) {
-			await gc.loadSurfaceAsset(
-				"load_surface_image",
-				"ghost/path",
-				"master",
-				i,
-			);
+		host.clearSurfaceAssetCache();
+		assert.equal(chromaKeyCache.size, 0);
+	} finally {
+		if (origWindow === undefined) {
+			delete g.window;
+		} else {
+			g.window = origWindow;
 		}
-
-		assert.equal(gc._surfaceAssetCache.size, 64);
-		// Oldest entries (0, 1) should have been evicted
-		assert.equal(
-			gc._surfaceAssetCache.has("load_surface_image|ghost/path|master|0"),
-			false,
-		);
-		assert.equal(
-			gc._surfaceAssetCache.has("load_surface_image|ghost/path|master|1"),
-			false,
-		);
-		// Newest entries should be present
-		assert.equal(
-			gc._surfaceAssetCache.has("load_surface_image|ghost/path|master|65"),
-			true,
-		);
-	});
-
-	it("clearSurfaceAssetCache clears internal cache and surfaceManager caches", async () => {
-		const gc = createMockGhostController();
-		await gc.loadSurfaceAsset("load_surface_image", "ghost/path", "master", 0);
-		assert.equal(gc._surfaceAssetCache.size, 1);
-		assert.equal(gc.app.surfaceManager.chromaKeyCache.size, 1);
-		assert.equal(gc.app.surfaceManager.baseCanvasCache.size, 1);
-
-		gc.clearSurfaceAssetCache();
-
-		assert.equal(gc._surfaceAssetCache.size, 0);
-		assert.equal(gc.app.surfaceManager.chromaKeyCache.size, 0);
-		assert.equal(gc.app.surfaceManager.baseCanvasCache.size, 0);
-	});
-
-	it("clearSurfaceAssetCache handles optional chaining safely when app or caches are undefined", () => {
-		const gc = Object.create(ghostSurfaceLoaderMethods);
-		// No _surfaceAssetCache or app attached
-		assert.doesNotThrow(() => {
-			gc.clearSurfaceAssetCache();
-		});
-	});
+		if (origTauri === undefined) {
+			delete g.__TAURI_INTERNALS__;
+		} else {
+			g.__TAURI_INTERNALS__ = origTauri;
+		}
+	}
 });

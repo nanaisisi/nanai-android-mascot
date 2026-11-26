@@ -82,8 +82,6 @@ export const menuMethods = {
 		const app = this as unknown as MenuAppContext;
 		const gc = app.ghostController;
 		const sm = app.surfaceManager;
-		const shellNames = gc.shells || ["master"];
-		const currentShellName = gc.currentShell || "master";
 		if (
 			(!Array.isArray(gc.ghosts) || gc.ghosts.length === 0) &&
 			typeof (gc as { scanGhosts?: () => Promise<unknown> }).scanGhosts ===
@@ -97,7 +95,58 @@ export const menuMethods = {
 				: gc.currentGhost
 					? [gc.currentGhost]
 					: [{ name: AppConfig.paths.fallbackGhostName }];
-		const rawShells = gc.currentGhost?.shells || shellNames;
+		const currentShellName = gc.currentShell || "master";
+		const matchedGhost = Array.isArray(gc.ghosts)
+			? gc.ghosts.find((g) => g?.name === gc.currentGhost?.name)
+			: undefined;
+		let rawShells: unknown[] = [];
+		if (
+			Array.isArray(gc.currentGhost?.shells) &&
+			gc.currentGhost.shells.length > 0
+		) {
+			rawShells = gc.currentGhost.shells;
+		} else if (
+			Array.isArray(matchedGhost?.shells) &&
+			matchedGhost.shells.length > 0
+		) {
+			rawShells = matchedGhost.shells;
+		} else if (isTauriAvailable()) {
+			const targetGhostName =
+				gc.currentGhost?.name ||
+				(typeof ghosts[0] === "object" && ghosts[0] !== null
+					? ghosts[0].name
+					: undefined);
+			if (targetGhostName) {
+				try {
+					const info = await invoke<{
+						path?: string;
+						shells?: unknown[];
+					}>("get_ghost_info", { ghostName: targetGhostName });
+					if (Array.isArray(info?.shells) && info.shells.length > 0) {
+						rawShells = info.shells;
+						if (gc.currentGhost) {
+							gc.currentGhost.shells = info.shells as NonNullable<
+								typeof gc.currentGhost
+							>["shells"];
+							if (typeof info.path === "string" && info.path.length > 0) {
+								gc.currentGhost.path = info.path;
+							}
+						}
+						gc.shells = info.shells.map((s) =>
+							typeof s === "object" && s !== null && "name" in s
+								? String((s as { name: unknown }).name)
+								: String(s),
+						);
+					}
+				} catch (_err) {}
+			}
+		}
+		if (rawShells.length === 0) {
+			rawShells =
+				Array.isArray(gc.shells) && gc.shells.length > 0
+					? gc.shells
+					: [currentShellName];
+		}
 
 		const manifestDescript = (sm?.shellManifest?.descript || {}) as Record<
 			string,
@@ -138,16 +187,16 @@ export const menuMethods = {
 				manifestDescript["menu.sidebar.alignment"] || "top,left",
 		};
 
-		const fullShells = (Array.isArray(rawShells) ? rawShells : [rawShells]).map(
-			(s) => {
-				if (typeof s === "object" && s !== null) return s;
-				return {
-					name: String(s),
-					path: shellPath,
-					menu_theme: menuThemeFromManifest,
-				};
-			},
-		);
+		const fullShells = (
+			rawShells.length > 0 ? rawShells : [currentShellName]
+		).map((s) => {
+			if (typeof s === "object" && s !== null) return s;
+			return {
+				name: String(s),
+				path: shellPath,
+				menu_theme: menuThemeFromManifest,
+			};
+		});
 
 		const dressup = dressupMenuPayload(
 			sm?.shellManifest,
@@ -199,6 +248,8 @@ export const menuMethods = {
 					type: "sync-ghosts",
 					ghosts,
 					currentGhost: gc.currentGhost,
+					shells: fullShells,
+					currentShell: currentShellName,
 					scope,
 					dressup,
 					recentGhosts,

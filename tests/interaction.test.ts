@@ -237,3 +237,109 @@ test("InteractionManager covers dragging, stroke, longpress, docking, and native
 	vi.useRealTimers();
 	assert.ok(true);
 });
+
+test("dragging ghost-display inside character-slot anchors slot by center relative to offsetParent", () => {
+	const mockApp = { toggleMenu() {} };
+	const manager = new InteractionManager(mockApp);
+
+	const offsetParent = {
+		clientWidth: 800,
+		clientHeight: 600,
+		getBoundingClientRect: () => ({ left: 0, top: 40 }),
+	};
+	const slotClasses = new Set<string>(["character-slot"]);
+	const slotEl = {
+		offsetParent,
+		style: {} as Record<string, string>,
+		classList: {
+			add(c: string) {
+				slotClasses.add(c);
+			},
+			remove(...args: string[]) {
+				for (const c of args) slotClasses.delete(c);
+			},
+			contains(c: string) {
+				return slotClasses.has(c);
+			},
+		},
+		getBoundingClientRect: () => ({
+			left: 300,
+			top: 140,
+			width: 200,
+			height: 400,
+		}),
+		querySelector: () => null,
+	};
+
+	const displayListeners: Record<
+		string,
+		(e?: Record<string, unknown>) => void
+	> = {};
+	const displayClasses = new Set<string>(["ghost-display"]);
+	const displayEl = {
+		style: {} as Record<string, string>,
+		classList: {
+			add(c: string) {
+				displayClasses.add(c);
+			},
+			remove(...args: string[]) {
+				for (const c of args) displayClasses.delete(c);
+			},
+			contains(c: string) {
+				return displayClasses.has(c);
+			},
+		},
+		closest(sel: string) {
+			return sel === ".character-slot" ? slotEl : null;
+		},
+		getBoundingClientRect: () => ({
+			left: 300,
+			top: 240,
+			width: 200,
+			height: 300,
+		}),
+		querySelector: () => null,
+		addEventListener(type: string, cb: (e?: Record<string, unknown>) => void) {
+			displayListeners[type] = cb;
+		},
+	} as unknown as HTMLElement;
+
+	const globalListeners: Record<
+		string,
+		Array<(e?: Record<string, unknown>) => void>
+	> = {};
+	g.addEventListener = (
+		type: string,
+		cb: (e?: Record<string, unknown>) => void,
+	) => {
+		globalListeners[type] = globalListeners[type] || [];
+		globalListeners[type].push(cb);
+	};
+
+	delete g.__TAURI_INTERNALS__;
+	manager.setupDragging(displayEl, undefined, undefined);
+
+	displayListeners.touchstart?.({
+		type: "touchstart",
+		cancelable: true,
+		preventDefault() {},
+		touches: [{ clientX: 400, clientY: 340 }],
+	});
+	for (const cb of globalListeners.touchmove ?? []) {
+		cb({ touches: [{ clientX: 420, clientY: 370 }] });
+	}
+	for (const cb of globalListeners.touchend ?? []) {
+		cb({});
+	}
+
+	// slot center in offsetParent: (300 - 0 + 100, 140 - 40 + 200) = (400, 300), + delta (20, 30) = (420, 330)
+	assert.equal(slotEl.style.left, "420px");
+	assert.equal(slotEl.style.top, "330px");
+	assert.equal(slotEl.style.transform, "translate(-50%, -50%)");
+	assert.equal(
+		(displayEl as unknown as { style: Record<string, string> }).style.left,
+		"",
+	);
+	assert.equal(slotClasses.has("is-dragging"), false);
+	assert.equal(displayClasses.has("is-dragging"), false);
+});

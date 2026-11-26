@@ -121,3 +121,62 @@ test("BalloonDragManager covers restore, follow, dragging, and persistence", () 
 
 	assert.ok(true);
 });
+
+test("BalloonDragManager centers balloon relative to offsetParent and preserves scale", () => {
+	const offsetBalloon = {
+		offsetParent: {
+			getBoundingClientRect: () => ({ left: 100, top: 80 }),
+		},
+		style: { transform: "translateX(-50%) scale(1.2)" } as Record<
+			string,
+			string
+		>,
+		_listeners: {} as Record<string, (e?: unknown) => void>,
+		getBoundingClientRect: () => ({
+			left: 160,
+			top: 100,
+			width: 200,
+			height: 100,
+		}),
+		addEventListener(type: string, cb: (e?: unknown) => void) {
+			this._listeners[type] = cb;
+		},
+	};
+	const origGetEl = globalThis.document.getElementById;
+	globalThis.document.getElementById = ((id: string) =>
+		id === "balloon-display" ? offsetBalloon : null) as typeof origGetEl;
+
+	try {
+		const manager = new BalloonDragManager({} as InteractionManager);
+		const ghostTarget = {
+			getBoundingClientRect: () => ({
+				left: 200,
+				top: 200,
+				width: 100,
+				height: 200,
+			}),
+		} as unknown as HTMLElement;
+		manager.setupBalloonDragging(ghostTarget);
+
+		offsetBalloon._listeners.touchstart?.({
+			touches: [{ clientX: 260, clientY: 150 }],
+			target: { tagName: "DIV" },
+			stopPropagation() {},
+		});
+		globalListeners.touchmove?.({ touches: [{ clientX: 280, clientY: 180 }] });
+		globalListeners.touchend?.();
+
+		// initial center in parent: (160 - 100 + 100, 100 - 80 + 50) = (160, 70), + delta (20, 30) = (180, 100)
+		assert.equal(offsetBalloon.style.left, "180px");
+		assert.equal(offsetBalloon.style.top, "100px");
+		assert.equal(
+			offsetBalloon.style.transform,
+			"translate(-50%, -50%) scale(1.2)",
+		);
+		// ghost center: (250, 300), balloon viewport center: (100+180, 80+100) = (280, 180)
+		assert.equal(manager.balloonOffsetX, 30);
+		assert.equal(manager.balloonOffsetY, -120);
+	} finally {
+		globalThis.document.getElementById = origGetEl;
+	}
+});

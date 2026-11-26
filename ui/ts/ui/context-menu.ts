@@ -3,6 +3,7 @@ import {
 	isNativeMultiWindow,
 	isTauriAvailable,
 } from "../core/tauri-helper.js";
+import { InlineSubmenuController } from "./context-menu-inline-submenu.js";
 import { handleMenuKeydown } from "./context-menu-keyboard.js";
 import { setupContextMenuSync } from "./context-menu-sync.js";
 import { MenuDispatcher } from "./menu-dispatcher.js";
@@ -13,6 +14,19 @@ export { setupContextMenuSync } from "./context-menu-sync.js";
 
 const dispatcher = new MenuDispatcher();
 const renderer = new MenuSubmenuRenderer(dispatcher);
+const inlineSubmenu = new InlineSubmenuController(dispatcher);
+
+function syncInlineSubmenuModeClass() {
+	const isEmbeddedIframe = Boolean(
+		globalThis.parent && (globalThis.parent as unknown) !== globalThis,
+	);
+	if (isNativeMultiWindow() && !isEmbeddedIframe) {
+		document.body?.classList?.remove?.("inline-submenu-mode");
+	} else {
+		document.body?.classList?.add?.("inline-submenu-mode");
+	}
+}
+syncInlineSubmenuModeClass();
 
 /**
  * [Design Invariant / 設計仕様]
@@ -42,13 +56,22 @@ export function resetMenuFocusState() {
 	activeSubmenuType = null;
 	menuOpenedAt = Date.now();
 	clearBlurCloseTimer();
+	inlineSubmenu.close(false);
 	scheduleMenuWindowResize(true);
 }
 
 // Tauri / iframe 同期リスナー初期化
-setupContextMenuSync(dispatcher, renderer, resetMenuFocusState, () => {
-	scheduleMenuWindowResize(false);
-});
+setupContextMenuSync(
+	dispatcher,
+	renderer,
+	resetMenuFocusState,
+	() => {
+		scheduleMenuWindowResize(false);
+	},
+	(patch) => {
+		inlineSubmenu.updateData(patch);
+	},
+);
 
 // 独立サブメニューウィンドウ（デスクトップ）またはインラインサブメニュー（モバイル/Android/Web）を開く補助関数
 function _triggerSubmenuWindow(
@@ -120,7 +143,7 @@ function _triggerSubmenuWindow(
 	}
 }
 
-function getMenuTypeFromButton(btn: Element): string {
+export function getMenuTypeFromButton(btn: Element): string {
 	let type = btn.id
 		.replace("-menu-btn", "")
 		.replace("-switch-btn", "")
@@ -131,12 +154,32 @@ function getMenuTypeFromButton(btn: Element): string {
 	if (type === "utility-root" || type === "tools") {
 		type = "utility";
 	}
+	if (type === "ghost-history") {
+		type = "recent";
+	}
 	return type;
 }
 
 document.addEventListener("click", (e) => {
-	const menuItem = (e.target as Element).closest(".menu-item");
-	if (!menuItem) return;
+	const target = e.target as Element | null;
+	if (target?.closest?.("#inline-submenu-panel")) {
+		return;
+	}
+
+	const menuItem = target?.closest?.(".menu-item");
+	if (!menuItem) {
+		if (
+			inlineSubmenu.isOpen() &&
+			!target?.closest?.(
+				".menu-container, .menu-sidebar, #inline-submenu-panel",
+			)
+		) {
+			inlineSubmenu.close(false);
+			hasActiveSubmenu = false;
+			activeSubmenuType = null;
+		}
+		return;
+	}
 
 	// サブメニュー展開用の親ボタン
 	if (menuItem.classList.contains("has-submenu")) {
@@ -147,7 +190,7 @@ document.addEventListener("click", (e) => {
 		}
 
 		const wrapper = menuItem.closest(".menu-item-wrapper");
-		if (wrapper) {
+		if (wrapper?.classList?.contains?.("menu-item-wrapper")) {
 			const isAlreadyOpen = wrapper.classList.contains("open");
 			document.querySelectorAll(".menu-item-wrapper.open").forEach((el) => {
 				if (el !== wrapper) el.classList.remove("open");
@@ -158,8 +201,19 @@ document.addEventListener("click", (e) => {
 			} else {
 				wrapper.classList.remove("open");
 			}
+			return;
 		}
+
+		const opened = inlineSubmenu.toggle(menuType, menuItem);
+		hasActiveSubmenu = opened;
+		activeSubmenuType = opened ? menuType : null;
 		return;
+	}
+
+	if (inlineSubmenu.isOpen()) {
+		inlineSubmenu.close(false);
+		hasActiveSubmenu = false;
+		activeSubmenuType = null;
 	}
 
 	const action =
@@ -186,20 +240,17 @@ function checkSubmenuFlip(wrapper: Element) {
 
 // ホバー時にも右/左展開を判定 & サブメニュー呼び出し
 document.addEventListener("mouseover", (e: MouseEvent) => {
+	if (!isNativeMultiWindow()) {
+		return;
+	}
 	const item = (e.target as Element | null)?.closest?.(".menu-item");
 	if (!item) return;
 	if (!item.classList.contains("has-submenu")) {
 		if (hasActiveSubmenu) {
 			hasActiveSubmenu = false;
 			activeSubmenuType = null;
-			if (isNativeMultiWindow()) {
-				void invoke("hide_submenu_window").catch(() => {});
-				globalThis.window?.focus?.();
-			} else {
-				document.querySelectorAll(".menu-item-wrapper.open").forEach((el) => {
-					el.classList.remove("open");
-				});
-			}
+			void invoke("hide_submenu_window").catch(() => {});
+			globalThis.window?.focus?.();
 		}
 		return;
 	}
@@ -208,16 +259,7 @@ document.addEventListener("mouseover", (e: MouseEvent) => {
 		checkSubmenuFlip(wrapper);
 	}
 	const menuType = getMenuTypeFromButton(item);
-	if (isNativeMultiWindow()) {
-		_triggerSubmenuWindow(menuType, item, true);
-	} else if (wrapper) {
-		document.querySelectorAll(".menu-item-wrapper.open").forEach((el) => {
-			if (el !== wrapper) el.classList.remove("open");
-		});
-		if (!wrapper.classList.contains("open")) {
-			wrapper.classList.add("open");
-		}
-	}
+	_triggerSubmenuWindow(menuType, item, true);
 });
 
 document.querySelectorAll(".menu-item-wrapper").forEach((wrapper) => {
@@ -244,6 +286,7 @@ document.querySelectorAll(".menu-item-wrapper").forEach((wrapper) => {
 
 // 初期化時に親ウィンドウへ同期リクエスト & 保存済みテーマの即時適用
 globalThis.addEventListener("DOMContentLoaded", () => {
+	syncInlineSubmenuModeClass();
 	try {
 		const savedTheme = localStorage.getItem("nanai_balloon_theme");
 		if (savedTheme) {
@@ -258,6 +301,17 @@ globalThis.addEventListener("DOMContentLoaded", () => {
 
 // ショートカットキー対応 (T, B, R, P, O, D, A, C, Ctrl+I, Ctrl+W, Escape)
 document.addEventListener("keydown", (e) => {
+	if (
+		inlineSubmenu.isOpen() &&
+		(e.key === "Escape" || e.key === "ArrowLeft" || e.key === "Backspace")
+	) {
+		e.preventDefault?.();
+		e.stopPropagation?.();
+		inlineSubmenu.close(true);
+		hasActiveSubmenu = false;
+		activeSubmenuType = null;
+		return;
+	}
 	handleMenuKeydown(e, dispatcher);
 });
 
@@ -332,7 +386,7 @@ export function computeMenuWindowSize(): {
 }
 
 export async function adjustMenuWindowSize(force = false) {
-	if (!isTauriAvailable()) return;
+	if (!isTauriAvailable() || !isNativeMultiWindow()) return;
 	const size = computeMenuWindowSize();
 	if (!size) return;
 	if (

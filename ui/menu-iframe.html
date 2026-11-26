@@ -81,7 +81,7 @@
         <span>ゴースト切り替え(<u>G</u>)</span>
       </button>
 
-      <button type="button" class="menu-item main-only has-submenu" id="call-ghost-btn" role="menuitem">
+      <button type="button" class="menu-item main-only has-submenu" id="call-ghost-btn" role="menuitem" aria-haspopup="true">
         <span>他のゴーストを呼ぶ(<u>Z</u>)</span>
       </button>
 
@@ -99,7 +99,7 @@
         <span>バルーン(<u>B</u>)</span>
       </button>
 
-      <button type="button" class="menu-item main-only has-submenu" id="ghost-history-btn" role="menuitem">
+      <button type="button" class="menu-item main-only has-submenu" id="ghost-history-btn" role="menuitem" aria-haspopup="true">
         <span>最近使ったもの(<u>Y</u>)</span>
       </button>
 
@@ -137,5 +137,14 @@
         <span>全て終了(<u>X</u>)</span><span class="shortcut-key">Ctrl+Q</span>
       </button>
     </div>
+
+    <div
+      class="inline-submenu-panel"
+      id="inline-submenu-panel"
+      role="menu"
+      aria-label="サブメニュー"
+      aria-busy="true"
+      hidden
+    ></div>
   </body>
 </html>

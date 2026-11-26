@@ -39,7 +39,10 @@ export class MenuDispatcher {
 			finalPayload = { scope: this.currentScope, ...finalPayload };
 		}
 
-		if (globalThis.parent && (globalThis.parent as unknown) !== globalThis) {
+		const isEmbeddedIframe = Boolean(
+			globalThis.parent && (globalThis.parent as unknown) !== globalThis,
+		);
+		if (isEmbeddedIframe) {
 			try {
 				globalThis.parent.postMessage(
 					{
@@ -51,6 +54,7 @@ export class MenuDispatcher {
 					"*",
 				);
 			} catch (_e) {}
+			return;
 		}
 
 		if (isTauriAvailable()) {

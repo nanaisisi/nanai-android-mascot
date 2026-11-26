@@ -20,7 +20,10 @@ import type {
 	MenuGhostItem,
 	MenuShellInput,
 } from "./renderers/menu-ghost-shell-renderer.js";
-import { renderSubmenuContent } from "./submenu-renderer.js";
+import {
+	type PluginMenuItem,
+	renderSubmenuContent,
+} from "./submenu-renderer.js";
 import { applyShellMenuTheme } from "./submenu-theme.js";
 
 interface TauriSubmenuEvent<T> {
@@ -33,6 +36,7 @@ interface SubmenuSyncGhostsPayload {
 	shells?: MenuShellInput[];
 	currentShell?: string | null;
 	recentGhosts?: RecentGhostInput[];
+	plugins?: PluginMenuItem[];
 	dressup?: DressupMenuPayload | null;
 	scope?: number;
 }
@@ -59,6 +63,7 @@ let dressupScope = 0;
 let cachedBalloons: BalloonMenuItem[] = [];
 let currentBalloonTheme: string | null = null;
 let cachedRecentGhosts: RecentGhostInput[] = [];
+let cachedPlugins: PluginMenuItem[] = [];
 
 /**
  * サブメニューのアクションをイベントとして送信
@@ -112,6 +117,7 @@ function renderContent(options: { syncShow?: boolean } = {}) {
 		cachedBalloons,
 		currentBalloonTheme,
 		cachedRecentGhosts,
+		cachedPlugins,
 		dispatchSubmenuAction,
 	});
 	if (options.syncShow) {
@@ -228,6 +234,9 @@ if (isTauriAvailable()) {
 			cachedShells = data.shells || [];
 			currentShellName = data.currentShell ?? null;
 			cachedRecentGhosts = data.recentGhosts || [];
+			if (Array.isArray(data.plugins)) {
+				cachedPlugins = data.plugins;
+			}
 			if (data.dressup) {
 				cachedDressup = data.dressup;
 			}

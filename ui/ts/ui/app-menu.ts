@@ -10,6 +10,7 @@ import { dressupMenuPayload } from "../surface/bind-menu.js";
 
 type MenuAppContext = NanaiAndroidMascotApp & {
 	cachedMenuCaptions?: Record<string, string>;
+	availablePlugins?: unknown[];
 };
 
 /** メニュー/クイックパネル関連メソッド (NanaiAndroidMascotApp に mixin) */
@@ -133,6 +134,10 @@ export const menuMethods = {
 			);
 		} catch (_err) {}
 
+		if (!app.availableBalloons || app.availableBalloons.length === 0) {
+			await app.scanBalloons?.();
+		}
+
 		if (isTauriAvailable() && !isSinglePageUi()) {
 			emit("sync-ghosts", {
 				ghosts,
@@ -142,12 +147,10 @@ export const menuMethods = {
 				scope,
 				dressup,
 				recentGhosts,
+				plugins: app.availablePlugins || [],
 				captions: app.cachedMenuCaptions || {},
 			});
 			emit("sync-theme", app.currentBalloonTheme);
-			if (!app.availableBalloons || app.availableBalloons.length === 0) {
-				await app.scanBalloons?.();
-			}
 			if (app.availableBalloons) {
 				emit("sync-balloons", app.availableBalloons);
 			}
@@ -165,6 +168,7 @@ export const menuMethods = {
 					scope,
 					dressup,
 					recentGhosts,
+					plugins: app.availablePlugins || [],
 					captions: app.cachedMenuCaptions || {},
 				},
 				"*",

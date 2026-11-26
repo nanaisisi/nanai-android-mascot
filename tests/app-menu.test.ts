@@ -35,7 +35,9 @@ test("menuMethods covers toggleMenu, toggleHtmlMenu, syncMenuGhosts, hideMenu, a
 		};
 		currentBalloonTheme: string;
 		availableBalloons: Array<{ name: string; dir_name: string }>;
+		availablePlugins?: unknown[];
 		cachedMenuCaptions?: Record<string, string>;
+		scanBalloons?: () => Promise<void>;
 	} = {
 		...menuMethods,
 		elements: {
@@ -161,5 +163,26 @@ test("menuMethods covers toggleMenu, toggleHtmlMenu, syncMenuGhosts, hideMenu, a
 	assert.ok(emitted.length > 0);
 
 	delete globalThis.__TAURI_INTERNALS__;
+
+	// Test SinglePageUi (Android) scans balloons when empty and posts plugins + balloons to #menu-iframe
+	posted.length = 0;
+	mockApp.availableBalloons = [];
+	mockApp.availablePlugins = [{ name: "DemoPlugin" }];
+	let scannedBalloons = false;
+	mockApp.scanBalloons = async () => {
+		scannedBalloons = true;
+		mockApp.availableBalloons = [{ name: "NAM", dir_name: "nam" }];
+	};
+	await mockApp.syncMenuGhosts(0);
+	assert.equal(scannedBalloons, true);
+	const ghostsMsg = posted.find(
+		(p) => (p.msg as { type?: string })?.type === "sync-ghosts",
+	)?.msg as { plugins?: unknown[] } | undefined;
+	assert.deepEqual(ghostsMsg?.plugins, [{ name: "DemoPlugin" }]);
+	const balloonsMsg = posted.find(
+		(p) => (p.msg as { type?: string })?.type === "sync-balloons",
+	)?.msg as { balloons?: unknown[] } | undefined;
+	assert.deepEqual(balloonsMsg?.balloons, [{ name: "NAM", dir_name: "nam" }]);
+
 	assert.ok(true);
 });

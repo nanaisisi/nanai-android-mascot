@@ -235,6 +235,77 @@ test("renderSubmenuContent covers all submenu types (ghost, shell, dressup, ball
 	assert.equal(children.length, 1);
 	assert.ok(children[0].className.includes("is-disabled"));
 
+	// 7. type = "ghost-history" alias & custom container
+	const customChildren: MockRendererElement[] = [];
+	const customContainer = {
+		innerHTML: "",
+		children: customChildren,
+		appendChild(child: MockRendererElement) {
+			customChildren.push(child);
+		},
+	} as unknown as HTMLElement;
+	dispatched.length = 0;
+	renderSubmenuContent({
+		currentSubmenuType: "ghost-history",
+		cachedGhosts: [],
+		currentGhostName: "",
+		cachedShells: [],
+		currentShellName: "",
+		cachedDressup: null,
+		dressupScope: 0,
+		cachedBalloons: [],
+		currentBalloonTheme: "",
+		cachedRecentGhosts: ["GhostHistory1"],
+		container: customContainer,
+		dispatchSubmenuAction,
+	});
+	assert.equal(customChildren.length, 1);
+	customChildren[0].click();
+	assert.equal(dispatched[0].action, "recent-ghost");
+
+	// 8. type = "plugin" (empty and populated)
+	children.length = 0;
+	dispatched.length = 0;
+	renderSubmenuContent({
+		currentSubmenuType: "plugin",
+		cachedGhosts: [],
+		currentGhostName: "",
+		cachedShells: [],
+		currentShellName: "",
+		cachedDressup: null,
+		dressupScope: 0,
+		cachedBalloons: [],
+		currentBalloonTheme: "",
+		cachedRecentGhosts: [],
+		cachedPlugins: [],
+		dispatchSubmenuAction,
+	});
+	assert.equal(children.length, 3);
+	assert.ok(children[0].className.includes("is-disabled"));
+	children[2].click();
+	assert.equal(dispatched[0].action, "plugins");
+
+	children.length = 0;
+	dispatched.length = 0;
+	renderSubmenuContent({
+		currentSubmenuType: "plugin",
+		cachedGhosts: [],
+		currentGhostName: "",
+		cachedShells: [],
+		currentShellName: "",
+		cachedDressup: null,
+		dressupScope: 0,
+		cachedBalloons: [],
+		currentBalloonTheme: "",
+		cachedRecentGhosts: [],
+		cachedPlugins: ["SamplePlugin"],
+		dispatchSubmenuAction,
+	});
+	assert.equal(children.length, 3);
+	children[0].click();
+	assert.equal(dispatched[0].action, "plugins");
+	assert.deepEqual(dispatched[0].payload, { name: "SamplePlugin" });
+
 	assert.ok(true);
 });
 

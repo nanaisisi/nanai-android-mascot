@@ -9,6 +9,8 @@ import type {
 	MenuShellInput,
 } from "./renderers/menu-ghost-shell-renderer.js";
 
+export type PluginMenuItem = string | { name?: string; id?: string };
+
 export interface SubmenuRenderOptions {
 	currentSubmenuType: string;
 	cachedGhosts: MenuGhostInput[];
@@ -20,6 +22,8 @@ export interface SubmenuRenderOptions {
 	cachedBalloons: BalloonMenuItem[];
 	currentBalloonTheme: string | null;
 	cachedRecentGhosts: RecentGhostInput[];
+	cachedPlugins?: PluginMenuItem[];
+	container?: HTMLElement | null;
 	dispatchSubmenuAction: (action: string, payload?: unknown) => void;
 }
 
@@ -37,9 +41,12 @@ export function renderSubmenuContent({
 	cachedBalloons,
 	currentBalloonTheme,
 	cachedRecentGhosts,
+	cachedPlugins = [],
+	container: customContainer,
 	dispatchSubmenuAction,
 }: SubmenuRenderOptions) {
-	const container = document.getElementById("submenu-content");
+	const container =
+		customContainer ?? document.getElementById("submenu-content");
 	if (!container) return;
 	container.innerHTML = "";
 
@@ -186,7 +193,10 @@ export function renderSubmenuContent({
 		} else {
 			renderBalloons(cachedBalloons);
 		}
-	} else if (currentSubmenuType === "recent") {
+	} else if (
+		currentSubmenuType === "recent" ||
+		currentSubmenuType === "ghost-history"
+	) {
 		if (!cachedRecentGhosts || cachedRecentGhosts.length === 0) {
 			const empty = document.createElement("div");
 			empty.className = "menu-item is-disabled";
@@ -477,5 +487,46 @@ export function renderSubmenuContent({
 			}
 			container.appendChild(btn);
 		});
+	} else if (
+		currentSubmenuType === "plugin" ||
+		currentSubmenuType === "plugins"
+	) {
+		if (!cachedPlugins || cachedPlugins.length === 0) {
+			const empty = document.createElement("div");
+			empty.className = "menu-item is-disabled";
+			empty.innerHTML = `<span class="menu-item-indicator"></span><span class="menu-item-label">(プラグインなし)</span>`;
+			container.appendChild(empty);
+		} else {
+			cachedPlugins.forEach((pluginItem) => {
+				const pluginName =
+					typeof pluginItem === "string"
+						? pluginItem
+						: pluginItem?.name || pluginItem?.id || "";
+				if (!pluginName) return;
+				const btn = document.createElement("button");
+				btn.type = "button";
+				btn.className = "menu-item";
+				btn.innerHTML = `<span class="menu-item-indicator"></span><span class="menu-item-label">${pluginName}</span>`;
+				btn.addEventListener("click", () => {
+					dispatchSubmenuAction(
+						"plugins",
+						typeof pluginItem === "string" ? { name: pluginItem } : pluginItem,
+					);
+				});
+				container.appendChild(btn);
+			});
+		}
+		const separator = document.createElement("hr");
+		separator.className = "menu-separator";
+		container.appendChild(separator);
+
+		const manageBtn = document.createElement("button");
+		manageBtn.type = "button";
+		manageBtn.className = "menu-item";
+		manageBtn.innerHTML = `<span class="menu-item-indicator"></span><span class="menu-item-label">プラグイン一覧・管理...</span>`;
+		manageBtn.addEventListener("click", () => {
+			dispatchSubmenuAction("plugins");
+		});
+		container.appendChild(manageBtn);
 	}
 }

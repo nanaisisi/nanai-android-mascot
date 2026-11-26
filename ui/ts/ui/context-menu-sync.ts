@@ -11,6 +11,20 @@ import type {
 	MenuGhostItem,
 	MenuShellInput,
 } from "./renderers/menu-ghost-shell-renderer.js";
+import type { PluginMenuItem } from "./submenu-renderer.js";
+
+export interface SubmenuSyncStatePatch {
+	ghosts?: MenuGhostInput[];
+	currentGhostName?: string | null;
+	shells?: MenuShellInput[];
+	currentShellName?: string | null;
+	dressup?: DressupMenuPayload | null;
+	dressupScope?: number;
+	balloons?: BalloonMenuItem[];
+	currentBalloonTheme?: string | null;
+	recentGhosts?: RecentGhostInput[];
+	plugins?: PluginMenuItem[];
+}
 
 interface TauriSyncEvent<T> {
 	payload: T;
@@ -24,6 +38,7 @@ interface SyncGhostsPayload {
 	scope?: number;
 	dressup?: DressupMenuPayload | null;
 	recentGhosts?: RecentGhostInput[];
+	plugins?: PluginMenuItem[];
 	captions?: Record<string, string>;
 }
 
@@ -36,6 +51,7 @@ export function setupContextMenuSync(
 	renderer: MenuSubmenuRenderer,
 	onScopeSync?: () => void,
 	onContentUpdate?: () => void,
+	onDataSync?: (patch: SubmenuSyncStatePatch) => void,
 ) {
 	if (isTauriAvailable()) {
 		listen("sync-menu-scope", (rawEvent) => {
@@ -48,6 +64,7 @@ export function setupContextMenuSync(
 				onScopeSync?.();
 				dispatcher.setScope(scope);
 				renderer.renderDressupSubmenu(null, scope);
+				onDataSync?.({ dressupScope: scope });
 				dispatcher.dispatchAction("request-sync");
 			}
 		});
@@ -92,6 +109,16 @@ export function setupContextMenuSync(
 				if (data.captions) {
 					renderer.applyCaptions(data.captions);
 				}
+				onDataSync?.({
+					ghosts: data.ghosts || [],
+					currentGhostName: ghostName ?? null,
+					shells: data.shells,
+					currentShellName: data.currentShell ?? null,
+					dressup: data.dressup,
+					dressupScope: data.scope ?? dispatcher.currentScope,
+					recentGhosts: data.recentGhosts || [],
+					plugins: data.plugins,
+				});
 				onContentUpdate?.();
 			}
 		});
@@ -112,6 +139,7 @@ export function setupContextMenuSync(
 				document.documentElement.getAttribute("data-balloon-theme") ||
 				localStorage.getItem("nanai_balloon_theme") ||
 				"nam";
+			onDataSync?.({ currentBalloonTheme: theme });
 			if (syncGlobal._lastBalloons) {
 				renderer.renderBalloonSubmenu(syncGlobal._lastBalloons, theme);
 			}
@@ -125,6 +153,10 @@ export function setupContextMenuSync(
 				localStorage.getItem("nanai_balloon_theme") ||
 				"nam";
 			renderer.renderBalloonSubmenu(event.payload, theme);
+			onDataSync?.({
+				balloons: event.payload || [],
+				currentBalloonTheme: theme,
+			});
 		});
 	}
 
@@ -138,12 +170,18 @@ export function setupContextMenuSync(
 				onScopeSync?.();
 				dispatcher.setScope(scope);
 				renderer.renderDressupSubmenu(null, scope);
+				onDataSync?.({ dressupScope: scope });
 			}
 		} else if (event.data?.type === "sync-ghosts") {
+			const ghostName =
+				typeof event.data.currentGhost === "string"
+					? event.data.currentGhost
+					: event.data.currentGhost?.name;
 			renderer.renderGhostSubmenu(
 				event.data.ghosts || [],
 				event.data.currentGhost,
 			);
+			renderer.renderCallGhostSubmenu(event.data.ghosts || []);
 			if (event.data.dressup) {
 				renderer.renderDressupSubmenu(
 					event.data.dressup,
@@ -151,6 +189,17 @@ export function setupContextMenuSync(
 				);
 			}
 			renderer.renderRecentSubmenu(event.data.recentGhosts || []);
+			if (event.data.captions) {
+				renderer.applyCaptions(event.data.captions);
+			}
+			onDataSync?.({
+				ghosts: event.data.ghosts || [],
+				currentGhostName: ghostName ?? null,
+				dressup: event.data.dressup,
+				dressupScope: event.data.scope ?? dispatcher.currentScope,
+				recentGhosts: event.data.recentGhosts || [],
+				plugins: event.data.plugins,
+			});
 		} else if (event.data?.type === "sync-shells") {
 			const ghostName =
 				typeof event.data.currentGhost === "string"
@@ -174,6 +223,11 @@ export function setupContextMenuSync(
 			if (event.data.captions) {
 				renderer.applyCaptions(event.data.captions);
 			}
+			onDataSync?.({
+				shells: event.data.shells || ["master"],
+				currentShellName: event.data.currentShell || "master",
+				currentGhostName: ghostName ?? undefined,
+			});
 		} else if (event.data?.type === "sync-menu-captions") {
 			if (event.data.captions) {
 				renderer.applyCaptions(event.data.captions);
@@ -185,6 +239,7 @@ export function setupContextMenuSync(
 				document.documentElement.getAttribute("data-balloon-theme") ||
 				localStorage.getItem("nanai_balloon_theme") ||
 				"nam";
+			onDataSync?.({ currentBalloonTheme: theme });
 			if (syncGlobal._lastBalloons) {
 				renderer.renderBalloonSubmenu(syncGlobal._lastBalloons, theme);
 			}
@@ -195,6 +250,10 @@ export function setupContextMenuSync(
 				localStorage.getItem("nanai_balloon_theme") ||
 				"nam";
 			renderer.renderBalloonSubmenu(event.data.balloons, theme);
+			onDataSync?.({
+				balloons: event.data.balloons || [],
+				currentBalloonTheme: theme,
+			});
 		}
 	});
 }

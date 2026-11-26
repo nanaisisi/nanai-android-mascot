@@ -357,7 +357,7 @@ test("touch tap with small jitter fires click and resolveContainedImageRect acco
 		{ left: 0, top: 100, width: 200, height: 200 },
 	);
 
-	const clicked: Array<{ x: unknown; y: unknown }> = [];
+	const clicked: Array<{ x: unknown; y: unknown; device: unknown }> = [];
 	const mockApp = { toggleMenu() {} };
 	const manager = new InteractionManager(mockApp);
 	const listeners: Record<string, (e?: Record<string, unknown>) => void> = {};
@@ -395,7 +395,13 @@ test("touch tap with small jitter fires click and resolveContainedImageRect acco
 	delete g.__TAURI_INTERNALS__;
 	manager.setupDragging(
 		target,
-		(x: unknown, y: unknown) => clicked.push({ x, y }),
+		(
+			x: unknown,
+			y: unknown,
+			_rect: unknown,
+			_clickType: unknown,
+			device: unknown,
+		) => clicked.push({ x, y, device }),
 		undefined,
 	);
 
@@ -413,5 +419,5 @@ test("touch tap with small jitter fires click and resolveContainedImageRect acco
 	}
 
 	assert.equal(clicked.length, 1);
-	assert.deepEqual(clicked[0], { x: 158, y: 200 });
+	assert.deepEqual(clicked[0], { x: 158, y: 200, device: "touch" });
 });

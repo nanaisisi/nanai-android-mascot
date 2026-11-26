@@ -25,7 +25,39 @@ import {
 } from "./drag/drag-pointer-up.js";
 import { createLongPressController } from "./drag/long-press.js";
 import { createStrokeTracker } from "./drag/stroke.js";
-import { isPixelTransparent } from "./transparency.js";
+import {
+	isPixelTransparent,
+	resolveContainedImageRect,
+} from "./transparency.js";
+
+function getInteractionRect(target: HTMLElement):
+	| DOMRect
+	| {
+			left: number;
+			top: number;
+			width: number;
+			height: number;
+			naturalWidth?: number;
+			naturalHeight?: number;
+	  } {
+	const img = target.querySelector?.("img") as HTMLImageElement | null;
+	if (img && typeof img.getBoundingClientRect === "function") {
+		const imgRect = img.getBoundingClientRect();
+		if (imgRect.width > 0 && imgRect.height > 0) {
+			const contained = resolveContainedImageRect(
+				imgRect,
+				img.naturalWidth,
+				img.naturalHeight,
+			);
+			return {
+				...contained,
+				...(img.naturalWidth > 0 ? { naturalWidth: img.naturalWidth } : {}),
+				...(img.naturalHeight > 0 ? { naturalHeight: img.naturalHeight } : {}),
+			};
+		}
+	}
+	return target.getBoundingClientRect();
+}
 
 // Re-export submodules for direct usage
 export {
@@ -239,8 +271,8 @@ export function setupGhostDragging(
 		threshold: STROKE_THRESHOLD,
 		onStroke: (clientX: unknown, clientY: unknown) => {
 			if (typeof onGhostStroke === "function") {
-				const rect = target.getBoundingClientRect();
-				(onGhostStroke as (x: unknown, y: unknown, rect: DOMRect) => unknown)(
+				const rect = getInteractionRect(target);
+				(onGhostStroke as (x: unknown, y: unknown, rect: unknown) => unknown)(
 					clientX,
 					clientY,
 					rect,
@@ -333,10 +365,12 @@ export function setupGhostDragging(
 		lastX = clientX;
 		lastY = clientY;
 
-		const rect = target.getBoundingClientRect();
+		const rect = getInteractionRect(target);
 		const moveTarget = resolveMoveTarget(target);
 		const moveRect =
-			moveTarget === target ? rect : moveTarget.getBoundingClientRect();
+			moveTarget === target
+				? target.getBoundingClientRect()
+				: moveTarget.getBoundingClientRect();
 		const parentRect = (
 			moveTarget.offsetParent as HTMLElement | null
 		)?.getBoundingClientRect?.() ?? { left: 0, top: 0 };
@@ -435,7 +469,7 @@ export function setupGhostDragging(
 					}
 				}
 				if (onGhostDragStart) {
-					const rect = target.getBoundingClientRect();
+					const rect = getInteractionRect(target);
 					onGhostDragStart(clientX, clientY, rect);
 				}
 			}
@@ -584,6 +618,7 @@ export function setupGhostDragging(
 			onGhostMouseUp,
 			leftClickTracker,
 			moveTarget,
+			getInteractionRect(target),
 		);
 	};
 

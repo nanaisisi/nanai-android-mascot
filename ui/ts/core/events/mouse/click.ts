@@ -86,12 +86,10 @@ export function onGhostClick(
 	rect?: unknown,
 	scopeId: number = 0,
 	clickType: "single" | "double" = "single",
+	device: string = "mouse",
 ) {
-	const app = this as MouseApp & {
-		currentGhost?: { dont_need_onmousemove?: boolean } | null;
-	};
+	const app = this as MouseApp;
 	if (isTimeCriticalPlaying(app)) return;
-	if (app.currentGhost?.dont_need_onmousemove) return;
 	const col = app.getCollisionInfo(clientX, clientY, rect, scopeId);
 	console.log(
 		`🖱️ ゴーストタップ: スコープ=${scopeId}, 部位=${col.name || "なし"} (X:${col.canvasX}, Y:${col.canvasY})`,
@@ -100,7 +98,15 @@ export function onGhostClick(
 		invoke("on_mouse_click").catch(() => {});
 	}
 
-	const args = [col.canvasX, col.canvasY, 0, scopeId, col.name || "", 0];
+	const args = [
+		col.canvasX,
+		col.canvasY,
+		0,
+		scopeId,
+		col.name || "",
+		0,
+		device,
+	];
 
 	if (clickType === "single") {
 		return dispatchShioriMouseEvent(app, "OnMouseClick", args);
@@ -124,11 +130,8 @@ export function onGhostStroke(
 	rect?: unknown,
 	scopeId: number = 0,
 ) {
-	const app = this as MouseApp & {
-		currentGhost?: { dont_need_onmousemove?: boolean } | null;
-	};
+	const app = this as MouseApp;
 	if (isTimeCriticalPlaying(app)) return;
-	if (app.currentGhost?.dont_need_onmousemove) return;
 	const col = app.getCollisionInfo(clientX, clientY, rect, scopeId);
 	console.log(
 		`🖐️ ゴースト撫で（Stroke）: スコープ=${scopeId}, 部位=${col.name || "なし"}`,

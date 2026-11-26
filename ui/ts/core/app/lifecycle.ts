@@ -54,6 +54,8 @@ export class NanaiAndroidMascotApp {
 		y?: number,
 		rect?: unknown,
 		scopeId?: number,
+		clickType?: "single" | "double",
+		device?: string,
 	) => unknown;
 	declare onGhostStroke: (
 		x?: number,

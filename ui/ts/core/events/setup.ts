@@ -163,7 +163,11 @@ export const setupMethods = {
 					y: number,
 					rect: unknown,
 					clickType?: "single" | "double",
-				) => app.onGhostClick(x, y, rect, scopeId, clickType),
+					device?: string,
+				) =>
+					device !== undefined
+						? app.onGhostClick(x, y, rect, scopeId, clickType, device)
+						: app.onGhostClick(x, y, rect, scopeId, clickType),
 				(x: number, y: number, rect: unknown) => {
 					void trackPartTransition(app, x, y, rect, scopeId);
 					return app.onGhostStroke(x, y, rect, scopeId);

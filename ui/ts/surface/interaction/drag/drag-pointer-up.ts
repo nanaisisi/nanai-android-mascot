@@ -157,8 +157,9 @@ function dispatchLeftClick(
 				y: number,
 				rect: unknown,
 				clickType?: "single" | "double",
+				device?: string,
 			) => unknown
-		)(clickX, clickY, currentRect, clickType);
+		)(clickX, clickY, currentRect, clickType, device);
 	}
 }
 
@@ -175,6 +176,7 @@ export function handleGhostPointerUp(
 	onGhostMouseUp: unknown,
 	clickTracker?: ClickTrackerState,
 	dockTarget: HTMLElement = target,
+	interactionRect?: unknown,
 ) {
 	if (!state.isInteracting) return false;
 	const ev = (e || {}) as PointerEventLike;
@@ -193,7 +195,7 @@ export function handleGhostPointerUp(
 	const touchPoint = ev.changedTouches?.[0] ?? ev.touches?.[0];
 	const clientX = Number(ev.clientX ?? touchPoint?.clientX ?? state.startX);
 	const clientY = Number(ev.clientY ?? touchPoint?.clientY ?? state.startY);
-	const rect = target.getBoundingClientRect();
+	const rect = (interactionRect ?? target.getBoundingClientRect()) as DOMRect;
 	const button = ev.button !== undefined ? ev.button : 0;
 	const device = normalizePointerDevice(ev);
 

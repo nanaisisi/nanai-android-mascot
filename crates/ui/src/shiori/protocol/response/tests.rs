@@ -34,19 +34,19 @@ fn test_response_helpers() {
     assert!(!helpers::is_header_key(""));
 
     let mut res = ShioriResponse::ok("Line1");
-    helpers::push_continuation(&mut res, Some("value"), "Line2");
+    res.push_continuation(Some("value"), "Line2");
     assert_eq!(res.value.as_deref(), Some("Line1\nLine2"));
 
     let mut res_notify = ShioriResponse::ok("Notify1");
     res_notify.value_notify = Some("Notify1".to_string());
-    helpers::push_continuation(&mut res_notify, Some("value_notify"), "Notify2");
+    res_notify.push_continuation(Some("value_notify"), "Notify2");
     assert_eq!(res_notify.value_notify.as_deref(), Some("Notify1\nNotify2"));
 
-    helpers::push_continuation(&mut res_notify, Some("unknown"), "Ignored");
+    res_notify.push_continuation(Some("unknown"), "Ignored");
 
     let mut res_none = ShioriResponse::default();
-    helpers::push_continuation(&mut res_none, Some("value"), "Ignored");
-    helpers::push_continuation(&mut res_none, Some("value_notify"), "Ignored");
+    res_none.push_continuation(Some("value"), "Ignored");
+    res_none.push_continuation(Some("value_notify"), "Ignored");
 
     let mut out = String::new();
     helpers::write_multiline_header(helpers::Write_multiline_headerParams {

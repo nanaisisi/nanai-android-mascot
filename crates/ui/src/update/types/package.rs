@@ -1,6 +1,5 @@
 //! ネットワーク更新パッケージ、進捗サマリー、差分更新計画モデル
 
-use super::super::parser::parse_update_definition;
 use super::entry::UpdateEntry;
 
 /// ネットワーク更新進捗サマリー (Slot-15 Contract)
@@ -77,14 +76,12 @@ pub struct UpdatePackage {
 
 #[allow(dead_code)]
 impl UpdatePackage {
-    pub fn entries(&self) -> &[UpdateEntry] {
-        &self.entries
+    pub fn new(entries: Vec<UpdateEntry>) -> Self {
+        Self { entries }
     }
 
-    pub fn from_definition(content: &str) -> Self {
-        Self {
-            entries: parse_update_definition(content),
-        }
+    pub fn entries(&self) -> &[UpdateEntry] {
+        &self.entries
     }
 
     /// 更新対象（非delete、非ignore）の有効なエントリ一覧を取得

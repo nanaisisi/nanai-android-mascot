@@ -77,8 +77,17 @@ impl SstpGhostContext {
     pub fn properties(&self) -> &HashMap<String, String> {
         &self.properties
     }
+    pub fn property(&self, key: &str) -> Option<&str> {
+        self.properties.get(key).map(String::as_str)
+    }
     pub fn cookies(&self) -> &HashMap<String, HashMap<String, String>> {
         &self.cookies
+    }
+    pub fn cookie(&self, sender: &str, key: &str) -> Option<&str> {
+        self.cookies
+            .get(sender)
+            .and_then(|m| m.get(key))
+            .map(String::as_str)
     }
     pub fn sender(&self) -> &str {
         &self.sender
@@ -91,6 +100,9 @@ impl SstpGhostContext {
     }
     pub fn references(&self) -> &HashMap<String, String> {
         &self.references
+    }
+    pub fn reference(&self, key: &str) -> Option<&str> {
+        self.references.get(key).map(String::as_str)
     }
 
     pub fn set_security_level(&mut self, level: Option<String>) {

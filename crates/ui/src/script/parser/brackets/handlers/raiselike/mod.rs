@@ -23,30 +23,12 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
         "execute" => {
             execution::handle_execute(&parts, callback);
         }
-        "enter" | "leave" => {
-            settings::handle_enter_leave(&parts, callback);
-        }
-        "bind" => {
-            settings::handle_bind(&parts, callback);
-        }
-        "open" => {
-            settings::handle_open(&parts, callback);
-        }
-        "set" => {
-            settings::handle_set(&parts, callback);
-        }
         "quicksection" => {
             let enabled = parts
                 .get(1)
                 .map(|v| !matches!(v.as_str(), "0" | "false"))
                 .unwrap_or(true);
             callback(SakuraCommand::Quick(enabled));
-        }
-        "lock" | "unlock" => {
-            settings::handle_lock_unlock(&parts, callback);
-        }
-        "*" => {
-            settings::handle_marker(callback);
         }
         "biff" => {
             execution::handle_biff(callback);
@@ -56,12 +38,6 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
         }
         "create" => {
             execution::handle_create(&parts, callback);
-        }
-        "change" => {
-            settings::handle_change(&parts, callback);
-        }
-        "call" => {
-            settings::handle_call(&parts, callback);
         }
         "save" => {
             execution::handle_save(&parts, callback);
@@ -75,6 +51,7 @@ pub(crate) fn handle_raiselike(chars: &mut CharsIter<'_>, callback: &mut dyn FnM
         "close" => {
             execution::handle_close(&parts, callback);
         }
+        _ if settings::handle_setting_command(&parts, callback) => {}
         _ => {
             callback(SakuraCommand::Command { args: parts });
         }

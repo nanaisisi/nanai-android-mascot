@@ -2,7 +2,25 @@
 
 use crate::script::command::SakuraCommand;
 
-pub(crate) fn handle_enter_leave(parts: &[String], callback: &mut dyn FnMut(SakuraCommand)) {
+pub(crate) fn handle_setting_command(
+    parts: &[String],
+    callback: &mut dyn FnMut(SakuraCommand),
+) -> bool {
+    match parts[0].as_str() {
+        "enter" | "leave" => handle_enter_leave(parts, callback),
+        "bind" => handle_bind(parts, callback),
+        "open" => handle_open(parts, callback),
+        "set" => handle_set(parts, callback),
+        "lock" | "unlock" => handle_lock_unlock(parts, callback),
+        "*" => handle_marker(callback),
+        "change" => handle_change(parts, callback),
+        "call" => handle_call(parts, callback),
+        _ => return false,
+    }
+    true
+}
+
+pub(super) fn handle_enter_leave(parts: &[String], callback: &mut dyn FnMut(SakuraCommand)) {
     let mode = parts.get(1).cloned().unwrap_or_default();
     callback(SakuraCommand::ModeChange {
         mode,
@@ -10,7 +28,7 @@ pub(crate) fn handle_enter_leave(parts: &[String], callback: &mut dyn FnMut(Saku
     });
 }
 
-pub(crate) fn handle_bind(parts: &[String], callback: &mut dyn FnMut(SakuraCommand)) {
+pub(super) fn handle_bind(parts: &[String], callback: &mut dyn FnMut(SakuraCommand)) {
     let category = parts.get(1).cloned().unwrap_or_default();
     let part = parts.get(2).cloned().unwrap_or_default();
     let status = parts.get(3).and_then(|v| match v.as_str() {
@@ -25,7 +43,7 @@ pub(crate) fn handle_bind(parts: &[String], callback: &mut dyn FnMut(SakuraComma
     });
 }
 
-pub(crate) fn handle_open(parts: &[String], callback: &mut dyn FnMut(SakuraCommand)) {
+pub(super) fn handle_open(parts: &[String], callback: &mut dyn FnMut(SakuraCommand)) {
     let dialog_type = parts.get(1).cloned().unwrap_or_default();
     let id = parts.get(2).cloned().unwrap_or_default();
     let args = if parts.len() > 3 {
@@ -40,7 +58,7 @@ pub(crate) fn handle_open(parts: &[String], callback: &mut dyn FnMut(SakuraComma
     });
 }
 
-pub(crate) fn handle_set(parts: &[String], callback: &mut dyn FnMut(SakuraCommand)) {
+pub(super) fn handle_set(parts: &[String], callback: &mut dyn FnMut(SakuraCommand)) {
     let setting = parts.get(1).cloned().unwrap_or_default();
     match setting.to_lowercase().as_str() {
         "quicksection" => {
@@ -105,7 +123,7 @@ pub(crate) fn handle_set(parts: &[String], callback: &mut dyn FnMut(SakuraComman
     }
 }
 
-pub(crate) fn handle_lock_unlock(parts: &[String], callback: &mut dyn FnMut(SakuraCommand)) {
+pub(super) fn handle_lock_unlock(parts: &[String], callback: &mut dyn FnMut(SakuraCommand)) {
     let target = parts.get(1).map(|s| s.as_str()).unwrap_or("");
     if target == "balloonmove" {
         callback(SakuraCommand::LockBalloonMove(parts[0] == "lock"));
@@ -118,17 +136,17 @@ pub(crate) fn handle_lock_unlock(parts: &[String], callback: &mut dyn FnMut(Saku
     }
 }
 
-pub(crate) fn handle_marker(callback: &mut dyn FnMut(SakuraCommand)) {
+pub(super) fn handle_marker(callback: &mut dyn FnMut(SakuraCommand)) {
     callback(SakuraCommand::Marker);
 }
 
-pub(crate) fn handle_change(parts: &[String], callback: &mut dyn FnMut(SakuraCommand)) {
+pub(super) fn handle_change(parts: &[String], callback: &mut dyn FnMut(SakuraCommand)) {
     let target = parts.get(1).cloned().unwrap_or_default();
     let name = parts.get(2).cloned().unwrap_or_default();
     callback(SakuraCommand::Change { target, name });
 }
 
-pub(crate) fn handle_call(parts: &[String], callback: &mut dyn FnMut(SakuraCommand)) {
+pub(super) fn handle_call(parts: &[String], callback: &mut dyn FnMut(SakuraCommand)) {
     let target = parts.get(1).cloned().unwrap_or_default();
     let name = parts.get(2).cloned().unwrap_or_default();
     callback(SakuraCommand::Call { target, name });

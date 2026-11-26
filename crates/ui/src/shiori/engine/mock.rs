@@ -75,9 +75,7 @@ impl ShioriEngine for MockShioriEngine {
             if script.is_empty() {
                 Ok(ShioriResponse::no_content().build())
             } else {
-                let mut resp = ShioriResponse::ok(script);
-                resp.charset = "UTF-8".to_string();
-                Ok(resp.build())
+                Ok(ShioriResponse::ok(script).with_charset("UTF-8").build())
             }
         } else {
             // 未知イベントは 204 No Content

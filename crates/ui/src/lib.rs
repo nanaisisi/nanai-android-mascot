@@ -1,20 +1,30 @@
 pub mod animation;
 pub mod app;
+#[path = "resources/descript/mod.rs"]
 pub mod descript;
 pub mod fmo;
 pub mod interface;
+#[path = "resources/manifest/mod.rs"]
 pub mod manifest;
 pub mod script;
+#[path = "resources/shell/mod.rs"]
 pub mod shell;
 pub mod shiori;
 pub mod sstp;
+#[path = "surfaces/surfaces_core.rs"]
 pub mod surfaces_core;
+#[path = "surfaces/surfaces_core_core.rs"]
 pub mod surfaces_core_core;
+#[path = "surfaces/surfaces_core_integration.rs"]
 pub mod surfaces_core_integration;
+#[path = "surfaces/surfaces_integration.rs"]
 pub mod surfaces_integration;
+#[path = "resources/surfacetable/mod.rs"]
 pub mod surfacetable;
 pub mod update;
+#[path = "vfs/vfs_core.rs"]
 pub mod vfs_core;
+#[path = "vfs/vfs_integration.rs"]
 pub mod vfs_integration;
 
 pub use interface::{Nanai_android_mascot_uiInterface, NanaiUiFacade};

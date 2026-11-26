@@ -29,16 +29,15 @@ pub fn handle_execute_command(command_str: &str, ctx: &SstpGhostContext) -> Sstp
 
     if args.is_empty() {
         let mut idx = 0;
-        while let Some(val) = ctx.references.get(&format!("Reference{}", idx)) {
-            args.push(val.clone());
+        while let Some(val) = ctx.reference(&format!("Reference{}", idx)) {
+            args.push(val.to_string());
             idx += 1;
         }
     }
 
     // リモート不可判定ヘルパー
     let is_remote = ctx
-        .security_level
-        .as_deref()
+        .security_level()
         .map(|s| s.eq_ignore_ascii_case("external"))
         .unwrap_or(false);
 

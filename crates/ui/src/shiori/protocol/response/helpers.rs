@@ -1,26 +1,8 @@
 //! SHIORI/3.0 レスポンスヘッダパース・テキストフォーマット補助関数
 
-use super::types::ShioriResponse;
-
 pub(crate) fn key_str_prefix(key: &str) -> Option<String> {
     let key = key.strip_prefix("X-SSTP-PassThru-")?;
     Some(key.to_string())
-}
-
-pub(crate) fn push_continuation(res: &mut ShioriResponse, mode: Option<&str>, line: &str) {
-    match mode {
-        Some("value") => {
-            if let Some(v) = res.value.take() {
-                res.value = Some(format!("{}\n{}", v, line));
-            }
-        }
-        Some("value_notify") => {
-            if let Some(v) = res.value_notify.take() {
-                res.value_notify = Some(format!("{}\n{}", v, line));
-            }
-        }
-        _ => {}
-    }
 }
 
 pub(crate) fn is_header_key(key: &str) -> bool {

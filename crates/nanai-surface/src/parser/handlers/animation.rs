@@ -3,7 +3,7 @@
 use crate::types::*;
 
 #[allow(non_camel_case_types)]
-pub struct Apply_animation_lineParams<'a> {
+pub(in crate::parser) struct Apply_animation_lineParams<'a> {
     pub(crate) txt: &'a mut SurfacesTxt,
     pub(crate) ids: &'a [u32],
     pub(crate) rest: &'a str,

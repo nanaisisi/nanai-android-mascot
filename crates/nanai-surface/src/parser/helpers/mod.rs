@@ -1,7 +1,7 @@
 //! `surfaces.txt` パーサー補助関数・ブロック行ハンドラー
 
-pub(crate) mod blocks;
-pub(crate) mod lines;
+mod blocks;
+mod lines;
 
-pub(crate) use blocks::*;
-pub(crate) use lines::*;
+pub(super) use blocks::{BlockKind, parse_block_opener, prepare_block};
+pub(super) use lines::dispatch_scope_line;

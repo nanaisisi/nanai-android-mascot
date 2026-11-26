@@ -1,21 +1,18 @@
 //! Nanai Core - Pure Rust logic (parsers for sakura script, descript, fmo, manifest, update/install protocols)
 
-pub mod balloon_descript;
-pub mod balloon_layout;
+mod balloon;
 pub mod descript_parser;
-pub mod install_protocol;
-pub mod sakura_player;
-pub mod sakura_script;
-pub mod seriko_animation;
-pub mod shiori_protocol;
-pub mod shiori_protocol_core;
-pub mod shiori_protocol_helpers;
-pub mod sstp_fmo;
+mod protocol;
+mod sakura;
+mod shiori;
 pub mod state;
-pub mod surface_collision;
-pub mod surface_compositor;
-pub mod surfaces_parser;
-pub mod update_protocol;
+mod surface;
+
+pub use balloon::{balloon_descript, balloon_layout};
+pub use protocol::{install_protocol, sstp_fmo, update_protocol};
+pub use sakura::{sakura_player, sakura_script};
+pub use shiori::{shiori_protocol, shiori_protocol_core, shiori_protocol_helpers};
+pub use surface::{seriko_animation, surface_collision, surface_compositor, surfaces_parser};
 
 pub use balloon_descript::*;
 pub use balloon_layout::*;

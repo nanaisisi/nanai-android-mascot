@@ -1,10 +1,28 @@
 //! `surfaces.txt` ブロック行ハンドラー
 
-use crate::parser::handlers::*;
+use super::blocks::BlockKind;
+use crate::parser::handlers::{apply_surface_key, expand_range};
 use crate::types::*;
 
+/// スコープに応じた行処理を実行する
+pub(in crate::parser) fn dispatch_scope_line(
+    txt: &mut SurfacesTxt,
+    scope: &Option<BlockKind>,
+    line: &str,
+) {
+    match scope {
+        Some(BlockKind::Descript) => handle_descript_line(txt, line),
+        Some(BlockKind::Alias { kero }) => handle_alias_line(txt, *kero, line),
+        Some(BlockKind::CharAlias { char_id }) => handle_char_alias_line(txt, *char_id, line),
+        Some(BlockKind::Surface { ids, .. }) => handle_surface_line(txt, ids, line),
+        Some(BlockKind::Cursor { scope }) => handle_cursor_line(txt, scope, line),
+        Some(BlockKind::Tooltip { scope }) => handle_tooltip_line(txt, scope, line),
+        None => handle_root_line(txt, line),
+    }
+}
+
 /// ルート（ブロック外）の行を処理する
-pub(crate) fn handle_root_line(txt: &mut SurfacesTxt, line: &str) {
+fn handle_root_line(txt: &mut SurfacesTxt, line: &str) {
     let Some((key, value)) = split_key_value(line) else {
         return;
     };
@@ -126,77 +144,7 @@ pub(crate) fn handle_surface_line(txt: &mut SurfacesTxt, ids: &[u32], line: &str
     if key.is_empty() {
         return;
     }
-    let key_lower = key.to_lowercase();
-
-    if let Some(rest) = key_lower.strip_prefix("collisionex") {
-        apply_collisionex(Apply_collisionexParams {
-            txt,
-            ids,
-            id_part: rest,
-            value,
-        });
-    } else if let Some(rest) = key_lower.strip_prefix("collision") {
-        apply_collision(Apply_collisionParams {
-            txt,
-            ids,
-            id_part: rest,
-            value,
-        });
-    } else if let Some(rest) = key_lower.strip_prefix("element") {
-        apply_element(Apply_elementParams {
-            txt,
-            ids,
-            id_part: rest,
-            value,
-        });
-    } else if let Some(rest) = key_lower.strip_prefix("animation") {
-        apply_animation_line(Apply_animation_lineParams {
-            txt,
-            ids,
-            rest,
-            value,
-        });
-    } else if key_lower == "name" {
-        for id in ids {
-            txt.surfaces.entry(*id).or_default().name = Some(value.trim().to_string());
-        }
-    } else if key_lower == "icon.rect" {
-        let coords: Vec<i32> = value
-            .split(',')
-            .filter_map(|t| t.trim().parse::<i32>().ok())
-            .collect();
-        if coords.len() >= 4 {
-            let rect = [coords[0], coords[1], coords[2], coords[3]];
-            for id in ids {
-                txt.surfaces.entry(*id).or_default().icon_rect = Some(rect);
-            }
-        }
-    } else if let Some(rest) = key_lower.strip_prefix("point.") {
-        apply_point(Apply_pointParams {
-            txt,
-            ids,
-            field: rest,
-            value,
-        });
-    } else if let Some(offset) = parse_balloon_offset_key(&key_lower) {
-        for id in ids {
-            let def = txt.surfaces.entry(*id).or_default();
-            let entry = def.balloon_offsets.entry(offset.0.clone()).or_default();
-            if offset.1 == 'x' {
-                entry.x = first_i32(value);
-            } else {
-                entry.y = first_i32(value);
-            }
-        }
-    } else {
-        for id in ids {
-            txt.surfaces
-                .entry(*id)
-                .or_default()
-                .properties
-                .insert(key.to_string(), value.trim().to_string());
-        }
-    }
+    apply_surface_key(txt, ids, key, value);
 }
 
 pub(crate) fn split_key_value(line: &str) -> Option<(&str, &str)> {

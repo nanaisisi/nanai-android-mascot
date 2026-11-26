@@ -1,7 +1,7 @@
 //! `surfaces.txt` 構文解析パーサー（ブロック判定・行ルート振り分け）
 
-pub mod handlers;
-pub mod helpers;
+mod handlers;
+mod helpers;
 pub mod main_parser;
 
 #[cfg(test)]

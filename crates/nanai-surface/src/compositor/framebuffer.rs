@@ -55,6 +55,10 @@ impl SurfaceFrameBuffer {
         self.height
     }
 
+    pub fn byte_len(&self) -> usize {
+        self.data.len()
+    }
+
     pub fn raw_pixels(&self) -> Vec<u8> {
         self.data.clone()
     }
@@ -155,16 +159,5 @@ impl SurfaceFrameBuffer {
             sub.data[dst_start..dst_end].copy_from_slice(&self.data[src_start..src_end]);
         }
         Some(sub)
-    }
-
-    /// 別のバッファを指定座標 (dx, dy) に指定描画メソッドで合成する便利メソッド
-    pub fn composite_buffer(
-        &mut self,
-        src: &SurfaceFrameBuffer,
-        dx: i32,
-        dy: i32,
-        method: &crate::types::DrawMethod,
-    ) {
-        self.composite_layer(src, dx, dy, method);
     }
 }

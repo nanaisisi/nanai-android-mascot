@@ -77,11 +77,6 @@ impl SurfacesTxt {
         &self.properties
     }
 
-    /// テキスト内容から `surfaces.txt` をパースする
-    pub fn parse(text: &str) -> Self {
-        crate::parser::parse_surfaces_txt(text)
-    }
-
     /// サーフィス番号に対応する定義を取得
     pub fn surface(&self, number: u32) -> Option<&SurfaceDefinition> {
         self.surfaces.get(&number)

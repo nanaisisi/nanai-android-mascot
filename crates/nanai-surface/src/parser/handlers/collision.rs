@@ -4,7 +4,7 @@ use super::utils::split_id_suffix;
 use crate::types::*;
 
 #[allow(non_camel_case_types)]
-pub struct Apply_collisionParams<'a> {
+pub(in crate::parser) struct Apply_collisionParams<'a> {
     pub(crate) txt: &'a mut SurfacesTxt,
     pub(crate) ids: &'a [u32],
     pub(crate) id_part: &'a str,
@@ -29,7 +29,7 @@ impl<'a> Apply_collisionParams<'a> {
 }
 
 #[allow(non_camel_case_types)]
-pub struct Apply_collisionexParams<'a> {
+pub(in crate::parser) struct Apply_collisionexParams<'a> {
     pub(crate) txt: &'a mut SurfacesTxt,
     pub(crate) ids: &'a [u32],
     pub(crate) id_part: &'a str,

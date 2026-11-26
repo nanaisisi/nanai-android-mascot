@@ -4,7 +4,7 @@ use super::utils::split_id_suffix;
 use crate::types::*;
 
 #[allow(non_camel_case_types)]
-pub struct Apply_elementParams<'a> {
+pub(in crate::parser) struct Apply_elementParams<'a> {
     pub(crate) txt: &'a mut SurfacesTxt,
     pub(crate) ids: &'a [u32],
     pub(crate) id_part: &'a str,

@@ -29,10 +29,10 @@ impl SurfaceLruCache {
 
     /// Insert or update a framebuffer in cache
     pub fn insert(&mut self, key: &str, fb: SurfaceFrameBuffer) {
-        let size = fb.data.len();
+        let size = fb.byte_len();
 
         if let Some(old) = self.map.insert(key.to_string(), fb) {
-            self.current_bytes = self.current_bytes.saturating_sub(old.data.len());
+            self.current_bytes = self.current_bytes.saturating_sub(old.byte_len());
         } else {
             self.order.push_back(key.to_string());
         }
@@ -58,7 +58,7 @@ impl SurfaceLruCache {
             if let Some(oldest_key) = self.order.pop_front()
                 && let Some(removed) = self.map.remove(&oldest_key)
             {
-                self.current_bytes = self.current_bytes.saturating_sub(removed.data.len());
+                self.current_bytes = self.current_bytes.saturating_sub(removed.byte_len());
             }
         }
     }

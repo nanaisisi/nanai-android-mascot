@@ -183,4 +183,15 @@ impl SurfaceFrameBuffer {
             }
         }
     }
+
+    /// 別のバッファを指定座標 (dx, dy) に指定描画メソッドで合成する便利メソッド
+    pub fn composite_buffer(
+        &mut self,
+        src: &SurfaceFrameBuffer,
+        dx: i32,
+        dy: i32,
+        method: &DrawMethod,
+    ) {
+        self.composite_layer(src, dx, dy, method);
+    }
 }

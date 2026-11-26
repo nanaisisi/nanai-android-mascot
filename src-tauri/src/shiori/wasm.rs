@@ -78,7 +78,7 @@ impl ShioriEngine for WasmShioriEngine {
         Ok(())
     }
 
-    fn request(&self, request_str: &str) -> Result<String, String> {
+    fn request(&self, _request_str: &str) -> Result<String, String> {
         if self.state == ShioriLifecycleState::Suspended {
             return Err("WASM SHIORI is suspended".to_string());
         }
@@ -88,12 +88,8 @@ impl ShioriEngine for WasmShioriEngine {
 
         self.request_count.fetch_add(1, Ordering::Relaxed);
 
-        // WASM ランタイムとの対話モック/フォールバック
-        if request_str.starts_with("NOTIFY") {
-            return Ok("SHIORI/3.0 204 No Content\r\nCharset: UTF-8\r\n\r\n".to_string());
-        }
-
-        Ok("SHIORI/3.0 200 OK\r\nCharset: UTF-8\r\nValue: \\0\\s[0]WASM SHIORI 応答です。\\e\r\n\r\n".to_string())
+        // WASM ランタイムとの対話（未実装イベントは 204 No Content を返す）
+        Ok("SHIORI/3.0 204 No Content\r\nCharset: UTF-8\r\n\r\n".to_string())
     }
 
     fn unload(&mut self) -> Result<(), String> {
@@ -170,7 +166,7 @@ mod tests {
         assert!(engine.is_loaded());
 
         let res = engine.request("GET SHIORI/3.0\r\n\r\n").unwrap();
-        assert!(res.contains("200 OK"));
+        assert!(res.contains("204 No Content"));
         assert_eq!(engine.request_count(), 1);
 
         let notify_res = engine.request("NOTIFY SHIORI/3.0\r\n\r\n").unwrap();

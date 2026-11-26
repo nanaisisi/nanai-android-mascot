@@ -3,6 +3,7 @@
  * @file ghost-surface.js
  * @brief サーフィスおよびキャラクター表示メソッド (GhostController mixin)
  */
+import { applyCharacterScaleToDom } from "../core/app-settings.js";
 import { AppConfig } from "../core/config.js";
 import {
 	applyAnimatedElementsCursor,
@@ -269,6 +270,9 @@ export const ghostSurfaceMethods = {
 				}
 			}
 
+			if (!isAnimationFrame && this.app) {
+				applyCharacterScaleToDom(this.app);
+			}
 			if (!useMultiWindow) {
 				await notifySurfaceChangeEvents(
 					this,
@@ -297,6 +301,9 @@ export const ghostSurfaceMethods = {
 			`${ghostPath}/shell/${shell}/surface${fallbackSurface}.svg`,
 		);
 		const result = await applyImageSrc(imgUrl, fallbackSvgUrl, pnaUrl);
+		if (!isAnimationFrame && this.app) {
+			applyCharacterScaleToDom(this.app);
+		}
 
 		// サーフィス切り替え完了時、UKADOC OnSurfaceChange / OnOtherSurfaceChange を通知
 		await notifySurfaceChangeEvents(

@@ -23,6 +23,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.core.app.NotificationCompat
 import androidx.webkit.WebViewAssetLoader
+import java.io.ByteArrayInputStream
 import org.json.JSONObject
 
 class NanaiForegroundService : Service() {
@@ -51,6 +52,10 @@ class NanaiForegroundService : Service() {
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
         return START_NOT_STICKY
+      }
+      ACTION_SHOW_OVERLAY -> {
+        setOverlayVisible(true)
+        return START_STICKY
       }
       ACTION_TOGGLE_CLICK_THROUGH -> {
         updateClickThrough(!isClickThrough)
@@ -160,7 +165,24 @@ class NanaiForegroundService : Service() {
           view: WebView,
           request: WebResourceRequest
         ): WebResourceResponse? {
-          return loader.shouldInterceptRequest(request.url)
+          val url = request.url
+          if (url.host == "appassets.androidplatform.net") {
+            val reqPath = url.encodedPath ?: "/"
+            val bytes = nativeOverlayLoadAsset(reqPath)
+            if (bytes != null) {
+              val mime = guessMimeType(reqPath)
+              val headers = mapOf("Access-Control-Allow-Origin" to "*")
+              return WebResourceResponse(
+                mime,
+                "UTF-8",
+                200,
+                "OK",
+                headers,
+                ByteArrayInputStream(bytes)
+              )
+            }
+          }
+          return loader.shouldInterceptRequest(url)
         }
 
         override fun onPageFinished(view: WebView, loadedUrl: String?) {
@@ -621,8 +643,28 @@ class NanaiForegroundService : Service() {
     @JvmStatic
     private external fun nativeOverlayInvoke(reqId: String, cmd: String, argsJson: String)
 
+    @JvmStatic
+    private external fun nativeOverlayLoadAsset(path: String): ByteArray?
+
+    private fun guessMimeType(path: String): String {
+      val clean = path.substringBefore('?').substringBefore('#').lowercase()
+      return when {
+        clean.endsWith(".html") || clean == "/" || clean.isEmpty() -> "text/html"
+        clean.endsWith(".js") || clean.endsWith(".mjs") -> "application/javascript"
+        clean.endsWith(".css") -> "text/css"
+        clean.endsWith(".wasm") -> "application/wasm"
+        clean.endsWith(".json") -> "application/json"
+        clean.endsWith(".svg") -> "image/svg+xml"
+        clean.endsWith(".png") -> "image/png"
+        clean.endsWith(".jpg") || clean.endsWith(".jpeg") -> "image/jpeg"
+        clean.endsWith(".webp") -> "image/webp"
+        else -> "application/octet-stream"
+      }
+    }
+
     const val ACTION_HIDE = "com.nanai_android_mascot.app.HIDE"
     const val ACTION_SHOW = "com.nanai_android_mascot.app.SHOW"
+    const val ACTION_SHOW_OVERLAY = "com.nanai_android_mascot.app.SHOW_OVERLAY"
     private const val ACTION_TOGGLE_CLICK_THROUGH = "com.nanai_android_mascot.app.TOGGLE_CLICK_THROUGH"
     private const val CHANNEL_ID = "nanai_mascot_service"
     private const val NOTIFICATION_ID = 1001

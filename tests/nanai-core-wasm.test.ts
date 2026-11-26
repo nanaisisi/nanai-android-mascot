@@ -241,6 +241,10 @@ describe("nanai-core WASM module parity and fallback", () => {
 		// wasm-bindgen exports Rust snake_case as camelCase in JS
 		if (typeof engine.handleEvent === "function") {
 			engine.handleEvent("OnBoot", null);
+			expect(engine.isPlaying()).toBe(false);
+		}
+		if (typeof engine.enqueueScript === "function") {
+			engine.enqueueScript(String.raw`\0\s[0]テスト\e`);
 			expect(engine.isPlaying()).toBe(true);
 		}
 

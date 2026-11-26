@@ -67,6 +67,12 @@ export function initUIEnvironment(appContext: {
 	}
 	if (isOverlayWindow() && typeof document !== "undefined" && document.body) {
 		document.body.classList.add("is-android-overlay");
+		const toggleOverlayBtn = document.getElementById(
+			"android-toggle-overlay-btn",
+		);
+		if (toggleOverlayBtn) {
+			toggleOverlayBtn.textContent = "📱 アプリ画面へ戻る";
+		}
 	}
 	if (isSinglePageUi() && !isOverlayWindow()) {
 		applyAndroidBackgroundImage();

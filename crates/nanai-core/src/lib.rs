@@ -169,19 +169,7 @@ impl MascotEngine {
         self.inner.clear_script_queue();
     }
 
-    pub fn handle_event(&mut self, event_name: &str, _args: wasm_bindgen::JsValue) {
-        match event_name {
-            "OnBoot" | "OnFirstBoot" => {
-                let default_script = r"\0\s[0]こんにちは！\1\s[10]よろしくね。\e";
-                self.inner.enqueue_script(default_script);
-            }
-            "OnClose" => {
-                let close_script = r"\0\s[0]またね！\e";
-                self.inner.enqueue_script(close_script);
-            }
-            _ => {}
-        }
-    }
+    pub fn handle_event(&mut self, _event_name: &str, _args: wasm_bindgen::JsValue) {}
 
     pub fn tick(&mut self, delta_ms: f64) {
         self.inner.tick(delta_ms);

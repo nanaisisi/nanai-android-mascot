@@ -6,6 +6,71 @@ import {
 	isTauriAvailable,
 } from "./tauri-helper.js";
 
+/**
+ * シングルページ/オーバーレイ上で全キャラクター表示枠を実寸比率＋シェル倍率で統一サイズ調整する
+ */
+export function applyCharacterScaleToDom(
+	app: import("../../main.js").NanaiAndroidMascotApp,
+	explicitScalePercent?: number,
+): void {
+	if (typeof document === "undefined") return;
+	const scalePercent =
+		explicitScalePercent ??
+		(parseInt(
+			String((app.settings?.shellScale as string | number) ?? "100"),
+			10,
+		) ||
+			100);
+	const factor = scalePercent / 100;
+
+	const getEl = (id: string) =>
+		typeof document.getElementById === "function"
+			? document.getElementById(id)
+			: null;
+	const sakuraImg =
+		typeof document.querySelector === "function"
+			? document.querySelector<HTMLImageElement>("#sakura-placeholder img")
+			: null;
+	const sakuraNaturalH = sakuraImg?.naturalHeight ?? 0;
+	const baseFitScale =
+		sakuraNaturalH > 0 ? Math.min(1.5, 360 / sakuraNaturalH) : 1.0;
+
+	const containers: HTMLElement[] = [];
+	const mainDisplay = app.elements?.ghostDisplay || getEl("ghost-display");
+	if (mainDisplay) containers.push(mainDisplay);
+	const keroDisplay = getEl("kero-display");
+	if (keroDisplay) containers.push(keroDisplay);
+	if (typeof document.querySelectorAll === "function") {
+		for (const el of document.querySelectorAll<HTMLElement>(
+			"[id^='char-display-']",
+		)) {
+			containers.push(el);
+		}
+	}
+
+	for (const container of containers) {
+		const img =
+			typeof container.querySelector === "function"
+				? container.querySelector<HTMLImageElement>("img")
+				: null;
+		const natW = img?.naturalWidth ?? 0;
+		const natH = img?.naturalHeight ?? 0;
+		if (natW > 0 && natH > 0) {
+			const w = Math.max(48, Math.round(natW * baseFitScale * factor));
+			const h = Math.max(48, Math.round(natH * baseFitScale * factor));
+			container.style.aspectRatio = "auto";
+			container.style.width = `${w}px`;
+			container.style.height = `${h}px`;
+		} else {
+			const isMain = container === mainDisplay;
+			const baseW = isMain ? 200 : 140;
+			const baseH = isMain ? 400 : 280;
+			container.style.width = `${Math.round(baseW * factor)}px`;
+			container.style.height = `${Math.round(baseH * factor)}px`;
+		}
+	}
+}
+
 export const settingsMethods = {
 	loadSettings() {
 		const app =
@@ -75,11 +140,7 @@ export const settingsMethods = {
 		const shellScaleVal =
 			(app.settings?.shellScale as string | number) ?? "100";
 		const scalePercent = parseInt(String(shellScaleVal), 10) || 100;
-		const ghostDisplay = app.elements?.ghostDisplay;
-		if (ghostDisplay) {
-			ghostDisplay.style.width = `${Math.round((200 * scalePercent) / 100)}px`;
-			ghostDisplay.style.height = `${Math.round((400 * scalePercent) / 100)}px`;
-		}
+		applyCharacterScaleToDom(app, scalePercent);
 		if (isTauriAvailable()) {
 			invoke("set_character_scale", { scalePercent }).catch(() => {});
 		}

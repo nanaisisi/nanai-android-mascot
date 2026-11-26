@@ -7,6 +7,7 @@ import {
 	emit,
 	frontendLog,
 	invoke,
+	isOverlayWindow,
 	isTauriAvailable,
 	listen,
 } from "../tauri-helper.js";
@@ -428,6 +429,27 @@ export const setupMethods = {
 			if (!action) return;
 			closeAndroidMenu();
 			switch (action) {
+				case "toggle-overlay": {
+					void (async () => {
+						try {
+							if (isOverlayWindow()) {
+								await invoke("setup_foreground_service", { enabled: false });
+								return;
+							}
+							const granted = await invoke<boolean>(
+								"get_overlay_permission_state",
+							).catch(() => false);
+							if (!granted) {
+								await invoke("request_overlay_permission");
+								return;
+							}
+							await invoke("setup_foreground_service", { enabled: true });
+						} catch (err) {
+							console.warn("toggle-overlay failed:", err);
+						}
+					})();
+					break;
+				}
 				case "import-nar":
 					void app.handleMenuAction("open-file");
 					break;

@@ -60,19 +60,7 @@ impl ShioriGuestState {
             return "SHIORI/3.0 200 OK\r\nCharset: UTF-8\r\nValue: NanaiWasm\r\n\r\n".to_string();
         }
 
-        if request.contains("ID: OnBoot") {
-            return "SHIORI/3.0 200 OK\r\nCharset: UTF-8\r\nValue: \\0\\s[0]こんにちは。WASM版SHIORIが起動しました。\\e\r\n\r\n".to_string();
-        }
-
-        if request.contains("ID: OnClose") {
-            return "SHIORI/3.0 200 OK\r\nCharset: UTF-8\r\nValue: \\0\\s[0]さようなら。\\w9\\-\\e\r\n\r\n".to_string();
-        }
-
-        if request.contains("ID: OnSecondChange") {
-            return "SHIORI/3.0 204 No Content\r\nCharset: UTF-8\r\n\r\n".to_string();
-        }
-
-        "SHIORI/3.0 200 OK\r\nCharset: UTF-8\r\nValue: \\0\\s[0]WASM SHIORIが応答しました。\\e\r\n\r\n".to_string()
+        "SHIORI/3.0 204 No Content\r\nCharset: UTF-8\r\n\r\n".to_string()
     }
 }
 
@@ -228,10 +216,10 @@ mod tests {
         assert!(res_version.contains("Nanai Wasm SHIORI"));
 
         let res_boot = state.handle_request("GET SHIORI/3.0\r\nID: OnBoot\r\n\r\n");
-        assert!(res_boot.contains("OnBoot") || res_boot.contains("起動しました"));
+        assert!(res_boot.contains("204 No Content"));
 
         let res_close = state.handle_request("GET SHIORI/3.0\r\nID: OnClose\r\n\r\n");
-        assert!(res_close.contains("さようなら"));
+        assert!(res_close.contains("204 No Content"));
 
         assert_eq!(state.request_count(), 4);
     }

@@ -72,33 +72,6 @@ impl NativeShioriEngine {
             Some("version") => Ok(shiori_200(&format!("Native Engine [{}]", self.engine_name))),
             Some("name") => Ok(shiori_200(&self.engine_name)),
             Some("craftman") | Some("craftmanw") => Ok(shiori_200("Nanai Project")),
-            Some("OnFirstBoot") | Some("OnBoot") | Some("OnGhostChanged") => {
-                let name = self.ghost_name.as_deref().unwrap_or("ゴースト");
-                Ok(shiori_200(&format!(
-                    "\\0\\s[0]{}を起動しました。\\1\\s[10]\\e",
-                    name
-                )))
-            }
-            Some("OnClose") | Some("OnGhostChanging") => {
-                Ok(shiori_200("\\0\\s[0]またね。\\w9\\-\\e"))
-            }
-            Some("OnRandomTalk") | Some("OnMouseDoubleClick") | Some("OnTeach") => {
-                Ok(shiori_200("\\0\\s[0]こんにちは。\\e"))
-            }
-            Some(
-                "OnSecondChange"
-                | "OnMinuteChange"
-                | "OnHourTimeSignal"
-                | "OnSurfaceChange"
-                | "OnOtherSurfaceChange"
-                | "OnSurfaceRestore"
-                | "OnMouseMove"
-                | "OnMouseHover"
-                | "OnMouseWheel"
-                | "OnBalloonTimeout"
-                | "OnBalloonClose"
-                | "OnBalloonBreak",
-            ) => Ok(shiori_204()),
             _ => Ok(shiori_204()),
         }
     }

@@ -569,3 +569,39 @@ pub extern "system" fn Java_com_nanai_1android_1mascot_app_NanaiForegroundServic
         }
     });
 }
+
+#[cfg(target_os = "android")]
+#[unsafe(no_mangle)]
+pub extern "system" fn Java_com_nanai_1android_1mascot_app_NanaiForegroundService_nativeOverlayLoadAsset<
+    'local,
+>(
+    mut unowned_env: jni::EnvUnowned<'local>,
+    _class: jni::objects::JClass<'local>,
+    path: jni::objects::JString<'local>,
+) -> jni::objects::JByteArray<'local> {
+    let outcome = unowned_env
+        .with_env(
+            |env| -> jni::errors::Result<jni::objects::JByteArray<'local>> {
+                let path_str = path.to_string();
+                let normalized = path_str.trim_start_matches('/').to_string();
+                let target = if normalized.is_empty() {
+                    "index.html".to_string()
+                } else {
+                    normalized
+                };
+                let Some(app_handle) = get_overlay_app_handle() else {
+                    return Ok(jni::objects::JByteArray::default());
+                };
+                let Some(asset) = app_handle.asset_resolver().get(target) else {
+                    return Ok(jni::objects::JByteArray::default());
+                };
+                env.byte_array_from_slice(&asset.bytes)
+            },
+        )
+        .into_outcome();
+
+    match outcome {
+        jni::Outcome::Ok(arr) => arr,
+        _ => jni::objects::JByteArray::default(),
+    }
+}

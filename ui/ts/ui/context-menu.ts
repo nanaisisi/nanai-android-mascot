@@ -25,6 +25,7 @@ const BLUR_GRACE_MS = 350;
 const BLUR_DEBOUNCE_MS = 80;
 
 let hasActiveSubmenu = false;
+let activeSubmenuType: string | null = null;
 let menuOpenedAt = Date.now();
 let blurCloseTimer: ReturnType<typeof setTimeout> | null = null;
 let lastSubmenuRequest: { type: string; time: number } | null = null;
@@ -38,15 +39,26 @@ function clearBlurCloseTimer() {
 
 export function resetMenuFocusState() {
 	hasActiveSubmenu = false;
+	activeSubmenuType = null;
 	menuOpenedAt = Date.now();
 	clearBlurCloseTimer();
+	scheduleMenuWindowResize(true);
 }
 
 // Tauri / iframe 同期リスナー初期化
-setupContextMenuSync(dispatcher, renderer, resetMenuFocusState);
+setupContextMenuSync(dispatcher, renderer, resetMenuFocusState, () => {
+	scheduleMenuWindowResize(false);
+});
 
 // 独立サブメニューウィンドウ（デスクトップ）またはインラインサブメニュー（モバイル/Android/Web）を開く補助関数
-function _triggerSubmenuWindow(menuType: string, buttonEl: Element) {
+function _triggerSubmenuWindow(
+	menuType: string,
+	buttonEl: Element,
+	fromHover = false,
+) {
+	if (fromHover && hasActiveSubmenu && activeSubmenuType === menuType) {
+		return;
+	}
 	const now = Date.now();
 	if (
 		lastSubmenuRequest?.type === menuType &&
@@ -57,13 +69,21 @@ function _triggerSubmenuWindow(menuType: string, buttonEl: Element) {
 	lastSubmenuRequest = { type: menuType, time: now };
 
 	hasActiveSubmenu = true;
+	activeSubmenuType = menuType;
 	const wrapper = buttonEl.closest(".menu-item-wrapper");
 
 	if (isNativeMultiWindow()) {
 		const rect = buttonEl.getBoundingClientRect();
 		const sX = globalThis.screenX ?? 0;
 		const sY = globalThis.screenY ?? 0;
-		const posX = sX + 260 + 2;
+		const containerRect = document
+			.querySelector(".menu-container")
+			?.getBoundingClientRect();
+		const menuWidth =
+			containerRect && containerRect.right > 0
+				? Math.ceil(containerRect.right)
+				: globalThis.innerWidth || 260;
+		const posX = sX + menuWidth + 2;
 		const posY = sY + rect.top;
 		const winHeight =
 			menuType === "utility" ||
@@ -171,6 +191,7 @@ document.addEventListener("mouseover", (e: MouseEvent) => {
 	if (!item.classList.contains("has-submenu")) {
 		if (hasActiveSubmenu) {
 			hasActiveSubmenu = false;
+			activeSubmenuType = null;
 			if (isNativeMultiWindow()) {
 				void invoke("hide_submenu_window").catch(() => {});
 				globalThis.window?.focus?.();
@@ -188,7 +209,7 @@ document.addEventListener("mouseover", (e: MouseEvent) => {
 	}
 	const menuType = getMenuTypeFromButton(item);
 	if (isNativeMultiWindow()) {
-		_triggerSubmenuWindow(menuType, item);
+		_triggerSubmenuWindow(menuType, item, true);
 	} else if (wrapper) {
 		document.querySelectorAll(".menu-item-wrapper.open").forEach((el) => {
 			if (el !== wrapper) el.classList.remove("open");
@@ -206,7 +227,7 @@ document.querySelectorAll(".menu-item-wrapper").forEach((wrapper) => {
 			const btn = wrapper.querySelector(".menu-item.has-submenu");
 			if (btn) {
 				const menuType = getMenuTypeFromButton(btn);
-				_triggerSubmenuWindow(menuType, btn);
+				_triggerSubmenuWindow(menuType, btn, true);
 			}
 		} else {
 			if (!wrapper.classList.contains("open")) {
@@ -232,6 +253,7 @@ globalThis.addEventListener("DOMContentLoaded", () => {
 		// LocalStorage access restricted or unavailable
 	}
 	dispatcher.dispatchAction("request-sync");
+	scheduleMenuWindowResize(true);
 });
 
 // ショートカットキー対応 (T, B, R, P, O, D, A, C, Ctrl+I, Ctrl+W, Escape)
@@ -267,37 +289,84 @@ globalThis.addEventListener("blur", () => {
 	}, BLUR_DEBOUNCE_MS);
 });
 
-async function adjustMenuWindowSize() {
+let lastWindowWidth: number | null = null;
+let lastWindowHeight: number | null = null;
+
+export function computeMenuWindowSize(): {
+	width: number;
+	height: number;
+} | null {
+	const sidebar = document.querySelector(".menu-sidebar");
+	const container = document.querySelector(".menu-container");
+	const sidebarRect = sidebar?.getBoundingClientRect?.();
+	const containerRect = container?.getBoundingClientRect?.();
+
+	let measuredWidth = 0;
+	if (containerRect && containerRect.width > 0) {
+		const sidebarWidth =
+			sidebarRect && sidebarRect.width > 0 ? sidebarRect.width : 0;
+		measuredWidth = Math.ceil(sidebarWidth + containerRect.width);
+	} else {
+		const bodyWidth =
+			document.body?.getBoundingClientRect?.().width ||
+			document.body?.scrollWidth ||
+			document.documentElement?.scrollWidth ||
+			0;
+		measuredWidth = Math.ceil(bodyWidth);
+	}
+
+	const rawHeight =
+		containerRect && containerRect.height > 0
+			? containerRect.height
+			: document.body?.scrollHeight ||
+				document.documentElement?.scrollHeight ||
+				0;
+
+	if (rawHeight <= 50) {
+		return null;
+	}
+
+	const width = Math.min(380, Math.max(150, measuredWidth || 220));
+	const height = Math.min(650, Math.max(100, Math.ceil(rawHeight)));
+	return { width, height };
+}
+
+export async function adjustMenuWindowSize(force = false) {
 	if (!isTauriAvailable()) return;
+	const size = computeMenuWindowSize();
+	if (!size) return;
+	if (
+		!force &&
+		lastWindowWidth === size.width &&
+		lastWindowHeight === size.height
+	) {
+		return;
+	}
 	try {
-		const modName = "@tauri-apps/api/window";
-		const { getCurrentWindow } = await import(/* @vite-ignore */ modName);
-		const dpiModName = "@tauri-apps/api/dpi";
-		const { LogicalSize } = await import(/* @vite-ignore */ dpiModName);
-		const win = getCurrentWindow();
-		const container = document.querySelector(".menu-container");
-		const containerHeight = container
-			? container.getBoundingClientRect().height
-			: 0;
-		const bodyHeight =
-			containerHeight ||
-			document.body.scrollHeight ||
-			document.documentElement.scrollHeight;
-		if (bodyHeight > 50) {
-			const targetHeight = Math.min(
-				650,
-				Math.max(140, Math.ceil(bodyHeight + 20)),
-			);
-			await win.setSize(new LogicalSize(260, targetHeight));
-		}
-	} catch (_e) {
-		// Non-Tauri environment
+		await invoke("resize_menu_window", {
+			width: size.width,
+			height: size.height,
+		});
+		lastWindowWidth = size.width;
+		lastWindowHeight = size.height;
+	} catch (e) {
+		console.warn("Failed to resize menu window:", e);
+	}
+}
+
+export function scheduleMenuWindowResize(force = false) {
+	if (typeof requestAnimationFrame === "function") {
+		requestAnimationFrame(() => {
+			void adjustMenuWindowSize(force);
+		});
+	} else {
+		void adjustMenuWindowSize(force);
 	}
 }
 
 if (isTauriAvailable() && typeof ResizeObserver !== "undefined") {
 	const observer = new ResizeObserver(() => {
-		void adjustMenuWindowSize();
+		scheduleMenuWindowResize(false);
 	});
 	observer.observe(document.body);
 }

@@ -113,8 +113,6 @@ export function extractEdgeColorFromImage(
 	}
 }
 
-let lastValidShellTheme: MenuShellItem | null = null;
-
 /**
  * 画像アセットをメモリ・GPUへ事前デコード読み込み (初回メニュー表示時のチラつき・ロード不全防止)
  */
@@ -173,13 +171,8 @@ export const menuThemeRenderer = {
 		shioriResources?: Record<string, string> | null,
 	) {
 		const rootStyle = document.documentElement.style;
-		let resolvedShell =
+		const resolvedShell =
 			activeShell && typeof activeShell === "object" ? activeShell : null;
-		if (resolvedShell?.menu_theme) {
-			lastValidShellTheme = resolvedShell;
-		} else if (!resolvedShell?.menu_theme && lastValidShellTheme) {
-			resolvedShell = lastValidShellTheme;
-		}
 
 		const mt = mergeShioriMenuTheme(resolvedShell?.menu_theme, shioriResources);
 		if (mt) {
@@ -453,5 +446,6 @@ export const menuThemeRenderer = {
 				sidebarLabelEl.textContent = "NANAI";
 			}
 		}
+		document.body.classList.add("menu-theme-ready");
 	},
 };

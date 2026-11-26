@@ -165,4 +165,33 @@ describe("menu-theme-renderer SHIORI Resource priority & edge-color fallback", (
 			"has-sidebar-custom",
 		);
 	});
+
+	it("clears previous shell menu images when switching to a shell without menu_theme and marks menu-theme-ready", () => {
+		menuThemeRenderer.applyShellTheme({
+			path: "C:/ghosts/mock_nanai/shell/master",
+			menu_theme: {
+				background_bitmap: "menu_background.png",
+				sidebar_bitmap: "menu_sidebar.png",
+			},
+		});
+
+		const style = mockDoc.documentElement.style;
+		expect(style.getPropertyValue("--menu-bg-image")).toContain(
+			"menu_background.png",
+		);
+		expect(style.getPropertyValue("--menu-sidebar-image")).toContain(
+			"menu_sidebar.png",
+		);
+		expect(Array.from(mockDoc.body.classList)).toContain("menu-theme-ready");
+
+		// メニューテーマを持たない別ゴースト/シェルへ切り替えた場合、前の画像が引き継がれないこと
+		menuThemeRenderer.applyShellTheme({
+			path: "C:/ghosts/other_ghost/shell/master",
+			menu_theme: null,
+		});
+		expect(style.getPropertyValue("--menu-bg-image")).toBe("");
+		expect(style.getPropertyValue("--menu-sidebar-image")).toBe("");
+		expect(Array.from(mockDoc.body.classList)).not.toContain("has-sidebar");
+		expect(Array.from(mockDoc.body.classList)).toContain("menu-theme-ready");
+	});
 });

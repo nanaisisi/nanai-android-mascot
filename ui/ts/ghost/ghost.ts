@@ -305,6 +305,9 @@ export class GhostController {
 		}
 
 		// アトミック反映完了後にバナー非表示化 (完全待機)
+		(
+			this.app as { syncMenuGhosts?: (scope?: number) => unknown }
+		)?.syncMenuGhosts?.(0);
 		if (isTauriAvailable()) {
 			try {
 				await invoke("hide_loading_banner_window");
@@ -346,6 +349,9 @@ export class GhostController {
 					await this.sendShioriEvent("OnShellChanged", [shellName, prevShell]);
 				} catch (_e) {}
 			}
+			(
+				this.app as { syncMenuGhosts?: (scope?: number) => unknown }
+			)?.syncMenuGhosts?.(0);
 		}
 	}
 

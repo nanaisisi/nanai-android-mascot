@@ -90,7 +90,7 @@ async function dispatchSubmenuAction(action: string, payload: unknown = null) {
 	}
 }
 
-function renderContent() {
+function renderContent(options: { syncShow?: boolean } = {}) {
 	if (!currentBalloonTheme) {
 		try {
 			currentBalloonTheme =
@@ -114,6 +114,73 @@ function renderContent() {
 		cachedRecentGhosts,
 		dispatchSubmenuAction,
 	});
+	if (options.syncShow) {
+		void adjustSubmenuWindowSize(true, true);
+	} else {
+		scheduleSubmenuWindowResize(false, false);
+	}
+}
+
+let lastSubmenuWidth: number | null = null;
+let lastSubmenuHeight: number | null = null;
+
+export function computeSubmenuWindowSize(): {
+	width: number;
+	height: number;
+} | null {
+	const container = document.getElementById("submenu-content");
+	const rect =
+		container?.getBoundingClientRect?.() ||
+		document.body?.getBoundingClientRect?.();
+	if (!rect || rect.width <= 0 || rect.height <= 0) {
+		return null;
+	}
+	const width = Math.min(360, Math.max(120, Math.ceil(rect.width)));
+	const height = Math.min(520, Math.max(32, Math.ceil(rect.height)));
+	return { width, height };
+}
+
+export async function adjustSubmenuWindowSize(force = false, show = false) {
+	if (!isTauriAvailable()) return;
+	const measured = computeSubmenuWindowSize();
+	const size = measured ?? (show ? { width: 220, height: 320 } : null);
+	if (!size) return;
+	if (
+		!force &&
+		!show &&
+		lastSubmenuWidth === size.width &&
+		lastSubmenuHeight === size.height
+	) {
+		return;
+	}
+	try {
+		await invoke("resize_submenu_window", {
+			width: size.width,
+			height: size.height,
+			show,
+		});
+		lastSubmenuWidth = size.width;
+		lastSubmenuHeight = size.height;
+	} catch (e) {
+		console.warn("Failed to resize submenu window:", e);
+	}
+}
+
+export function scheduleSubmenuWindowResize(force = false, show = false) {
+	if (typeof requestAnimationFrame === "function") {
+		requestAnimationFrame(() => {
+			void adjustSubmenuWindowSize(force, show);
+		});
+	} else {
+		void adjustSubmenuWindowSize(force, show);
+	}
+}
+
+if (isTauriAvailable() && typeof ResizeObserver !== "undefined") {
+	const observer = new ResizeObserver(() => {
+		scheduleSubmenuWindowResize(false, false);
+	});
+	observer.observe(document.body);
 }
 
 if (isTauriAvailable()) {
@@ -121,7 +188,7 @@ if (isTauriAvailable()) {
 		const event = rawEvent as TauriSubmenuEvent<{ type?: string } | null>;
 		if (event.payload?.type) {
 			currentSubmenuType = event.payload.type;
-			renderContent();
+			renderContent({ syncShow: true });
 			if (
 				(currentSubmenuType === "ghost" ||
 					currentSubmenuType === "call-ghost") &&

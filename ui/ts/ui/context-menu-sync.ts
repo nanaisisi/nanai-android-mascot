@@ -35,6 +35,7 @@ export function setupContextMenuSync(
 	dispatcher: MenuDispatcher,
 	renderer: MenuSubmenuRenderer,
 	onScopeSync?: () => void,
+	onContentUpdate?: () => void,
 ) {
 	if (isTauriAvailable()) {
 		listen("sync-menu-scope", (rawEvent) => {
@@ -91,6 +92,7 @@ export function setupContextMenuSync(
 				if (data.captions) {
 					renderer.applyCaptions(data.captions);
 				}
+				onContentUpdate?.();
 			}
 		});
 		listen("sync-menu-captions", (rawEvent) => {
@@ -99,6 +101,7 @@ export function setupContextMenuSync(
 			>;
 			if (event.payload) {
 				renderer.applyCaptions(event.payload);
+				onContentUpdate?.();
 			}
 		});
 		listen("sync-theme", (rawEvent) => {
@@ -112,6 +115,7 @@ export function setupContextMenuSync(
 			if (syncGlobal._lastBalloons) {
 				renderer.renderBalloonSubmenu(syncGlobal._lastBalloons, theme);
 			}
+			onContentUpdate?.();
 		});
 		listen("sync-balloons", (rawEvent) => {
 			const event = rawEvent as TauriSyncEvent<BalloonMenuItem[] | null>;

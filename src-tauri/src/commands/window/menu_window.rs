@@ -45,8 +45,20 @@ pub async fn show_menu_window(
         );
         use tauri::Manager;
         let menu_scope = scope.unwrap_or(0);
-        // メインメニュー (260x460) / サブキャラクターメニュー (260x220)
-        let win_width = 260.0;
+        // 既存ウィンドウが実測幅へフィット済みならその論理幅を再利用し、未生成時等は 220.0 を使用
+        let win_width = app_handle
+            .get_webview_window("menu_window")
+            .and_then(|w| {
+                let size = w.inner_size().ok()?;
+                let scale = w.scale_factor().ok().filter(|&s| s > 0.0)?;
+                let logical_w = size.width as f64 / scale;
+                if (150.0..=380.0).contains(&logical_w) {
+                    Some(logical_w)
+                } else {
+                    None
+                }
+            })
+            .unwrap_or(220.0);
         let win_height = if menu_scope > 0 { 220.0 } else { 460.0 };
 
         let mut target_x = x;
@@ -94,6 +106,7 @@ pub async fn show_menu_window(
         }
 
         if let Some(sub_win) = app_handle.get_webview_window("submenu_window") {
+            SUBMENU_VISIBLE_INTENT.store(false, std::sync::atomic::Ordering::SeqCst);
             let _ = sub_win.hide();
         }
 
@@ -141,6 +154,28 @@ pub async fn show_menu_window(
     Ok(())
 }
 
+/// メニューウィンドウサイズ変更コマンド
+#[tauri::command]
+pub async fn resize_menu_window(
+    _app_handle: tauri::AppHandle,
+    width: f64,
+    height: f64,
+) -> Result<(), String> {
+    #[cfg(desktop)]
+    {
+        use tauri::Manager;
+        let w = width.clamp(150.0, 380.0);
+        let h = height.clamp(100.0, 650.0);
+        if let Some(menu_win) = _app_handle.get_webview_window("menu_window") {
+            let _ = menu_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
+                width: w,
+                height: h,
+            }));
+        }
+    }
+    Ok(())
+}
+
 /// メニューウィンドウ非表示コマンド
 #[tauri::command]
 pub async fn hide_menu_window(_app_handle: tauri::AppHandle) -> Result<(), String> {
@@ -152,6 +187,7 @@ pub async fn hide_menu_window(_app_handle: tauri::AppHandle) -> Result<(), Strin
             let _ = menu_win.hide();
         }
         if let Some(sub_win) = app_handle.get_webview_window("submenu_window") {
+            SUBMENU_VISIBLE_INTENT.store(false, std::sync::atomic::Ordering::SeqCst);
             let _ = sub_win.hide();
         }
     }
@@ -191,6 +227,71 @@ impl ShowSubmenuWindowParams {
     }
 }
 
+#[cfg(desktop)]
+static LAST_SUBMENU_ANCHOR: std::sync::Mutex<Option<(f64, f64)>> = std::sync::Mutex::new(None);
+
+#[cfg(desktop)]
+static SUBMENU_VISIBLE_INTENT: std::sync::atomic::AtomicBool =
+    std::sync::atomic::AtomicBool::new(false);
+
+#[cfg(desktop)]
+fn compute_submenu_position(
+    app_handle: &tauri::AppHandle,
+    anchor_x: f64,
+    anchor_y: f64,
+    win_width: f64,
+    win_height: f64,
+) -> (f64, f64) {
+    use tauri::Manager;
+    let monitor_opt = if let Ok(monitors) = app_handle.available_monitors() {
+        monitors
+            .into_iter()
+            .find(|m| {
+                let pos = m.position();
+                let size = m.size();
+                let scale = m.scale_factor();
+                let w = size.width as f64 / scale;
+                let h = size.height as f64 / scale;
+                let mx = pos.x as f64 / scale;
+                let my = pos.y as f64 / scale;
+                anchor_x >= mx && anchor_x <= mx + w && anchor_y >= my && anchor_y <= my + h
+            })
+            .or_else(|| app_handle.primary_monitor().ok().flatten())
+    } else {
+        app_handle.primary_monitor().ok().flatten()
+    };
+
+    if let Some(monitor) = monitor_opt {
+        let work_area = monitor.work_area();
+        let scale = monitor.scale_factor();
+        let work_x = work_area.position.x as f64 / scale;
+        let work_y = work_area.position.y as f64 / scale;
+        let work_w = work_area.size.width as f64 / scale;
+        let work_h = work_area.size.height as f64 / scale;
+
+        let flip_check_width = win_width.max(240.0);
+        let max_y = (work_y + work_h - win_height).max(work_y);
+
+        let target_x = if anchor_x + flip_check_width > work_x + work_w {
+            let parent_x = app_handle
+                .get_webview_window("menu_window")
+                .and_then(|w| {
+                    let pos = w.outer_position().ok()?;
+                    let s = w.scale_factor().ok().filter(|&v| v > 0.0)?;
+                    Some(pos.x as f64 / s)
+                })
+                .unwrap_or(anchor_x - 220.0 - 2.0);
+            (parent_x - win_width - 2.0).max(work_x)
+        } else {
+            anchor_x.max(work_x)
+        };
+        let target_y = anchor_y.max(work_y).min(max_y);
+        (target_x, target_y)
+    } else {
+        (anchor_x, anchor_y)
+    }
+}
+
 /// 独立サブメニューウィンドウ表示コマンド
 #[tauri::command]
 pub async fn show_submenu_window(
@@ -210,38 +311,21 @@ pub async fn show_submenu_window(
         let win_width = width.unwrap_or(220.0);
         let win_height = height.unwrap_or(320.0);
 
-        let mut target_x = x;
-        let mut target_y = y;
-
-        if let Ok(Some(monitor)) = app_handle.primary_monitor() {
-            let screen_size = monitor.size();
-            let screen_pos = monitor.position();
-            let max_x = (screen_pos.x + screen_size.width as i32) as f64 - win_width;
-            let max_y = (screen_pos.y + screen_size.height as i32) as f64 - win_height;
-
-            if target_x > max_x {
-                // 右端を超える場合は左側へ反転 (親メニューの左横へ)
-                target_x = (x - win_width - 240.0).max(screen_pos.x as f64);
-            }
-            if target_y > max_y {
-                target_y = max_y.max(screen_pos.y as f64);
-            }
+        SUBMENU_VISIBLE_INTENT.store(true, std::sync::atomic::Ordering::SeqCst);
+        if let Ok(mut anchor) = LAST_SUBMENU_ANCHOR.lock() {
+            *anchor = Some((x, y));
         }
 
         if let Some(sub_win) = app_handle.get_webview_window("submenu_window") {
             let _ = sub_win.set_decorations(false);
             let _ = sub_win.set_shadow(false);
-            let _ = sub_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
-                width: win_width,
-                height: win_height,
-            }));
-            let _ = sub_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
-                x: target_x,
-                y: target_y,
-            }));
-            let _ = sub_win.show();
+            if sub_win.is_visible().unwrap_or(false) {
+                let _ = sub_win.hide();
+            }
         } else {
-            let sub_win = tauri::WebviewWindowBuilder::new(
+            let (target_x, target_y) =
+                compute_submenu_position(&app_handle, x, y, win_width, win_height);
+            let _sub_win = tauri::WebviewWindowBuilder::new(
                 &app_handle,
                 "submenu_window",
                 tauri::WebviewUrl::App("submenu-iframe.html".into()),
@@ -254,15 +338,53 @@ pub async fn show_submenu_window(
             .always_on_top(true)
             .skip_taskbar(true)
             .resizable(false)
+            .visible(false)
             .position(target_x, target_y)
             .build()
             .map_err(|e| e.to_string())?;
-
-            let _ = sub_win.show();
         }
 
-        // サブメニュータイプを通知
+        // サブメニュータイプを通知 (描画完了後の resize_submenu_window で確定表示)
         let _ = app_handle.emit("set-submenu-type", serde_json::json!({ "type": menu_type }));
+    }
+    Ok(())
+}
+
+/// サブメニューウィンドウサイズ変更・再配置コマンド
+#[tauri::command]
+pub async fn resize_submenu_window(
+    _app_handle: tauri::AppHandle,
+    width: f64,
+    height: f64,
+    show: Option<bool>,
+) -> Result<(), String> {
+    #[cfg(desktop)]
+    {
+        use tauri::Manager;
+        if !SUBMENU_VISIBLE_INTENT.load(std::sync::atomic::Ordering::SeqCst) {
+            return Ok(());
+        }
+        let w = width.clamp(120.0, 360.0);
+        let h = height.clamp(32.0, 520.0);
+        if let Some(sub_win) = _app_handle.get_webview_window("submenu_window") {
+            if let Ok(anchor) = LAST_SUBMENU_ANCHOR.lock() {
+                if let Some((ax, ay)) = *anchor {
+                    let (tx, ty) = compute_submenu_position(&_app_handle, ax, ay, w, h);
+                    let _ =
+                        sub_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
+                            x: tx,
+                            y: ty,
+                        }));
+                }
+            }
+            let _ = sub_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
+                width: w,
+                height: h,
+            }));
+            if show.unwrap_or(false) && !sub_win.is_visible().unwrap_or(false) {
+                let _ = sub_win.show();
+            }
+        }
     }
     Ok(())
 }
@@ -275,6 +397,7 @@ pub async fn hide_submenu_window(_app_handle: tauri::AppHandle) -> Result<(), St
         let app_handle = _app_handle;
         use tauri::Manager;
         if let Some(sub_win) = app_handle.get_webview_window("submenu_window") {
+            SUBMENU_VISIBLE_INTENT.store(false, std::sync::atomic::Ordering::SeqCst);
             let _ = sub_win.hide();
         }
     }

@@ -165,7 +165,9 @@ const tauriInternals: MockTauriInternals = {
 globalThis.__TAURI_INTERNALS__ = tauriInternals;
 
 // Import context-menu to initialize listeners
-await import("../ui/ts/ui/context-menu.js");
+const { adjustMenuWindowSize, computeMenuWindowSize } = await import(
+	"../ui/ts/ui/context-menu.js"
+);
 
 test("context-menu event handlers, sync listeners, mouse events and keyboard shortcuts", async () => {
 	// 1. Test document mousedown
@@ -442,4 +444,174 @@ test("context menu enforces non-draggable invariant specification", () => {
 		false,
 		"Menu windows must remain non-draggable per design specification",
 	);
+});
+
+test("computeMenuWindowSize fits sidebar + container width and clamps bounds", () => {
+	const origQuerySelector = globalThis.document.querySelector;
+	try {
+		globalThis.document.querySelector = ((sel: string) => {
+			if (sel === ".menu-sidebar") {
+				return { getBoundingClientRect: () => ({ width: 20, height: 320 }) };
+			}
+			if (sel === ".menu-container") {
+				return {
+					getBoundingClientRect: () => ({
+						width: 165,
+						height: 320,
+						right: 185,
+					}),
+				};
+			}
+			return null;
+		}) as unknown as typeof globalThis.document.querySelector;
+
+		assert.deepEqual(computeMenuWindowSize(), { width: 185, height: 320 });
+
+		// Clamp minimum width (150) & maximum width (380)
+		globalThis.document.querySelector = ((sel: string) => {
+			if (sel === ".menu-sidebar") {
+				return { getBoundingClientRect: () => ({ width: 10, height: 120 }) };
+			}
+			if (sel === ".menu-container") {
+				return {
+					getBoundingClientRect: () => ({ width: 90, height: 120, right: 100 }),
+				};
+			}
+			return null;
+		}) as unknown as typeof globalThis.document.querySelector;
+		assert.deepEqual(computeMenuWindowSize(), { width: 150, height: 120 });
+
+		globalThis.document.querySelector = ((sel: string) => {
+			if (sel === ".menu-sidebar") {
+				return { getBoundingClientRect: () => ({ width: 40, height: 700 }) };
+			}
+			if (sel === ".menu-container") {
+				return {
+					getBoundingClientRect: () => ({
+						width: 400,
+						height: 700,
+						right: 440,
+					}),
+				};
+			}
+			return null;
+		}) as unknown as typeof globalThis.document.querySelector;
+		assert.deepEqual(computeMenuWindowSize(), { width: 380, height: 650 });
+	} finally {
+		globalThis.document.querySelector = origQuerySelector;
+	}
+});
+
+test("_triggerSubmenuWindow positions submenu using actual .menu-container right edge", async () => {
+	const origQuerySelector = globalThis.document.querySelector;
+	const origScreenX = globalThis.screenX;
+	const internals = globalThis.__TAURI_INTERNALS__ as MockTauriInternals;
+	const origInvoke = internals.invoke;
+	let capturedX: number | undefined;
+
+	globalThis.screenX = 100;
+	globalThis.document.querySelector = ((sel: string) => {
+		if (sel === ".menu-container") {
+			return {
+				getBoundingClientRect: () => ({ width: 170, height: 300, right: 190 }),
+			};
+		}
+		return null;
+	}) as unknown as typeof globalThis.document.querySelector;
+	internals.invoke = async (cmd: string, args?: unknown) => {
+		if (cmd === "show_submenu_window") {
+			capturedX = (args as { params?: { x?: number } })?.params?.x;
+			return;
+		}
+		return origInvoke(
+			cmd,
+			args as { event?: string; handler?: MockTauriListener },
+		);
+	};
+
+	try {
+		await new Promise((r) => setTimeout(r, 200));
+		const btn = {
+			id: "shell-btn",
+			classList: { contains: (c: string) => c === "has-submenu" },
+			getBoundingClientRect: () => ({ top: 80 }),
+			closest: (sel: string): unknown => (sel === ".menu-item" ? btn : null),
+		};
+		documentListeners.click?.({ target: btn });
+		assert.equal(capturedX, 100 + 190 + 2);
+	} finally {
+		globalThis.document.querySelector = origQuerySelector;
+		globalThis.screenX = origScreenX;
+		internals.invoke = origInvoke;
+	}
+});
+
+test("adjustMenuWindowSize invokes resize_menu_window with measured size", async () => {
+	const origQuerySelector = globalThis.document.querySelector;
+	const internals = globalThis.__TAURI_INTERNALS__ as MockTauriInternals;
+	const origInvoke = internals.invoke;
+	let capturedArgs: { width?: number; height?: number } | undefined;
+
+	globalThis.document.querySelector = ((sel: string) => {
+		if (sel === ".menu-sidebar") {
+			return { getBoundingClientRect: () => ({ width: 20, height: 300 }) };
+		}
+		if (sel === ".menu-container") {
+			return {
+				getBoundingClientRect: () => ({ width: 168, height: 300, right: 188 }),
+			};
+		}
+		return null;
+	}) as unknown as typeof globalThis.document.querySelector;
+	internals.invoke = async (cmd: string, args?: unknown) => {
+		if (cmd === "resize_menu_window") {
+			capturedArgs = args as { width?: number; height?: number };
+			return;
+		}
+		return origInvoke(
+			cmd,
+			args as { event?: string; handler?: MockTauriListener },
+		);
+	};
+
+	try {
+		await adjustMenuWindowSize(true);
+		assert.deepEqual(capturedArgs, { width: 188, height: 300 });
+	} finally {
+		globalThis.document.querySelector = origQuerySelector;
+		internals.invoke = origInvoke;
+	}
+});
+
+test("mouseover on same active submenu item does not re-trigger show_submenu_window", async () => {
+	const internals = globalThis.__TAURI_INTERNALS__ as MockTauriInternals;
+	const origInvoke = internals.invoke;
+	let showCount = 0;
+
+	internals.invoke = async (cmd: string, args?: unknown) => {
+		if (cmd === "show_submenu_window") {
+			showCount += 1;
+			return;
+		}
+		return origInvoke(
+			cmd,
+			args as { event?: string; handler?: MockTauriListener },
+		);
+	};
+
+	try {
+		await new Promise((r) => setTimeout(r, 200));
+		const btn = {
+			id: "balloon-btn",
+			classList: { contains: (c: string) => c === "has-submenu" },
+			getBoundingClientRect: () => ({ top: 120 }),
+			closest: (sel: string): unknown => (sel === ".menu-item" ? btn : null),
+		};
+		documentListeners.mouseover?.({ target: btn });
+		await new Promise((r) => setTimeout(r, 200));
+		documentListeners.mouseover?.({ target: btn });
+		assert.equal(showCount, 1);
+	} finally {
+		internals.invoke = origInvoke;
+	}
 });

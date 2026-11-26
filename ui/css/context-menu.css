@@ -92,10 +92,7 @@ body:not(.subchar-mode) .subchar-only {
 	min-width: var(--menu-sidebar-min-width, 20px);
 	align-self: stretch;
 	background-color: var(--menu-sidebar-bg, #334155);
-	background-image: var(
-		--menu-sidebar-image,
-		url("../assets/menu_sidebar.svg")
-	);
+	background-image: var(--menu-sidebar-image, none);
 	background-repeat: no-repeat;
 	background-position: var(--menu-sidebar-position, left bottom);
 	background-size: 100% auto;
@@ -160,6 +157,10 @@ body.has-sidebar-custom .menu-sidebar {
 }
 
 body.has-sidebar-custom .menu-sidebar-content {
+	display: flex;
+}
+
+body.menu-theme-ready:not(.has-sidebar) .menu-sidebar-content {
 	display: flex;
 }
 
@@ -236,6 +237,7 @@ body.subchar-mode.has-sidebar .menu-sidebar {
 .menu-item-label {
 	flex-grow: 1;
 	text-align: left;
+	white-space: nowrap;
 }
 
 .shortcut-key {

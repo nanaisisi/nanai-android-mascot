@@ -265,3 +265,67 @@ test("submenu event handlers, Tauri sync listeners, and DOMContentLoaded init", 
 
 	assert.ok(true);
 });
+
+test("computeSubmenuWindowSize and adjustSubmenuWindowSize fit content and clamp bounds", async () => {
+	const { adjustSubmenuWindowSize, computeSubmenuWindowSize } = await import(
+		"../ui/ts/ui/submenu.js"
+	);
+	const origGetElementById = globalThis.document.getElementById;
+	const origInvoke = mockTauriInternals.invoke;
+	let capturedArgs: { width?: number; height?: number } | undefined;
+
+	try {
+		globalThis.document.getElementById = ((id: string) => {
+			if (id === "submenu-content") {
+				return {
+					getBoundingClientRect: () => ({ width: 156, height: 184 }),
+				};
+			}
+			return null;
+		}) as unknown as typeof globalThis.document.getElementById;
+
+		assert.deepEqual(computeSubmenuWindowSize(), { width: 156, height: 184 });
+
+		mockTauriInternals.invoke = async (cmd: string, args?: TauriInvokeArgs) => {
+			if (cmd === "resize_submenu_window") {
+				capturedArgs = args as { width?: number; height?: number };
+				return;
+			}
+			return origInvoke(cmd, args);
+		};
+
+		await adjustSubmenuWindowSize(true, true);
+		assert.deepEqual(capturedArgs, { width: 156, height: 184, show: true });
+
+		// Fallback size when element rect is unavailable and show=true
+		capturedArgs = undefined;
+		globalThis.document.getElementById = (() =>
+			null) as unknown as typeof globalThis.document.getElementById;
+		await adjustSubmenuWindowSize(true, true);
+		assert.deepEqual(capturedArgs, { width: 220, height: 320, show: true });
+
+		// Clamp minimum (120x32) and maximum (360x520)
+		globalThis.document.getElementById = ((id: string) => {
+			if (id === "submenu-content") {
+				return {
+					getBoundingClientRect: () => ({ width: 80, height: 20 }),
+				};
+			}
+			return null;
+		}) as unknown as typeof globalThis.document.getElementById;
+		assert.deepEqual(computeSubmenuWindowSize(), { width: 120, height: 32 });
+
+		globalThis.document.getElementById = ((id: string) => {
+			if (id === "submenu-content") {
+				return {
+					getBoundingClientRect: () => ({ width: 420, height: 600 }),
+				};
+			}
+			return null;
+		}) as unknown as typeof globalThis.document.getElementById;
+		assert.deepEqual(computeSubmenuWindowSize(), { width: 360, height: 520 });
+	} finally {
+		globalThis.document.getElementById = origGetElementById;
+		mockTauriInternals.invoke = origInvoke;
+	}
+});

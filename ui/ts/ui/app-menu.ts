@@ -89,11 +89,11 @@ export const menuMethods = {
 				manifestDescript["menu.background.bitmap.filename"] ||
 				manifestDescript["menu.background.bitmap"] ||
 				manifestDescript["menu.bg.bitmap"] ||
-				"menu_background.png",
+				"",
 			sidebar_bitmap:
 				manifestDescript["menu.sidebar.bitmap.filename"] ||
 				manifestDescript["menu.sidebar.bitmap"] ||
-				"menu_sidebar.png",
+				"",
 			foreground_bitmap:
 				manifestDescript["menu.foreground.bitmap.filename"] ||
 				manifestDescript["menu.foreground.bitmap"] ||
@@ -134,10 +134,6 @@ export const menuMethods = {
 		} catch (_err) {}
 
 		if (isTauriAvailable() && !isSinglePageUi()) {
-			if (!app.availableBalloons || app.availableBalloons.length === 0) {
-				await app.scanBalloons?.();
-			}
-
 			emit("sync-ghosts", {
 				ghosts,
 				currentGhost: gc.currentGhost?.name || gc.currentGhost,
@@ -149,6 +145,9 @@ export const menuMethods = {
 				captions: app.cachedMenuCaptions || {},
 			});
 			emit("sync-theme", app.currentBalloonTheme);
+			if (!app.availableBalloons || app.availableBalloons.length === 0) {
+				await app.scanBalloons?.();
+			}
 			if (app.availableBalloons) {
 				emit("sync-balloons", app.availableBalloons);
 			}

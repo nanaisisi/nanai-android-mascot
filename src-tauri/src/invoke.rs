@@ -1,4 +1,4 @@
-﻿//! Tauri Invoke コマンドハンドラー一括登録モジュール
+//! Tauri Invoke コマンドハンドラー一括登録モジュール
 
 use crate::commands;
 use crate::fmo;
@@ -67,8 +67,10 @@ pub fn get_invoke_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         commands::window::hide_modal_window,
         commands::window::show_balloon_context_menu,
         commands::window::show_menu_window,
+        commands::window::resize_menu_window,
         commands::window::hide_menu_window,
         commands::window::show_submenu_window,
+        commands::window::resize_submenu_window,
         commands::window::hide_submenu_window,
         commands::window::show_subchar_window,
         commands::window::hide_subchar_window,

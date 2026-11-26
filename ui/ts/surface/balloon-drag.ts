@@ -52,6 +52,8 @@ export class BalloonDragManager {
 				if (bEl?.style) {
 					bEl.style.left = "";
 					bEl.style.top = "";
+					bEl.style.right = "";
+					bEl.style.bottom = "";
 					bEl.style.transform = "";
 				}
 			});
@@ -135,6 +137,8 @@ export class BalloonDragManager {
 					rafPending = false;
 					if (!isBalloonDragging) return;
 
+					balloon.style.right = "auto";
+					balloon.style.bottom = "auto";
 					balloon.style.left = `${targetLeft}px`;
 					balloon.style.top = `${targetTop}px`;
 					const scaleMatch = balloon.style.transform?.match(/scale\([^)]+\)/);

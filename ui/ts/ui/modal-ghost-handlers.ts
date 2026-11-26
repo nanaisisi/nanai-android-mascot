@@ -3,8 +3,13 @@
  * @brief ゴースト・バルーン・導入関連のモーダルハンドラ管理クラス（ファイル選択・アーカイブインポート対応）
  */
 import {
+	installGhostArchiveFile,
+	pickAndInstallGhostArchive,
+} from "../core/actions/ghost-install-action.js";
+import {
 	convertFileSrc,
 	invoke,
+	isAndroidMobile,
 	isTauriAvailable,
 } from "../core/tauri-helper.js";
 import type { GhostAssets } from "../ghost/ghost.js";
@@ -48,6 +53,10 @@ export class ModalGhostHandlers {
 		const fileInput = document.getElementById(
 			"ghost-archive-input",
 		) as HTMLInputElement | null;
+		if (fileInput && isAndroidMobile()) {
+			// Android WebChromeClient maps ".nar" to null MIME and hides .nar files when filtered
+			fileInput.accept = "*/*";
+		}
 
 		importBtn?.addEventListener("click", async () => {
 			const statusEl = document.getElementById("import-ghost-status");
@@ -55,9 +64,10 @@ export class ModalGhostHandlers {
 				try {
 					if (statusEl)
 						statusEl.textContent = "ファイル選択とインストールを実行中...";
-					const result = await invoke<InstalledGhostInfo | null>(
-						"pick_and_install_ghost_archive",
-					);
+					const selectedFile = fileInput?.files?.[0];
+					const result = selectedFile
+						? await installGhostArchiveFile(selectedFile)
+						: await pickAndInstallGhostArchive();
 					if (result) {
 						if (statusEl)
 							statusEl.textContent = `導入成功: ${result.name ?? ""}`;
@@ -100,14 +110,14 @@ export class ModalGhostHandlers {
 			hiddenInput = document.createElement("input");
 			hiddenInput.type = "file";
 			hiddenInput.id = "modal-install-hidden-file-input";
-			hiddenInput.accept = ".nar,.zip";
+			hiddenInput.accept = isAndroidMobile() ? "*/*" : ".nar,.zip";
 			hiddenInput.style.display = "none";
 			document.body.appendChild(hiddenInput);
 		}
 
 		selectBtn?.addEventListener("click", () => {
 			if (isTauriAvailable()) {
-				invoke<InstalledGhostInfo | null>("pick_and_install_ghost_archive")
+				pickAndInstallGhostArchive()
 					.then((result) => {
 						if (result && statusEl) {
 							statusEl.textContent = `導入成功: ${result.name ?? ""}`;
@@ -133,9 +143,7 @@ export class ModalGhostHandlers {
 			if (isTauriAvailable()) {
 				try {
 					if (statusEl) statusEl.textContent = "インストール実行中...";
-					const result = await invoke<InstalledGhostInfo | null>(
-						"pick_and_install_ghost_archive",
-					);
+					const result = await pickAndInstallGhostArchive();
 					if (result && statusEl) {
 						statusEl.textContent = `導入成功: ${result.name ?? ""}`;
 						await this.app?.ghostController?.scanGhosts?.();

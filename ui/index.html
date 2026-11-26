@@ -38,6 +38,72 @@
         >
           ☰
         </button>
+        <button
+          type="button"
+          class="menu-btn android-menu-btn"
+          id="android-menu-btn"
+          title="Android用メニュー"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          📱
+        </button>
+        <div
+          class="android-menu-panel"
+          id="android-menu-panel"
+          role="menu"
+          aria-label="Android用メニュー"
+          hidden
+        >
+          <button type="button" class="android-menu-item" data-android-action="import-nar" role="menuitem">
+            📦 ゴースト取り込み (.nar)
+          </button>
+          <button type="button" class="android-menu-item" data-android-action="ghost-manager" role="menuitem">
+            👻 ゴースト管理
+          </button>
+          <button type="button" class="android-menu-item" data-android-action="balloon-manager" role="menuitem">
+            💬 バルーン管理
+          </button>
+          <hr class="android-menu-separator" />
+          <div class="android-menu-scale-group">
+            <div class="android-menu-scale-row">
+              <span class="android-menu-scale-label">📐 シェル倍率</span>
+              <span class="android-menu-scale-value" id="android-shell-scale-value">100%</span>
+            </div>
+            <div class="android-menu-scale-controls">
+              <button type="button" class="android-scale-btn" data-android-scale="shell:-25" aria-label="シェル縮小 (-25%)">-25%</button>
+              <button type="button" class="android-scale-btn" data-android-scale="shell:100">100%</button>
+              <button type="button" class="android-scale-btn" data-android-scale="shell:+25" aria-label="シェル拡大 (+25%)">+25%</button>
+              <button type="button" class="android-scale-btn" data-android-action="shell-scale-other">詳細</button>
+            </div>
+          </div>
+          <div class="android-menu-scale-group">
+            <div class="android-menu-scale-row">
+              <span class="android-menu-scale-label">🗨️ バルーン倍率</span>
+              <span class="android-menu-scale-value" id="android-balloon-scale-value">100%</span>
+            </div>
+            <div class="android-menu-scale-controls">
+              <button type="button" class="android-scale-btn" data-android-scale="balloon:-25" aria-label="バルーン縮小 (-25%)">-25%</button>
+              <button type="button" class="android-scale-btn" data-android-scale="balloon:100">100%</button>
+              <button type="button" class="android-scale-btn" data-android-scale="balloon:+25" aria-label="バルーン拡大 (+25%)">+25%</button>
+              <button type="button" class="android-scale-btn" data-android-action="balloon-scale-other">詳細</button>
+            </div>
+          </div>
+          <hr class="android-menu-separator" />
+          <button type="button" class="android-menu-item" data-android-action="reset-shell-position" role="menuitem">
+            📍 キャラ位置を初期化
+          </button>
+          <button type="button" class="android-menu-item" data-android-action="reset-balloon-position" role="menuitem">
+            💭 バルーン位置を初期化
+          </button>
+          <button type="button" class="android-menu-item" data-android-action="settings" role="menuitem">
+            ⚙️ 設定
+          </button>
+          <hr class="android-menu-separator" />
+          <button type="button" class="android-menu-item is-danger" data-android-action="close-all" role="menuitem">
+            🚪 終了
+          </button>
+        </div>
         <!-- iframeメニュー -->
         <div
           class="menu-iframe-container"

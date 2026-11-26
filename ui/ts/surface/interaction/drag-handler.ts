@@ -468,6 +468,8 @@ export function setupGhostDragging(
 					rafPending = false;
 					if (!dragInternalState.isInteracting && !dragInternalState.isDragging)
 						return;
+					moveTarget.style.right = "auto";
+					moveTarget.style.bottom = "auto";
 					moveTarget.style.left = `${newX}px`;
 					moveTarget.style.top = `${newY}px`;
 					moveTarget.style.transform = "translate(-50%, -50%)";

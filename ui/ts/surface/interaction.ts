@@ -54,6 +54,8 @@ export class InteractionManager {
 				if (hEl?.style) {
 					hEl.style.left = "";
 					hEl.style.top = "";
+					hEl.style.right = "";
+					hEl.style.bottom = "";
 					hEl.style.transform = "";
 					hEl.style.margin = "";
 				}

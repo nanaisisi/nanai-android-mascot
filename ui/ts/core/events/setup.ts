@@ -350,6 +350,100 @@ export const setupMethods = {
 			).toggleMenu(e.screenX || sX + rect.right, e.screenY || sY + rect.bottom);
 		});
 
+		const app =
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp;
+		const androidBtn = app.elements?.androidMenuBtn;
+		const androidPanel = app.elements?.androidMenuPanel;
+		const readScalePercent = (key: string, fallbackKey: string): number => {
+			try {
+				const raw =
+					localStorage.getItem(key) || localStorage.getItem(fallbackKey);
+				const parsed = raw ? Number.parseInt(raw, 10) : Number.NaN;
+				if (Number.isFinite(parsed) && parsed > 0) return parsed;
+			} catch (_e) {}
+			return 100;
+		};
+		const syncAndroidScaleLabels = () => {
+			const shellValEl = document.getElementById("android-shell-scale-value");
+			if (shellValEl) {
+				shellValEl.textContent = `${readScalePercent("nanai_shell_scale", "shellScale")}%`;
+			}
+			const balloonValEl = document.getElementById(
+				"android-balloon-scale-value",
+			);
+			if (balloonValEl) {
+				balloonValEl.textContent = `${readScalePercent("nanai_balloon_scale", "balloonScale")}%`;
+			}
+		};
+		const closeAndroidMenu = () => {
+			if (androidPanel) {
+				androidPanel.hidden = true;
+			}
+			androidBtn?.setAttribute("aria-expanded", "false");
+		};
+		androidBtn?.addEventListener("click", (e: MouseEvent) => {
+			e.stopPropagation();
+			if (!androidPanel) return;
+			const nextOpen = androidPanel.hidden;
+			if (nextOpen && app.elements?.menuContainer) {
+				app.elements.menuContainer.style.display = "none";
+			}
+			if (nextOpen) {
+				syncAndroidScaleLabels();
+			}
+			androidPanel.hidden = !nextOpen;
+			androidBtn.setAttribute("aria-expanded", nextOpen ? "true" : "false");
+		});
+		androidPanel?.addEventListener("click", (e: MouseEvent) => {
+			e.stopPropagation();
+			const scaleBtn = (e.target as HTMLElement | null)?.closest?.(
+				"[data-android-scale]",
+			) as HTMLElement | null;
+			const scaleSpec = scaleBtn?.dataset?.androidScale;
+			if (scaleSpec) {
+				const [kind, op] = scaleSpec.split(":");
+				const isBalloon = kind === "balloon";
+				const current = readScalePercent(
+					isBalloon ? "nanai_balloon_scale" : "nanai_shell_scale",
+					isBalloon ? "balloonScale" : "shellScale",
+				);
+				const nextRaw =
+					op === "100" ? 100 : current + (Number.parseInt(op, 10) || 0);
+				const next = Math.max(25, Math.min(300, nextRaw));
+				void app.handleMenuAction(
+					isBalloon ? `balloon-scale-${next}` : `scale-${next}`,
+				);
+				syncAndroidScaleLabels();
+				return;
+			}
+
+			const target = (e.target as HTMLElement | null)?.closest?.(
+				"[data-android-action]",
+			) as HTMLElement | null;
+			const action = target?.dataset?.androidAction;
+			if (!action) return;
+			closeAndroidMenu();
+			switch (action) {
+				case "import-nar":
+					void app.handleMenuAction("open-file");
+					break;
+				case "ghost-manager":
+					app.modalManager?.show("ghost-modal-content");
+					break;
+				case "balloon-manager":
+					app.modalManager?.show("balloon-modal-content");
+					break;
+				case "shell-scale-other":
+				case "balloon-scale-other":
+				case "reset-shell-position":
+				case "reset-balloon-position":
+				case "settings":
+				case "close-all":
+					void app.handleMenuAction(action);
+					break;
+			}
+		});
+
 		(
 			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
 		).elements?.quickBubble?.addEventListener("click", (e: MouseEvent) => {

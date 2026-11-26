@@ -1,4 +1,4 @@
-import { invoke, isTauriAvailable } from "../tauri-helper.js";
+import { invoke, isAndroidMobile, isTauriAvailable } from "../tauri-helper.js";
 import {
 	buildInstallBeginArgs,
 	buildInstallCompleteArgs,
@@ -46,6 +46,85 @@ export interface GhostInstallContext {
 	};
 }
 
+function pickFileFromDom(accept: string): Promise<File | null> {
+	return new Promise((resolve) => {
+		if (
+			typeof document === "undefined" ||
+			typeof document.createElement !== "function"
+		) {
+			resolve(null);
+			return;
+		}
+		const input = document.createElement("input");
+		input.type = "file";
+		input.accept = accept;
+		input.style.display = "none";
+		let settled = false;
+		const cleanup = () => {
+			if (typeof globalThis.removeEventListener === "function") {
+				globalThis.removeEventListener("focus", onWindowFocus);
+			}
+			input.remove?.();
+		};
+		const finish = (file: File | null) => {
+			if (settled) return;
+			settled = true;
+			cleanup();
+			resolve(file);
+		};
+		const onWindowFocus = () => {
+			setTimeout(() => {
+				if (!settled && (!input.files || input.files.length === 0)) {
+					finish(null);
+				}
+			}, 400);
+		};
+		input.addEventListener("change", () => {
+			finish(input.files?.[0] ?? null);
+		});
+		input.addEventListener("cancel", () => {
+			finish(null);
+		});
+		if (typeof globalThis.addEventListener === "function") {
+			globalThis.addEventListener("focus", onWindowFocus, { once: true });
+		}
+		document.body?.appendChild?.(input);
+		input.click();
+	});
+}
+
+export async function installGhostArchiveFile(
+	file: File,
+	password?: string,
+): Promise<GhostArchiveInstallResult> {
+	const buffer = await file.arrayBuffer();
+	const bytes = Array.from(new Uint8Array(buffer));
+	return await invoke<GhostArchiveInstallResult>(
+		"install_ghost_archive_bytes",
+		{
+			fileName: file.name,
+			bytes,
+			...(password ? { password } : {}),
+		},
+	);
+}
+
+export async function pickAndInstallGhostArchive(
+	password?: string,
+): Promise<GhostArchiveInstallResult | null> {
+	if (isAndroidMobile()) {
+		const file = await pickFileFromDom("*/*");
+		if (!file) return null;
+		return await installGhostArchiveFile(file, password);
+	}
+	return (
+		(await invoke<GhostArchiveInstallResult | null>(
+			"pick_and_install_ghost_archive",
+			password ? { password } : {},
+		)) ?? null
+	);
+}
+
 export async function installGhostFromMenuImpl(context: GhostInstallContext) {
 	if (!isTauriAvailable()) {
 		return context.modalManager?.show("install-modal-content");
@@ -57,10 +136,7 @@ export async function installGhostFromMenuImpl(context: GhostInstallContext) {
 			buildInstallBeginArgs("install"),
 		);
 
-		const result =
-			(await invoke<GhostArchiveInstallResult>(
-				"pick_and_install_ghost_archive",
-			)) ?? null;
+		const result = await pickAndInstallGhostArchive();
 		if (!result) return;
 
 		await context.ghostController.scanGhosts();

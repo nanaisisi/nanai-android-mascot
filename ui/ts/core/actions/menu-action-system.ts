@@ -1,4 +1,5 @@
 import { invoke, isTauriAvailable } from "../tauri-helper.js";
+import { pickAndInstallGhostArchive } from "./ghost-install-action.js";
 
 export interface SystemMenuActionContext {
 	modalManager?: {
@@ -102,7 +103,7 @@ export function handleSystemMenuAction(
 	}
 	if (action === "open-file") {
 		if (isTauriAvailable()) {
-			invoke("pick_and_install_ghost_archive")
+			pickAndInstallGhostArchive()
 				.then((result: unknown) => {
 					if (result) {
 						const ghostName = (result as { name?: string })?.name || "";

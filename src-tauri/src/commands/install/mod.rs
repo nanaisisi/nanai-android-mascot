@@ -21,10 +21,12 @@ pub async fn pick_and_install_ghost_archive(
     let picked = tauri::async_runtime::spawn_blocking({
         let app = app_handle.clone();
         move || {
-            app.dialog()
-                .file()
-                .add_filter("Ghost archive", &["nar", "zip"])
-                .blocking_pick_file()
+            let mut builder = app.dialog().file();
+            #[cfg(not(target_os = "android"))]
+            {
+                builder = builder.add_filter("Ghost archive", &["nar", "zip"]);
+            }
+            builder.blocking_pick_file()
         }
     })
     .await

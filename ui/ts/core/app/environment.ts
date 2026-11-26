@@ -57,6 +57,8 @@ export function initUIEnvironment(appContext: {
 	if (isTauriAvailable() && !isSinglePageUi()) {
 		const menuBtn = document.getElementById("menu-btn");
 		if (menuBtn) menuBtn.style.display = "none";
+		const androidMenuBtn = document.getElementById("android-menu-btn");
+		if (androidMenuBtn) androidMenuBtn.style.display = "none";
 	}
 	if (isSinglePageUi()) {
 		applyAndroidBackgroundImage();
@@ -74,6 +76,8 @@ export function initUIEnvironment(appContext: {
 		keroBalloonText: "kero-balloon-text",
 		menuContainer: "menu-iframe-container",
 		menuBtn: "menu-btn",
+		androidMenuBtn: "android-menu-btn",
+		androidMenuPanel: "android-menu-panel",
 		quickBubble: "quick-bubble",
 		quickActionsPanel: "quick-actions-panel",
 	};

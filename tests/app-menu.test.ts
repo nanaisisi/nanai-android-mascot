@@ -26,6 +26,8 @@ test("menuMethods covers toggleMenu, toggleHtmlMenu, syncMenuGhosts, hideMenu, a
 		elements: {
 			menuContainer: { style: { display: string } };
 			quickActionsPanel: { style: { display: string } };
+			androidMenuPanel?: { hidden: boolean };
+			androidMenuBtn?: { setAttribute: (name: string, val: string) => void };
 		};
 		ghostController: {
 			ghosts: Array<{ name: string }> | null;
@@ -77,10 +79,19 @@ test("menuMethods covers toggleMenu, toggleHtmlMenu, syncMenuGhosts, hideMenu, a
 	mockApp.hideQuickActionsPanel();
 	assert.equal(mockApp.elements.quickActionsPanel.style.display, "none");
 
-	// 5. hideMenu
+	// 5. hideMenu (also closes androidMenuPanel)
+	let expandedAttr = "true";
+	mockApp.elements.androidMenuPanel = { hidden: false };
+	mockApp.elements.androidMenuBtn = {
+		setAttribute(name: string, val: string) {
+			if (name === "aria-expanded") expandedAttr = val;
+		},
+	};
 	mockApp.elements.menuContainer.style.display = "block";
 	mockApp.hideMenu();
 	assert.equal(mockApp.elements.menuContainer.style.display, "none");
+	assert.equal(mockApp.elements.androidMenuPanel.hidden, true);
+	assert.equal(expandedAttr, "false");
 
 	// 6. toggleMenu with Tauri available success
 	const tauriInternals: {

@@ -2,7 +2,7 @@
    Nanai Android Mascot - メニュー & モーダルスタイル
    = */
 
-/* 右上メニュー & 終了ボタン */
+/* 右上メニュー & Android用メニュー */
 .top-right-menu {
 	position: fixed;
 	top: clamp(0.5rem, 2vh, 1rem);
@@ -10,7 +10,8 @@
 	z-index: 9999;
 	pointer-events: auto;
 	display: flex;
-	align-items: center;
+	flex-direction: column;
+	align-items: flex-end;
 	gap: 0.5rem;
 }
 
@@ -50,6 +51,157 @@
 	background-color: #ffebee;
 	border-color: #f44336;
 	color: #b71c1c;
+}
+
+.android-menu-panel {
+	position: absolute;
+	top: calc(100% + 0.375rem);
+	right: 0;
+	z-index: 10001;
+	min-width: 14rem;
+	max-width: min(17rem, 90vw);
+	padding: 0.375rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+	background: rgba(255, 255, 255, 0.96);
+	border: 1px solid rgba(0, 0, 0, 0.2);
+	border-radius: 0.625rem;
+	box-shadow: 0 0.375rem 1.25rem rgba(0, 0, 0, 0.25);
+	backdrop-filter: blur(0.625rem);
+}
+
+.android-menu-panel[hidden] {
+	display: none;
+}
+
+.android-menu-item {
+	width: 100%;
+	min-height: 2.375rem;
+	padding: 0.4rem 0.75rem;
+	border: none;
+	border-radius: 0.375rem;
+	background: transparent;
+	color: #222;
+	font-size: 0.875rem;
+	font-weight: 500;
+	text-align: left;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	cursor: pointer;
+	box-shadow: none;
+	transform: none;
+}
+
+.android-menu-item:hover,
+.android-menu-item:focus-visible {
+	background: rgba(33, 150, 243, 0.14);
+	color: #0d47a1;
+	transform: none;
+	box-shadow: none;
+	outline: none;
+}
+
+.android-menu-item.is-danger {
+	color: #c62828;
+}
+
+.android-menu-item.is-danger:hover,
+.android-menu-item.is-danger:focus-visible {
+	background: rgba(244, 67, 54, 0.12);
+	color: #b71c1c;
+}
+
+.android-menu-separator {
+	border: none;
+	border-top: 1px solid rgba(0, 0, 0, 0.12);
+	margin: 0.125rem 0;
+}
+
+.android-menu-scale-group {
+	padding: 0.25rem 0.5rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.android-menu-scale-row {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	color: #333;
+}
+
+.android-menu-scale-value {
+	font-variant-numeric: tabular-nums;
+	color: #0d47a1;
+}
+
+.android-menu-scale-controls {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: 0.25rem;
+}
+
+.android-scale-btn {
+	min-height: 2rem;
+	min-width: 0;
+	padding: 0.25rem 0.375rem;
+	border: 1px solid rgba(0, 0, 0, 0.16);
+	border-radius: 0.375rem;
+	background: rgba(0, 0, 0, 0.04);
+	color: #222;
+	font-size: 0.75rem;
+	font-weight: 600;
+	white-space: nowrap;
+	box-shadow: none;
+	transform: none;
+}
+
+.android-scale-btn:hover,
+.android-scale-btn:focus-visible {
+	background: rgba(33, 150, 243, 0.16);
+	border-color: #2196f3;
+	color: #0d47a1;
+	transform: none;
+	box-shadow: none;
+	outline: none;
+}
+
+body.dark-mode .android-menu-scale-row {
+	color: #e8e8e8;
+}
+
+body.dark-mode .android-menu-scale-value {
+	color: #90caf9;
+}
+
+body.dark-mode .android-scale-btn {
+	background: rgba(255, 255, 255, 0.08);
+	border-color: rgba(255, 255, 255, 0.16);
+	color: #f0f0f0;
+}
+
+body.dark-mode .android-menu-panel {
+	background: rgba(40, 44, 52, 0.96);
+	border-color: rgba(255, 255, 255, 0.16);
+}
+
+body.dark-mode .android-menu-item {
+	color: #f0f0f0;
+}
+
+body.dark-mode .android-menu-item:hover,
+body.dark-mode .android-menu-item:focus-visible {
+	background: rgba(100, 181, 246, 0.2);
+	color: #ffffff;
+}
+
+body.dark-mode .android-menu-separator {
+	border-top-color: rgba(255, 255, 255, 0.12);
 }
 
 /* iframe メニューコンテナ (メインメニュー + 横展開サブメニューを余裕を持って収める) */

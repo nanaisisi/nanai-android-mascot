@@ -7,7 +7,8 @@
 .main-display {
 	position: relative;
 	width: 100vw;
-	height: 100vh;
+	height: 100dvh;
+	margin-top: 0;
 	pointer-events: none;
 	overflow: hidden;
 }
@@ -15,9 +16,11 @@
 /* キャラクタースロット（キャラとバルーンを1つの単位として管理） */
 .character-slot {
 	position: absolute;
-	left: 50%;
-	top: 50%;
-	transform: translate(-50%, -50%);
+	right: clamp(0.75rem, 4vw, 5rem);
+	bottom: 0;
+	left: auto;
+	top: auto;
+	transform: none;
 	transform-origin: center center;
 	display: flex;
 	flex-direction: column;
@@ -33,7 +36,9 @@
 }
 
 .character-slot.kero-slot {
-	left: calc(50% + clamp(6.25rem, 20vw, 12rem));
+	right: clamp(9.5rem, 38vw, 20rem);
+	bottom: 0;
+	left: auto;
 	z-index: 49;
 }
 
@@ -248,7 +253,6 @@
 	align-items: center;
 	justify-content: center;
 	filter: drop-shadow(0.125rem 0.125rem 0.5rem rgba(0, 0, 0, 0.3));
-	animation: float 3s ease-in-out infinite;
 }
 
 .character-placeholder img {
@@ -256,16 +260,6 @@
 	height: 100%;
 	object-fit: contain;
 	filter: drop-shadow(0.125rem 0.125rem 0.5rem rgba(0, 0, 0, 0.3));
-}
-
-@keyframes float {
-	0%,
-	100% {
-		transform: translateY(0);
-	}
-	50% {
-		transform: translateY(-0.625rem);
-	}
 }
 
 /* バルーン表示 */
@@ -278,12 +272,19 @@
 
 .balloon-display {
 	position: absolute;
-	top: clamp(1rem, 5vh, 2.5rem);
-	left: 50%;
-	transform: translateX(-50%);
+	bottom: calc(100% + 0.5rem);
+	right: 0;
+	top: auto;
+	left: auto;
+	transform: none;
 	transform-origin: center center;
 	z-index: 100;
 	max-width: 90vw;
+}
+
+.balloon-display.kero-balloon {
+	right: auto;
+	left: 0;
 }
 
 .balloon {

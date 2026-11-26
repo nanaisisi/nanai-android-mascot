@@ -362,6 +362,8 @@ export function handleMenuActionImpl(
 			if (el.style) {
 				el.style.left = "";
 				el.style.top = "";
+				el.style.right = "";
+				el.style.bottom = "";
 				el.style.transform = "";
 				el.style.margin = "";
 			}
@@ -408,6 +410,8 @@ export function handleMenuActionImpl(
 				if (bEl?.style) {
 					bEl.style.left = "";
 					bEl.style.top = "";
+					bEl.style.right = "";
+					bEl.style.bottom = "";
 					bEl.style.transform = "";
 				}
 			});

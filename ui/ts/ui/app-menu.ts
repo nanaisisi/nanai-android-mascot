@@ -60,6 +60,10 @@ export const menuMethods = {
 		const nextState = isVisible ? "none" : "block";
 		menuContainer.style.display = nextState;
 		if (nextState === "block") {
+			if (app.elements.androidMenuPanel) {
+				app.elements.androidMenuPanel.hidden = true;
+			}
+			app.elements.androidMenuBtn?.setAttribute?.("aria-expanded", "false");
 			const iframeEl = document.getElementById("menu-iframe");
 			if (
 				iframeEl &&
@@ -295,6 +299,11 @@ export const menuMethods = {
 		if (menuContainer) {
 			menuContainer.style.display = "none";
 		}
+		const androidMenuPanel = app.elements.androidMenuPanel;
+		if (androidMenuPanel) {
+			androidMenuPanel.hidden = true;
+		}
+		app.elements.androidMenuBtn?.setAttribute?.("aria-expanded", "false");
 		app.hideQuickActionsPanel();
 	},
 

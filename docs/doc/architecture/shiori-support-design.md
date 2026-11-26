@@ -10,6 +10,8 @@ Nanai Android Mascot における SHIORI（および SAORI / MAKOTO）の実行�
 - [baseware-comparison-plan.md](../research/baseware-comparison-plan.md)
 - [android-window-architecture.md](../nam-spec/android-window-architecture.md)
 - [android-unified-overlay.md](../nam-spec/android-unified-overlay.md)
+- [android-native-overlay-study.md](../nam-spec/android-native-overlay-study.md)
+- [native-architecture-study.md](native-architecture-study.md)
 
 ---
 

@@ -77,10 +77,12 @@ _(※現在各ドメインごとに整理中)_
 - **[encoding-and-vfs-spec.md](doc/nam-spec/encoding-and-vfs-spec.md)** - 文字コード変換 (Shift_JIS ↔ UTF-8) & 仮想ファイルシステム (VFS) 仕様書
 - **[android-overlay-and-service-spec.md](doc/nam-spec/android-overlay-and-service-spec.md)** - Android システムオーバーレイ & 常駐生存仕様書
 - **[android-window-architecture.md](doc/nam-spec/android-window-architecture.md)** - Android ウインドウアーキテクチャおよびオーバーレイ提供方式の検討・計画（全5案比較・メニュー維持・独自仕様）
+- **[android-native-overlay-study.md](doc/nam-spec/android-native-overlay-study.md)** - Android オーバーレイ ネイティブ化案 検討書（オーバーレイ特化・案 3〜4 詳細・SHIORI 連携）
 - **[android-unified-overlay.md](doc/nam-spec/android-unified-overlay.md)** - Android 全キャラ単一ウインドウ統合表示（opt-in）
 - **[plugin-and-shiori-fallback-spec.md](doc/nam-spec/plugin-and-shiori-fallback-spec.md)** - プラグイン & SHIORI 読込み・代替読込み (Fallback) 仕様書
 - **[wasm-and-plugin-extensibility.md](doc/nam-spec/wasm-and-plugin-extensibility.md)** - WASM化指針 & JavaScript拡張システム仕様書
 - **[shiori-support-design.md](doc/architecture/shiori-support-design.md)** - SHIORI 対応検討・実行アーキテクチャ設計（単一ゴースト複数キャラクター前提）
+- **[native-architecture-study.md](doc/architecture/native-architecture-study.md)** - ネイティブ化アーキテクチャ検討案（Windows / Android 横断・直近局所対応 vs 全面破壊的変更オプション整理）
 - **[shiori-integration.md](doc/nam-spec/shiori-integration.md)** - SHIORI 組み込み統合技術仕様
 - **[ssp-compatibility-reference.md](doc/nam-spec/ssp-compatibility-reference.md)** - SSP 仕様ベース 統合互換リファレンスマニュアル
 - **[local-reference-and-test-spec.md](doc/nam-spec/local-reference-and-test-spec.md)** - ローカル外部仕様・試験環境（local/）連携仕様書

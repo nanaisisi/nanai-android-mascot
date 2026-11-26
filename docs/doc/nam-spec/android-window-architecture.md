@@ -9,6 +9,8 @@
 関連仕様:
 
 - [android-unified-overlay.md](./android-unified-overlay.md) - Android 全キャラ単一ウインドウ統合表示（opt-in）
+- [android-native-overlay-study.md](./android-native-overlay-study.md) - Android オーバーレイ ネイティブ化案 検討書（オーバーレイ特化・案 3〜4 詳細・SHIORI 連携）
+- [native-architecture-study.md](../architecture/native-architecture-study.md) - ネイティブ化アーキテクチャ検討案（直近の局所対応と全面的な破壊的変更オプションの分離整理）
 - [window-design.md](../design/ui/window-design.md) - 従来の Single Container ウインドウ設計
 - [ui-and-menu-spec.md](../design/ui/ui-and-menu-spec.md) - 標準 UI & 拡張メニュー仕様
 - [右クリックメニュー（オーナードローメニュー）互換仕様.md](../ssp-spec/implicit-specs/ssp-compatibility-reference/右クリックメニュー（オーナードローメニュー）互換仕様.md) - SSP 2.x 標準メニュー互換仕様

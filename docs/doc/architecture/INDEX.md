@@ -45,3 +45,10 @@
   - SHIORI 実行環境および動的モジュール配信・ロード方針（WebView 主導・`wasmi` 削減・DFM・サイドローディング）。
 - **[shiori-support-design.md](./shiori-support-design.md)**
   - 単一ゴースト・複数キャラクター前提での SHIORI 対応検討・実行アーキテクチャ設計（`.so` 分離、`ssu` SAORI シム、段階ロードマップ）。
+
+---
+
+## 5. ネイティブ化検討案（破壊的変更オプション・ドラフト）
+
+- **[native-architecture-study.md](./native-architecture-study.md)**
+  - Windows / Android 横断でのネイティブ化アーキテクチャ検討案（直近の局所対応と全面的な破壊的変更オプションの分離整理）。

@@ -1,6 +1,6 @@
 #[cfg(any(desktop, test))]
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct LogicalWorkArea {
+pub(super) struct LogicalWorkArea {
     pub x: f64,
     pub y: f64,
     pub width: f64,
@@ -66,7 +66,7 @@ pub fn safe_scale_factor(scale: f64) -> f64 {
 
 /// バルーンの論理座標をクランプする（X軸は無制限、Y軸のみタスクバー除外ワークスペース内に絶対クランプ）
 #[cfg(any(desktop, test))]
-pub fn clamp_logical_position_y_only(
+pub(super) fn clamp_logical_position_y_only(
     x: f64,
     y: f64,
     height: f64,
@@ -83,7 +83,7 @@ pub fn clamp_logical_position_y_only(
 }
 
 #[cfg(any(desktop, test))]
-pub fn needs_vertical_clamp(y: f64, height: f64, work_y: f64, work_h: f64) -> bool {
+pub(super) fn needs_vertical_clamp(y: f64, height: f64, work_y: f64, work_h: f64) -> bool {
     if !y.is_finite() {
         return true;
     }
@@ -132,7 +132,7 @@ pub fn select_best_rect_index(rects: &[(f64, f64, f64, f64)], x: f64, y: f64) ->
 }
 
 #[cfg(desktop)]
-pub fn monitor_logical_work_area(monitor: &tauri::Monitor) -> LogicalWorkArea {
+pub(super) fn monitor_logical_work_area(monitor: &tauri::Monitor) -> LogicalWorkArea {
     let work = monitor.work_area();
     let pos = monitor.position();
     let size = monitor.size();
@@ -150,7 +150,7 @@ pub fn monitor_logical_work_area(monitor: &tauri::Monitor) -> LogicalWorkArea {
 }
 
 #[cfg(desktop)]
-pub fn window_scale_factor(win: &tauri::WebviewWindow, fallback: f64) -> f64 {
+pub(super) fn window_scale_factor(win: &tauri::WebviewWindow, fallback: f64) -> f64 {
     win.scale_factor()
         .ok()
         .filter(|s| *s > 0.0 && s.is_finite())
@@ -165,7 +165,7 @@ pub fn window_scale_factor(win: &tauri::WebviewWindow, fallback: f64) -> f64 {
 }
 
 #[cfg(desktop)]
-pub fn select_monitor_for_physical_point(
+pub(super) fn select_monitor_for_physical_point(
     app_handle: &tauri::AppHandle,
     px: f64,
     py: f64,
@@ -183,7 +183,7 @@ pub fn select_monitor_for_physical_point(
 }
 
 #[cfg(desktop)]
-pub fn select_monitor_for_logical_point(
+pub(super) fn select_monitor_for_logical_point(
     app_handle: &tauri::AppHandle,
     lx: f64,
     ly: f64,
@@ -200,7 +200,7 @@ pub fn select_monitor_for_logical_point(
 }
 
 #[cfg(desktop)]
-pub fn monitor_from_window_center(
+pub(super) fn monitor_from_window_center(
     app_handle: &tauri::AppHandle,
     win: &tauri::WebviewWindow,
 ) -> Option<tauri::Monitor> {
@@ -214,7 +214,7 @@ pub fn monitor_from_window_center(
 }
 
 #[cfg(any(desktop, test))]
-pub fn compute_default_logical_balloon_pos(
+pub(super) fn compute_default_logical_balloon_pos(
     scope_id: i32,
     char_x: f64,
     char_y: f64,

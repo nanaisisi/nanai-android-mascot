@@ -30,7 +30,7 @@ pub async fn set_balloon_offset(
     sync_balloon_position_impl(&app_handle, &state, target_scope).await
 }
 
-pub async fn sync_balloon_position_impl(
+pub(in crate::commands) async fn sync_balloon_position_impl(
     app_handle: &tauri::AppHandle,
     state: &tauri::State<'_, crate::common::state::AppState>,
     scope_id: i32,

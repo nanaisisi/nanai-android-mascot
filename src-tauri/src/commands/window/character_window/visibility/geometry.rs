@@ -1,5 +1,5 @@
 #[cfg(any(desktop, test))]
-pub fn sanitize_scale(scale: f64) -> f64 {
+pub(super) fn sanitize_scale(scale: f64) -> f64 {
     if scale > 0.0 && scale.is_finite() {
         scale
     } else {
@@ -8,7 +8,7 @@ pub fn sanitize_scale(scale: f64) -> f64 {
 }
 
 #[cfg(any(desktop, test))]
-pub fn work_area_to_logical(
+pub(super) fn work_area_to_logical(
     pos_x: i32,
     pos_y: i32,
     width: u32,
@@ -24,7 +24,7 @@ pub fn work_area_to_logical(
 }
 
 #[cfg(desktop)]
-pub fn monitor_logical_work_area(monitor: &tauri::Monitor) -> (f64, f64, f64, f64, f64) {
+pub(super) fn monitor_logical_work_area(monitor: &tauri::Monitor) -> (f64, f64, f64, f64, f64) {
     let work = monitor.work_area();
     work_area_to_logical(
         work.position.x,
@@ -36,7 +36,7 @@ pub fn monitor_logical_work_area(monitor: &tauri::Monitor) -> (f64, f64, f64, f6
 }
 
 #[cfg(any(desktop, test))]
-pub fn compute_default_character_position(
+pub(super) fn compute_default_character_position(
     scope_id: i32,
     eff_w: f64,
     eff_h: f64,

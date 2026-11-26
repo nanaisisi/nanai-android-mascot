@@ -1,7 +1,7 @@
 //! キャラクターサーフィス画像 URL キャッシュコマンド
 
 #[tauri::command]
-pub async fn set_surface_image(
+pub(crate) async fn set_surface_image(
     state: tauri::State<'_, crate::common::state::AppState>,
     scope_id: i32,
     image_src: String,
@@ -11,7 +11,7 @@ pub async fn set_surface_image(
 }
 
 #[tauri::command]
-pub async fn get_surface_image(
+pub(crate) async fn get_surface_image(
     state: tauri::State<'_, crate::common::state::AppState>,
     scope_id: i32,
 ) -> Result<String, String> {

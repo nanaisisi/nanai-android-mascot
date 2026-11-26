@@ -1,15 +1,7 @@
-use super::types::PhysicalWorkArea;
-
-pub fn safe_scale_factor(scale: f64) -> f64 {
-    if scale > 0.0 && scale.is_finite() {
-        scale
-    } else {
-        1.0
-    }
-}
+use super::types::{PhysicalWorkArea, safe_scale_factor};
 
 /// バルーンの物理座標をクランプする（X軸は無制限、Y軸のみタスクバー除外ワークスペース内に絶対クランプ）
-pub fn clamp_physical_position_y_only(
+pub(super) fn clamp_physical_position_y_only(
     x: i32,
     y: i32,
     height: i32,
@@ -28,7 +20,7 @@ pub fn clamp_physical_position_y_only(
     (x, clamped_y)
 }
 
-pub fn select_best_physical_monitor_index(
+pub(super) fn select_best_physical_monitor_index(
     areas: &[PhysicalWorkArea],
     px: i32,
     py: i32,
@@ -69,7 +61,7 @@ pub fn select_best_physical_monitor_index(
         .map(|(idx, _)| idx)
 }
 
-pub fn select_monitor_for_physical_point(
+pub(super) fn select_monitor_for_physical_point(
     app_handle: &tauri::AppHandle,
     px: i32,
     py: i32,
@@ -82,7 +74,7 @@ pub fn select_monitor_for_physical_point(
     select_best_physical_monitor_index(&areas, px, py).and_then(|idx| monitors.into_iter().nth(idx))
 }
 
-pub fn monitor_from_window_center(
+pub(super) fn monitor_from_window_center(
     app_handle: &tauri::AppHandle,
     win: &tauri::WebviewWindow,
 ) -> Option<tauri::Monitor> {
@@ -95,7 +87,7 @@ pub fn monitor_from_window_center(
     })
 }
 
-pub fn resolve_default_window_physical_size(
+pub(super) fn resolve_default_window_physical_size(
     size: tauri::PhysicalSize<u32>,
     base_logical_w: f64,
     base_logical_h: f64,
@@ -112,7 +104,7 @@ pub fn resolve_default_window_physical_size(
     }
 }
 
-pub fn compute_saved_offset_and_clamped_y(
+pub(super) fn compute_saved_offset_and_clamped_y(
     char_pos_x: i32,
     char_pos_y: i32,
     balloon_pos_x: i32,
@@ -144,7 +136,7 @@ pub fn compute_saved_offset_and_clamped_y(
 }
 
 #[allow(clippy::too_many_arguments)]
-pub fn compute_default_balloon_offset(
+pub(super) fn compute_default_balloon_offset(
     scope_id: i32,
     char_pos_x: i32,
     char_width: i32,

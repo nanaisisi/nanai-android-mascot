@@ -2,7 +2,7 @@ use crate::common::state::AppState;
 
 /// 単一ゴーストを終了 (SSP準拠: そのゴーストのみ終了。残りが無ければプロセス終了)
 #[tauri::command]
-pub async fn close_ghost(
+pub(crate) async fn close_ghost(
     state: tauri::State<'_, AppState>,
     ghost_id: Option<String>,
     app_handle: tauri::AppHandle,
@@ -39,7 +39,7 @@ pub async fn close_ghost(
 
 /// 現在のゴーストのSHIORIをアンロード
 #[tauri::command]
-pub async fn unload_current_ghost(
+pub(crate) async fn unload_current_ghost(
     state: tauri::State<'_, AppState>,
     app_handle: tauri::AppHandle,
 ) -> Result<(), String> {

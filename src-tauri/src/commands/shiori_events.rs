@@ -1,13 +1,13 @@
 //! 特殊イベント (MouseClick, SecondChange, OnTranslate, GhostCall) コマンド
 
-use super::dispatch::dispatch_request;
+use super::shiori_requests::dispatch_request;
 use crate::common::state::AppState;
 use crate::ui_adapter::shiori::{ShioriRequest, ShioriResponse};
 
 /// マウスクリックイベントを送信（簡易版）
 #[tauri::command]
 #[specta::specta]
-pub async fn on_mouse_click() -> Result<String, String> {
+pub(crate) async fn on_mouse_click() -> Result<String, String> {
     println!("🖱️ Mouse click event");
     Ok("Mouse clicked".to_string())
 }
@@ -15,13 +15,13 @@ pub async fn on_mouse_click() -> Result<String, String> {
 /// 秒数変化イベントを送信（簡易版）
 #[tauri::command]
 #[specta::specta]
-pub async fn on_second_change() -> Result<String, String> {
+pub(crate) async fn on_second_change() -> Result<String, String> {
     Ok("Second changed".to_string())
 }
 
 /// SHIORI へ OnTranslate イベントを送信し、ゴースト側で翻訳されたさくらスクリプトを取得する (UKADOC 規格準拠)
 #[tauri::command]
-pub async fn send_on_translate(
+pub(crate) async fn send_on_translate(
     state: tauri::State<'_, AppState>,
     script: String,
     ghost_id: Option<String>,
@@ -49,34 +49,37 @@ pub async fn send_on_translate(
 
 /// Windows 専用 `makoto.dll` をロードし、MAKOTO/2.0 プロトコルでさくらスクリプトを翻訳する
 #[tauri::command]
-pub async fn execute_makoto_translate(dll_path: String, script: String) -> Result<String, String> {
+pub(crate) async fn execute_makoto_translate(
+    dll_path: String,
+    script: String,
+) -> Result<String, String> {
     crate::shiori::makoto::execute_makoto_dll(std::path::Path::new(&dll_path), &script)
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct SendGhostCallEventParams {
+pub(crate) struct SendGhostCallEventParams {
     event: String,
     target_ghost_name: String,
     ghost_id: Option<String>,
 }
 
 impl SendGhostCallEventParams {
-    pub fn event(&self) -> &str {
+    fn event(&self) -> &str {
         &self.event
     }
 
-    pub fn target_ghost_name(&self) -> &str {
+    fn target_ghost_name(&self) -> &str {
         &self.target_ghost_name
     }
 
-    pub fn ghost_id(&self) -> Option<&str> {
+    fn ghost_id(&self) -> Option<&str> {
         self.ghost_id.as_deref()
     }
 }
 
 /// ゴースト間呼び出し/切り替え関連のイベントを送信する (UKADOC 規格準拠)
 #[tauri::command]
-pub async fn send_ghost_call_event(
+pub(crate) async fn send_ghost_call_event(
     state: tauri::State<'_, AppState>,
     params: SendGhostCallEventParams,
 ) -> Result<String, String> {

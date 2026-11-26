@@ -1,12 +1,12 @@
 //! キャラクターウィンドウ倍率設定およびバルーン位置同期コマンド
 
 #[tauri::command]
-pub async fn sync_character_balloon(
+pub(crate) async fn sync_character_balloon(
     app_handle: tauri::AppHandle,
     state: tauri::State<'_, crate::common::state::AppState>,
     scope_id: i32,
 ) -> Result<(), String> {
-    super::super::balloon_window::sync_balloon_position_impl(&app_handle, &state, scope_id).await
+    super::balloon_window::sync_balloon_position_impl(&app_handle, &state, scope_id).await
 }
 
 #[cfg(any(desktop, test))]
@@ -36,7 +36,7 @@ fn resolve_character_scale_factor(
 /// キャラクター（スコープ N）ウィンドウのサイズ変更コマンド（シェル倍率変更用）
 #[tauri::command(rename_all = "snake_case")]
 #[allow(non_snake_case)]
-pub async fn set_character_scale(
+pub(crate) async fn set_character_scale(
     _app_handle: tauri::AppHandle,
     scale_percent: Option<u32>,
     scalePercent: Option<u32>,

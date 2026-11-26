@@ -3,10 +3,20 @@
 use super::shell::ShellInfo;
 use std::collections::BTreeMap;
 
+/// `ghost/master/` から検出した外部アセットのパス（存在するもののみ）
+#[derive(Debug, Clone, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub struct GhostAssets {
+    pub thumbnail: Option<String>,
+    pub ai0: Option<String>,
+    pub ai0_dark: Option<String>,
+    pub cursors: Vec<String>,
+    pub icons: Vec<String>,
+}
+
 #[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
 pub struct GhostInfo {
     #[serde(default)]
-    pub(crate) assets: crate::ghost::scan::assets::GhostAssets,
+    pub(crate) assets: GhostAssets,
     pub(crate) name: String,
     pub(crate) version: Option<String>,
     pub(crate) path: String,

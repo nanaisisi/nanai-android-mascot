@@ -10,15 +10,15 @@ pub fn export_typescript_bindings() {
     {
         let specta_builder = SpectaBuilder::<tauri::Wry>::new().commands(collect_commands![
             crate::commands::window::test_command,
-            crate::commands::shiori::on_mouse_click,
-            crate::commands::shiori::on_second_change,
-            crate::commands::shiori::get_shiori_status,
-            crate::commands::window::request_overlay_permission,
-            crate::commands::window::setup_foreground_service,
-            crate::commands::window::set_overlay_transparency,
-            crate::commands::window::set_click_through,
-            crate::commands::window::resize_overlay_window,
-            crate::commands::window::trim_memory_command,
+            crate::commands::shiori_events::on_mouse_click,
+            crate::commands::shiori_events::on_second_change,
+            crate::commands::shiori_status::get_shiori_status,
+            crate::commands::android::request_overlay_permission,
+            crate::commands::android::setup_foreground_service,
+            crate::commands::android::set_overlay_transparency,
+            crate::commands::android::set_click_through,
+            crate::commands::android::resize_overlay_window,
+            crate::commands::android::trim_memory_command,
         ]);
 
         specta_builder

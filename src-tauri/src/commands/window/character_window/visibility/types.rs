@@ -1,6 +1,6 @@
 #[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
 #[serde(default)]
-pub struct ShowCharacterWindowParams {
+pub(crate) struct ShowCharacterWindowParams {
     #[serde(alias = "scopeId")]
     scope_id: Option<i32>,
     x: Option<f64>,
@@ -49,7 +49,7 @@ impl ShowCharacterWindowParams {
 
 #[derive(Debug, Clone, Default, serde::Serialize, serde::Deserialize)]
 #[serde(default)]
-pub struct ShowSubcharWindowParams {
+pub(crate) struct ShowSubcharWindowParams {
     #[serde(alias = "scopeId")]
     scope_id: Option<i32>,
     x: Option<f64>,

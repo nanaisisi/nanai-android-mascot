@@ -1,8 +1,8 @@
-pub mod hide;
-pub mod lock;
+mod hide;
+mod lock;
 pub mod params;
-pub mod resize;
-pub mod show;
+mod resize;
+mod show;
 
 pub use params::*;
 

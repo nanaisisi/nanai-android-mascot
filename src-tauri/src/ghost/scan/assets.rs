@@ -2,15 +2,7 @@
 
 use std::path::{Path, PathBuf};
 
-/// `ghost/master/` から検出した外部アセットのパス（存在するもののみ）
-#[derive(Debug, Clone, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
-pub struct GhostAssets {
-    pub thumbnail: Option<String>,
-    pub ai0: Option<String>,
-    pub ai0_dark: Option<String>,
-    pub cursors: Vec<String>,
-    pub icons: Vec<String>,
-}
+pub use crate::common::models::ghost::GhostAssets;
 
 fn find_ci(dir: &Path, names: &[&str]) -> Option<PathBuf> {
     let entries: Vec<_> = std::fs::read_dir(dir).ok()?.flatten().collect();

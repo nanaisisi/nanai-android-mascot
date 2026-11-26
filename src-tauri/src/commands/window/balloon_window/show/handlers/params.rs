@@ -12,7 +12,7 @@ pub struct ShowBalloonWindowParams {
 
 #[cfg(any(desktop, test))]
 #[allow(clippy::too_many_arguments)]
-pub fn resolve_show_balloon_args(
+pub(super) fn resolve_show_balloon_args(
     params: Option<ShowBalloonWindowParams>,
     scope_id: Option<i32>,
     scope_id_camel: Option<i32>,
@@ -70,7 +70,7 @@ impl ResizeBalloonWindowParams {
 }
 
 #[cfg(any(desktop, test))]
-pub fn resolve_resize_balloon_args(
+pub(super) fn resolve_resize_balloon_args(
     params: Option<ResizeBalloonWindowParams>,
     scope_id: Option<i32>,
     scope_id_camel: Option<i32>,
@@ -103,7 +103,7 @@ impl HideBalloonWindowParams {
 }
 
 #[cfg(any(desktop, test))]
-pub fn resolve_hide_balloon_scope(
+pub(super) fn resolve_hide_balloon_scope(
     params: Option<HideBalloonWindowParams>,
     scope_id: Option<i32>,
     scope_id_camel: Option<i32>,

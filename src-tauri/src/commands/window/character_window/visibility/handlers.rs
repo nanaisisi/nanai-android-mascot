@@ -4,7 +4,7 @@ use super::types::{ShowCharacterWindowParams, ShowSubcharWindowParams};
 
 /// キャラクター（スコープ N）ウィンドウ表示コマンド (0=メイン, 1=サブ/うにゅ, 2以降=追加キャラ)
 #[tauri::command]
-pub async fn show_character_window(
+pub(crate) async fn show_character_window(
     _app_handle: tauri::AppHandle,
     params: ShowCharacterWindowParams,
 ) -> Result<(), String> {
@@ -165,9 +165,8 @@ pub async fn show_character_window(
     Ok(())
 }
 
-/// キャラクター（スコープ N）ウィンドウ非表示コマンド (\s[-1])
-#[tauri::command]
-pub async fn hide_character_window(
+/// キャラクター（スコープ N）ウィンドウ非表示ヘルパー (\s[-1])
+async fn hide_character_window(
     _app_handle: tauri::AppHandle,
     _scope_id: i32,
 ) -> Result<(), String> {
@@ -187,7 +186,7 @@ pub async fn hide_character_window(
 /// 互換用: サブキャラクターウィンドウ表示コマンド
 #[tauri::command(rename_all = "snake_case")]
 #[allow(non_snake_case)]
-pub async fn show_subchar_window(
+pub(crate) async fn show_subchar_window(
     _app_handle: tauri::AppHandle,
     params: Option<ShowSubcharWindowParams>,
     scope_id: Option<i32>,
@@ -221,7 +220,7 @@ pub async fn show_subchar_window(
 /// 互換用: サブキャラクターウィンドウ非表示コマンド
 #[tauri::command(rename_all = "snake_case")]
 #[allow(non_snake_case)]
-pub async fn hide_subchar_window(
+pub(crate) async fn hide_subchar_window(
     _app_handle: tauri::AppHandle,
     scope_id: Option<i32>,
     scopeId: Option<i32>,
@@ -234,7 +233,7 @@ pub async fn hide_subchar_window(
 
 /// キャラクターウィンドウ位置リセットコマンド
 #[tauri::command]
-pub async fn reset_character_positions(
+pub(crate) async fn reset_character_positions(
     app_handle: tauri::AppHandle,
     state: tauri::State<'_, crate::common::state::AppState>,
 ) -> Result<(), String> {

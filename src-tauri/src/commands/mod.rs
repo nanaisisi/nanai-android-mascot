@@ -1,10 +1,14 @@
+pub mod android;
 pub mod calendar;
 pub mod config;
 pub mod ext;
 pub mod file;
 pub mod install;
 pub mod shell;
-pub mod shiori;
+pub mod shiori_events;
+pub mod shiori_lifecycle;
+pub mod shiori_requests;
+pub mod shiori_status;
 pub mod update;
 pub mod web;
 pub mod window;

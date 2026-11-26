@@ -21,6 +21,14 @@ impl SetBalloonOffsetParams {
     }
 }
 
+pub(super) fn safe_scale_factor(scale: f64) -> f64 {
+    if scale > 0.0 && scale.is_finite() {
+        scale
+    } else {
+        1.0
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct PhysicalWorkArea {
     pub x: i32,
@@ -56,7 +64,7 @@ impl PhysicalWorkArea {
             mon_y,
             mon_width: mon_w,
             mon_height: mon_h,
-            scale_factor: super::geometry::safe_scale_factor(scale_factor),
+            scale_factor: safe_scale_factor(scale_factor),
         }
     }
 

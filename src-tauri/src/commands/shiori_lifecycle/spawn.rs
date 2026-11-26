@@ -1,11 +1,11 @@
 use super::resolve_and_load_shiori_engine;
-use crate::commands::shiori::resolve_ghost_directory;
+use crate::common::paths::resolve_ghost_directory;
 use crate::common::state::AppState;
 use std::path::PathBuf;
 
 /// ゴーストを新規インスタンスとして追加起動 (マルチゴースト)
 #[tauri::command]
-pub async fn spawn_ghost(
+pub(crate) async fn spawn_ghost(
     state: tauri::State<'_, AppState>,
     ghost_name: String,
     app_handle: tauri::AppHandle,

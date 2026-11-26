@@ -1,11 +1,11 @@
 use super::resolve_and_load_shiori_engine;
-use crate::commands::shiori::resolve_ghost_directory;
+use crate::common::paths::resolve_ghost_directory;
 use crate::common::state::AppState;
 use std::path::PathBuf;
 
 /// ゴーストを読み込み（動的SHIORIローダー＋Android向け静的/フォールバック接続対応）
 #[tauri::command]
-pub async fn load_ghost(
+pub(crate) async fn load_ghost(
     state: tauri::State<'_, AppState>,
     ghost_name: String,
     ghost_path: Option<String>,
@@ -54,7 +54,7 @@ pub async fn load_ghost(
 
 /// ゴーストの SHIORI を再読み込み (`\![reload,shiori]` 対応)
 #[tauri::command]
-pub async fn reload_current_ghost_shiori(
+pub(crate) async fn reload_current_ghost_shiori(
     state: tauri::State<'_, AppState>,
     app_handle: tauri::AppHandle,
 ) -> Result<String, String> {

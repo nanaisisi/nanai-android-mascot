@@ -1,14 +1,53 @@
 //! 基本 SHIORI リクエスト / イベント / 通知 送信コマンド
 
-use super::dispatch::{LogLevel, dispatch_request, log_level};
 use crate::common::state::AppState;
 use crate::ui_adapter::shiori::{
     ShioriRequest, ShioriResponse, build_standard_capability_references,
 };
 
+#[derive(PartialEq, PartialOrd, Clone, Copy)]
+enum LogLevel {
+    Off,
+    Info,
+    Trace,
+}
+
+/// 開発ビルドでのみ NANAI_LOG を参照する。リリースビルドは常に Off。
+fn log_level() -> LogLevel {
+    if !cfg!(debug_assertions) {
+        return LogLevel::Off;
+    }
+    match std::env::var("NANAI_LOG").as_deref() {
+        Ok("off") => LogLevel::Off,
+        Ok("trace") => LogLevel::Trace,
+        _ => LogLevel::Info,
+    }
+}
+
+/// エンジンへのリクエスト委譲（main / 個別ゴースト共通）
+pub(super) fn dispatch_request(
+    state: &tauri::State<'_, AppState>,
+    request: &str,
+    ghost_id: &str,
+) -> Result<String, String> {
+    if ghost_id != "main" {
+        let engines = state.ghost_engines.lock();
+        if let Some(engine) = engines.get(ghost_id) {
+            return engine.request(request);
+        }
+        return Err("Ghost engine not found".to_string());
+    }
+    let engine_lock = state.shiori_engine.lock();
+    if let Some(ref engine) = *engine_lock {
+        engine.request(request)
+    } else {
+        Err("No active SHIORI engine loaded".to_string())
+    }
+}
+
 /// SHIORIにリクエストを送信（SHIORI/3.0 プロトコル準拠）
 #[tauri::command]
-pub async fn send_shiori_request(
+pub(crate) async fn send_shiori_request(
     state: tauri::State<'_, AppState>,
     request: String,
     ghost_id: Option<String>,
@@ -48,7 +87,7 @@ pub async fn send_shiori_request(
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct SendShioriEventParams {
+pub(crate) struct SendShioriEventParams {
     event: String,
     #[serde(alias = "args")]
     references: Option<Vec<String>>,
@@ -57,22 +96,22 @@ pub struct SendShioriEventParams {
 }
 
 impl SendShioriEventParams {
-    pub fn event(&self) -> &str {
+    fn event(&self) -> &str {
         &self.event
     }
 
-    pub fn references(&self) -> Option<&Vec<String>> {
+    fn references(&self) -> Option<&Vec<String>> {
         self.references.as_ref()
     }
 
-    pub fn ghost_id(&self) -> Option<&str> {
+    fn ghost_id(&self) -> Option<&str> {
         self.ghost_id.as_deref()
     }
 }
 
 /// SHIORIにイベントを送信（簡易版・パラメータ指定対応）
 #[tauri::command]
-pub async fn send_shiori_event(
+pub(crate) async fn send_shiori_event(
     state: tauri::State<'_, AppState>,
     params: SendShioriEventParams,
 ) -> Result<String, String> {
@@ -90,29 +129,29 @@ pub async fn send_shiori_event(
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
-pub struct SendShioriNotifyParams {
+pub(crate) struct SendShioriNotifyParams {
     event: String,
     references: Option<Vec<String>>,
     ghost_id: Option<String>,
 }
 
 impl SendShioriNotifyParams {
-    pub fn event(&self) -> &str {
+    fn event(&self) -> &str {
         &self.event
     }
 
-    pub fn references(&self) -> Option<&Vec<String>> {
+    fn references(&self) -> Option<&Vec<String>> {
         self.references.as_ref()
     }
 
-    pub fn ghost_id(&self) -> Option<&str> {
+    fn ghost_id(&self) -> Option<&str> {
         self.ghost_id.as_deref()
     }
 }
 
 /// SHIORIへ NOTIFY コマンドで情報を通知（UKADOC notify イベント群）
 #[tauri::command]
-pub async fn send_shiori_notify(
+pub(crate) async fn send_shiori_notify(
     state: tauri::State<'_, AppState>,
     params: SendShioriNotifyParams,
 ) -> Result<String, String> {
@@ -132,7 +171,7 @@ pub async fn send_shiori_notify(
 /// SHIORI へ UKADOC 準拠の capability Notify イベントを送信
 #[allow(dead_code)]
 #[tauri::command]
-pub async fn send_shiori_capability(
+pub(super) async fn send_shiori_capability(
     state: tauri::State<'_, AppState>,
     ghost_id: Option<String>,
 ) -> Result<String, String> {
@@ -144,7 +183,7 @@ pub async fn send_shiori_capability(
 
 /// SHIORI イベントを送信し、解析済み `ShioriResponse` オブジェクトで返す
 #[tauri::command]
-pub async fn send_shiori_event_typed(
+pub(crate) async fn send_shiori_event_typed(
     state: tauri::State<'_, AppState>,
     event: String,
     references: Option<Vec<String>>,

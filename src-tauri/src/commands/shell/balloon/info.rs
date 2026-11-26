@@ -1,7 +1,21 @@
-use super::manifest::balloon_descript_map;
-use crate::commands::shell::{open_text_file, resolve_asset_path};
+use crate::common::paths::{open_text_file, resolve_asset_path};
+use crate::ui_adapter::shell::Descript;
 use base64::Engine;
+use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
+
+pub fn balloon_descript_map(dir: &Path) -> BTreeMap<String, String> {
+    let descript = dir.join("descript.txt");
+    let path_str = descript.to_string_lossy();
+    let clean_path = crate::common::paths::clean_verbatim_path(&path_str);
+    let content = open_text_file(Path::new(&clean_path)).unwrap_or_default();
+    let parsed = Descript::parse(&content);
+    parsed
+        .properties()
+        .clone()
+        .into_iter()
+        .collect::<BTreeMap<_, _>>()
+}
 
 #[derive(serde::Serialize, Clone)]
 pub struct BalloonInfo {

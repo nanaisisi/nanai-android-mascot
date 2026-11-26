@@ -212,6 +212,8 @@ assets/ghost/
 4. **コード品質維持**:
    - `cargo fmt` (フォーマット統一)
    - `cargo clippy` (静的解析・リントチェック)
+   - `deslop-please` (モジュール循環・浅いモジュール等の構造負債チェック: `npm run lint:deslop` / `.deslop-please.allow`)
+   - `cargo coupling` (結合度・凝集度・循環依存の品質ゲート: `npm run lint:coupling` / 設定 `.coupling.toml`)
    - `cargo audit` (依存ライブラリのセキュリティ監査)
 
 ---

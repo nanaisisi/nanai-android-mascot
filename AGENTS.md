@@ -38,5 +38,6 @@
 ## 4. Verification & Platform Guardrails
 
 - **Rust 検証 (Windows)**: この環境では `cargo test` バイナリ実行時に `0xc0000139`（DLL エントリポイント制約）で起動失敗するため、Rust テストのコンパイル検証には `cargo check --tests --manifest-path src-tauri/Cargo.toml` および `cargo fmt --check --manifest-path src-tauri/Cargo.toml` を用いる。
+- **Rust 構造リンター**: Rust のモジュール構成・クレート間依存を変更した場合は `npm run lint:rust`（個別実行は `npm run lint:deslop` / `npm run lint:coupling`）を実行する。`cargo-coupling` は `.coupling.toml` に基づき Grade B+、Critical 0 / High 0 / 循環 0 を品質ゲートとし、`deslop-please` は既存負債を `.deslop-please.allow` で管理する（正当な理由なく `.deslop-please.allow` へ新規項目を追加しない）。
 - **TS / CSS / 生成バインディング**: 変更した TS/CSS/テストファイル（生成・更新した `ui/bindings.ts` を含む）に対して `npx @biomejs/biome check` を実行し、整形・import 順エラーを残さない。
 - **Android ネイティブ連携**: Rust 側コマンド（`src-tauri/src/commands/window/android.rs` 等）を追加した際、`MainActivity.kt` 等 Kotlin/Java 側のハンドラが未実装（スタブ状態）である場合は、未実装箇所と実機未検証である旨を明確に区別して扱う。

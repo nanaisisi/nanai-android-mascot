@@ -1,0 +1,32 @@
+[analysis]
+exclude_tests = true
+exclude = [
+    "target/**",
+    "target_*/**",
+    "cpp/**",
+    "node_modules/**",
+    "dist/**",
+    "src-tauri/gen/**",
+    "src-tauri/shiori-host/target/**",
+]
+
+[subdomains]
+core = [
+    "crates/nanai-core/**",
+    "crates/nanai-surface/**",
+    "crates/nanai-shiori-vm/**",
+    "crates/nanai-vfs/**",
+]
+supporting = [
+    "src-tauri/src/shiori/**",
+    "src-tauri/src/ghost/**",
+    "src-tauri/src/sstp/**",
+    "src-tauri/src/fmo/**",
+    "src-tauri/src/commands/**",
+    "crates/ui/**",
+]
+generic = [
+    "src-tauri/src/common/**",
+    "src-tauri/src/tray/**",
+    "src-tauri/src/ui_adapter/**",
+]

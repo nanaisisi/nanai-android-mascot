@@ -1,6 +1,6 @@
 /**
  * @file verify-implementation.ts
- * @brief 実装確認スクリプト - Rustビルド、全Vitest単体テスト、UKADOC仕様準拠・レイヤー監査、モジュール確認、ライセンス更新 & UI半自動確認ガイドを一括検証
+ * @brief 実装確認スクリプト - Rustビルド、Rust構造リンター (deslop-please / cargo coupling)、全Vitest単体テスト、UKADOC仕様準拠・レイヤー監査、モジュール確認、ライセンス更新 & UI半自動確認ガイドを一括検証
  */
 
 import { runBuildAndTestVerification } from "./verification/build-and-test.ts";
@@ -8,6 +8,7 @@ import { getHasError } from "./verification/config.ts";
 import { runLicensesAndGuide } from "./verification/licenses-and-guide.ts";
 import { runListAndComparisonAudit } from "./verification/list-audit.ts";
 import { runModuleExistenceCheck } from "./verification/module-check.ts";
+import { runRustArchitectureLintVerification } from "./verification/rust-lint.ts";
 import { runSpecAuditVerification } from "./verification/spec-audit.ts";
 import { runWiringAudit } from "./verification/wiring-audit.ts";
 
@@ -16,6 +17,7 @@ console.log("🚀 Nanai Android Mascot - 実装確認スクリプト");
 console.log("==================================================\n");
 
 runBuildAndTestVerification();
+runRustArchitectureLintVerification();
 runSpecAuditVerification();
 runModuleExistenceCheck();
 runListAndComparisonAudit();

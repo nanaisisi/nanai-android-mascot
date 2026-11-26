@@ -3,6 +3,8 @@
  * @brief Collision detection and part detection helpers for mouse events
  */
 
+import { resolveContainedImageRect } from "../../../surface/interaction/transparency.js";
+
 interface CollisionRectLike {
 	left?: number;
 	top?: number;
@@ -87,11 +89,30 @@ function resolveDomFallbackRect(scopeId: number): CollisionRectLike | null {
 
 	if (!hasPositiveSize(baseRect)) return null;
 
+	const resolvedRect =
+		naturalWidth !== undefined && naturalHeight !== undefined
+			? resolveContainedImageRect(
+					{
+						left: baseRect.left ?? 0,
+						top: baseRect.top ?? 0,
+						width: baseRect.width,
+						height: baseRect.height,
+					},
+					naturalWidth,
+					naturalHeight,
+				)
+			: {
+					left: baseRect.left ?? 0,
+					top: baseRect.top ?? 0,
+					width: baseRect.width,
+					height: baseRect.height,
+				};
+
 	return {
-		left: baseRect.left ?? 0,
-		top: baseRect.top ?? 0,
-		width: baseRect.width,
-		height: baseRect.height,
+		left: resolvedRect.left,
+		top: resolvedRect.top,
+		width: resolvedRect.width,
+		height: resolvedRect.height,
 		...(naturalWidth !== undefined ? { naturalWidth } : {}),
 		...(naturalHeight !== undefined ? { naturalHeight } : {}),
 	};

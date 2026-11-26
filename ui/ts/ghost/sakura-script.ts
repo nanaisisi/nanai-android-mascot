@@ -362,7 +362,7 @@ export class SakuraScriptPlayer {
 		const { textEl, dispEl, slotEl } = this.getBalloonElements(app, scope);
 
 		if (slotEl?.style && slotEl.style.display === "none") {
-			slotEl.style.display = "block";
+			slotEl.style.display = "flex";
 		}
 
 		if (textEl) {

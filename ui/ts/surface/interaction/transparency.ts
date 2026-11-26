@@ -1,3 +1,30 @@
+export function resolveContainedImageRect(
+	rect: { left: number; top: number; width: number; height: number },
+	naturalWidth: number,
+	naturalHeight: number,
+): { left: number; top: number; width: number; height: number } {
+	if (
+		naturalWidth <= 0 ||
+		naturalHeight <= 0 ||
+		rect.width <= 0 ||
+		rect.height <= 0
+	) {
+		return rect;
+	}
+	const scale = Math.min(
+		rect.width / naturalWidth,
+		rect.height / naturalHeight,
+	);
+	const width = naturalWidth * scale;
+	const height = naturalHeight * scale;
+	return {
+		left: rect.left + (rect.width - width) / 2,
+		top: rect.top + (rect.height - height) / 2,
+		width,
+		height,
+	};
+}
+
 /**
  * 画像の指定座標が透明ピクセルか判定するユーティリティ
  * クリックスルーおよび透明領域タップ無視の補助に使用
@@ -15,8 +42,14 @@ export function isPixelTransparent(
 	if (img?.tagName !== "IMG") return false;
 	try {
 		const htmlImg = img as HTMLImageElement;
-		const rect = htmlImg.getBoundingClientRect();
-		if (rect.width === 0 || rect.height === 0) return true;
+		const rawRect = htmlImg.getBoundingClientRect();
+		if (rawRect.width === 0 || rawRect.height === 0) return true;
+
+		const rect = resolveContainedImageRect(
+			rawRect,
+			htmlImg.naturalWidth,
+			htmlImg.naturalHeight,
+		);
 
 		// 画像の実際の表示サイズと解像度に合わせてスケール
 		const scaleX = htmlImg.naturalWidth / rect.width;

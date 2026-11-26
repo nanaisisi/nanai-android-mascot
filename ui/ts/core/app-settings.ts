@@ -90,12 +90,13 @@ export const settingsMethods = {
 		const balloonPercent = parseInt(String(balloonScaleVal), 10) || 100;
 		const balloonDisplay = app.elements?.balloonDisplay;
 		if (balloonDisplay) {
-			const translateToken = balloonDisplay.style.transform?.includes(
+			const hasCenterTranslate = balloonDisplay.style.transform?.includes(
 				"translate(-50%, -50%)",
-			)
-				? "translate(-50%, -50%)"
-				: "translateX(-50%)";
-			balloonDisplay.style.transform = `${translateToken} scale(${balloonPercent / 100})`;
+			);
+			const parts: string[] = [];
+			if (hasCenterTranslate) parts.push("translate(-50%, -50%)");
+			if (balloonPercent !== 100) parts.push(`scale(${balloonPercent / 100})`);
+			balloonDisplay.style.transform = parts.join(" ");
 			balloonDisplay.style.transformOrigin = "center center";
 		}
 
@@ -167,7 +168,7 @@ export const settingsMethods = {
 			balloonDisplay.style.display = "block";
 		}
 		if (slotEl) {
-			slotEl.style.display = "block";
+			slotEl.style.display = "flex";
 		}
 		if (isNativeMultiWindow()) {
 			const activeTheme = app.currentBalloonTheme || "default";

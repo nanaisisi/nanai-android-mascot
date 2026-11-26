@@ -3,6 +3,7 @@ import {
 	DOCK_RESTORE_OFFSET,
 	DOCK_RIGHT_THRESHOLD,
 	DRAG_MIN_MOVE,
+	DRAG_MIN_MOVE_TOUCH,
 	DRAG_PADDING,
 	LONG_PRESS_DELAY,
 	STROKE_THRESHOLD,
@@ -408,10 +409,8 @@ export function setupGhostDragging(
 		lastX = clientX;
 		lastY = clientY;
 
-		if (
-			!dragInternalState.hasMoved &&
-			Math.hypot(deltaX, deltaY) > DRAG_MIN_MOVE
-		) {
+		const minMove = isTouchEvt ? DRAG_MIN_MOVE_TOUCH : DRAG_MIN_MOVE;
+		if (!dragInternalState.hasMoved && Math.hypot(deltaX, deltaY) > minMove) {
 			dragInternalState.hasMoved = true;
 			longPress.cancel();
 		}
@@ -575,7 +574,7 @@ export function setupGhostDragging(
 		handleGhostPointerUp(
 			evt,
 			dragInternalState,
-			moveTarget,
+			target,
 			longPress,
 			strokeTracker,
 			nativeDrag,
@@ -584,10 +583,8 @@ export function setupGhostDragging(
 			onGhostDragEnd,
 			onGhostMouseUp,
 			leftClickTracker,
+			moveTarget,
 		);
-		if (moveTarget !== target) {
-			target.classList.remove("is-dragging");
-		}
 	};
 
 	target.addEventListener("mousedown", onPointerDown as EventListener);

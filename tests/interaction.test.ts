@@ -343,3 +343,75 @@ test("dragging ghost-display inside character-slot anchors slot by center relati
 	assert.equal(slotClasses.has("is-dragging"), false);
 	assert.equal(displayClasses.has("is-dragging"), false);
 });
+
+test("touch tap with small jitter fires click and resolveContainedImageRect accounts for object-fit: contain", async () => {
+	const { resolveContainedImageRect } = await import(
+		"../ui/ts/surface/interaction/transparency.js"
+	);
+	assert.deepEqual(
+		resolveContainedImageRect(
+			{ left: 0, top: 0, width: 200, height: 400 },
+			200,
+			200,
+		),
+		{ left: 0, top: 100, width: 200, height: 200 },
+	);
+
+	const clicked: Array<{ x: unknown; y: unknown }> = [];
+	const mockApp = { toggleMenu() {} };
+	const manager = new InteractionManager(mockApp);
+	const listeners: Record<string, (e?: Record<string, unknown>) => void> = {};
+	const globalListeners: Record<
+		string,
+		Array<(e?: Record<string, unknown>) => void>
+	> = {};
+	g.addEventListener = (
+		type: string,
+		cb: (e?: Record<string, unknown>) => void,
+	) => {
+		globalListeners[type] = globalListeners[type] || [];
+		globalListeners[type].push(cb);
+	};
+
+	const target = {
+		style: {},
+		classList: {
+			add() {},
+			remove() {},
+			contains: () => false,
+		},
+		getBoundingClientRect: () => ({
+			left: 100,
+			top: 100,
+			width: 200,
+			height: 400,
+		}),
+		querySelector: () => null,
+		addEventListener(type: string, cb: (e?: Record<string, unknown>) => void) {
+			listeners[type] = cb;
+		},
+	} as unknown as HTMLElement;
+
+	delete g.__TAURI_INTERNALS__;
+	manager.setupDragging(
+		target,
+		(x: unknown, y: unknown) => clicked.push({ x, y }),
+		undefined,
+	);
+
+	listeners.touchstart?.({
+		type: "touchstart",
+		cancelable: true,
+		preventDefault() {},
+		touches: [{ clientX: 150, clientY: 200 }],
+	});
+	for (const cb of globalListeners.touchmove ?? []) {
+		cb({ touches: [{ clientX: 158, clientY: 200 }] });
+	}
+	for (const cb of globalListeners.touchend ?? []) {
+		cb({ changedTouches: [{ clientX: 158, clientY: 200 }] });
+	}
+
+	assert.equal(clicked.length, 1);
+	assert.deepEqual(clicked[0], { x: 158, y: 200 });
+});

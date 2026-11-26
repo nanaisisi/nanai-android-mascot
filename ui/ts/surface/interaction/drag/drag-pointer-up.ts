@@ -174,12 +174,14 @@ export function handleGhostPointerUp(
 	onGhostDragEnd: unknown,
 	onGhostMouseUp: unknown,
 	clickTracker?: ClickTrackerState,
+	dockTarget: HTMLElement = target,
 ) {
 	if (!state.isInteracting) return false;
 	const ev = (e || {}) as PointerEventLike;
 	const wasDragging = state.isDragging;
 	state.isInteracting = false;
 	target.classList.remove("is-dragging");
+	dockTarget.classList.remove("is-dragging");
 
 	const lp = longPress as LongPressLike;
 	const st = strokeTracker as StrokeTrackerLike;
@@ -237,16 +239,16 @@ export function handleGhostPointerUp(
 
 	if (state.isDragging) {
 		if (!isTauriAvailable()) {
-			applyDockingSnap(target, globalThis.innerWidth);
+			applyDockingSnap(dockTarget, globalThis.innerWidth);
 		} else {
-			target.classList.remove("is-docked-left", "is-docked-right");
+			dockTarget.classList.remove("is-docked-left", "is-docked-right");
 			void snapMainWindowOnDragEnd(
 				target,
 				Boolean((e as { ctrlKey?: boolean }).ctrlKey),
 			);
 		}
 	} else {
-		if (restoreFromDocking(target, globalThis.innerWidth)) {
+		if (restoreFromDocking(dockTarget, globalThis.innerWidth)) {
 			return true;
 		}
 

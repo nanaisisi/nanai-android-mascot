@@ -14,6 +14,9 @@ export const DRAG_PADDING = 40;
 /** 初期の遊び（微小な手振れ）の移動距離閾値 (px) */
 export const DRAG_MIN_MOVE = 5;
 
+/** タッチ操作時の初期の遊び閾値 (px) */
+export const DRAG_MIN_MOVE_TOUCH = 12;
+
 /** 左端スナップ退避判定（画面幅の割合） */
 export const DOCK_LEFT_THRESHOLD = 0.12;
 

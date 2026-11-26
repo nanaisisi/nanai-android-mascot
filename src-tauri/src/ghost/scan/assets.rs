@@ -2,7 +2,7 @@
 
 use std::path::{Path, PathBuf};
 
-pub use crate::common::models::ghost::GhostAssets;
+pub use crate::common::models::GhostAssets;
 
 fn find_ci(dir: &Path, names: &[&str]) -> Option<PathBuf> {
     let entries: Vec<_> = std::fs::read_dir(dir).ok()?.flatten().collect();

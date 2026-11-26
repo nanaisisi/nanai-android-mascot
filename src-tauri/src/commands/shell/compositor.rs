@@ -37,13 +37,22 @@ impl ClearFrameBufferRectParams {
     }
 }
 
+fn mutate_frame_buffer(
+    fb: &SurfaceFrameBuffer,
+    op: impl FnOnce(&mut SurfaceFrameBuffer),
+) -> Result<SurfaceFrameBuffer, String> {
+    let mut next = fb.clone();
+    op(&mut next);
+    Ok(next)
+}
+
 #[tauri::command]
 pub fn clear_frame_buffer_rect(
     params: ClearFrameBufferRectParams,
 ) -> Result<SurfaceFrameBuffer, String> {
-    let mut fb = params.fb().clone();
-    fb.clear_rect(params.x(), params.y(), params.w(), params.h());
-    Ok(fb)
+    mutate_frame_buffer(params.fb(), |fb| {
+        fb.clear_rect(params.x(), params.y(), params.w(), params.h());
+    })
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -77,9 +86,9 @@ impl ApplyChromakeyToBufferParams {
 pub fn apply_chromakey_to_buffer(
     params: ApplyChromakeyToBufferParams,
 ) -> Result<SurfaceFrameBuffer, String> {
-    let mut fb = params.fb().clone();
-    fb.apply_chromakey(params.r(), params.g(), params.b());
-    Ok(fb)
+    mutate_frame_buffer(params.fb(), |fb| {
+        fb.apply_chromakey(params.r(), params.g(), params.b());
+    })
 }
 
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -98,7 +107,5 @@ impl ApplyCornerChromakeyToBufferParams {
 pub fn apply_corner_chromakey_to_buffer(
     params: ApplyCornerChromakeyToBufferParams,
 ) -> Result<SurfaceFrameBuffer, String> {
-    let mut fb = params.fb().clone();
-    fb.apply_corner_chromakey();
-    Ok(fb)
+    mutate_frame_buffer(params.fb(), SurfaceFrameBuffer::apply_corner_chromakey)
 }

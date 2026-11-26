@@ -33,7 +33,7 @@ pub fn get_invoke_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         commands::shell::ghost::get_ghost_readme,
         commands::shell::ghost::get_ghost_terms,
         commands::shell::ghost::get_ghost_thumbnail,
-        commands::shell::compositor::surface_composition_plan,
+        commands::shell::manifest::surface_composition_plan,
         commands::shell::compositor::create_surface_frame_buffer,
         commands::shell::compositor::clear_frame_buffer_rect,
         commands::shell::compositor::apply_chromakey_to_buffer,

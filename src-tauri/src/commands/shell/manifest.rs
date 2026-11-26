@@ -1,11 +1,11 @@
-use super::{resolve_ghost_directory, resolve_vfs_path};
+use crate::common::paths::{open_text_file, resolve_ghost_directory, resolve_vfs_path};
 use crate::ui_adapter::shell::{Shell, ShellManifest};
 use nanai_surface::{CompositionLayer, CompositionPlan, DrawMethod};
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 use std::path::PathBuf;
 
-pub fn resolve_shell_dir(
+fn resolve_shell_dir(
     ghost_name: &str,
     shell_name: &str,
     app_handle: &tauri::AppHandle,
@@ -171,18 +171,18 @@ pub fn surface_composition_plan(
 }
 
 /// shell/<name>/readme.txt を読み込む（存在しなければ None）。
-pub fn read_shell_readme(shell_dir: &std::path::Path) -> Option<String> {
+fn read_shell_readme(shell_dir: &std::path::Path) -> Option<String> {
     for f in ["readme.txt", "Readme.txt", "README.TXT"] {
         let p = shell_dir.join(f);
         if p.is_file() {
-            return super::open_text_file(&p).ok();
+            return open_text_file(&p).ok();
         }
     }
     None
 }
 
 /// shell/<name>/thumbnail.png を探索してパスを返す。
-pub fn find_shell_thumbnail(shell_dir: &std::path::Path) -> Option<PathBuf> {
+fn find_shell_thumbnail(shell_dir: &std::path::Path) -> Option<PathBuf> {
     for f in ["thumbnail.png", "Thumbnail.png", "THUMBNAIL.PNG"] {
         let p = shell_dir.join(f);
         if p.is_file() {

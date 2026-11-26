@@ -2,6 +2,9 @@
 
 use super::helpers::{find_file_case_insensitive, process_chromakey_image_bytes};
 use crate::common::paths::{clean_verbatim_path, resolve_asset_path};
+use crate::common::win_icon::{
+    CursorAssetData, decode_cursor_asset_from_bytes, encode_win_icon_or_cursor_data_url,
+};
 use base64::Engine;
 use std::fs;
 use std::path::PathBuf;
@@ -51,6 +54,10 @@ pub fn load_surface_image(
                 .and_then(|e| e.to_str())
                 .unwrap_or("png")
                 .to_lowercase();
+
+            if let Some(data_url) = encode_win_icon_or_cursor_data_url(&ext, &bytes) {
+                return Ok(data_url);
+            }
 
             if ext != "svg"
                 && ext != "pna"
@@ -157,6 +164,77 @@ pub fn load_surface_pna(
     Err(format!("PNA file not found for surface_id: {sid}"))
 }
 
+/// `.cur` / `.ani` / `.ico` 等のカーソルアセットをフレーム列（Data URL + ホットスポット + 待ち時間）として読み込む
+#[tauri::command]
+#[specta::specta]
+pub fn load_cursor_asset(
+    base_kind: String,
+    file: String,
+    ghost_path: Option<String>,
+    shell_name: Option<String>,
+    balloon_name: Option<String>,
+    app_handle: tauri::AppHandle<tauri::Wry>,
+) -> Result<Option<CursorAssetData>, String> {
+    let clean_file = file.trim().trim_start_matches(['/', '\\']);
+    if clean_file.is_empty() {
+        return Ok(None);
+    }
+
+    let mut search_paths: Vec<PathBuf> = Vec::new();
+    match base_kind.as_str() {
+        "balloon" => {
+            if let Some(name) = balloon_name
+                && let Ok(dir) =
+                    crate::commands::shell::balloon::resolve_balloon_dir(&name, &app_handle)
+            {
+                search_paths.push(dir.join(clean_file));
+            }
+        }
+        "shell" => {
+            if let Some(gp) = ghost_path {
+                let clean_gp = clean_verbatim_path(&gp);
+                let base_gp = resolve_asset_path(&clean_gp, &app_handle)
+                    .unwrap_or_else(|_| PathBuf::from(&clean_gp));
+                let sn = shell_name.unwrap_or_else(|| "master".to_string());
+                search_paths.push(base_gp.join("shell").join(&sn).join(clean_file));
+                search_paths.push(base_gp.join("shell").join("master").join(clean_file));
+                search_paths.push(base_gp.join("ghost").join("master").join(clean_file));
+            }
+        }
+        "ghost" => {
+            if let Some(gp) = ghost_path {
+                let clean_gp = clean_verbatim_path(&gp);
+                let base_gp = resolve_asset_path(&clean_gp, &app_handle)
+                    .unwrap_or_else(|_| PathBuf::from(&clean_gp));
+                search_paths.push(base_gp.join("ghost").join("master").join(clean_file));
+                search_paths.push(base_gp.join(clean_file));
+            }
+        }
+        _ => {
+            let clean_path = clean_verbatim_path(clean_file);
+            let resolved = resolve_asset_path(&clean_path, &app_handle)
+                .unwrap_or_else(|_| PathBuf::from(&clean_path));
+            search_paths.push(resolved);
+        }
+    }
+
+    for candidate in search_paths {
+        if let Some(target) = find_file_case_insensitive(&candidate)
+            && target.is_file()
+            && let Ok(bytes) = fs::read(&target)
+        {
+            let ext = target
+                .extension()
+                .and_then(|e| e.to_str())
+                .unwrap_or("png")
+                .to_lowercase();
+            return Ok(decode_cursor_asset_from_bytes(&ext, &bytes));
+        }
+    }
+
+    Ok(None)
+}
+
 fn build_surface_image_candidates(
     shell_dir: &std::path::Path,
     master_dir: &std::path::Path,
@@ -168,10 +246,16 @@ fn build_surface_image_candidates(
             shell_dir.join(format!("{sid}.png")),
             shell_dir.join(format!("{sid}.bmp")),
             shell_dir.join(format!("{sid}.svg")),
+            shell_dir.join(format!("{sid}.ico")),
+            shell_dir.join(format!("{sid}.cur")),
+            shell_dir.join(format!("{sid}.ani")),
             shell_dir.join(format!("{sid}.pna")),
             master_dir.join(format!("{sid}.png")),
             master_dir.join(format!("{sid}.bmp")),
             master_dir.join(format!("{sid}.svg")),
+            master_dir.join(format!("{sid}.ico")),
+            master_dir.join(format!("{sid}.cur")),
+            master_dir.join(format!("{sid}.ani")),
             master_dir.join(format!("{sid}.pna")),
         ];
     };
@@ -187,6 +271,12 @@ fn build_surface_image_candidates(
         shell_dir.join(format!("surface{surface_id_num:04}.gif")),
         shell_dir.join(format!("surface{sid}.webp")),
         shell_dir.join(format!("surface{surface_id_num:04}.webp")),
+        shell_dir.join(format!("surface{sid}.ico")),
+        shell_dir.join(format!("surface{surface_id_num:04}.ico")),
+        shell_dir.join(format!("surface{sid}.cur")),
+        shell_dir.join(format!("surface{surface_id_num:04}.cur")),
+        shell_dir.join(format!("surface{sid}.ani")),
+        shell_dir.join(format!("surface{surface_id_num:04}.ani")),
         shell_dir.join(format!("surface{sid}.jpg")),
         shell_dir.join(format!("surface{sid}.jpeg")),
         shell_dir.join(format!("surface{sid}.pna")),
@@ -202,6 +292,12 @@ fn build_surface_image_candidates(
         master_dir.join(format!("surface{surface_id_num:04}.gif")),
         master_dir.join(format!("surface{sid}.webp")),
         master_dir.join(format!("surface{surface_id_num:04}.webp")),
+        master_dir.join(format!("surface{sid}.ico")),
+        master_dir.join(format!("surface{surface_id_num:04}.ico")),
+        master_dir.join(format!("surface{sid}.cur")),
+        master_dir.join(format!("surface{surface_id_num:04}.cur")),
+        master_dir.join(format!("surface{sid}.ani")),
+        master_dir.join(format!("surface{surface_id_num:04}.ani")),
         master_dir.join(format!("surface{sid}.jpg")),
         master_dir.join(format!("surface{sid}.jpeg")),
     ];
@@ -321,7 +417,13 @@ mod tests {
         let candidates = build_surface_image_candidates(shell_dir, master_dir, "0", Some(0));
         assert!(candidates.contains(&shell_dir.join("surface0.gif")));
         assert!(candidates.contains(&shell_dir.join("surface0.webp")));
+        assert!(candidates.contains(&shell_dir.join("surface0.ico")));
+        assert!(candidates.contains(&shell_dir.join("surface0.cur")));
+        assert!(candidates.contains(&shell_dir.join("surface0.ani")));
         assert!(candidates.contains(&master_dir.join("surface0.gif")));
+        assert!(candidates.contains(&master_dir.join("surface0.ico")));
+        assert!(candidates.contains(&master_dir.join("surface0.cur")));
+        assert!(candidates.contains(&master_dir.join("surface0.ani")));
 
         // PNG signature + acTL chunk before IDAT
         let mut apng = b"\x89PNG\r\n\x1a\n".to_vec();

@@ -5,6 +5,11 @@
  */
 import { AppConfig } from "../core/config.js";
 import {
+	applyAnimatedElementsCursor,
+	type CursorAssetData,
+	stopAnimatedCursor,
+} from "../core/cursor-animator.js";
+import {
 	convertFileSrc,
 	invoke,
 	isSinglePageUi,
@@ -324,11 +329,42 @@ export const ghostSurfaceMethods = {
 		)
 			return;
 		const cursors = this.currentGhost?.assets?.cursors;
-		const cursorValue =
-			Array.isArray(cursors) && cursors.length > 0
-				? `url("${convertFileSrc(cursors[0])}"), auto`
-				: "";
 		const slots = document.querySelectorAll<HTMLElement>(".character-slot");
+		if (!Array.isArray(cursors) || cursors.length === 0) {
+			stopAnimatedCursor("ghost-slot-cursor");
+			for (const slot of slots) {
+				slot.style.cursor = "";
+			}
+			return;
+		}
+		if (globalThis.__TAURI__) {
+			void invoke<CursorAssetData | null>("load_cursor_asset", {
+				baseKind: "path",
+				file: cursors[0],
+			})
+				.then((asset) => {
+					if (asset && Array.isArray(asset.frames) && asset.frames.length > 0) {
+						applyAnimatedElementsCursor(
+							"ghost-slot-cursor",
+							slots,
+							asset.frames,
+						);
+						return;
+					}
+					const fallback = `url("${convertFileSrc(cursors[0])}"), auto`;
+					for (const slot of slots) {
+						slot.style.cursor = fallback;
+					}
+				})
+				.catch(() => {
+					const fallback = `url("${convertFileSrc(cursors[0])}"), auto`;
+					for (const slot of slots) {
+						slot.style.cursor = fallback;
+					}
+				});
+			return;
+		}
+		const cursorValue = `url("${convertFileSrc(cursors[0])}"), auto`;
 		for (const slot of slots) {
 			slot.style.cursor = cursorValue;
 		}

@@ -1,3 +1,7 @@
+import {
+	applyAnimatedCssVarCursor,
+	type CursorAssetData,
+} from "../../cursor-animator.js";
 import { invoke } from "../../tauri-helper.js";
 import { wasmBridge } from "../../wasm-bridge.js";
 
@@ -381,11 +385,28 @@ export function applyAssetProperties(
 		if (filename) {
 			const themeName = (instance?.currentBalloonTheme as string) || "default";
 			if (globalThis.__TAURI__) {
-				void invoke("load_balloon_image", { name: themeName, file: filename })
-					.then((dataUrl) => {
-						if (dataUrl) {
-							root.style.setProperty(varName, `url("${dataUrl}"), auto`);
+				void invoke<CursorAssetData | null>("load_cursor_asset", {
+					baseKind: "balloon",
+					balloonName: themeName,
+					file: filename,
+				})
+					.then((asset) => {
+						if (
+							asset &&
+							Array.isArray(asset.frames) &&
+							asset.frames.length > 0
+						) {
+							applyAnimatedCssVarCursor(root, varName, asset.frames);
+							return;
 						}
+						return invoke<string | null>("load_balloon_image", {
+							name: themeName,
+							file: filename,
+						}).then((dataUrl) => {
+							if (dataUrl) {
+								root.style.setProperty(varName, `url("${dataUrl}"), auto`);
+							}
+						});
 					})
 					.catch(() => {});
 			} else {

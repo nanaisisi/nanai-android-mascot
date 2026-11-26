@@ -38,7 +38,8 @@ pub fn load_balloon_image(
             })
     } else if let Some(stem) = Path::new(&file).file_stem().and_then(|s| s.to_str()) {
         let extensions = [
-            "png", "bmp", "jpg", "jpeg", "gif", "svg", "PNG", "BMP", "JPG", "JPEG", "GIF", "SVG",
+            "png", "bmp", "jpg", "jpeg", "gif", "svg", "ico", "cur", "ani", "PNG", "BMP", "JPG",
+            "JPEG", "GIF", "SVG", "ICO", "CUR", "ANI",
         ];
         let mut matched = None;
         for ext in &extensions {
@@ -153,6 +154,18 @@ pub fn composite_pna_alpha(base_path: &Path, pna_path: &Path) -> Option<Vec<u8>>
 }
 
 pub fn encode_image_data_url(path: &Path) -> Option<String> {
+    let ext = path
+        .extension()
+        .and_then(|e| e.to_str())
+        .map(|s| s.to_lowercase());
+
+    if let Some(ref e) = ext
+        && matches!(e.as_str(), "ico" | "cur" | "ani")
+    {
+        let bytes = std::fs::read(path).ok()?;
+        return crate::common::win_icon::encode_win_icon_or_cursor_data_url(e, &bytes);
+    }
+
     if let Some(pna_path) = find_sibling_pna(path)
         && let Some(composited_png) = composite_pna_alpha(path, &pna_path)
     {
@@ -163,11 +176,7 @@ pub fn encode_image_data_url(path: &Path) -> Option<String> {
     }
 
     let bytes = std::fs::read(path).ok()?;
-    let mime = match path
-        .extension()
-        .and_then(|e| e.to_str())
-        .map(|s| s.to_lowercase())
-    {
+    let mime = match ext {
         Some(ref e) if e == "png" || e == "pna" => "image/png",
         Some(ref e) if e == "bmp" => "image/bmp",
         Some(ref e) if e == "jpg" || e == "jpeg" => "image/jpeg",

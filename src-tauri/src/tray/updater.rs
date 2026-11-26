@@ -11,6 +11,23 @@ use tauri::Manager;
 use tauri::image::Image;
 
 #[cfg(not(target_os = "android"))]
+fn load_tray_rgba_image(path: &Path, bytes: &[u8]) -> Option<image::RgbaImage> {
+    let ext = path
+        .extension()
+        .and_then(|e| e.to_str())
+        .map(|s| s.to_lowercase())
+        .unwrap_or_default();
+    match ext.as_str() {
+        "ico" | "cur" => crate::common::win_icon::decode_ico_or_cur_largest(bytes).map(|d| d.rgba),
+        "ani" => crate::common::win_icon::decode_ani_steps(bytes)
+            .and_then(|steps| steps.into_iter().next().map(|s| s.rgba)),
+        _ => image::load_from_memory(bytes)
+            .ok()
+            .map(|img| img.to_rgba8()),
+    }
+}
+
+#[cfg(not(target_os = "android"))]
 pub fn update_tray_for_ghost(
     app_handle: &tauri::AppHandle,
     ghost_name: &str,
@@ -50,9 +67,8 @@ pub fn update_tray_for_ghost(
 
         if let Some(icon_path) = tray_path {
             if let Ok(bytes) = std::fs::read(&icon_path)
-                && let Ok(img) = image::load_from_memory(&bytes)
+                && let Some(rgba) = load_tray_rgba_image(&icon_path, &bytes)
             {
-                let rgba = img.to_rgba8();
                 let (width, height) = rgba.dimensions();
                 let icon = Image::new_owned(rgba.into_raw(), width, height);
                 let _ = tray.set_icon(Some(icon));
@@ -94,8 +110,7 @@ pub fn update_tray_icon_from_path(
         && icon_path.exists()
     {
         let bytes = std::fs::read(icon_path).map_err(|e| e.to_string())?;
-        if let Ok(img) = image::load_from_memory(&bytes) {
-            let rgba = img.to_rgba8();
+        if let Some(rgba) = load_tray_rgba_image(icon_path, &bytes) {
             let (width, height) = rgba.dimensions();
             let icon = Image::new_owned(rgba.into_raw(), width, height);
             tray.set_icon(Some(icon)).map_err(|e| e.to_string())?;

@@ -96,6 +96,7 @@ pub fn get_invoke_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         commands::install::create_nar_archive,
         commands::file::load_surface_image,
         commands::file::load_surface_pna,
+        commands::file::load_cursor_asset,
         commands::update::network::commands::check_ghost_update,
         commands::update::network::commands::execute_ghost_update,
         commands::update::network::commands::update_shell,

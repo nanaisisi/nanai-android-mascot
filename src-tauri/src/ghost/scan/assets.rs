@@ -16,15 +16,16 @@ fn find_ci(dir: &Path, names: &[&str]) -> Option<PathBuf> {
     None
 }
 
-fn list_ext(dir: &Path, ext: &str) -> Vec<String> {
+fn list_exts(dir: &Path, exts: &[&str]) -> Vec<String> {
     let mut v: Vec<String> = std::fs::read_dir(dir)
         .into_iter()
         .flatten()
         .flatten()
         .filter(|e| {
-            e.path()
-                .extension()
-                .is_some_and(|x| x.to_string_lossy().eq_ignore_ascii_case(ext))
+            e.path().extension().is_some_and(|x| {
+                let s = x.to_string_lossy();
+                exts.iter().any(|ext| s.eq_ignore_ascii_case(ext))
+            })
         })
         .map(|e| e.path().to_string_lossy().to_string())
         .collect();
@@ -43,14 +44,17 @@ pub fn discover_ghost_assets(ghost_root: &Path) -> GhostAssets {
                 "thumbnail.png",
                 "thumbnail.jpg",
                 "thumbnail.jpeg",
+                "thumbnail.ico",
+                "thumbnail.cur",
+                "thumbnail.ani",
                 "thumbnail.pnr",
             ],
         )
         .map(s),
         ai0: find_ci(&master, &["ai0.png"]).map(s),
         ai0_dark: find_ci(&master, &["ai0_dark.png"]).map(s),
-        cursors: list_ext(&master, "cur"),
-        icons: list_ext(&master, "ico"),
+        cursors: list_exts(&master, &["cur", "ani"]),
+        icons: list_exts(&master, &["ico"]),
     }
 }
 
@@ -83,6 +87,12 @@ pub fn load_ghost_thumbnail_data_url(path: &Path) -> Option<String> {
         .and_then(|e| e.to_str())
         .map(|e| e.to_ascii_lowercase())
         .unwrap_or_default();
+
+    if let Some(data_url) =
+        crate::common::win_icon::encode_win_icon_or_cursor_data_url(&ext, &bytes)
+    {
+        return Some(data_url);
+    }
 
     let (mime, out_bytes) = if ext == "pnr" {
         ("image/png", apply_top_left_transparency(&bytes)?)

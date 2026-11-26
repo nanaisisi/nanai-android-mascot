@@ -367,15 +367,14 @@ pub async fn resize_submenu_window(
         let w = width.clamp(120.0, 360.0);
         let h = height.clamp(32.0, 520.0);
         if let Some(sub_win) = _app_handle.get_webview_window("submenu_window") {
-            if let Ok(anchor) = LAST_SUBMENU_ANCHOR.lock() {
-                if let Some((ax, ay)) = *anchor {
-                    let (tx, ty) = compute_submenu_position(&_app_handle, ax, ay, w, h);
-                    let _ =
-                        sub_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
-                            x: tx,
-                            y: ty,
-                        }));
-                }
+            if let Ok(anchor) = LAST_SUBMENU_ANCHOR.lock()
+                && let Some((ax, ay)) = *anchor
+            {
+                let (tx, ty) = compute_submenu_position(&_app_handle, ax, ay, w, h);
+                let _ = sub_win.set_position(tauri::Position::Logical(tauri::LogicalPosition {
+                    x: tx,
+                    y: ty,
+                }));
             }
             let _ = sub_win.set_size(tauri::Size::Logical(tauri::LogicalSize {
                 width: w,

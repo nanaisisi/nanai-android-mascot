@@ -84,21 +84,20 @@ impl SstpGhostConfig {
     #[allow(clippy::result_large_err)]
     pub fn validate_request(&self, req: &SstpRequest) -> Result<(), SstpResponse> {
         // [sstp.allowcommunicate]: COMMUNICATE メソッドの拒否判定
-        if req.method == SstpMethod::Communicate && !self.allow_communicate {
+        if req.method() == SstpMethod::Communicate && !self.allow_communicate {
             return Err(
                 SstpResponse::refuse().with_error_description("COMMUNICATE disabled by ghost")
             );
         }
 
         // [sstp.allowunspecifiedsend]: ゴーストを指名しない SEND メソッドの拒否判定
-        if req.method == SstpMethod::Send && !self.allow_unspecified_send {
-            let is_specified = req.receiver_ghost_name.is_some()
-                || req.receiver_ghost_hwnd.is_some()
-                || !req.if_ghosts.is_empty();
-            if !is_specified {
-                return Err(SstpResponse::refuse()
-                    .with_error_description("Unspecified SEND disabled by ghost"));
-            }
+        if req.method() == SstpMethod::Send
+            && !self.allow_unspecified_send
+            && !req.is_ghost_specified()
+        {
+            return Err(
+                SstpResponse::refuse().with_error_description("Unspecified SEND disabled by ghost")
+            );
         }
 
         Ok(())

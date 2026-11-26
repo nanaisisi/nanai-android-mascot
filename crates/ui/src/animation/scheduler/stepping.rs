@@ -25,7 +25,15 @@ impl AnimationScheduler {
             let mut stop_others = false;
 
             for anim in anims.iter_mut() {
-                if let Some(event) = anim.advance(delta_ms, scope_id) {
+                if let Some(mut event) = anim.advance(delta_ms, scope_id) {
+                    if let Some(&(ox, oy)) = self
+                        .animation_offsets
+                        .get(&scope_id)
+                        .and_then(|m| m.get(&event.animation_id))
+                    {
+                        event.offset_x = ox;
+                        event.offset_y = oy;
+                    }
                     if event.pattern.surface() == -2 {
                         // surface -2 はスコープ内の他のアニメーションを停止
                         stop_others = true;
@@ -75,9 +83,9 @@ impl AnimationScheduler {
             }
 
             if stop_others {
-                anims.retain(|a| a.is_finished || a.patterns().iter().any(|p| p.surface() == -2));
+                anims.retain(|a| a.is_finished() || a.has_stop_others_pattern());
             } else {
-                anims.retain(|a| !a.is_finished);
+                anims.retain(|a| !a.is_finished());
             }
         }
 
@@ -113,7 +121,7 @@ impl AnimationScheduler {
     pub fn active_count(&self, scope_id: u32) -> usize {
         self.active_animations
             .get(&scope_id)
-            .map(|a| a.iter().filter(|x| !x.is_finished).count())
+            .map(|a| a.iter().filter(|x| !x.is_finished()).count())
             .unwrap_or(0)
     }
 
@@ -123,7 +131,7 @@ impl AnimationScheduler {
             .get(&scope_id)
             .map(|a| {
                 a.iter()
-                    .filter(|x| !x.is_finished)
+                    .filter(|x| !x.is_finished())
                     .map(|x| x.animation_id)
                     .collect()
             })
@@ -136,7 +144,7 @@ impl AnimationScheduler {
             .get(&scope_id)
             .map(|a| {
                 a.iter()
-                    .any(|x| x.animation_id == anim_id && !x.is_finished)
+                    .any(|x| x.animation_id == anim_id && !x.is_finished())
             })
             .unwrap_or(false)
     }

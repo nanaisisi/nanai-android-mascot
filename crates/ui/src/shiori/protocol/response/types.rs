@@ -68,6 +68,27 @@ impl ShioriResponse {
         }
     }
 
+    pub fn with_charset(mut self, charset: impl Into<String>) -> Self {
+        self.charset = charset.into();
+        self
+    }
+
+    pub(crate) fn push_continuation(&mut self, mode: Option<&str>, line: &str) {
+        match mode {
+            Some("value") => {
+                if let Some(v) = self.value.take() {
+                    self.value = Some(format!("{}\n{}", v, line));
+                }
+            }
+            Some("value_notify") => {
+                if let Some(v) = self.value_notify.take() {
+                    self.value_notify = Some(format!("{}\n{}", v, line));
+                }
+            }
+            _ => {}
+        }
+    }
+
     /// OnTeach の追加情報要求（311 Not Enough / 312 Advice）か
     pub fn is_teach_pending(&self) -> bool {
         matches!(self.status, StatusCode::NotEnough | StatusCode::Advice)

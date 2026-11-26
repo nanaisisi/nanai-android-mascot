@@ -26,8 +26,8 @@ impl AnimationScheduler {
         let mut preserved: HashMap<u32, usize> = HashMap::new();
         if let Some(active) = self.active_animations.get(&scope_id) {
             for a in active {
-                if a.is_shared_index && !a.is_finished {
-                    preserved.insert(a.animation_id, a.current_pattern_index);
+                if let Some((id, idx)) = a.shared_index_entry() {
+                    preserved.insert(id, idx);
                 }
             }
         }
@@ -44,10 +44,10 @@ impl AnimationScheduler {
                 && let Some(&saved_index) = preserved.get(&anim.id())
                 && saved_index < anim.patterns().len()
             {
-                let mut active =
+                let active =
                     ActiveAnimation::new(anim.id(), new_surface_id, anim.patterns().to_vec())
-                        .with_options(&opts);
-                active.current_pattern_index = saved_index;
+                        .with_options(&opts)
+                        .with_pattern_index(saved_index);
                 let anims = self.active_animations.entry(scope_id).or_default();
                 anims.push(active);
             }
@@ -88,7 +88,7 @@ impl AnimationScheduler {
         if let Some(anims) = self.active_animations.get_mut(&scope_id) {
             for anim in anims.iter_mut() {
                 if anim.animation_id == anim_id {
-                    anim.is_paused = true;
+                    anim.pause();
                 }
             }
         }
@@ -102,7 +102,7 @@ impl AnimationScheduler {
         if let Some(anims) = self.active_animations.get_mut(&scope_id) {
             for anim in anims.iter_mut() {
                 if anim.animation_id == anim_id {
-                    anim.is_paused = false;
+                    anim.resume();
                 }
             }
         }
@@ -127,10 +127,10 @@ impl AnimationScheduler {
         if let Some(anims) = self.active_animations.get_mut(&scope_id) {
             for a in anims.iter_mut() {
                 if a.animation_id == anim_id {
-                    a.is_finished = true;
+                    a.mark_finished();
                 }
             }
-            anims.retain(|a| !a.is_finished);
+            anims.retain(|a| !a.is_finished());
         }
     }
 
@@ -138,15 +138,6 @@ impl AnimationScheduler {
     pub fn set_animation_offset(&mut self, scope_id: u32, anim_id: u32, x: i32, y: i32) {
         let offsets = self.animation_offsets.entry(scope_id).or_default();
         offsets.insert(anim_id, (x, y));
-
-        if let Some(anims) = self.active_animations.get_mut(&scope_id) {
-            for a in anims.iter_mut() {
-                if a.animation_id == anim_id {
-                    a.offset_x = x;
-                    a.offset_y = y;
-                }
-            }
-        }
     }
 
     /// 動的アニメーション座標オフセットを取得

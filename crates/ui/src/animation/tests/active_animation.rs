@@ -38,7 +38,7 @@ fn test_active_animation_edge_cases() {
     );
     assert!(anim1.advance(15, 0).is_some());
     assert!(anim1.advance(15, 0).is_none());
-    assert!(anim1.is_finished);
+    assert!(anim1.is_finished());
 
     // Paused animation check
     let mut anim_paused = ActiveAnimation::new(
@@ -55,7 +55,7 @@ fn test_active_animation_edge_cases() {
             vec![],
         )],
     );
-    anim_paused.is_paused = true;
+    anim_paused.pause();
     assert!(anim_paused.advance(100, 0).is_none());
 
     // Surface -1 check (is_surface_minus_one)
@@ -74,7 +74,7 @@ fn test_active_animation_edge_cases() {
         )],
     );
     assert!(anim_minus_one.advance(15, 0).is_some());
-    assert!(anim_minus_one.is_finished);
+    assert!(anim_minus_one.is_finished());
 
     // Intermediate surface -1 test
     let mut anim_mid_minus_one = ActiveAnimation::new(
@@ -86,7 +86,7 @@ fn test_active_animation_edge_cases() {
         ],
     );
     assert!(anim_mid_minus_one.advance(15, 0).is_some());
-    assert!(anim_mid_minus_one.is_finished);
+    assert!(anim_mid_minus_one.is_finished());
 
     // Multi pattern
     let mut anim2 = ActiveAnimation::new(
@@ -101,7 +101,7 @@ fn test_active_animation_edge_cases() {
     assert!(anim2.advance(15, 0).is_some());
     assert_eq!(anim2.next_step_at_ms, 30);
     assert!(anim2.advance(25, 0).is_some());
-    assert!(anim2.is_finished);
+    assert!(anim2.is_finished());
 }
 
 #[test]

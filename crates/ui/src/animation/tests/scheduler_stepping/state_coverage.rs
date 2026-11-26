@@ -128,7 +128,7 @@ fn test_animation_scheduler_state_coverage_boost() {
     if let Some(anims) = scheduler.active_animations.get_mut(&0) {
         for a in anims.iter_mut() {
             if a.animation_id == 88 {
-                a.is_finished = true;
+                a.mark_finished();
             }
         }
     }

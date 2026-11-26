@@ -9,18 +9,18 @@ use std::collections::HashSet;
 pub struct ActiveAnimation {
     pub(crate) animation_id: u32,
     pub(crate) base_surface_id: i32,
-    pub(crate) patterns: Vec<AnimationPattern>,
-    pub(crate) current_pattern_index: usize,
+    patterns: Vec<AnimationPattern>,
+    current_pattern_index: usize,
     pub(crate) elapsed_ms: u32,
     pub(crate) next_step_at_ms: u32,
-    pub(crate) is_paused: bool,
-    pub(crate) is_finished: bool,
+    is_paused: bool,
+    is_finished: bool,
     pub(crate) is_background: bool,
     pub(crate) is_exclusive: bool,
     pub(crate) exclusive_targets: Option<HashSet<u32>>,
     pub(crate) is_shared_index: bool,
-    pub(crate) offset_x: i32,
-    pub(crate) offset_y: i32,
+    offset_x: i32,
+    offset_y: i32,
 }
 
 #[allow(dead_code)]
@@ -31,12 +31,6 @@ impl ActiveAnimation {
     }
     pub fn base_surface_id(&self) -> i32 {
         self.base_surface_id
-    }
-    pub fn patterns(&self) -> &[AnimationPattern] {
-        &self.patterns
-    }
-    pub fn current_pattern_index(&self) -> usize {
-        self.current_pattern_index
     }
     pub fn elapsed_ms(&self) -> u32 {
         self.elapsed_ms
@@ -67,6 +61,51 @@ impl ActiveAnimation {
     }
     pub fn offset_y(&self) -> i32 {
         self.offset_y
+    }
+
+    pub(crate) fn with_pattern_index(mut self, index: usize) -> Self {
+        self.current_pattern_index = index;
+        self
+    }
+
+    pub(crate) fn with_offset(mut self, x: i32, y: i32) -> Self {
+        self.offset_x = x;
+        self.offset_y = y;
+        self
+    }
+
+    pub(crate) fn shared_index_entry(&self) -> Option<(u32, usize)> {
+        if self.is_shared_index && !self.is_finished {
+            Some((self.animation_id, self.current_pattern_index))
+        } else {
+            None
+        }
+    }
+
+    pub(crate) fn has_stop_others_pattern(&self) -> bool {
+        self.patterns.iter().any(|p| p.surface() == -2)
+    }
+
+    pub(crate) fn pause(&mut self) {
+        self.is_paused = true;
+    }
+
+    pub(crate) fn resume(&mut self) {
+        self.is_paused = false;
+    }
+
+    pub(crate) fn mark_finished(&mut self) {
+        self.is_finished = true;
+    }
+
+    pub(crate) fn apply_offset_from(
+        &mut self,
+        offsets: &std::collections::HashMap<u32, (i32, i32)>,
+    ) {
+        if let Some(&(x, y)) = offsets.get(&self.animation_id) {
+            self.offset_x = x;
+            self.offset_y = y;
+        }
     }
 }
 

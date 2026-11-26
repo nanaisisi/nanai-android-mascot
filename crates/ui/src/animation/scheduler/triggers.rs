@@ -8,7 +8,7 @@ impl AnimationScheduler {
     pub fn is_blocked_by_exclusive(&self, scope_id: u32, anim_id: u32) -> bool {
         if let Some(anims) = self.active_animations.get(&scope_id) {
             for a in anims {
-                if a.is_exclusive && !a.is_finished {
+                if a.is_exclusive && !a.is_finished() {
                     if let Some(ref targets) = a.exclusive_targets {
                         if targets.contains(&anim_id) {
                             return true;
@@ -42,26 +42,25 @@ impl AnimationScheduler {
             for a in anims.iter_mut() {
                 if let Some(ref targets) = options.exclusive_targets {
                     if targets.contains(&a.animation_id) {
-                        a.is_finished = true;
+                        a.mark_finished();
                     }
                 } else if a.animation_id != anim.id() {
-                    a.is_finished = true;
+                    a.mark_finished();
                 }
             }
         }
 
-        let mut active = ActiveAnimation::new(anim.id(), base_surface_id, anim.patterns().to_vec())
-            .with_options(&options);
         let (ox, oy) = self.get_animation_offset(scope_id, anim.id());
-        active.offset_x = ox;
-        active.offset_y = oy;
+        let mut active = ActiveAnimation::new(anim.id(), base_surface_id, anim.patterns().to_vec())
+            .with_options(&options)
+            .with_offset(ox, oy);
         if self.is_animation_paused(scope_id, anim.id()) {
-            active.is_paused = true;
+            active.pause();
         }
 
         let anims = self.active_animations.entry(scope_id).or_default();
         // 同一IDのアニメーションが既に再生中の場合は差し替えるか重複防止
-        anims.retain(|a| a.animation_id != anim.id() || a.is_finished);
+        anims.retain(|a| a.animation_id != anim.id() || a.is_finished());
         anims.push(active);
     }
 

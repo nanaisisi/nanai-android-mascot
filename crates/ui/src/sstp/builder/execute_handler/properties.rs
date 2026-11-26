@@ -17,11 +17,10 @@ pub(super) fn handle_property_cookie_commands(
                 Some(SstpResponse::bad_request().with_error_description("missing property name"))
             } else {
                 let val = ctx
-                    .properties()
-                    .get(prop_name)
-                    .or_else(|| ctx.properties().get(&prop_name.to_lowercase()))
-                    .cloned()
-                    .unwrap_or_default();
+                    .property(prop_name)
+                    .or_else(|| ctx.property(&prop_name.to_lowercase()))
+                    .unwrap_or_default()
+                    .to_string();
                 Some(SstpResponse::ok(None).with_additional_data(val))
             }
         }
@@ -41,11 +40,9 @@ pub(super) fn handle_property_cookie_commands(
                 Some(SstpResponse::bad_request().with_error_description("missing cookie name"))
             } else {
                 let val = ctx
-                    .cookies()
-                    .get(ctx.sender())
-                    .and_then(|m| m.get(cookie_name))
-                    .cloned()
-                    .unwrap_or_default();
+                    .cookie(ctx.sender(), cookie_name)
+                    .unwrap_or_default()
+                    .to_string();
                 Some(SstpResponse::ok(None).with_additional_data(val))
             }
         }
@@ -62,11 +59,10 @@ pub(super) fn handle_property_cookie_commands(
             }
             let ghost_target = args.first().map(|s| s.as_str()).unwrap_or(ctx.name());
             let path = ctx
-                .properties()
-                .get(&format!("ghost.{}.path", ghost_target.to_lowercase()))
-                .or_else(|| ctx.properties().get("ghostpath"))
-                .cloned()
-                .unwrap_or_default();
+                .property(&format!("ghost.{}.path", ghost_target.to_lowercase()))
+                .or_else(|| ctx.property("ghostpath"))
+                .unwrap_or_default()
+                .to_string();
             Some(SstpResponse::ok(None).with_additional_data(path))
         }
         "getshellpath" => {
@@ -75,11 +71,10 @@ pub(super) fn handle_property_cookie_commands(
             }
             let shell_target = args.first().map(|s| s.as_str()).unwrap_or(ctx.shell_name());
             let path = ctx
-                .properties()
-                .get(&format!("shell.{}.path", shell_target.to_lowercase()))
-                .or_else(|| ctx.properties().get("shellpath"))
-                .cloned()
-                .unwrap_or_default();
+                .property(&format!("shell.{}.path", shell_target.to_lowercase()))
+                .or_else(|| ctx.property("shellpath"))
+                .unwrap_or_default()
+                .to_string();
             Some(SstpResponse::ok(None).with_additional_data(path))
         }
         "getballoonpath" => {
@@ -91,11 +86,10 @@ pub(super) fn handle_property_cookie_commands(
                 .map(|s| s.as_str())
                 .unwrap_or(ctx.balloon_name());
             let path = ctx
-                .properties()
-                .get(&format!("balloon.{}.path", balloon_target.to_lowercase()))
-                .or_else(|| ctx.properties().get("balloonpath"))
-                .cloned()
-                .unwrap_or_default();
+                .property(&format!("balloon.{}.path", balloon_target.to_lowercase()))
+                .or_else(|| ctx.property("balloonpath"))
+                .unwrap_or_default()
+                .to_string();
             Some(SstpResponse::ok(None).with_additional_data(path))
         }
         _ => None,

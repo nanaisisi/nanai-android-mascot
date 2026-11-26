@@ -115,6 +115,14 @@ impl SstpRequest {
     pub fn references(&self) -> &HashMap<String, String> {
         &self.references
     }
+    pub fn reference(&self, key: &str) -> Option<&str> {
+        self.references.get(key).map(String::as_str)
+    }
+    pub fn is_ghost_specified(&self) -> bool {
+        self.receiver_ghost_name.is_some()
+            || self.receiver_ghost_hwnd.is_some()
+            || !self.if_ghosts.is_empty()
+    }
     pub fn pass_thru(&self) -> &HashMap<String, String> {
         &self.pass_thru
     }

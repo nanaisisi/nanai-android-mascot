@@ -59,6 +59,9 @@ impl SstpResponse {
     pub fn references_mut(&mut self) -> &mut HashMap<String, String> {
         &mut self.references
     }
+    pub fn set_reference(&mut self, key: impl Into<String>, value: impl Into<String>) {
+        self.references.insert(key.into(), value.into());
+    }
     pub fn pass_thru(&self) -> &HashMap<String, String> {
         &self.pass_thru
     }

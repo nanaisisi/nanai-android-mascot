@@ -8,10 +8,10 @@ use std::sync::{LazyLock, Mutex};
 /// Global in-memory SHIORI state for WASM target (guest mode)
 #[derive(Default)]
 pub struct ShioriGuestState {
-    pub(crate) is_loaded: bool,
-    pub(crate) dir_path: String,
-    pub(crate) virtual_fs: HashMap<String, Vec<u8>>,
-    pub(crate) request_count: usize,
+    is_loaded: bool,
+    dir_path: String,
+    virtual_fs: HashMap<String, Vec<u8>>,
+    request_count: usize,
 }
 
 #[allow(dead_code)]
@@ -28,6 +28,15 @@ impl ShioriGuestState {
     }
     pub fn request_count(&self) -> usize {
         self.request_count
+    }
+
+    pub(crate) fn mark_loaded(&mut self, dir_path: String) {
+        self.is_loaded = true;
+        self.dir_path = dir_path;
+    }
+
+    pub(crate) fn mark_unloaded(&mut self) {
+        self.is_loaded = false;
     }
 }
 
@@ -120,8 +129,7 @@ pub unsafe extern "C" fn load(dir_ptr: *const u8, len: usize) -> i32 {
     };
 
     if let Ok(mut state) = GUEST_STATE.lock() {
-        state.is_loaded = true;
-        state.dir_path = dir;
+        state.mark_loaded(dir);
         1
     } else {
         0
@@ -156,7 +164,7 @@ pub unsafe extern "C" fn request(req_ptr: *const u8, len_ptr: *mut usize) -> *mu
     };
 
     let response = if let Ok(mut state) = GUEST_STATE.lock() {
-        if !state.is_loaded {
+        if !state.is_loaded() {
             "SHIORI/3.0 500 Internal Server Error\r\nCharset: UTF-8\r\n\r\n".to_string()
         } else {
             state.handle_request(&req_str)
@@ -193,7 +201,7 @@ pub unsafe extern "C" fn shiori_request(req_ptr: *const u8, len_ptr: *mut usize)
 #[unsafe(no_mangle)]
 pub extern "C" fn unload() -> i32 {
     if let Ok(mut state) = GUEST_STATE.lock() {
-        state.is_loaded = false;
+        state.mark_unloaded();
         1
     } else {
         0
@@ -225,7 +233,7 @@ mod tests {
         let res_close = state.handle_request("GET SHIORI/3.0\r\nID: OnClose\r\n\r\n");
         assert!(res_close.contains("さようなら"));
 
-        assert_eq!(state.request_count, 4);
+        assert_eq!(state.request_count(), 4);
     }
 
     #[test]

@@ -2,7 +2,7 @@
 
 use super::super::super::super::types::*;
 use super::super::ShioriResponse;
-use super::super::{is_header_key, key_str_prefix, push_continuation};
+use super::super::{is_header_key, key_str_prefix};
 
 impl ShioriResponse {
     /// テキストから SHIORI/3.0 レスポンスをパースする（LF / CRLF 両対応）
@@ -38,7 +38,7 @@ impl ShioriResponse {
                     let key_ok = !key.trim().contains(char::is_whitespace)
                         || key.trim().starts_with("X-SSTP-");
                     if !key_ok && !is_header_key(key) {
-                        push_continuation(&mut res, in_value, line);
+                        res.push_continuation(in_value, line);
                         continue;
                     }
                     let key_l = key.trim().to_lowercase();
@@ -87,7 +87,7 @@ impl ShioriResponse {
                         }
                     }
                 }
-                None => push_continuation(&mut res, in_value, line),
+                None => res.push_continuation(in_value, line),
             }
         }
 

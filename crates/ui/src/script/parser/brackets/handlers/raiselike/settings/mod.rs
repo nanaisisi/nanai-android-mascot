@@ -1,8 +1,8 @@
 //! 設定系ブラケットコマンドハンドラーモジュール
 
-pub mod handlers;
+mod handlers;
 
 #[cfg(test)]
 mod tests;
 
-pub(crate) use handlers::*;
+pub(crate) use handlers::handle_setting_command;

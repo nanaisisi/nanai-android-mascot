@@ -1,5 +1,5 @@
 use super::info::{balloon_descript_map, resolve_balloon_dir};
-use crate::common::paths::{open_text_file, resolve_vfs_path};
+use crate::common::paths::resolve_vfs_path;
 use std::collections::BTreeMap;
 use std::path::Path;
 

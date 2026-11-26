@@ -1,5 +1,5 @@
-use super::{open_text_file, resolve_ghost_directory};
 use crate::common::models::GhostInfo;
+use crate::common::paths::{open_text_file, resolve_ghost_directory};
 use crate::ghost::scan::assets::{discover_ghost_assets, load_ghost_thumbnail_data_url};
 use crate::ghost::scan::directory::manifest::parse_ghost_manifest;
 use crate::ghost::scan::directory::package_files::{
@@ -9,7 +9,7 @@ use crate::ghost::scan::shell::{load_shiori_menu_bitmap_data_url, scan_shells_fr
 use crate::ghost::scan::translator::{find_ghost_makoto, find_shell_makoto, translate_order};
 use std::path::{Path, PathBuf};
 
-pub fn resolve_ghost_dir_opt(ghost_name: &str, app_handle: &tauri::AppHandle) -> Option<PathBuf> {
+fn resolve_ghost_dir_opt(ghost_name: &str, app_handle: &tauri::AppHandle) -> Option<PathBuf> {
     resolve_ghost_directory(ghost_name, app_handle).ok()
 }
 

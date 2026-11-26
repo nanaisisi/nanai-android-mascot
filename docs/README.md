@@ -79,6 +79,7 @@ _(※現在各ドメインごとに整理中)_
 - **[android-window-architecture.md](doc/nam-spec/android-window-architecture.md)** - Android ウインドウアーキテクチャおよびオーバーレイ提供方式の検討・計画（全5案比較・メニュー維持・独自仕様）
 - **[android-native-overlay-study.md](doc/nam-spec/android-native-overlay-study.md)** - Android オーバーレイ ネイティブ化案 検討書（オーバーレイ特化・案 3〜4 詳細・SHIORI 連携）
 - **[android-unified-overlay.md](doc/nam-spec/android-unified-overlay.md)** - Android 全キャラ単一ウインドウ統合表示（opt-in）
+- **[custom-operation-system-study.md](doc/nam-spec/custom-operation-system-study.md)** - NAM 独自操作システムおよびメニュー・サブメニュー拡張 検討書（機能互換・表示維持・3種選択式・Desktop/Android 差分対応）
 - **[plugin-and-shiori-fallback-spec.md](doc/nam-spec/plugin-and-shiori-fallback-spec.md)** - プラグイン & SHIORI 読込み・代替読込み (Fallback) 仕様書
 - **[wasm-and-plugin-extensibility.md](doc/nam-spec/wasm-and-plugin-extensibility.md)** - WASM化指針 & JavaScript拡張システム仕様書
 - **[shiori-support-design.md](doc/architecture/shiori-support-design.md)** - SHIORI 対応検討・実行アーキテクチャ設計（単一ゴースト複数キャラクター前提）

@@ -36,3 +36,12 @@
 
 - **[rust-migration-summary.md](./rust-migration-summary.md)**：総論
   - 各論（1〜5）の検討結果の統合、ハイブリッドアーキテクチャの最終決定、および段階的移行ロードマップ。
+
+---
+
+## 4. SHIORI 実行基盤・互換設計
+
+- **[shiori-runtime-and-dynamic-module-policy.md](./shiori-runtime-and-dynamic-module-policy.md)**
+  - SHIORI 実行環境および動的モジュール配信・ロード方針（WebView 主導・`wasmi` 削減・DFM・サイドローディング）。
+- **[shiori-support-design.md](./shiori-support-design.md)**
+  - 単一ゴースト・複数キャラクター前提での SHIORI 対応検討・実行アーキテクチャ設計（`.so` 分離、`ssu` SAORI シム、段階ロードマップ）。

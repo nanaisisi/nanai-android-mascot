@@ -80,6 +80,7 @@ _(※現在各ドメインごとに整理中)_
 - **[android-unified-overlay.md](doc/nam-spec/android-unified-overlay.md)** - Android 全キャラ単一ウインドウ統合表示（opt-in）
 - **[plugin-and-shiori-fallback-spec.md](doc/nam-spec/plugin-and-shiori-fallback-spec.md)** - プラグイン & SHIORI 読込み・代替読込み (Fallback) 仕様書
 - **[wasm-and-plugin-extensibility.md](doc/nam-spec/wasm-and-plugin-extensibility.md)** - WASM化指針 & JavaScript拡張システム仕様書
+- **[shiori-support-design.md](doc/architecture/shiori-support-design.md)** - SHIORI 対応検討・実行アーキテクチャ設計（単一ゴースト複数キャラクター前提）
 - **[shiori-integration.md](doc/nam-spec/shiori-integration.md)** - SHIORI 組み込み統合技術仕様
 - **[ssp-compatibility-reference.md](doc/nam-spec/ssp-compatibility-reference.md)** - SSP 仕様ベース 統合互換リファレンスマニュアル
 - **[local-reference-and-test-spec.md](doc/nam-spec/local-reference-and-test-spec.md)** - ローカル外部仕様・試験環境（local/）連携仕様書

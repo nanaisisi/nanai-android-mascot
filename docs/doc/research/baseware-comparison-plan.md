@@ -54,6 +54,7 @@ _(※既存の [compare_baseware.md](compare_baseware.md) に記載している 
   - 文字送り・スクロール・タグ互換・縦書き・独自拡張の扱い
 - **3.4 SHIORI / SAORI / MAKOTO / PLUGIN 実行方式**
   - Windows DLL ロード、32bit/64bit ブリッジ、Wine / ホストプロセス、ネイティブ `.so` / 静的リンク、WASM、フォールバック戦略
+  - 本作側の前提設計: [shiori-support-design.md](../architecture/shiori-support-design.md)
 - **3.5 外部連携・補助プロトコル**
   - SSTP / FMO / ネットワーク更新（`updates2.dau` 等）/ NAR インストール / 文字コード（`Shift_JIS` ↔ `UTF-8`）
 - **3.6 UI・操作性・モバイル適応**

@@ -35,7 +35,9 @@
 		"active": true,
 		"targets": "all",
 		"resources": {
-			"../assets/ghost/mock_nanai": "ghost/mock_nanai"
+			"../assets/ghost/mock_nanai": "ghost/mock_nanai",
+			"../assets/balloon/nam": "balloon/nam",
+			"../assets/balloon/nam_vertical": "balloon/nam_vertical"
 		},
 		"icon": [
 			"icons/32x32.png",

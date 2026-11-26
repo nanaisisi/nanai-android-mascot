@@ -32,6 +32,7 @@ test("menuMethods covers toggleMenu, toggleHtmlMenu, syncMenuGhosts, hideMenu, a
 			currentGhost: { name: string; shells: string[] } | null;
 			shells: string[] | null;
 			currentShell: string | null;
+			scanGhosts?: () => Promise<void>;
 		};
 		currentBalloonTheme: string;
 		availableBalloons: Array<{ name: string; dir_name: string }>;
@@ -183,6 +184,34 @@ test("menuMethods covers toggleMenu, toggleHtmlMenu, syncMenuGhosts, hideMenu, a
 		(p) => (p.msg as { type?: string })?.type === "sync-balloons",
 	)?.msg as { balloons?: unknown[] } | undefined;
 	assert.deepEqual(balloonsMsg?.balloons, [{ name: "NAM", dir_name: "nam" }]);
+	const scopeDefaultMsg = posted.find(
+		(p) => (p.msg as { type?: string })?.type === "sync-scope",
+	)?.msg as { resetSubmenu?: boolean } | undefined;
+	assert.equal(scopeDefaultMsg?.resetSubmenu, false);
+
+	// Test scanGhosts is called when gc.ghosts is empty ([]) and resetSubmenu: true is forwarded
+	posted.length = 0;
+	let scannedGhosts = false;
+	mockApp.ghostController = {
+		ghosts: [],
+		currentGhost: null,
+		shells: ["master"],
+		currentShell: "master",
+		scanGhosts: async () => {
+			scannedGhosts = true;
+			mockApp.ghostController.ghosts = [{ name: "mock_nanai" }];
+		},
+	};
+	await mockApp.syncMenuGhosts(0, { resetSubmenu: true });
+	assert.equal(scannedGhosts, true);
+	const scopeResetMsg = posted.find(
+		(p) => (p.msg as { type?: string })?.type === "sync-scope",
+	)?.msg as { resetSubmenu?: boolean } | undefined;
+	assert.equal(scopeResetMsg?.resetSubmenu, true);
+	const rescannedGhostsMsg = posted.find(
+		(p) => (p.msg as { type?: string })?.type === "sync-ghosts",
+	)?.msg as { ghosts?: Array<{ name: string }> } | undefined;
+	assert.deepEqual(rescannedGhostsMsg?.ghosts, [{ name: "mock_nanai" }]);
 
 	assert.ok(true);
 });

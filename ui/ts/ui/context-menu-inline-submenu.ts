@@ -29,6 +29,7 @@ export class InlineSubmenuController {
 	private currentBalloonTheme: string | null = null;
 	private cachedRecentGhosts: RecentGhostInput[] = [];
 	private cachedPlugins: PluginMenuItem[] = [];
+	private hasSyncedBalloons = false;
 	private activeType: string | null = null;
 	private activeTrigger: Element | null = null;
 
@@ -65,6 +66,7 @@ export class InlineSubmenuController {
 		}
 		if (patch.balloons !== undefined) {
 			this.cachedBalloons = patch.balloons;
+			this.hasSyncedBalloons = true;
 		}
 		if (patch.currentBalloonTheme !== undefined) {
 			this.currentBalloonTheme = patch.currentBalloonTheme;
@@ -114,8 +116,9 @@ export class InlineSubmenuController {
 		this.positionPanel(panelEl, triggerBtn);
 
 		if (
-			(menuType === "ghost" || menuType === "call-ghost") &&
-			this.cachedGhosts.length === 0
+			((menuType === "ghost" || menuType === "call-ghost") &&
+				this.cachedGhosts.length === 0) ||
+			(menuType === "balloon" && this.cachedBalloons.length === 0)
 		) {
 			void this.dispatcher.dispatchAction("request-sync");
 		}
@@ -209,6 +212,8 @@ export class InlineSubmenuController {
 			cachedRecentGhosts: this.cachedRecentGhosts,
 			cachedPlugins: this.cachedPlugins,
 			container: panelEl,
+			skipDirectInvoke: true,
+			hasSyncedBalloons: this.hasSyncedBalloons,
 			dispatchSubmenuAction: (action, payload) => {
 				this.close(false);
 				void this.dispatcher.dispatchAction(action, payload);

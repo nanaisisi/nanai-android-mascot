@@ -9,6 +9,7 @@ interface MockElement {
 	hidden: boolean;
 	scrollTop: number;
 	textContent: string;
+	_innerHTML: string;
 	innerHTML: string;
 	className: string;
 	dataset: Record<string, string>;
@@ -81,7 +82,16 @@ function createMockElement(
 		hidden: false,
 		scrollTop: 0,
 		textContent: "",
-		innerHTML: "",
+		_innerHTML: "",
+		get innerHTML() {
+			return this._innerHTML;
+		},
+		set innerHTML(val: string) {
+			this._innerHTML = val;
+			if (val === "") {
+				this.children = [];
+			}
+		},
 		className: classes.join(" "),
 		dataset: {},
 		attributes: {},
@@ -316,6 +326,32 @@ function dispatchKeydown(key: string) {
 
 test("Android shows SSP submenu beside existing main menu without replacing it", () => {
 	assert.equal(bodyEl.classList.contains("inline-submenu-mode"), true);
+
+	// Opening balloon submenu before initial sync requests sync without direct invoke and live-renders on response
+	parentMessages.length = 0;
+	invokedCommands.length = 0;
+	byId.get("balloon-btn")?.click();
+	assert.equal(inlinePanelEl.hidden, false);
+	assert.ok(inlinePanelEl.innerHTML.includes("読み込み中..."));
+	assert.equal(invokedCommands.includes("scan_balloons"), false);
+	assert.equal(
+		parentMessages.some(
+			(p) => (p.msg as { action?: string })?.action === "request-sync",
+		),
+		true,
+	);
+
+	// sync-scope with resetSubmenu: false keeps open submenu and sync-balloons live-updates it
+	dispatchWindowMessage({ type: "sync-scope", scope: 0, resetSubmenu: false });
+	assert.equal(inlinePanelEl.hidden, false);
+	dispatchWindowMessage({
+		type: "sync-balloons",
+		balloons: [{ dir_name: "nam", name: "NAMデフォルト+" }],
+	});
+	assert.equal(inlinePanelEl.hidden, false);
+	assert.ok(inlinePanelEl.children.length > 0);
+	byId.get("balloon-btn")?.click();
+	assert.equal(inlinePanelEl.hidden, true);
 
 	dispatchWindowMessage({
 		type: "sync-ghosts",

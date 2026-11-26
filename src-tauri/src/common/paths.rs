@@ -51,6 +51,17 @@ impl PathsInterface for AppPathResolver {
     }
 }
 
+fn strip_assets_prefix(clean: &str) -> Option<PathBuf> {
+    if clean == "assets" {
+        return Some(PathBuf::from("."));
+    }
+    clean
+        .strip_prefix("assets/")
+        .or_else(|| clean.strip_prefix(r"assets\"))
+        .filter(|s| !s.is_empty())
+        .map(PathBuf::from)
+}
+
 pub fn resolve_asset_path(
     relative_path: &str,
     app_handle: &tauri::AppHandle,
@@ -65,7 +76,7 @@ pub fn resolve_asset_path(
         return Ok(path);
     }
 
-    let path_candidates = vec![
+    let mut path_candidates = vec![
         {
             let current_dir = std::env::current_dir().unwrap_or_else(|_| PathBuf::from("."));
             let project_root = current_dir
@@ -94,6 +105,15 @@ pub fn resolve_asset_path(
             .unwrap_or_else(|_| PathBuf::from("."))
             .join(&path),
     ];
+
+    if let Some(stripped) = strip_assets_prefix(&clean) {
+        if let Ok(app_dir) = app_handle.path().app_data_dir() {
+            path_candidates.push(app_dir.join(&stripped));
+        }
+        if let Ok(resource_dir) = app_handle.path().resource_dir() {
+            path_candidates.push(resource_dir.join(&stripped));
+        }
+    }
 
     for candidate in &path_candidates {
         if candidate.exists() {
@@ -266,5 +286,19 @@ mod tests {
         );
         let expected = format!("normal{}path", std::path::MAIN_SEPARATOR);
         assert_eq!(clean_verbatim_path("normal/path"), expected);
+    }
+
+    #[test]
+    fn test_strip_assets_prefix() {
+        assert_eq!(
+            strip_assets_prefix("assets/ghost/mock_nanai"),
+            Some(PathBuf::from("ghost/mock_nanai"))
+        );
+        assert_eq!(
+            strip_assets_prefix(r"assets\balloon\nam"),
+            Some(PathBuf::from(r"balloon\nam"))
+        );
+        assert_eq!(strip_assets_prefix("ghost/mock_nanai"), None);
+        assert_eq!(strip_assets_prefix("assets"), Some(PathBuf::from(".")));
     }
 }

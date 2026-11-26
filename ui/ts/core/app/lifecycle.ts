@@ -103,7 +103,10 @@ export class NanaiAndroidMascotApp {
 		scopeId?: number,
 	) => unknown;
 	declare handleMenuAction: (action: string, payload?: unknown) => unknown;
-	declare syncMenuGhosts: (reqScope?: unknown) => void;
+	declare syncMenuGhosts: (
+		reqScope?: unknown,
+		options?: { resetSubmenu?: boolean },
+	) => void;
 	declare switchToNextGhost: () => void;
 	declare startNetworkUpdate: (
 		targetGhostName?: string | null,

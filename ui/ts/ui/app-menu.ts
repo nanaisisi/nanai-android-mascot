@@ -11,6 +11,7 @@ import { dressupMenuPayload } from "../surface/bind-menu.js";
 type MenuAppContext = NanaiAndroidMascotApp & {
 	cachedMenuCaptions?: Record<string, string>;
 	availablePlugins?: unknown[];
+	_menuIframeLoadBound?: boolean;
 };
 
 /** メニュー/クイックパネル関連メソッド (NanaiAndroidMascotApp に mixin) */
@@ -59,17 +60,43 @@ export const menuMethods = {
 		const nextState = isVisible ? "none" : "block";
 		menuContainer.style.display = nextState;
 		if (nextState === "block") {
-			app.syncMenuGhosts(scope);
+			const iframeEl = document.getElementById("menu-iframe");
+			if (
+				iframeEl &&
+				!app._menuIframeLoadBound &&
+				typeof iframeEl.addEventListener === "function"
+			) {
+				app._menuIframeLoadBound = true;
+				iframeEl.addEventListener("load", () => {
+					void app.syncMenuGhosts(scope, { resetSubmenu: false });
+				});
+			}
+			void app.syncMenuGhosts(scope, { resetSubmenu: true });
 		}
 	},
 
-	async syncMenuGhosts(scope: number = 0) {
+	async syncMenuGhosts(
+		scope: number = 0,
+		options: { resetSubmenu?: boolean } = {},
+	) {
 		const app = this as unknown as MenuAppContext;
 		const gc = app.ghostController;
 		const sm = app.surfaceManager;
 		const shellNames = gc.shells || ["master"];
 		const currentShellName = gc.currentShell || "master";
-		const ghosts = gc.ghosts || [{ name: AppConfig.paths.fallbackGhostName }];
+		if (
+			(!Array.isArray(gc.ghosts) || gc.ghosts.length === 0) &&
+			typeof (gc as { scanGhosts?: () => Promise<unknown> }).scanGhosts ===
+				"function"
+		) {
+			await (gc as { scanGhosts: () => Promise<unknown> }).scanGhosts();
+		}
+		const ghosts =
+			Array.isArray(gc.ghosts) && gc.ghosts.length > 0
+				? gc.ghosts
+				: gc.currentGhost
+					? [gc.currentGhost]
+					: [{ name: AppConfig.paths.fallbackGhostName }];
 		const rawShells = gc.currentGhost?.shells || shellNames;
 
 		const manifestDescript = (sm?.shellManifest?.descript || {}) as Record<
@@ -159,7 +186,14 @@ export const menuMethods = {
 		const win = (document.getElementById("menu-iframe") as HTMLIFrameElement)
 			?.contentWindow;
 		if (win) {
-			win.postMessage({ type: "sync-scope", scope }, "*");
+			win.postMessage(
+				{
+					type: "sync-scope",
+					scope,
+					resetSubmenu: Boolean(options.resetSubmenu),
+				},
+				"*",
+			);
 			win.postMessage(
 				{
 					type: "sync-ghosts",

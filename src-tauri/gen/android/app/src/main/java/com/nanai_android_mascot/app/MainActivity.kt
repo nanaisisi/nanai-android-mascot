@@ -25,6 +25,7 @@ class MainActivity : TauriActivity() {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     extractBundledGhostIfNeeded()
+    extractBundledBalloonsIfNeeded()
     enableEdgeToEdge()
     super.onCreate(savedInstanceState)
     applyOsWallpaperBackground()
@@ -42,6 +43,26 @@ class MainActivity : TauriActivity() {
       if (!list.isNullOrEmpty()) {
         copyAssetDir(assetBase, targetRoot)
         break
+      }
+    }
+  }
+
+  private fun extractBundledBalloonsIfNeeded() {
+    val bundledBalloons = listOf("nam", "nam_vertical")
+    for (balloonName in bundledBalloons) {
+      val targetRoot = File(filesDir, "balloon/$balloonName")
+      if (File(targetRoot, "descript.txt").exists()) continue
+      val assetCandidates = listOf(
+        "_up_/assets/balloon/$balloonName",
+        "assets/balloon/$balloonName",
+        "balloon/$balloonName"
+      )
+      for (assetBase in assetCandidates) {
+        val list = try { assets.list(assetBase) } catch (_: Exception) { null }
+        if (!list.isNullOrEmpty()) {
+          copyAssetDir(assetBase, targetRoot)
+          break
+        }
       }
     }
   }

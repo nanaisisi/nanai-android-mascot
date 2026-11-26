@@ -24,6 +24,8 @@ export interface SubmenuRenderOptions {
 	cachedRecentGhosts: RecentGhostInput[];
 	cachedPlugins?: PluginMenuItem[];
 	container?: HTMLElement | null;
+	skipDirectInvoke?: boolean;
+	hasSyncedBalloons?: boolean;
 	dispatchSubmenuAction: (action: string, payload?: unknown) => void;
 }
 
@@ -43,6 +45,8 @@ export function renderSubmenuContent({
 	cachedRecentGhosts,
 	cachedPlugins = [],
 	container: customContainer,
+	skipDirectInvoke = false,
+	hasSyncedBalloons = false,
 	dispatchSubmenuAction,
 }: SubmenuRenderOptions) {
 	const container =
@@ -179,17 +183,25 @@ export function renderSubmenuContent({
 		};
 
 		if (!cachedBalloons || cachedBalloons.length === 0) {
-			container.innerHTML = `<div class="menu-item is-disabled"><span class="menu-item-indicator"></span><span class="menu-item-label">読み込み中...</span></div>`;
-			invoke("scan_balloons")
-				.catch(() => invoke("list_balloons"))
-				.then((res) => {
-					if (Array.isArray(res) && res.length > 0) {
-						renderBalloons(res as BalloonMenuItem[]);
-					} else {
-						renderBalloons([]);
-					}
-				})
-				.catch(() => renderBalloons([]));
+			if (skipDirectInvoke) {
+				if (hasSyncedBalloons) {
+					renderBalloons([]);
+				} else {
+					container.innerHTML = `<div class="menu-item is-disabled"><span class="menu-item-indicator"></span><span class="menu-item-label">読み込み中...</span></div>`;
+				}
+			} else {
+				container.innerHTML = `<div class="menu-item is-disabled"><span class="menu-item-indicator"></span><span class="menu-item-label">読み込み中...</span></div>`;
+				invoke("scan_balloons")
+					.catch(() => invoke("list_balloons"))
+					.then((res) => {
+						if (Array.isArray(res) && res.length > 0) {
+							renderBalloons(res as BalloonMenuItem[]);
+						} else {
+							renderBalloons([]);
+						}
+					})
+					.catch(() => renderBalloons([]));
+			}
 		} else {
 			renderBalloons(cachedBalloons);
 		}

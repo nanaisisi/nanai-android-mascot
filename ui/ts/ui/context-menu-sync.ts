@@ -167,7 +167,9 @@ export function setupContextMenuSync(
 					? event.data.scope
 					: parseInt(event.data.scope, 10);
 			if (!Number.isNaN(scope)) {
-				onScopeSync?.();
+				if (event.data.resetSubmenu !== false) {
+					onScopeSync?.();
+				}
 				dispatcher.setScope(scope);
 				renderer.renderDressupSubmenu(null, scope);
 				onDataSync?.({ dressupScope: scope });

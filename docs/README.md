@@ -99,6 +99,7 @@ _(※現在各ドメインごとに整理中)_
 ### 🔬 調査・研究メモ (`doc/research`)
 
 - **[all_desktopmascot.md](doc/research/all_desktopmascot.md)** - デスクトップマスコットの立ち位置・原理検討メモ
+- **[baseware-comparison-plan.md](doc/research/baseware-comparison-plan.md)** - 既存ベースウェア比較検討 計画・目次
 - **[compare_baseware.md](doc/research/compare_baseware.md)** - 互換ベースウェア比較
 - **[compare_chara_solution.md](doc/research/compare_chara_solution.md)** - キャラクターソリューション比較
 - **[compare_device_solution.md](doc/research/compare_device_solution.md)** - 音声アシスタント・スマートデバイス比較

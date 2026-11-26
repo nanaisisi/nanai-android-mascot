@@ -246,21 +246,19 @@ export const ghostShioriMethods = {
 				});
 			} catch (e1) {
 				console.warn(
-					"⚠️ send_shiori_event_typed failed, trying request_shiori:",
+					"⚠️ send_shiori_event_typed failed, trying send_shiori_event:",
 					e1,
 				);
 				try {
-					rawRes = await invoke("request_shiori", {
-						request: {
-							id: eventId,
-							sender: "NanaiAndroidMascot",
+					rawRes = await invoke("send_shiori_event", {
+						params: {
+							event: eventId,
 							references: references.map(String),
-							securityOrigin: "Local",
-							ghostName,
+							ghost_id: ghostName || undefined,
 						},
 					});
 				} catch (e2) {
-					console.error("❌ request_shiori also failed:", e2);
+					console.error("❌ send_shiori_event also failed:", e2);
 				}
 			}
 			const parsed = fromRustResponse(rawRes as Record<string, unknown>);

@@ -9,17 +9,32 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.PixelFormat
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.provider.Settings
 import android.view.Gravity
+import android.view.View
 import android.view.WindowManager
+import android.webkit.JavascriptInterface
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.core.app.NotificationCompat
+import androidx.webkit.WebViewAssetLoader
+import org.json.JSONObject
 
 class NanaiForegroundService : Service() {
+  private val mainHandler = Handler(Looper.getMainLooper())
   private var windowManager: WindowManager? = null
   private var overlayWebView: WebView? = null
   private var overlayParams: WindowManager.LayoutParams? = null
+  private var assetLoader: WebViewAssetLoader? = null
+  private val menuSlot = PopupOverlaySlot("https://appassets.androidplatform.net/menu-iframe.html?overlay=1")
+  private val submenuSlot = PopupOverlaySlot("https://appassets.androidplatform.net/submenu-iframe.html?overlay=1")
+  private var isClickThrough = false
+  private var isOverlayVisible = false
 
   override fun onCreate() {
     super.onCreate()
@@ -30,11 +45,19 @@ class NanaiForegroundService : Service() {
   }
 
   override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-    if (intent?.action == ACTION_STOP) {
-      removeOverlayWindow()
-      stopForeground(STOP_FOREGROUND_REMOVE)
-      stopSelf()
-      return START_NOT_STICKY
+    when (intent?.action) {
+      ACTION_STOP -> {
+        removeOverlayWindow()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
+        return START_NOT_STICKY
+      }
+      ACTION_TOGGLE_CLICK_THROUGH -> {
+        updateClickThrough(!isClickThrough)
+        val nm = getSystemService(NotificationManager::class.java)
+        nm.notify(NOTIFICATION_ID, buildNotification())
+        return START_STICKY
+      }
     }
     ensureOverlayWindow()
     return START_STICKY
@@ -49,78 +72,407 @@ class NanaiForegroundService : Service() {
   }
 
   private fun ensureOverlayWindow() {
-    if (overlayWebView != null || !Settings.canDrawOverlays(this)) return
-    val wm = getSystemService(WINDOW_SERVICE) as? WindowManager ?: return
-    val overlayType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    mainHandler.post {
+      if (overlayWebView != null || !Settings.canDrawOverlays(this)) return@post
+      val wm = getSystemService(WINDOW_SERVICE) as? WindowManager ?: return@post
+      val density = resources.displayMetrics.density
+      val screenW = resources.displayMetrics.widthPixels
+      val screenH = resources.displayMetrics.heightPixels
+      val initialW = (300 * density).toInt().coerceAtMost((screenW * 0.85f).toInt())
+      val initialH = (520 * density).toInt().coerceAtMost((screenH * 0.85f).toInt())
+      val marginX = (12 * density).toInt()
+      val marginY = (48 * density).toInt()
+
+      val overlayType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+      } else {
+        @Suppress("DEPRECATION")
+        WindowManager.LayoutParams.TYPE_PHONE
+      }
+      val params = WindowManager.LayoutParams(
+        initialW,
+        initialH,
+        overlayType,
+        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+          WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+        PixelFormat.TRANSLUCENT
+      ).apply {
+        gravity = Gravity.TOP or Gravity.START
+        x = (screenW - initialW - marginX).coerceAtLeast(0)
+        y = (screenH - initialH - marginY).coerceAtLeast(0)
+      }
+
+      val loader = WebViewAssetLoader.Builder()
+        .setDomain("appassets.androidplatform.net")
+        .addPathHandler("/", WebViewAssetLoader.AssetsPathHandler(this))
+        .build()
+      assetLoader = loader
+
+      val webView = createOverlayWebView(
+        url = "https://appassets.androidplatform.net/index.html?overlay=1",
+        loader = loader,
+        paramsProvider = { overlayParams }
+      ).apply {
+        visibility = if (isOverlayVisible) View.VISIBLE else View.GONE
+      }
+      wm.addView(webView, params)
+      windowManager = wm
+      overlayWebView = webView
+      overlayParams = params
+    }
+  }
+
+  fun setOverlayVisible(visible: Boolean) {
+    isOverlayVisible = visible
+    mainHandler.post {
+      if (visible) {
+        ensureOverlayWindow()
+        overlayWebView?.visibility = View.VISIBLE
+      } else {
+        overlayWebView?.visibility = View.GONE
+        hidePopupSlot(menuSlot)
+        hidePopupSlot(submenuSlot)
+      }
+    }
+  }
+
+  private fun overlayWindowType(): Int =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
     } else {
       @Suppress("DEPRECATION")
       WindowManager.LayoutParams.TYPE_PHONE
     }
-    val params = WindowManager.LayoutParams(
-      WindowManager.LayoutParams.MATCH_PARENT,
-      WindowManager.LayoutParams.MATCH_PARENT,
-      overlayType,
-      WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
-        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
-      PixelFormat.TRANSLUCENT
-    ).apply {
-      gravity = Gravity.TOP or Gravity.START
-    }
-    val webView = WebView(this).apply {
+
+  private fun createOverlayWebView(
+    url: String,
+    loader: WebViewAssetLoader,
+    paramsProvider: () -> WindowManager.LayoutParams?,
+    onPageLoaded: ((WebView) -> Unit)? = null,
+  ): WebView {
+    return WebView(this).apply {
       setBackgroundColor(Color.TRANSPARENT)
       settings.javaScriptEnabled = true
+      settings.domStorageEnabled = true
+      settings.allowFileAccess = false
+      webViewClient = object : WebViewClient() {
+        override fun shouldInterceptRequest(
+          view: WebView,
+          request: WebResourceRequest
+        ): WebResourceResponse? {
+          return loader.shouldInterceptRequest(request.url)
+        }
+
+        override fun onPageFinished(view: WebView, loadedUrl: String?) {
+          super.onPageFinished(view, loadedUrl)
+          onPageLoaded?.invoke(view)
+        }
+      }
+      addJavascriptInterface(
+        OverlayJsBridge(this@NanaiForegroundService, paramsProvider),
+        "__NANAI_OVERLAY_IPC__"
+      )
+      loadUrl(url)
     }
-    wm.addView(webView, params)
-    windowManager = wm
-    overlayWebView = webView
-    overlayParams = params
   }
 
   private fun removeOverlayWindow() {
     val wm = windowManager
     val view = overlayWebView
-    if (wm != null && view != null) {
-      try {
-        wm.removeView(view)
-      } catch (_: IllegalArgumentException) {
-      }
-      view.destroy()
-    }
     overlayWebView = null
     overlayParams = null
     windowManager = null
+    assetLoader = null
+    mainHandler.post {
+      if (wm != null) {
+        menuSlot.destroy(wm)
+        submenuSlot.destroy(wm)
+        if (view != null) {
+          try {
+            wm.removeView(view)
+          } catch (_: IllegalArgumentException) {
+          }
+          view.destroy()
+        }
+      }
+    }
   }
 
   fun updateOverlayTransparency(alpha: Float) {
-    val wm = windowManager ?: return
-    val view = overlayWebView ?: return
-    val params = overlayParams ?: return
-    params.alpha = alpha.coerceIn(0.0f, 1.0f)
-    wm.updateViewLayout(view, params)
+    mainHandler.post {
+      val wm = windowManager ?: return@post
+      val view = overlayWebView ?: return@post
+      val params = overlayParams ?: return@post
+      val clamped = if (isClickThrough && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        alpha.coerceIn(0.0f, 0.8f)
+      } else {
+        alpha.coerceIn(0.0f, 1.0f)
+      }
+      params.alpha = clamped
+      wm.updateViewLayout(view, params)
+    }
   }
 
   fun updateClickThrough(enabled: Boolean) {
-    val wm = windowManager ?: return
-    val view = overlayWebView ?: return
-    val params = overlayParams ?: return
-    params.flags = if (enabled) {
-      params.flags or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-    } else {
-      params.flags and WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE.inv()
+    isClickThrough = enabled
+    mainHandler.post {
+      val wm = windowManager ?: return@post
+      val view = overlayWebView ?: return@post
+      val params = overlayParams ?: return@post
+      params.flags = if (enabled) {
+        params.flags or WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+      } else {
+        params.flags and WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE.inv()
+      }
+      if (enabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && params.alpha > 0.8f) {
+        params.alpha = 0.8f
+      }
+      wm.updateViewLayout(view, params)
     }
-    wm.updateViewLayout(view, params)
   }
 
   fun updateOverlaySize(width: Int, height: Int) {
     if (width <= 0 || height <= 0) return
-    val wm = windowManager ?: return
-    val view = overlayWebView ?: return
-    val params = overlayParams ?: return
-    params.width = width
-    params.height = height
-    wm.updateViewLayout(view, params)
+    mainHandler.post {
+      val wm = windowManager ?: return@post
+      val view = overlayWebView ?: return@post
+      val params = overlayParams ?: return@post
+      val density = resources.displayMetrics.density
+      val screenW = resources.displayMetrics.widthPixels
+      val screenH = resources.displayMetrics.heightPixels
+      params.width = (width * density).toInt().coerceIn((120 * density).toInt(), screenW)
+      params.height = (height * density).toInt().coerceIn((160 * density).toInt(), screenH)
+      params.x = params.x.coerceIn(0, (screenW - params.width).coerceAtLeast(0))
+      params.y = params.y.coerceIn(0, (screenH - params.height).coerceAtLeast(0))
+      wm.updateViewLayout(view, params)
+    }
+  }
+
+  fun moveOverlayBy(dxDp: Float, dyDp: Float) {
+    mainHandler.post {
+      val wm = windowManager ?: return@post
+      val view = overlayWebView ?: return@post
+      val params = overlayParams ?: return@post
+      val density = resources.displayMetrics.density
+      val screenW = resources.displayMetrics.widthPixels
+      val screenH = resources.displayMetrics.heightPixels
+      val dx = (dxDp * density).toInt()
+      val dy = (dyDp * density).toInt()
+      params.x = (params.x + dx).coerceIn(0, (screenW - params.width).coerceAtLeast(0))
+      params.y = (params.y + dy).coerceIn(0, (screenH - params.height).coerceAtLeast(0))
+      wm.updateViewLayout(view, params)
+    }
+  }
+
+  fun getPositionJson(params: WindowManager.LayoutParams?): String {
+    val p = params ?: return """{"x":0,"y":0}"""
+    val density = resources.displayMetrics.density
+    val xDp = if (density > 0f) p.x / density else p.x.toFloat()
+    val yDp = if (density > 0f) p.y / density else p.y.toFloat()
+    return """{"x":${xDp.toInt()},"y":${yDp.toInt()}}"""
+  }
+
+  private fun clampPopupRect(
+    xDp: Double,
+    yDp: Double,
+    widthDp: Double,
+    heightDp: Double,
+    flipUpOnBottomOverflow: Boolean,
+  ): IntArray {
+    val density = resources.displayMetrics.density
+    val screenW = resources.displayMetrics.widthPixels
+    val screenH = resources.displayMetrics.heightPixels
+    val wPx = (widthDp * density).toInt().coerceIn((120 * density).toInt(), screenW)
+    val hPx = (heightDp * density).toInt().coerceIn((80 * density).toInt(), (screenH * 0.9f).toInt())
+    var xPx = (xDp * density).toInt()
+    var yPx = (yDp * density).toInt()
+    val marginPx = (8 * density).toInt()
+
+    if (xPx + wPx > screenW - marginPx) {
+      xPx = (screenW - wPx - marginPx).coerceAtLeast(marginPx)
+    } else {
+      xPx = xPx.coerceAtLeast(marginPx)
+    }
+
+    val safeBottom = screenH - (48 * density).toInt()
+    if (flipUpOnBottomOverflow && yPx + hPx > safeBottom) {
+      yPx = (yPx - hPx).coerceAtLeast(marginPx)
+    }
+    yPx = yPx.coerceIn(marginPx, (screenH - hPx - marginPx).coerceAtLeast(marginPx))
+    return intArrayOf(xPx, yPx, wPx, hPx)
+  }
+
+  private fun showPopupSlot(
+    slot: PopupOverlaySlot,
+    xDp: Double,
+    yDp: Double,
+    widthDp: Double,
+    heightDp: Double,
+    flipUpOnBottomOverflow: Boolean,
+    pendingEventName: String,
+    pendingPayloadJson: String,
+  ) {
+    mainHandler.post {
+      val wm = windowManager ?: return@post
+      val loader = assetLoader ?: return@post
+      val rect = clampPopupRect(xDp, yDp, widthDp, heightDp, flipUpOnBottomOverflow)
+      slot.pendingInitEvent = pendingEventName to pendingPayloadJson
+
+      val existingView = slot.webView
+      val existingParams = slot.params
+      if (existingView != null && existingParams != null) {
+        existingParams.x = rect[0]
+        existingParams.y = rect[1]
+        existingParams.width = rect[2]
+        existingParams.height = rect[3]
+        existingView.visibility = View.VISIBLE
+        wm.updateViewLayout(existingView, existingParams)
+        if (slot.isLoaded) {
+          evalOverlayEvent(existingView, pendingEventName, pendingPayloadJson)
+        }
+        return@post
+      }
+
+      val params = WindowManager.LayoutParams(
+        rect[2],
+        rect[3],
+        overlayWindowType(),
+        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+          WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+        PixelFormat.TRANSLUCENT
+      ).apply {
+        gravity = Gravity.TOP or Gravity.START
+        x = rect[0]
+        y = rect[1]
+      }
+      val webView = createOverlayWebView(
+        url = slot.url,
+        loader = loader,
+        paramsProvider = { slot.params },
+        onPageLoaded = { view ->
+          slot.isLoaded = true
+          slot.pendingInitEvent?.let { (ev, payload) ->
+            evalOverlayEvent(view, ev, payload)
+          }
+        }
+      )
+      slot.params = params
+      slot.webView = webView
+      wm.addView(webView, params)
+    }
+  }
+
+  private fun hidePopupSlot(slot: PopupOverlaySlot) {
+    mainHandler.post {
+      slot.webView?.visibility = View.GONE
+    }
+  }
+
+  private fun resizePopupSlot(slot: PopupOverlaySlot, widthDp: Double, heightDp: Double) {
+    if (widthDp <= 0.0 || heightDp <= 0.0) return
+    mainHandler.post {
+      val wm = windowManager ?: return@post
+      val view = slot.webView ?: return@post
+      val params = slot.params ?: return@post
+      val density = resources.displayMetrics.density
+      val xDp = if (density > 0f) params.x / density.toDouble() else params.x.toDouble()
+      val yDp = if (density > 0f) params.y / density.toDouble() else params.y.toDouble()
+      val rect = clampPopupRect(xDp, yDp, widthDp, heightDp, flipUpOnBottomOverflow = false)
+      params.x = rect[0]
+      params.y = rect[1]
+      params.width = rect[2]
+      params.height = rect[3]
+      wm.updateViewLayout(view, params)
+    }
+  }
+
+  fun showMenuOverlay(xDp: Double, yDp: Double, scope: Int) {
+    val density = resources.displayMetrics.density
+    val existingW = menuSlot.params?.width?.let {
+      val logical = if (density > 0f) it / density.toDouble() else 220.0
+      if (logical in 150.0..380.0) logical else null
+    } ?: 220.0
+    val heightDp = if (scope > 0) 220.0 else 460.0
+    showPopupSlot(
+      slot = menuSlot,
+      xDp = xDp,
+      yDp = yDp,
+      widthDp = existingW,
+      heightDp = heightDp,
+      flipUpOnBottomOverflow = true,
+      pendingEventName = "sync-menu-scope",
+      pendingPayloadJson = scope.toString(),
+    )
+  }
+
+  fun hideMenuOverlay() {
+    hidePopupSlot(menuSlot)
+    hidePopupSlot(submenuSlot)
+  }
+
+  fun resizeMenuOverlay(widthDp: Double, heightDp: Double) {
+    resizePopupSlot(menuSlot, widthDp, heightDp)
+  }
+
+  fun showSubmenuOverlay(
+    menuType: String,
+    xDp: Double,
+    yDp: Double,
+    widthDp: Double,
+    heightDp: Double,
+  ) {
+    val payload = JSONObject().put("type", menuType).toString()
+    showPopupSlot(
+      slot = submenuSlot,
+      xDp = xDp,
+      yDp = yDp,
+      widthDp = widthDp,
+      heightDp = heightDp,
+      flipUpOnBottomOverflow = false,
+      pendingEventName = "set-submenu-type",
+      pendingPayloadJson = payload,
+    )
+  }
+
+  fun hideSubmenuOverlay() {
+    hidePopupSlot(submenuSlot)
+  }
+
+  fun resizeSubmenuOverlay(widthDp: Double, heightDp: Double) {
+    resizePopupSlot(submenuSlot, widthDp, heightDp)
+  }
+
+  private fun allOverlayViews(): List<WebView> =
+    listOfNotNull(overlayWebView, menuSlot.webView, submenuSlot.webView)
+
+  private fun evalOverlayEvent(view: WebView, eventName: String, payloadJson: String) {
+    val eventLit = JSONObject.quote(eventName)
+    val payloadLit = JSONObject.quote(payloadJson)
+    view.evaluateJavascript(
+      "window.__NANAI_OVERLAY_EVENT_DISPATCH__ && window.__NANAI_OVERLAY_EVENT_DISPATCH__($eventLit, $payloadLit);",
+      null
+    )
+  }
+
+  fun dispatchOverlayEvent(eventName: String, payloadJson: String) {
+    mainHandler.post {
+      allOverlayViews().forEach { view ->
+        evalOverlayEvent(view, eventName, payloadJson)
+      }
+    }
+  }
+
+  fun dispatchOverlayIpcResult(reqId: String, ok: Boolean, payloadJson: String) {
+    val reqLit = JSONObject.quote(reqId)
+    val payloadLit = JSONObject.quote(payloadJson)
+    mainHandler.post {
+      allOverlayViews().forEach { view ->
+        view.evaluateJavascript(
+          "window.__NANAI_OVERLAY_IPC_RESOLVE__ && window.__NANAI_OVERLAY_IPC_RESOLVE__($reqLit, $ok, $payloadLit);",
+          null
+        )
+      }
+    }
   }
 
   override fun onBind(intent: Intent?): IBinder? = null
@@ -135,12 +487,10 @@ class NanaiForegroundService : Service() {
       showIntent,
       PendingIntent.FLAG_UPDATE_CURRENT or pendingIntentImmutableFlag()
     )
-    val hideIntent = PendingIntent.getActivity(
+    val toggleTouchIntent = PendingIntent.getService(
       this,
-      2,
-      Intent(this, MainActivity::class.java)
-        .setAction(ACTION_HIDE)
-        .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP),
+      3,
+      Intent(this, NanaiForegroundService::class.java).setAction(ACTION_TOGGLE_CLICK_THROUGH),
       PendingIntent.FLAG_UPDATE_CURRENT or pendingIntentImmutableFlag()
     )
     val stopIntent = PendingIntent.getService(
@@ -150,17 +500,18 @@ class NanaiForegroundService : Service() {
       PendingIntent.FLAG_UPDATE_CURRENT or pendingIntentImmutableFlag()
     )
 
+    val touchLabel = if (isClickThrough) "操作を有効化" else "タッチ透過"
     return NotificationCompat.Builder(this, CHANNEL_ID)
       .setSmallIcon(android.R.drawable.ic_dialog_info)
       .setContentTitle("Nanai Android Mascot が常駐中")
-      .setContentText("ゴースト: ナナイ (タップでメニュー表示)")
+      .setContentText("オーバーレイ表示稼働中 (タップで管理画面を開く)")
       .setContentIntent(contentIntent)
       .setOngoing(true)
       .setAutoCancel(false)
       .setOnlyAlertOnce(true)
       .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
-      .addAction(android.R.drawable.ic_menu_view, "表示", contentIntent)
-      .addAction(android.R.drawable.ic_menu_close_clear_cancel, "隠す", hideIntent)
+      .addAction(android.R.drawable.ic_menu_view, "管理画面", contentIntent)
+      .addAction(android.R.drawable.ic_menu_compass, touchLabel, toggleTouchIntent)
       .addAction(android.R.drawable.ic_menu_close_clear_cancel, "終了", stopIntent)
       .build()
   }
@@ -179,14 +530,100 @@ class NanaiForegroundService : Service() {
   private fun pendingIntentImmutableFlag(): Int =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) PendingIntent.FLAG_IMMUTABLE else 0
 
+  private class PopupOverlaySlot(val url: String) {
+    var webView: WebView? = null
+    var params: WindowManager.LayoutParams? = null
+    var isLoaded: Boolean = false
+    var pendingInitEvent: Pair<String, String>? = null
+
+    fun destroy(wm: WindowManager) {
+      val view = webView
+      webView = null
+      params = null
+      isLoaded = false
+      pendingInitEvent = null
+      if (view != null) {
+        try {
+          wm.removeView(view)
+        } catch (_: IllegalArgumentException) {
+        }
+        view.destroy()
+      }
+    }
+  }
+
+  private class OverlayJsBridge(
+    private val service: NanaiForegroundService,
+    private val paramsProvider: () -> WindowManager.LayoutParams?,
+  ) {
+    @JavascriptInterface
+    fun invoke(reqId: String, cmd: String, argsJson: String) {
+      nativeOverlayInvoke(reqId, cmd, argsJson)
+    }
+
+    @JavascriptInterface
+    fun emitEvent(eventName: String, payloadJson: String) {
+      service.dispatchOverlayEvent(eventName, payloadJson)
+    }
+
+    @JavascriptInterface
+    fun moveWindowBy(dx: Float, dy: Float) {
+      service.moveOverlayBy(dx, dy)
+    }
+
+    @JavascriptInterface
+    fun getWindowPosition(): String {
+      return service.getPositionJson(paramsProvider())
+    }
+  }
+
   companion object {
     @Volatile
     private var instance: NanaiForegroundService? = null
 
     fun getInstance(): NanaiForegroundService? = instance
 
+    @JvmStatic
+    fun resolveOverlayIpc(reqId: String, ok: Boolean, payloadJson: String) {
+      instance?.dispatchOverlayIpcResult(reqId, ok, payloadJson)
+    }
+
+    @JvmStatic
+    fun showMenuFromNative(x: Double, y: Double, scope: Int) {
+      instance?.showMenuOverlay(x, y, scope)
+    }
+
+    @JvmStatic
+    fun hideMenuFromNative() {
+      instance?.hideMenuOverlay()
+    }
+
+    @JvmStatic
+    fun resizeMenuFromNative(width: Double, height: Double) {
+      instance?.resizeMenuOverlay(width, height)
+    }
+
+    @JvmStatic
+    fun showSubmenuFromNative(menuType: String, x: Double, y: Double, width: Double, height: Double) {
+      instance?.showSubmenuOverlay(menuType, x, y, width, height)
+    }
+
+    @JvmStatic
+    fun hideSubmenuFromNative() {
+      instance?.hideSubmenuOverlay()
+    }
+
+    @JvmStatic
+    fun resizeSubmenuFromNative(width: Double, height: Double) {
+      instance?.resizeSubmenuOverlay(width, height)
+    }
+
+    @JvmStatic
+    private external fun nativeOverlayInvoke(reqId: String, cmd: String, argsJson: String)
+
     const val ACTION_HIDE = "com.nanai_android_mascot.app.HIDE"
     const val ACTION_SHOW = "com.nanai_android_mascot.app.SHOW"
+    private const val ACTION_TOGGLE_CLICK_THROUGH = "com.nanai_android_mascot.app.TOGGLE_CLICK_THROUGH"
     private const val CHANNEL_ID = "nanai_mascot_service"
     private const val NOTIFICATION_ID = 1001
     private const val ACTION_STOP = "com.nanai_android_mascot.app.STOP_SERVICE"

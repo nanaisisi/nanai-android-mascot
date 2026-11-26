@@ -18,13 +18,50 @@ fn call_main_activity_static(
     .map_err(|e| format!("MainActivity.{method} 呼び出し失敗: {e}"))
 }
 
+#[cfg(target_os = "android")]
+fn call_main_activity_static_bool(method: &str) -> Result<bool, String> {
+    let ctx = ndk_context::android_context();
+    let vm = unsafe { jni::JavaVM::from_raw(ctx.vm().cast()) };
+    vm.attach_current_thread(|env| -> jni::errors::Result<bool> {
+        let class = env.find_class(jni::strings::JNIString::from(
+            "com/nanai_android_mascot/app/MainActivity",
+        ))?;
+        let res = env.call_static_method(
+            class,
+            jni::strings::JNIString::from(method),
+            jni::jni_sig!(() -> jboolean),
+            &[],
+        )?;
+        res.z()
+    })
+    .map_err(|e| format!("MainActivity.{method} 呼び出し失敗: {e}"))
+}
+
+/// Androidオーバーレイ権限状態取得コマンド
+#[tauri::command]
+#[specta::specta]
+pub async fn get_overlay_permission_state() -> Result<bool, String> {
+    #[cfg(target_os = "android")]
+    {
+        call_main_activity_static_bool("canDrawOverlays")
+    }
+    #[cfg(not(target_os = "android"))]
+    {
+        Ok(true)
+    }
+}
+
 /// Androidオーバーレイ権限リクエスト・案内コマンド
 #[tauri::command]
 #[specta::specta]
 pub async fn request_overlay_permission() -> Result<String, String> {
     #[cfg(target_os = "android")]
     {
-        // 将来的にJNI経由でSettings.ACTION_MANAGE_OVERLAY_PERMISSIONを発行
+        call_main_activity_static(
+            "openOverlayPermissionSettings",
+            jni::jni_sig!(() -> void),
+            &[],
+        )?;
         Ok("Androidオーバーレイ設定画面への誘導を行いました".to_string())
     }
     #[cfg(not(target_os = "android"))]

@@ -13,10 +13,90 @@ import {
 } from "@tauri-apps/api/event";
 import { getCurrentWindow, PhysicalPosition } from "@tauri-apps/api/window";
 
+interface AndroidOverlayIpcBridge {
+	invoke?: (reqId: string, cmd: string, argsJson: string) => void;
+	emitEvent?: (eventName: string, payloadJson: string) => void;
+	moveWindowBy?: (dx: number, dy: number) => void;
+	getWindowPosition?: () => string;
+}
+
+const overlayPending = new Map<
+	string,
+	{ resolve: (v: unknown) => void; reject: (err: unknown) => void }
+>();
+const overlayEventListeners = new Map<string, Set<(event: unknown) => void>>();
+let overlayReqSeq = 0;
+
+const gOverlay = globalThis as unknown as {
+	__NANAI_OVERLAY_IPC__?: AndroidOverlayIpcBridge;
+	__NANAI_OVERLAY_IPC_RESOLVE__?: (
+		reqId: string,
+		ok: boolean,
+		payloadJson: string,
+	) => void;
+	__NANAI_OVERLAY_EVENT_DISPATCH__?: (
+		eventName: string,
+		payloadJson: string,
+	) => void;
+};
+
+gOverlay.__NANAI_OVERLAY_EVENT_DISPATCH__ = (
+	eventName: string,
+	payloadJson: string,
+) => {
+	const listeners = overlayEventListeners.get(eventName);
+	if (!listeners || listeners.size === 0) return;
+	let payload: unknown = payloadJson;
+	try {
+		payload = JSON.parse(payloadJson);
+	} catch (_err) {}
+	const eventObj = { event: eventName, payload };
+	for (const handler of Array.from(listeners)) {
+		try {
+			handler(eventObj);
+		} catch (err) {
+			console.warn(`Overlay event handler error (${eventName}):`, err);
+		}
+	}
+};
+
+gOverlay.__NANAI_OVERLAY_IPC_RESOLVE__ = (
+	reqId: string,
+	ok: boolean,
+	payloadJson: string,
+) => {
+	const entry = overlayPending.get(reqId);
+	if (!entry) return;
+	overlayPending.delete(reqId);
+	try {
+		const parsed = JSON.parse(payloadJson);
+		if (ok) {
+			entry.resolve(parsed);
+		} else {
+			entry.reject(
+				new Error(typeof parsed === "string" ? parsed : payloadJson),
+			);
+		}
+	} catch (err) {
+		if (ok) entry.resolve(payloadJson);
+		else entry.reject(err);
+	}
+};
+
+export function isOverlayWindow(): boolean {
+	if (typeof location === "undefined") return false;
+	return new URLSearchParams(location.search).get("overlay") === "1";
+}
+
+export function isOverlayIpcAvailable(): boolean {
+	return Boolean(gOverlay.__NANAI_OVERLAY_IPC__?.invoke);
+}
+
 /**
  * Tauri環境で動作しているかどうかを判定
  */
 export function isTauriAvailable(): boolean {
+	if (isOverlayIpcAvailable()) return true;
 	const g = globalThis as unknown as Record<string, unknown>;
 	const win =
 		typeof window !== "undefined"
@@ -67,11 +147,28 @@ export function isAndroidMobile(): boolean {
 	return /Android/i.test(navigator.userAgent);
 }
 
+export function getOverlayWindowOrigin(): { x: number; y: number } {
+	if (gOverlay.__NANAI_OVERLAY_IPC__?.getWindowPosition) {
+		try {
+			const parsed = JSON.parse(
+				gOverlay.__NANAI_OVERLAY_IPC__.getWindowPosition(),
+			) as { x?: number; y?: number };
+			if (typeof parsed.x === "number" && typeof parsed.y === "number") {
+				return { x: parsed.x, y: parsed.y };
+			}
+		} catch (_err) {}
+	}
+	return {
+		x: (globalThis as { screenX?: number }).screenX ?? 0,
+		y: (globalThis as { screenY?: number }).screenY ?? 0,
+	};
+}
+
 /**
- * Windows ネイティブ透過マルチウィンドウ環境かどうかを判定
+ * Windows ネイティブ透過マルチウィンドウ、または Android 独立オーバーレイマルチウィンドウ環境かどうかを判定
  */
 export function isNativeMultiWindow(): boolean {
-	return !isAndroidMobile();
+	return !isAndroidMobile() || isOverlayWindow();
 }
 
 /**
@@ -131,6 +228,25 @@ export async function invoke<T = unknown>(
 	}
 
 	try {
+		if (isOverlayIpcAvailable() && gOverlay.__NANAI_OVERLAY_IPC__?.invoke) {
+			const reqId = `ov_${++overlayReqSeq}`;
+			return await new Promise<T>((resolve, reject) => {
+				overlayPending.set(reqId, {
+					resolve: resolve as (v: unknown) => void,
+					reject,
+				});
+				try {
+					gOverlay.__NANAI_OVERLAY_IPC__?.invoke?.(
+						reqId,
+						cmd,
+						JSON.stringify(args ?? {}),
+					);
+				} catch (err) {
+					overlayPending.delete(reqId);
+					reject(err);
+				}
+			});
+		}
 		return await tauriInvoke(cmd, args);
 	} finally {
 		ipcQueueStats.pendingCount--;
@@ -171,6 +287,17 @@ export async function listen(
 	handler: (event: unknown) => void,
 ): Promise<() => void> {
 	if (!isTauriAvailable()) return () => {};
+	if (isOverlayIpcAvailable()) {
+		let set = overlayEventListeners.get(event);
+		if (!set) {
+			set = new Set();
+			overlayEventListeners.set(event, set);
+		}
+		set.add(handler);
+		return () => {
+			set?.delete(handler);
+		};
+	}
 	return await tauriListen(event, handler);
 }
 
@@ -179,6 +306,13 @@ export async function listen(
  */
 export async function emit(event: string, payload?: unknown): Promise<void> {
 	if (!isTauriAvailable()) return;
+	if (isOverlayIpcAvailable()) {
+		gOverlay.__NANAI_OVERLAY_IPC__?.emitEvent?.(
+			event,
+			JSON.stringify(payload ?? null),
+		);
+		return;
+	}
 	await tauriEmit(event, payload);
 }
 

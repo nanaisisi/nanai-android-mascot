@@ -482,6 +482,21 @@ export function setupGhostDragging(
 				return;
 			}
 
+			const overlayBridge = (
+				globalThis as unknown as {
+					__NANAI_OVERLAY_IPC__?: {
+						moveWindowBy?: (dx: number, dy: number) => void;
+					};
+				}
+			).__NANAI_OVERLAY_IPC__;
+			if (overlayBridge?.moveWindowBy) {
+				overlayBridge.moveWindowBy(
+					stepDist > 0 ? clientX - lastX : 0,
+					stepDist > 0 ? clientY - lastY : 0,
+				);
+				return;
+			}
+
 			const offsetParent = moveTarget.offsetParent as HTMLElement | null;
 			const boundsWidth = offsetParent?.clientWidth || globalThis.innerWidth;
 			const boundsHeight = offsetParent?.clientHeight || globalThis.innerHeight;
@@ -627,10 +642,10 @@ export function setupGhostDragging(
 	globalThis.addEventListener("mouseup", onPointerUp as EventListener);
 
 	target.addEventListener("touchstart", onPointerDown as EventListener, {
-		passive: true,
+		passive: false,
 	});
 	globalThis.addEventListener("touchmove", onPointerMove as EventListener, {
-		passive: true,
+		passive: false,
 	});
 	globalThis.addEventListener("touchend", onPointerUp as EventListener);
 

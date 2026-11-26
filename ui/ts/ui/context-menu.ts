@@ -1,4 +1,5 @@
 import {
+	getOverlayWindowOrigin,
 	invoke,
 	isNativeMultiWindow,
 	isTauriAvailable,
@@ -97,8 +98,7 @@ function _triggerSubmenuWindow(
 
 	if (isNativeMultiWindow()) {
 		const rect = buttonEl.getBoundingClientRect();
-		const sX = globalThis.screenX ?? 0;
-		const sY = globalThis.screenY ?? 0;
+		const { x: sX, y: sY } = getOverlayWindowOrigin();
 		const containerRect = document
 			.querySelector(".menu-container")
 			?.getBoundingClientRect();

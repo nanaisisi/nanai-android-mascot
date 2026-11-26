@@ -1,5 +1,10 @@
 import { actionMethods } from "../app-actions.js";
-import { invoke, isSinglePageUi, isTauriAvailable } from "../tauri-helper.js";
+import {
+	invoke,
+	isOverlayWindow,
+	isSinglePageUi,
+	isTauriAvailable,
+} from "../tauri-helper.js";
 
 export async function scanBalloons(appContext: {
 	scanBalloons?: () => Promise<unknown[]>;
@@ -60,7 +65,10 @@ export function initUIEnvironment(appContext: {
 		const androidMenuBtn = document.getElementById("android-menu-btn");
 		if (androidMenuBtn) androidMenuBtn.style.display = "none";
 	}
-	if (isSinglePageUi()) {
+	if (isOverlayWindow() && typeof document !== "undefined" && document.body) {
+		document.body.classList.add("is-android-overlay");
+	}
+	if (isSinglePageUi() && !isOverlayWindow()) {
 		applyAndroidBackgroundImage();
 	}
 	const ids: Record<string, string> = {

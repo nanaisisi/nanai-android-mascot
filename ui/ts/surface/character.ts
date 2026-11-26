@@ -12,6 +12,7 @@ import {
 import {
 	emit,
 	getCurrentWindowPosition,
+	getOverlayWindowOrigin,
 	invoke,
 	isTauriAvailable,
 	listen,
@@ -216,8 +217,9 @@ function openCharacterMenu(
 	clientX?: number,
 	clientY?: number,
 ) {
-	const winX = window.screenX ?? globalThis.screenX ?? 0;
-	const winY = window.screenY ?? globalThis.screenY ?? 0;
+	const origin = getOverlayWindowOrigin();
+	const winX = origin.x;
+	const winY = origin.y;
 
 	const safeClientX = clientX ?? 100;
 	const safeClientY = clientY ?? 100;
@@ -1780,14 +1782,14 @@ function initCharacterWindow() {
 
 	if (typeof img?.addEventListener === "function") {
 		img.addEventListener("touchstart", onPointerDown as EventListener, {
-			passive: true,
+			passive: false,
 		});
 	}
 	root?.addEventListener("touchstart", onPointerDown as EventListener, {
-		passive: true,
+		passive: false,
 	});
 	globalThis.addEventListener("touchmove", onPointerMove as EventListener, {
-		passive: true,
+		passive: false,
 	});
 	globalThis.addEventListener("touchend", onPointerUp as EventListener);
 }

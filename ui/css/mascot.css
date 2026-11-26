@@ -42,6 +42,16 @@
 	z-index: 49;
 }
 
+body.is-android-overlay .character-slot {
+	right: 0.5rem;
+	bottom: 0;
+}
+
+body.is-android-overlay .character-slot.kero-slot {
+	right: 8.5rem;
+	bottom: 0;
+}
+
 .character-slot.is-dragging {
 	transition: none;
 	opacity: 1;

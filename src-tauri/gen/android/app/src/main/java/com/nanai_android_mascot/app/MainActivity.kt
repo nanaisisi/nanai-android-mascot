@@ -22,6 +22,8 @@ import java.lang.ref.WeakReference
 class MainActivity : TauriActivity() {
   private var hasPromptedOverlayThisSession = false
   private var isOverlayDialogShowing = false
+  private var isOverlayServiceEnabled = false
+  private var isActivityForeground = false
 
   override fun onCreate(savedInstanceState: Bundle?) {
     extractBundledGhostIfNeeded()
@@ -105,17 +107,25 @@ class MainActivity : TauriActivity() {
 
   override fun onResume() {
     super.onResume()
+    isActivityForeground = true
     handleServiceIntent(intent)
+    NanaiForegroundService.getInstance()?.setOverlayVisible(false)
     if (Settings.canDrawOverlays(this)) {
       hasPromptedOverlayThisSession = false
-      val intent = Intent(this, NanaiForegroundService::class.java)
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        startForegroundService(intent)
-      } else {
-        startService(intent)
-      }
     } else if (!hasPromptedOverlayThisSession) {
       requestOverlayPermission()
+    }
+  }
+
+  override fun onPause() {
+    isActivityForeground = false
+    super.onPause()
+  }
+
+  override fun onStop() {
+    super.onStop()
+    if (!isChangingConfigurations && isOverlayServiceEnabled && Settings.canDrawOverlays(this)) {
+      NanaiForegroundService.getInstance()?.setOverlayVisible(true)
     }
   }
 
@@ -181,12 +191,16 @@ class MainActivity : TauriActivity() {
   }
 
   fun setupForegroundService(enabled: Boolean) {
+    isOverlayServiceEnabled = enabled
     val serviceIntent = Intent(this, NanaiForegroundService::class.java)
     if (enabled && Settings.canDrawOverlays(this)) {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         startForegroundService(serviceIntent)
       } else {
         startService(serviceIntent)
+      }
+      if (!isActivityForeground) {
+        NanaiForegroundService.getInstance()?.setOverlayVisible(true)
       }
     } else if (!enabled) {
       stopService(serviceIntent)
@@ -231,20 +245,36 @@ class MainActivity : TauriActivity() {
     fun getInstance(): MainActivity? = currentActivity?.get()
 
     @JvmStatic
+    fun canDrawOverlays(): Boolean {
+      val activity = getInstance() ?: return false
+      return Settings.canDrawOverlays(activity)
+    }
+
+    @JvmStatic
+    fun openOverlayPermissionSettings() {
+      val activity = getInstance() ?: return
+      activity.runOnUiThread {
+        activity.startActivity(
+          Intent(
+            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+            Uri.parse("package:${activity.packageName}")
+          )
+        )
+      }
+    }
+
+    @JvmStatic
     fun applyOverlayTransparency(alpha: Float) {
-      getInstance()?.setOverlayTransparency(alpha)
       NanaiForegroundService.getInstance()?.updateOverlayTransparency(alpha)
     }
 
     @JvmStatic
     fun applyClickThrough(enabled: Boolean) {
-      getInstance()?.setClickThrough(enabled)
       NanaiForegroundService.getInstance()?.updateClickThrough(enabled)
     }
 
     @JvmStatic
     fun applyResizeOverlayWindow(width: Int, height: Int) {
-      getInstance()?.resizeOverlayWindow(width, height)
       NanaiForegroundService.getInstance()?.updateOverlaySize(width, height)
     }
 

@@ -1,5 +1,7 @@
 //! Tauri Invoke コマンドハンドラー一括登録モジュール
 
+pub(crate) mod android_overlay_ipc;
+
 use crate::commands;
 use crate::fmo;
 use crate::ghost;
@@ -54,6 +56,7 @@ pub fn get_invoke_handler() -> impl Fn(tauri::ipc::Invoke) -> bool {
         commands::shiori_lifecycle::spawn::spawn_ghost,
         commands::shiori_lifecycle::load::reload_current_ghost_shiori,
         commands::shiori_lifecycle::close::close_ghost,
+        commands::android::get_overlay_permission_state,
         commands::android::request_overlay_permission,
         commands::android::setup_foreground_service,
         commands::android::set_overlay_transparency,

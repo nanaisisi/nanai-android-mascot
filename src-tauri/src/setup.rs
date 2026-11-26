@@ -14,6 +14,7 @@ pub fn setup_app(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>>
         std::env::consts::OS
     );
 
+    crate::invoke::android_overlay_ipc::register_overlay_app_handle(app.handle().clone());
     shiori::fmo::acquire_base_ware_mutexes();
     let _ = jumplist::setup_taskbar_jumplist(app);
 

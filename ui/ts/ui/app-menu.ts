@@ -2,8 +2,9 @@ import type { NanaiAndroidMascotApp } from "../../main.js";
 import { AppConfig } from "../core/config.js";
 import {
 	emit,
+	getOverlayWindowOrigin,
 	invoke,
-	isSinglePageUi,
+	isNativeMultiWindow,
 	isTauriAvailable,
 } from "../core/tauri-helper.js";
 import { dressupMenuPayload } from "../surface/bind-menu.js";
@@ -22,13 +23,8 @@ export const menuMethods = {
 		scope: number = 0,
 	) {
 		const app = this as unknown as MenuAppContext;
-		if (isTauriAvailable() && !isSinglePageUi()) {
-			const winCoords = globalThis as unknown as {
-				screenX?: number;
-				screenY?: number;
-			};
-			const sX = winCoords.screenX ?? 0;
-			const sY = winCoords.screenY ?? 0;
+		if (isTauriAvailable() && isNativeMultiWindow()) {
+			const { x: sX, y: sY } = getOverlayWindowOrigin();
 			const posX = screenX !== null ? screenX : sX + 200;
 			const posY = screenY !== null ? screenY : sY + 100;
 
@@ -218,7 +214,7 @@ export const menuMethods = {
 			await app.scanBalloons?.();
 		}
 
-		if (isTauriAvailable() && !isSinglePageUi()) {
+		if (isTauriAvailable() && isNativeMultiWindow()) {
 			emit("sync-ghosts", {
 				ghosts,
 				currentGhost: gc.currentGhost?.name || gc.currentGhost,
@@ -292,7 +288,7 @@ export const menuMethods = {
 
 	hideMenu() {
 		const app = this as unknown as MenuAppContext;
-		if (isTauriAvailable() && !isSinglePageUi()) {
+		if (isTauriAvailable() && isNativeMultiWindow()) {
 			void invoke("hide_menu_window").catch(() => {});
 		}
 		const menuContainer = app.elements.menuContainer;

@@ -207,41 +207,39 @@ pub fn decode_ani_steps(bytes: &[u8]) -> Option<Vec<DecodedAniStep>> {
                 }
             }
             b"rate" => {
-                for pair in chunk_data.chunks_exact(4) {
+                for pair in chunk_data.as_chunks::<4>().0 {
                     rates.push(u32::from_le_bytes([pair[0], pair[1], pair[2], pair[3]]));
                 }
             }
             b"seq " => {
-                for pair in chunk_data.chunks_exact(4) {
+                for pair in chunk_data.as_chunks::<4>().0 {
                     seq.push(u32::from_le_bytes([pair[0], pair[1], pair[2], pair[3]]));
                 }
             }
-            b"LIST" => {
-                if chunk_data.len() >= 4 && &chunk_data[0..4] == b"fram" {
-                    let mut fpos = 4usize;
-                    while fpos + 8 <= chunk_data.len() {
-                        let sub_id = &chunk_data[fpos..fpos + 4];
-                        let sub_size = u32::from_le_bytes([
-                            chunk_data[fpos + 4],
-                            chunk_data[fpos + 5],
-                            chunk_data[fpos + 6],
-                            chunk_data[fpos + 7],
-                        ]) as usize;
-                        let sub_start = fpos + 8;
-                        let Some(sub_end) = sub_start.checked_add(sub_size) else {
-                            break;
-                        };
-                        if sub_end > chunk_data.len() {
-                            break;
-                        }
-                        if sub_id == b"icon"
-                            && let Some(decoded) =
-                                decode_ico_or_cur_largest(&chunk_data[sub_start..sub_end])
-                        {
-                            frames.push(decoded);
-                        }
-                        fpos = sub_end + (sub_size & 1);
+            b"LIST" if chunk_data.len() >= 4 && &chunk_data[0..4] == b"fram" => {
+                let mut fpos = 4usize;
+                while fpos + 8 <= chunk_data.len() {
+                    let sub_id = &chunk_data[fpos..fpos + 4];
+                    let sub_size = u32::from_le_bytes([
+                        chunk_data[fpos + 4],
+                        chunk_data[fpos + 5],
+                        chunk_data[fpos + 6],
+                        chunk_data[fpos + 7],
+                    ]) as usize;
+                    let sub_start = fpos + 8;
+                    let Some(sub_end) = sub_start.checked_add(sub_size) else {
+                        break;
+                    };
+                    if sub_end > chunk_data.len() {
+                        break;
                     }
+                    if sub_id == b"icon"
+                        && let Some(decoded) =
+                            decode_ico_or_cur_largest(&chunk_data[sub_start..sub_end])
+                    {
+                        frames.push(decoded);
+                    }
+                    fpos = sub_end + (sub_size & 1);
                 }
             }
             _ => {}

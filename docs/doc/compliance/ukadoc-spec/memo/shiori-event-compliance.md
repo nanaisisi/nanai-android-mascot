@@ -5,4 +5,4 @@
 
 ## 実装方針・確認事項
 
-- SHIORI 3.0 / 2.x の GET / NOTIFY コマンド区別、Reference 配列処理、イベントディスパッチ機構の完全実装 (`../../../../../crates/nanai-core/src/shiori_protocol.rs`, `src-tauri/src/commands/shiori/protocol/mod.rs`).
+- SHIORI 3.0 / 2.x の GET / NOTIFY コマンド区別、Reference 配列処理、イベントディスパッチ機構の完全実装 (`../../../../../crates/nanai-core/src/shiori/shiori_protocol.rs`, `src-tauri/src/commands/shiori_requests.rs`, `src-tauri/src/commands/shiori_events.rs`).

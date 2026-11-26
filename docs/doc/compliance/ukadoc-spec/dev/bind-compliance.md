@@ -5,4 +5,4 @@
 
 ## 実装方針・確認事項
 
-- `surfaces.txt` パーサ (`crates/nanai-core/src/surfaces_parser/mod.rs`) および `ui/ts/surface/bind-menu.ts` による `bindgroup`・`bindoption` 定義の解析とレイヤー合成に対応。
+- `surfaces.txt` パーサ (`crates/nanai-core/src/surface/surfaces_parser/mod.rs`) および `ui/ts/surface/bind-menu.ts` による `bindgroup`・`bindoption` 定義の解析とレイヤー合成に対応。

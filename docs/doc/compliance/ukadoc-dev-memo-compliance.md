@@ -16,7 +16,7 @@
 | **`nar.md`**                      | NAR アーカイブ構造・パッケージング                   | **✅ 対応済** | `.nar` 抽出・ZIP 展開処理 (`../../../src-tauri/src/commands/install` および VFS 解決)。                                        |
 | **`ownerdraw.md`**                | オーナードローメニュー仕様                           | **✅ 対応済** | メニューテーマ、背景・サイドバービットマップ適用 (`ui/ts/ui/submenu.ts`, `ui/ts/ui/renderers/menu-renderer.ts`)。              |
 | **`shell.md` / `shell-error.md`** | シェル構造、サーフィス定義、アニメーション           | **✅ 対応済** | `surfaces.txt` パーサ、Seriko アニメーションエンジン、パレット・カラーブレンド合成。                                           |
-| **`update.md`**                   | ネットワーク更新仕様 (`updates.txt`, `updates2.dau`) | **✅ 対応済** | 更新定義パーサ (`src-tauri/src/commands/update/`、`crates/nanai-core/src/update_protocol/mod.rs`) およびネットワーク更新進行管理。 |
+| **`update.md`**                   | ネットワーク更新仕様 (`updates.txt`, `updates2.dau`) | **✅ 対応済** | 更新定義パーサ (`src-tauri/src/commands/update/`、`crates/nanai-core/src/protocol/update_protocol/mod.rs`) およびネットワーク更新進行管理。 |
 
 ---
 

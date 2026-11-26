@@ -1,5 +1,10 @@
 import { assetCache } from "../../core/asset-cache.js";
-import { convertFileSrc } from "../../core/tauri-helper.js";
+import {
+	convertFileSrc,
+	invoke,
+	isAndroidMobile,
+	isTauriAvailable,
+} from "../../core/tauri-helper.js";
 
 export interface ShellMenuTheme {
 	background_color?: string;
@@ -291,15 +296,15 @@ export const menuThemeRenderer = {
 				rootStyle.setProperty(`--${prefix}-repeat`, repeat);
 			};
 
-			const bgUrl = resolveImg(
+			let bgUrl = resolveImg(
 				mt.background_bitmap,
 				Boolean(shioriResources?.["menu.background.bitmap.filename"]?.trim()),
 			);
-			const fgUrl = resolveImg(
+			let fgUrl = resolveImg(
 				mt.foreground_bitmap,
 				Boolean(shioriResources?.["menu.foreground.bitmap.filename"]?.trim()),
 			);
-			const sideUrl = resolveImg(
+			let sideUrl = resolveImg(
 				mt.sidebar_bitmap,
 				Boolean(shioriResources?.["menu.sidebar.bitmap.filename"]?.trim()),
 			);
@@ -406,18 +411,57 @@ export const menuThemeRenderer = {
 			// 即時適用
 			applyStyles(false);
 
+			const resolveAndroidBitmap = async (
+				relPath?: string | null,
+			): Promise<string | null> => {
+				if (!relPath || !isAndroidMobile() || !isTauriAvailable()) return null;
+				if (
+					relPath.startsWith("data:") ||
+					relPath.startsWith("http://") ||
+					relPath.startsWith("https://")
+				) {
+					return relPath;
+				}
+				const match = shellPath
+					.replace(/\\/g, "/")
+					.match(/\/ghost\/([^/]+)\/shell\/([^/]+)/i);
+				const ghostName = match?.[1];
+				const shellName = match?.[2] || resolvedShell?.name || "master";
+				if (!ghostName) return null;
+				try {
+					return await invoke<string | null>("load_shiori_menu_bitmap", {
+						ghostName,
+						shellName,
+						relPath: relPath.replace(/\\/g, "/"),
+					});
+				} catch (_err) {
+					return null;
+				}
+			};
+
 			// 事前ロード完了時に幅の再計算と確定適用
-			void Promise.all([
-				preloadImage(bgUrl),
-				preloadImage(fgUrl),
-				preloadImage(sideUrl),
-			]).then(([, , sideImg]) => {
+			void (async () => {
+				if (isAndroidMobile() && isTauriAvailable()) {
+					const [bgData, fgData, sideData] = await Promise.all([
+						resolveAndroidBitmap(mt.background_bitmap),
+						resolveAndroidBitmap(mt.foreground_bitmap),
+						resolveAndroidBitmap(mt.sidebar_bitmap),
+					]);
+					if (bgData) bgUrl = bgData;
+					if (fgData) fgUrl = fgData;
+					if (sideData) sideUrl = sideData;
+				}
+				const [, , sideImg] = await Promise.all([
+					preloadImage(bgUrl),
+					preloadImage(fgUrl),
+					preloadImage(sideUrl),
+				]);
 				const sideLoadFailed =
 					Boolean(sideUrl) &&
 					typeof Image !== "undefined" &&
 					(!sideImg || sideImg.naturalWidth <= 0);
 				applyStyles(sideLoadFailed);
-			});
+			})();
 		} else {
 			rootStyle.removeProperty("--balloon-bg");
 			rootStyle.removeProperty("--balloon-highlight-bg");

@@ -5,6 +5,7 @@ import {
 	getOverlayWindowOrigin,
 	invoke,
 	isNativeMultiWindow,
+	isOverlayWindow,
 	isTauriAvailable,
 } from "../core/tauri-helper.js";
 import { dressupMenuPayload } from "../surface/bind-menu.js";
@@ -25,8 +26,10 @@ export const menuMethods = {
 		const app = this as unknown as MenuAppContext;
 		if (isTauriAvailable() && isNativeMultiWindow()) {
 			const { x: sX, y: sY } = getOverlayWindowOrigin();
-			const posX = screenX !== null ? screenX : sX + 200;
-			const posY = screenY !== null ? screenY : sY + 100;
+			const defaultOffsetX = isOverlayWindow() ? 40 : 200;
+			const defaultOffsetY = isOverlayWindow() ? 48 : 100;
+			const posX = screenX !== null ? screenX : sX + defaultOffsetX;
+			const posY = screenY !== null ? screenY : sY + defaultOffsetY;
 
 			invoke("show_menu_window", {
 				params: {

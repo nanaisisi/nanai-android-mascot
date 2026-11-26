@@ -59,6 +59,12 @@ export function applyBalloonScale(
 		rawScale = actionOrScale;
 	} else if (BALLOON_SCALE_MAP[actionOrScale]) {
 		rawScale = parseFloat(BALLOON_SCALE_MAP[actionOrScale]) || 1;
+	} else if (actionOrScale.startsWith("balloon-scale-")) {
+		const pct = Number.parseInt(
+			actionOrScale.replace("balloon-scale-", ""),
+			10,
+		);
+		rawScale = Number.isFinite(pct) && pct > 0 ? pct / 100 : 1;
 	} else {
 		rawScale = parseFloat(actionOrScale) || 1;
 	}
@@ -80,16 +86,32 @@ export function applyBalloonScale(
 	const dpiScale = manager.dpiScale || manager.app?.balloonDpiScale || 1;
 	const finalScale = +(scale * dpiScale).toFixed(4);
 	const percent = Math.round(scale * 100);
+	if (manager.app?.settings) {
+		(manager.app.settings as Record<string, unknown>).balloonScale =
+			String(percent);
+		(manager.app as { saveSettings?: () => void }).saveSettings?.();
+	}
 
 	if (typeof document !== "undefined") {
 		const root = document.documentElement;
 		if (root) {
 			root.style.setProperty("--balloon-user-scale", String(scale));
 		}
-		const balloonEl = document.querySelector(".balloon") as HTMLElement | null;
-		if (balloonEl?.style) {
-			balloonEl.style.transform = `scale(${finalScale})`;
-			balloonEl.style.transformOrigin = "top left";
+		if (typeof document.querySelectorAll === "function") {
+			for (const balloonEl of document.querySelectorAll<HTMLElement>(
+				".balloon",
+			)) {
+				balloonEl.style.transform = `scale(${finalScale})`;
+				balloonEl.style.transformOrigin = "top left";
+			}
+		} else {
+			const balloonEl = document.querySelector(
+				".balloon",
+			) as HTMLElement | null;
+			if (balloonEl?.style) {
+				balloonEl.style.transform = `scale(${finalScale})`;
+				balloonEl.style.transformOrigin = "top left";
+			}
 		}
 	}
 

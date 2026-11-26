@@ -13,7 +13,8 @@ import {
 import {
 	convertFileSrc,
 	invoke,
-	isSinglePageUi,
+	isNativeMultiWindow,
+	isOverlayWindow,
 	isTauriAvailable,
 } from "../core/tauri-helper.js";
 import { showBalloonContextMenu } from "../ui/balloon-context-menu.js";
@@ -198,7 +199,7 @@ export const ghostSurfaceMethods = {
 			return;
 		}
 
-		const useMultiWindow = isTauriAvailable() && !isSinglePageUi();
+		const useMultiWindow = isTauriAvailable() && isNativeMultiWindow();
 		if (useMultiWindow) {
 			if (slot) slot.style.display = "none";
 			if (container) container.style.display = "none";
@@ -272,6 +273,24 @@ export const ghostSurfaceMethods = {
 
 			if (!isAnimationFrame && this.app) {
 				applyCharacterScaleToDom(this.app);
+				if (isOverlayWindow() && scopeId === 0 && container) {
+					const fitW = Math.round(
+						Number.parseFloat(container.style.width) ||
+							container.clientWidth ||
+							180,
+					);
+					const fitH = Math.round(
+						Number.parseFloat(container.style.height) ||
+							container.clientHeight ||
+							320,
+					);
+					if (fitW > 0 && fitH > 0) {
+						void invoke("resize_overlay_window", {
+							width: fitW,
+							height: fitH,
+						}).catch(() => {});
+					}
+				}
 			}
 			if (!useMultiWindow) {
 				await notifySurfaceChangeEvents(

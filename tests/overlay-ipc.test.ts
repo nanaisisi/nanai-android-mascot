@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { afterEach, describe, test } from "vitest";
 import {
 	emit,
+	getCurrentWindowPosition,
 	getOverlayWindowOrigin,
 	invoke,
 	isNativeMultiWindow,
@@ -9,6 +10,7 @@ import {
 	isOverlayWindow,
 	isTauriAvailable,
 	listen,
+	moveCurrentWindowBy,
 } from "../ui/ts/core/tauri-helper.js";
 
 type OverlayBridge = {
@@ -156,5 +158,26 @@ describe("Android overlay IPC", () => {
 		await emit("sync-menu-scope", 2);
 
 		assert.deepEqual(received, [1]);
+	});
+
+	test("moveCurrentWindowBy and getCurrentWindowPosition route via __NANAI_OVERLAY_IPC__", async () => {
+		delete globalThis.__TAURI_INTERNALS__;
+		let posX = 100;
+		let posY = 200;
+
+		g.__NANAI_OVERLAY_IPC__ = {
+			invoke: () => {},
+			getWindowPosition: () => JSON.stringify({ x: posX, y: posY }),
+			moveWindowBy: (dx, dy) => {
+				posX += dx;
+				posY += dy;
+			},
+		};
+
+		const initial = await getCurrentWindowPosition();
+		assert.deepEqual(initial, { x: 100, y: 200 });
+
+		await moveCurrentWindowBy(30, -20, { x: 100, y: 200 });
+		assert.deepEqual(await getCurrentWindowPosition(), { x: 130, y: 180 });
 	});
 });

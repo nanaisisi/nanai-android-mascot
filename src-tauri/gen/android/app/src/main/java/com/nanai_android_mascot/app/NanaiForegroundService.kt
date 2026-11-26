@@ -13,10 +13,14 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.provider.Settings
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.WindowManager
+import android.webkit.ConsoleMessage
 import android.webkit.JavascriptInterface
+import android.webkit.WebChromeClient
+import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
@@ -34,6 +38,8 @@ class NanaiForegroundService : Service() {
   private var assetLoader: WebViewAssetLoader? = null
   private val menuSlot = PopupOverlaySlot("https://appassets.androidplatform.net/menu-iframe.html?overlay=1")
   private val submenuSlot = PopupOverlaySlot("https://appassets.androidplatform.net/submenu-iframe.html?overlay=1")
+  private val subcharSlots = mutableMapOf<Int, PopupOverlaySlot>()
+  private val balloonSlots = mutableMapOf<Int, PopupOverlaySlot>()
   private var isClickThrough = false
   private var isOverlayVisible = false
 
@@ -83,8 +89,8 @@ class NanaiForegroundService : Service() {
       val density = resources.displayMetrics.density
       val screenW = resources.displayMetrics.widthPixels
       val screenH = resources.displayMetrics.heightPixels
-      val initialW = (300 * density).toInt().coerceAtMost((screenW * 0.85f).toInt())
-      val initialH = (520 * density).toInt().coerceAtMost((screenH * 0.85f).toInt())
+      val initialW = (180 * density).toInt().coerceAtMost((screenW * 0.75f).toInt())
+      val initialH = (320 * density).toInt().coerceAtMost((screenH * 0.75f).toInt())
       val marginX = (12 * density).toInt()
       val marginY = (48 * density).toInt()
 
@@ -116,6 +122,7 @@ class NanaiForegroundService : Service() {
       val webView = createOverlayWebView(
         url = "https://appassets.androidplatform.net/index.html?overlay=1",
         loader = loader,
+        viewProvider = { overlayWebView },
         paramsProvider = { overlayParams }
       ).apply {
         visibility = if (isOverlayVisible) View.VISIBLE else View.GONE
@@ -129,6 +136,7 @@ class NanaiForegroundService : Service() {
 
   fun setOverlayVisible(visible: Boolean) {
     isOverlayVisible = visible
+    Log.i("NanaiOverlay", "setOverlayVisible($visible), hasView=${overlayWebView != null}")
     mainHandler.post {
       if (visible) {
         ensureOverlayWindow()
@@ -137,6 +145,8 @@ class NanaiForegroundService : Service() {
         overlayWebView?.visibility = View.GONE
         hidePopupSlot(menuSlot)
         hidePopupSlot(submenuSlot)
+        subcharSlots.values.forEach { hidePopupSlot(it) }
+        balloonSlots.values.forEach { hidePopupSlot(it) }
       }
     }
   }
@@ -152,6 +162,7 @@ class NanaiForegroundService : Service() {
   private fun createOverlayWebView(
     url: String,
     loader: WebViewAssetLoader,
+    viewProvider: () -> WebView?,
     paramsProvider: () -> WindowManager.LayoutParams?,
     onPageLoaded: ((WebView) -> Unit)? = null,
   ): WebView {
@@ -160,6 +171,15 @@ class NanaiForegroundService : Service() {
       settings.javaScriptEnabled = true
       settings.domStorageEnabled = true
       settings.allowFileAccess = false
+      webChromeClient = object : WebChromeClient() {
+        override fun onConsoleMessage(consoleMessage: ConsoleMessage): Boolean {
+          Log.i(
+            "NanaiOverlay",
+            "[WebView ${consoleMessage.messageLevel()}] ${consoleMessage.message()} (${consoleMessage.sourceId()}:${consoleMessage.lineNumber()})"
+          )
+          return true
+        }
+      }
       webViewClient = object : WebViewClient() {
         override fun shouldInterceptRequest(
           view: WebView,
@@ -185,13 +205,22 @@ class NanaiForegroundService : Service() {
           return loader.shouldInterceptRequest(url)
         }
 
+        override fun onReceivedError(
+          view: WebView,
+          request: WebResourceRequest,
+          error: WebResourceError
+        ) {
+          super.onReceivedError(view, request, error)
+          Log.e("NanaiOverlay", "WebView error on ${request.url}: ${error.description}")
+        }
+
         override fun onPageFinished(view: WebView, loadedUrl: String?) {
           super.onPageFinished(view, loadedUrl)
           onPageLoaded?.invoke(view)
         }
       }
       addJavascriptInterface(
-        OverlayJsBridge(this@NanaiForegroundService, paramsProvider),
+        OverlayJsBridge(this@NanaiForegroundService, viewProvider, paramsProvider),
         "__NANAI_OVERLAY_IPC__"
       )
       loadUrl(url)
@@ -209,6 +238,10 @@ class NanaiForegroundService : Service() {
       if (wm != null) {
         menuSlot.destroy(wm)
         submenuSlot.destroy(wm)
+        subcharSlots.values.forEach { it.destroy(wm) }
+        subcharSlots.clear()
+        balloonSlots.values.forEach { it.destroy(wm) }
+        balloonSlots.clear()
         if (view != null) {
           try {
             wm.removeView(view)
@@ -270,20 +303,24 @@ class NanaiForegroundService : Service() {
     }
   }
 
-  fun moveOverlayBy(dxDp: Float, dyDp: Float) {
+  fun moveSlotBy(view: WebView?, params: WindowManager.LayoutParams?, dxDp: Float, dyDp: Float) {
+    val targetView = view ?: return
+    val targetParams = params ?: return
     mainHandler.post {
       val wm = windowManager ?: return@post
-      val view = overlayWebView ?: return@post
-      val params = overlayParams ?: return@post
       val density = resources.displayMetrics.density
       val screenW = resources.displayMetrics.widthPixels
       val screenH = resources.displayMetrics.heightPixels
       val dx = (dxDp * density).toInt()
       val dy = (dyDp * density).toInt()
-      params.x = (params.x + dx).coerceIn(0, (screenW - params.width).coerceAtLeast(0))
-      params.y = (params.y + dy).coerceIn(0, (screenH - params.height).coerceAtLeast(0))
-      wm.updateViewLayout(view, params)
+      targetParams.x = (targetParams.x + dx).coerceIn(0, (screenW - targetParams.width).coerceAtLeast(0))
+      targetParams.y = (targetParams.y + dy).coerceIn(0, (screenH - targetParams.height).coerceAtLeast(0))
+      wm.updateViewLayout(targetView, targetParams)
     }
+  }
+
+  fun moveOverlayBy(dxDp: Float, dyDp: Float) {
+    moveSlotBy(overlayWebView, overlayParams, dxDp, dyDp)
   }
 
   fun getPositionJson(params: WindowManager.LayoutParams?): String {
@@ -370,6 +407,7 @@ class NanaiForegroundService : Service() {
       val webView = createOverlayWebView(
         url = slot.url,
         loader = loader,
+        viewProvider = { slot.webView },
         paramsProvider = { slot.params },
         onPageLoaded = { view ->
           slot.isLoaded = true
@@ -464,8 +502,99 @@ class NanaiForegroundService : Service() {
     resizePopupSlot(submenuSlot, widthDp, heightDp)
   }
 
+  private fun anchorForScopeDp(scopeId: Int): Pair<Double, Double> {
+    val density = resources.displayMetrics.density.takeIf { it > 0f } ?: 1f
+    val targetParams = if (scopeId == 0) overlayParams else subcharSlots[scopeId]?.params
+    if (targetParams != null) {
+      return (targetParams.x / density.toDouble()) to (targetParams.y / density.toDouble())
+    }
+    val screenW = resources.displayMetrics.widthPixels / density.toDouble()
+    val screenH = resources.displayMetrics.heightPixels / density.toDouble()
+    return (screenW - 220.0).coerceAtLeast(16.0) to (screenH - 360.0).coerceAtLeast(48.0)
+  }
+
+  fun showBalloonOverlay(
+    scopeId: Int,
+    payloadJson: String,
+    widthDp: Double,
+    heightDp: Double,
+  ) {
+    mainHandler.post {
+      val slot = balloonSlots.getOrPut(scopeId) {
+        PopupOverlaySlot("https://appassets.androidplatform.net/balloon.html?scope=$scopeId&overlay=1")
+      }
+      val (anchorX, anchorY) = anchorForScopeDp(scopeId)
+      val w = if (widthDp > 0.0) widthDp else 240.0
+      val h = if (heightDp > 0.0) heightDp else 140.0
+      val xDp = slot.params?.let {
+        val d = resources.displayMetrics.density.takeIf { d0 -> d0 > 0f } ?: 1f
+        it.x / d.toDouble()
+      } ?: (anchorX - w - 8.0).coerceAtLeast(8.0)
+      val yDp = slot.params?.let {
+        val d = resources.displayMetrics.density.takeIf { d0 -> d0 > 0f } ?: 1f
+        it.y / d.toDouble()
+      } ?: (anchorY - h - 8.0).coerceAtLeast(24.0)
+      showPopupSlot(
+        slot = slot,
+        xDp = xDp,
+        yDp = yDp,
+        widthDp = w,
+        heightDp = h,
+        flipUpOnBottomOverflow = false,
+        pendingEventName = "balloon-update",
+        pendingPayloadJson = payloadJson,
+      )
+    }
+  }
+
+  fun hideBalloonOverlay(scopeId: Int) {
+    balloonSlots[scopeId]?.let { hidePopupSlot(it) }
+  }
+
+  fun resizeBalloonOverlay(scopeId: Int, widthDp: Double, heightDp: Double) {
+    balloonSlots[scopeId]?.let { resizePopupSlot(it, widthDp, heightDp) }
+  }
+
+  fun showSubcharOverlay(scopeId: Int, widthDp: Double, heightDp: Double) {
+    if (scopeId == 0) {
+      if (widthDp > 0.0 && heightDp > 0.0) {
+        updateOverlaySize(widthDp.toInt(), heightDp.toInt())
+      }
+      return
+    }
+    mainHandler.post {
+      val slot = subcharSlots.getOrPut(scopeId) {
+        PopupOverlaySlot("https://appassets.androidplatform.net/character.html?scope=$scopeId&overlay=1")
+      }
+      val (mainX, mainY) = anchorForScopeDp(0)
+      val w = if (widthDp > 0.0) widthDp else 140.0
+      val h = if (heightDp > 0.0) heightDp else 260.0
+      val d = resources.displayMetrics.density.takeIf { d0 -> d0 > 0f } ?: 1f
+      val xDp = slot.params?.let { it.x / d.toDouble() } ?: (mainX - w * scopeId - 8.0).coerceAtLeast(8.0)
+      val yDp = slot.params?.let { it.y / d.toDouble() } ?: mainY
+      val syncPayload = JSONObject().put("scopeId", scopeId).toString()
+      showPopupSlot(
+        slot = slot,
+        xDp = xDp,
+        yDp = yDp,
+        widthDp = w,
+        heightDp = h,
+        flipUpOnBottomOverflow = false,
+        pendingEventName = "subchar-init",
+        pendingPayloadJson = syncPayload,
+      )
+    }
+  }
+
+  fun hideSubcharOverlay(scopeId: Int) {
+    if (scopeId == 0) return
+    subcharSlots[scopeId]?.let { hidePopupSlot(it) }
+  }
+
   private fun allOverlayViews(): List<WebView> =
-    listOfNotNull(overlayWebView, menuSlot.webView, submenuSlot.webView)
+    listOfNotNull(overlayWebView, menuSlot.webView, submenuSlot.webView) +
+      subcharSlots.values.mapNotNull { it.webView } +
+      balloonSlots.values.mapNotNull { it.webView }
 
   private fun evalOverlayEvent(view: WebView, eventName: String, payloadJson: String) {
     val eventLit = JSONObject.quote(eventName)
@@ -576,6 +705,7 @@ class NanaiForegroundService : Service() {
 
   private class OverlayJsBridge(
     private val service: NanaiForegroundService,
+    private val viewProvider: () -> WebView?,
     private val paramsProvider: () -> WindowManager.LayoutParams?,
   ) {
     @JavascriptInterface
@@ -590,7 +720,7 @@ class NanaiForegroundService : Service() {
 
     @JavascriptInterface
     fun moveWindowBy(dx: Float, dy: Float) {
-      service.moveOverlayBy(dx, dy)
+      service.moveSlotBy(viewProvider(), paramsProvider(), dx, dy)
     }
 
     @JavascriptInterface
@@ -638,6 +768,31 @@ class NanaiForegroundService : Service() {
     @JvmStatic
     fun resizeSubmenuFromNative(width: Double, height: Double) {
       instance?.resizeSubmenuOverlay(width, height)
+    }
+
+    @JvmStatic
+    fun showBalloonFromNative(scopeId: Int, payloadJson: String, width: Double, height: Double) {
+      instance?.showBalloonOverlay(scopeId, payloadJson, width, height)
+    }
+
+    @JvmStatic
+    fun hideBalloonFromNative(scopeId: Int) {
+      instance?.hideBalloonOverlay(scopeId)
+    }
+
+    @JvmStatic
+    fun resizeBalloonFromNative(scopeId: Int, width: Double, height: Double) {
+      instance?.resizeBalloonOverlay(scopeId, width, height)
+    }
+
+    @JvmStatic
+    fun showSubcharFromNative(scopeId: Int, width: Double, height: Double) {
+      instance?.showSubcharOverlay(scopeId, width, height)
+    }
+
+    @JvmStatic
+    fun hideSubcharFromNative(scopeId: Int) {
+      instance?.hideSubcharOverlay(scopeId)
     }
 
     @JvmStatic

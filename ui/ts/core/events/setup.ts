@@ -359,10 +359,23 @@ export const setupMethods = {
 			this as unknown as import("../../../main.js").NanaiAndroidMascotApp;
 		const androidBtn = app.elements?.androidMenuBtn;
 		const androidPanel = app.elements?.androidMenuPanel;
-		const readScalePercent = (key: string, fallbackKey: string): number => {
+		const readScalePercent = (
+			settingKey: "shellScale" | "balloonScale",
+			legacyKey: string,
+		): number => {
+			const fromSettings = (
+				app.settings as Record<string, unknown> | undefined
+			)?.[settingKey];
+			const parsedSettings =
+				fromSettings !== undefined && fromSettings !== null
+					? Number.parseInt(String(fromSettings), 10)
+					: Number.NaN;
+			if (Number.isFinite(parsedSettings) && parsedSettings > 0) {
+				return parsedSettings;
+			}
 			try {
 				const raw =
-					localStorage.getItem(key) || localStorage.getItem(fallbackKey);
+					localStorage.getItem(legacyKey) || localStorage.getItem(settingKey);
 				const parsed = raw ? Number.parseInt(raw, 10) : Number.NaN;
 				if (Number.isFinite(parsed) && parsed > 0) return parsed;
 			} catch (_e) {}
@@ -371,13 +384,13 @@ export const setupMethods = {
 		const syncAndroidScaleLabels = () => {
 			const shellValEl = document.getElementById("android-shell-scale-value");
 			if (shellValEl) {
-				shellValEl.textContent = `${readScalePercent("nanai_shell_scale", "shellScale")}%`;
+				shellValEl.textContent = `${readScalePercent("shellScale", "nanai_shell_scale")}%`;
 			}
 			const balloonValEl = document.getElementById(
 				"android-balloon-scale-value",
 			);
 			if (balloonValEl) {
-				balloonValEl.textContent = `${readScalePercent("nanai_balloon_scale", "balloonScale")}%`;
+				balloonValEl.textContent = `${readScalePercent("balloonScale", "nanai_balloon_scale")}%`;
 			}
 		};
 		const closeAndroidMenu = () => {
@@ -409,12 +422,18 @@ export const setupMethods = {
 				const [kind, op] = scaleSpec.split(":");
 				const isBalloon = kind === "balloon";
 				const current = readScalePercent(
-					isBalloon ? "nanai_balloon_scale" : "nanai_shell_scale",
 					isBalloon ? "balloonScale" : "shellScale",
+					isBalloon ? "nanai_balloon_scale" : "nanai_shell_scale",
 				);
 				const nextRaw =
 					op === "100" ? 100 : current + (Number.parseInt(op, 10) || 0);
 				const next = Math.max(25, Math.min(300, nextRaw));
+				if (app.settings) {
+					(app.settings as Record<string, unknown>)[
+						isBalloon ? "balloonScale" : "shellScale"
+					] = String(next);
+					(app as { saveSettings?: () => void }).saveSettings?.();
+				}
 				void app.handleMenuAction(
 					isBalloon ? `balloon-scale-${next}` : `scale-${next}`,
 				);
@@ -433,18 +452,28 @@ export const setupMethods = {
 					void (async () => {
 						try {
 							if (isOverlayWindow()) {
+								frontendLog("オーバーレイ表示を終了し、アプリ画面へ戻ります");
 								await invoke("setup_foreground_service", { enabled: false });
 								return;
 							}
 							const granted = await invoke<boolean>(
 								"get_overlay_permission_state",
-							).catch(() => false);
+							).catch((err) => {
+								frontendLog(
+									`get_overlay_permission_state failed: ${err}`,
+									"warn",
+								);
+								return false;
+							});
 							if (!granted) {
+								frontendLog("オーバーレイ権限が未許可のため設定画面を開きます");
 								await invoke("request_overlay_permission");
 								return;
 							}
+							frontendLog("オーバーレイ表示へ切り替えます");
 							await invoke("setup_foreground_service", { enabled: true });
 						} catch (err) {
+							frontendLog(`toggle-overlay failed: ${err}`, "warn");
 							console.warn("toggle-overlay failed:", err);
 						}
 					})();

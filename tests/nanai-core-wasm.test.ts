@@ -243,9 +243,15 @@ describe("nanai-core WASM module parity and fallback", () => {
 			engine.handleEvent("OnBoot", null);
 			expect(engine.isPlaying()).toBe(false);
 		}
-		if (typeof engine.enqueueScript === "function") {
-			engine.enqueueScript(String.raw`\0\s[0]テスト\e`);
-			expect(engine.isPlaying()).toBe(true);
+		if (typeof engine.enqueue_script === "function") {
+			engine.enqueue_script(String.raw`\0\s[0]テスト\e`);
+			const playing =
+				typeof engine.isPlaying === "function"
+					? engine.isPlaying()
+					: (
+							engine as unknown as { is_playing?: () => boolean }
+						).is_playing?.();
+			expect(playing).toBe(true);
 		}
 
 		engine.tick(16.6);

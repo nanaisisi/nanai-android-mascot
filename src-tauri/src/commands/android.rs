@@ -1,6 +1,40 @@
 #![allow(dead_code)]
 
 #[cfg(target_os = "android")]
+fn find_main_activity_class<'local>(
+    env: &mut jni::Env<'local>,
+) -> jni::errors::Result<jni::objects::JClass<'local>> {
+    if let Ok(cls) = env.find_class(jni::strings::JNIString::from(
+        "com/nanai_android_mascot/app/MainActivity",
+    )) {
+        return Ok(cls);
+    }
+    let _ = env.exception_clear();
+    let ctx = ndk_context::android_context();
+    let ctx_obj = std::mem::ManuallyDrop::new(unsafe {
+        jni::objects::JObject::from_raw(env, ctx.context().cast())
+    });
+    let class_loader = env
+        .call_method(
+            &*ctx_obj,
+            jni::strings::JNIString::from("getClassLoader"),
+            jni::jni_sig!(() -> java.lang.ClassLoader),
+            &[],
+        )?
+        .l()?;
+    let j_name = env.new_string("com.nanai_android_mascot.app.MainActivity")?;
+    let cls_obj = env
+        .call_method(
+            &class_loader,
+            jni::strings::JNIString::from("loadClass"),
+            jni::jni_sig!((name: java.lang.String) -> java.lang.Class),
+            &[jni::objects::JValue::Object(&j_name)],
+        )?
+        .l()?;
+    env.cast_local::<jni::objects::JClass>(cls_obj)
+}
+
+#[cfg(target_os = "android")]
 fn call_main_activity_static(
     method: &str,
     sig: jni::signature::MethodSignature<'_, '_>,
@@ -9,9 +43,7 @@ fn call_main_activity_static(
     let ctx = ndk_context::android_context();
     let vm = unsafe { jni::JavaVM::from_raw(ctx.vm().cast()) };
     vm.attach_current_thread(|env| -> jni::errors::Result<()> {
-        let class = env.find_class(jni::strings::JNIString::from(
-            "com/nanai_android_mascot/app/MainActivity",
-        ))?;
+        let class = find_main_activity_class(env)?;
         env.call_static_method(class, jni::strings::JNIString::from(method), sig, args)?;
         Ok(())
     })
@@ -23,9 +55,7 @@ fn call_main_activity_static_bool(method: &str) -> Result<bool, String> {
     let ctx = ndk_context::android_context();
     let vm = unsafe { jni::JavaVM::from_raw(ctx.vm().cast()) };
     vm.attach_current_thread(|env| -> jni::errors::Result<bool> {
-        let class = env.find_class(jni::strings::JNIString::from(
-            "com/nanai_android_mascot/app/MainActivity",
-        ))?;
+        let class = find_main_activity_class(env)?;
         let res = env.call_static_method(
             class,
             jni::strings::JNIString::from(method),

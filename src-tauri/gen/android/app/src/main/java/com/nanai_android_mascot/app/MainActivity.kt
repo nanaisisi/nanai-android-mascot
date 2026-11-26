@@ -107,6 +107,7 @@ class MainActivity : TauriActivity() {
 
   override fun onResume() {
     super.onResume()
+    currentActivity = WeakReference(this)
     isActivityForeground = true
     handleServiceIntent(intent)
     NanaiForegroundService.getInstance()?.setOverlayVisible(false)
@@ -192,27 +193,34 @@ class MainActivity : TauriActivity() {
 
   fun setupForegroundService(enabled: Boolean) {
     isOverlayServiceEnabled = enabled
-    val serviceIntent = Intent(this, NanaiForegroundService::class.java)
-    if (enabled && Settings.canDrawOverlays(this)) {
-      serviceIntent.action = NanaiForegroundService.ACTION_SHOW_OVERLAY
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        startForegroundService(serviceIntent)
-      } else {
-        startService(serviceIntent)
-      }
-      if (isActivityForeground) {
-        moveTaskToBack(true)
-      } else {
-        NanaiForegroundService.getInstance()?.setOverlayVisible(true)
-      }
-    } else if (!enabled) {
-      stopService(serviceIntent)
-      if (!isActivityForeground) {
-        val showMain = Intent(this, MainActivity::class.java).apply {
-          action = NanaiForegroundService.ACTION_SHOW
-          addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+    val canDraw = Settings.canDrawOverlays(this)
+    android.util.Log.i(
+      "NanaiOverlay",
+      "setupForegroundService(enabled=$enabled, canDraw=$canDraw, fg=$isActivityForeground)"
+    )
+    runOnUiThread {
+      val serviceIntent = Intent(this, NanaiForegroundService::class.java)
+      if (enabled && canDraw) {
+        serviceIntent.action = NanaiForegroundService.ACTION_SHOW_OVERLAY
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+          startForegroundService(serviceIntent)
+        } else {
+          startService(serviceIntent)
         }
-        startActivity(showMain)
+        if (isActivityForeground) {
+          moveTaskToBack(true)
+        } else {
+          NanaiForegroundService.getInstance()?.setOverlayVisible(true)
+        }
+      } else if (!enabled) {
+        stopService(serviceIntent)
+        if (!isActivityForeground) {
+          val showMain = Intent(this, MainActivity::class.java).apply {
+            action = NanaiForegroundService.ACTION_SHOW
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+          }
+          startActivity(showMain)
+        }
       }
     }
   }

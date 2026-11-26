@@ -350,18 +350,97 @@ pub(crate) async fn dispatch_overlay_command(
             call_service_resize_submenu(width, height)?;
             Ok(Value::Null)
         }
+        "show_balloon_window" => {
+            let params = args.get("params").unwrap_or(&args);
+            let scope_id: i32 = parse_opt_arg(params, "scopeId")
+                .or_else(|| parse_opt_arg(params, "scope_id"))
+                .unwrap_or(0);
+            let width: f64 = parse_opt_arg(params, "width").unwrap_or(240.0);
+            let height: f64 = parse_opt_arg(params, "height").unwrap_or(140.0);
+            let payload_json = serde_json::to_string(params).unwrap_or_else(|_| "{}".to_string());
+            call_service_show_balloon(scope_id, &payload_json, width, height)?;
+            Ok(Value::Null)
+        }
+        "hide_balloon_window" => {
+            let params = args.get("params").unwrap_or(&args);
+            let scope_id: i32 = parse_opt_arg(params, "scopeId")
+                .or_else(|| parse_opt_arg(params, "scope_id"))
+                .unwrap_or(0);
+            call_service_hide_balloon(scope_id)?;
+            Ok(Value::Null)
+        }
+        "resize_balloon_window" => {
+            let params = args.get("params").unwrap_or(&args);
+            let scope_id: i32 = parse_opt_arg(params, "scopeId")
+                .or_else(|| parse_opt_arg(params, "scope_id"))
+                .unwrap_or(0);
+            let width: f64 = parse_arg(params, "width")?;
+            let height: f64 = parse_arg(params, "height")?;
+            call_service_resize_balloon(scope_id, width, height)?;
+            Ok(Value::Null)
+        }
+        "show_subchar_window" => {
+            let params = args.get("params").unwrap_or(&args);
+            let scope_id: i32 = parse_opt_arg(params, "scopeId")
+                .or_else(|| parse_opt_arg(params, "scope_id"))
+                .unwrap_or(1);
+            let width: f64 = parse_opt_arg(params, "width").unwrap_or(0.0);
+            let height: f64 = parse_opt_arg(params, "height").unwrap_or(0.0);
+            call_service_show_subchar(scope_id, width, height)?;
+            Ok(Value::Null)
+        }
+        "hide_subchar_window" => {
+            let params = args.get("params").unwrap_or(&args);
+            let scope_id: i32 = parse_opt_arg(params, "scopeId")
+                .or_else(|| parse_opt_arg(params, "scope_id"))
+                .unwrap_or(1);
+            call_service_hide_subchar(scope_id)?;
+            Ok(Value::Null)
+        }
         "show_loading_banner_window"
         | "hide_loading_banner_window"
         | "set_character_scale"
         | "reset_character_positions"
         | "reset_balloon_positions"
         | "set_balloon_offset"
-        | "show_subchar_window"
-        | "hide_subchar_window"
         | "minimize_app"
         | "exit_app" => Ok(Value::Null),
         _ => Err(format!("Unsupported overlay command: {cmd}")),
     }
+}
+
+#[cfg(target_os = "android")]
+fn find_foreground_service_class<'local>(
+    env: &mut jni::Env<'local>,
+) -> jni::errors::Result<jni::objects::JClass<'local>> {
+    if let Ok(cls) = env.find_class(jni::strings::JNIString::from(
+        "com/nanai_android_mascot/app/NanaiForegroundService",
+    )) {
+        return Ok(cls);
+    }
+    let _ = env.exception_clear();
+    let ctx = ndk_context::android_context();
+    let ctx_obj = std::mem::ManuallyDrop::new(unsafe {
+        jni::objects::JObject::from_raw(env, ctx.context().cast())
+    });
+    let class_loader = env
+        .call_method(
+            &*ctx_obj,
+            jni::strings::JNIString::from("getClassLoader"),
+            jni::jni_sig!(() -> java.lang.ClassLoader),
+            &[],
+        )?
+        .l()?;
+    let j_name = env.new_string("com.nanai_android_mascot.app.NanaiForegroundService")?;
+    let cls_obj = env
+        .call_method(
+            &class_loader,
+            jni::strings::JNIString::from("loadClass"),
+            jni::jni_sig!((name: java.lang.String) -> java.lang.Class),
+            &[jni::objects::JValue::Object(&j_name)],
+        )?
+        .l()?;
+    env.cast_local::<jni::objects::JClass>(cls_obj)
 }
 
 #[cfg(target_os = "android")]
@@ -373,9 +452,7 @@ fn call_service_static(
     let ctx = ndk_context::android_context();
     let vm = unsafe { jni::JavaVM::from_raw(ctx.vm().cast()) };
     vm.attach_current_thread(|env| -> jni::errors::Result<()> {
-        let class = env.find_class(jni::strings::JNIString::from(
-            "com/nanai_android_mascot/app/NanaiForegroundService",
-        ))?;
+        let class = find_foreground_service_class(env)?;
         env.call_static_method(class, jni::strings::JNIString::from(method), sig, args)?;
         Ok(())
     })
@@ -443,9 +520,7 @@ fn call_service_show_submenu(
         let vm = unsafe { jni::JavaVM::from_raw(ctx.vm().cast()) };
         return vm
             .attach_current_thread(|env| -> jni::errors::Result<()> {
-                let class = env.find_class(jni::strings::JNIString::from(
-                    "com/nanai_android_mascot/app/NanaiForegroundService",
-                ))?;
+                let class = find_foreground_service_class(env)?;
                 let j_type = env.new_string(menu_type)?;
                 env.call_static_method(
                     class,
@@ -500,14 +575,122 @@ fn call_service_resize_submenu(width: f64, height: f64) -> Result<(), String> {
     }
 }
 
+fn call_service_show_balloon(
+    scope_id: i32,
+    payload_json: &str,
+    width: f64,
+    height: f64,
+) -> Result<(), String> {
+    #[cfg(target_os = "android")]
+    {
+        let ctx = ndk_context::android_context();
+        let vm = unsafe { jni::JavaVM::from_raw(ctx.vm().cast()) };
+        return vm
+            .attach_current_thread(|env| -> jni::errors::Result<()> {
+                let class = find_foreground_service_class(env)?;
+                let j_payload = env.new_string(payload_json)?;
+                env.call_static_method(
+                    class,
+                    jni::strings::JNIString::from("showBalloonFromNative"),
+                    jni::jni_sig!(
+                        (scope_id: jint, payload_json: java.lang.String, width: jdouble, height: jdouble) -> void
+                    ),
+                    &[
+                        jni::objects::JValue::Int(scope_id),
+                        jni::objects::JValue::Object(&j_payload),
+                        jni::objects::JValue::Double(width),
+                        jni::objects::JValue::Double(height),
+                    ],
+                )?;
+                Ok(())
+            })
+            .map_err(|e| format!("Android service JNI error (showBalloonFromNative): {e:?}"));
+    }
+    #[cfg(not(target_os = "android"))]
+    {
+        let _ = (scope_id, payload_json, width, height);
+        Ok(())
+    }
+}
+
+fn call_service_hide_balloon(scope_id: i32) -> Result<(), String> {
+    #[cfg(target_os = "android")]
+    {
+        return call_service_static(
+            "hideBalloonFromNative",
+            jni::jni_sig!((scope_id: jint) -> void),
+            &[jni::objects::JValue::Int(scope_id)],
+        );
+    }
+    #[cfg(not(target_os = "android"))]
+    {
+        let _ = scope_id;
+        Ok(())
+    }
+}
+
+fn call_service_resize_balloon(scope_id: i32, width: f64, height: f64) -> Result<(), String> {
+    #[cfg(target_os = "android")]
+    {
+        return call_service_static(
+            "resizeBalloonFromNative",
+            jni::jni_sig!((scope_id: jint, width: jdouble, height: jdouble) -> void),
+            &[
+                jni::objects::JValue::Int(scope_id),
+                jni::objects::JValue::Double(width),
+                jni::objects::JValue::Double(height),
+            ],
+        );
+    }
+    #[cfg(not(target_os = "android"))]
+    {
+        let _ = (scope_id, width, height);
+        Ok(())
+    }
+}
+
+fn call_service_show_subchar(scope_id: i32, width: f64, height: f64) -> Result<(), String> {
+    #[cfg(target_os = "android")]
+    {
+        return call_service_static(
+            "showSubcharFromNative",
+            jni::jni_sig!((scope_id: jint, width: jdouble, height: jdouble) -> void),
+            &[
+                jni::objects::JValue::Int(scope_id),
+                jni::objects::JValue::Double(width),
+                jni::objects::JValue::Double(height),
+            ],
+        );
+    }
+    #[cfg(not(target_os = "android"))]
+    {
+        let _ = (scope_id, width, height);
+        Ok(())
+    }
+}
+
+fn call_service_hide_subchar(scope_id: i32) -> Result<(), String> {
+    #[cfg(target_os = "android")]
+    {
+        return call_service_static(
+            "hideSubcharFromNative",
+            jni::jni_sig!((scope_id: jint) -> void),
+            &[jni::objects::JValue::Int(scope_id)],
+        );
+    }
+    #[cfg(not(target_os = "android"))]
+    {
+        let _ = scope_id;
+        Ok(())
+    }
+}
+
 #[cfg(target_os = "android")]
 fn notify_overlay_ipc_result(req_id: &str, ok: bool, payload_json: &str) {
     let ctx = ndk_context::android_context();
     let vm = unsafe { jni::JavaVM::from_raw(ctx.vm().cast()) };
     let _ = vm.attach_current_thread(|env| -> jni::errors::Result<()> {
-        let class = env.find_class(jni::strings::JNIString::from(
-            "com/nanai_android_mascot/app/NanaiForegroundService",
-        ))?;
+        let class = find_foreground_service_class(env)?;
         let j_req_id = env.new_string(req_id)?;
         let j_payload = env.new_string(payload_json)?;
         env.call_static_method(

@@ -5,8 +5,8 @@
 /* 右上メニュー & Android用メニュー */
 .top-right-menu {
 	position: fixed;
-	top: clamp(0.5rem, 2vh, 1rem);
-	right: clamp(0.5rem, 2vw, 1rem);
+	top: max(env(safe-area-inset-top, 0px), clamp(0.5rem, 2vh, 1rem));
+	right: max(env(safe-area-inset-right, 0px), clamp(0.5rem, 2vw, 1rem));
 	z-index: 9999;
 	pointer-events: auto;
 	display: flex;
@@ -207,11 +207,11 @@ body.dark-mode .android-menu-separator {
 /* iframe メニューコンテナ (メインメニュー + 横展開サブメニューを余裕を持って収める) */
 .menu-iframe-container {
 	position: absolute;
-	top: 100%;
+	top: calc(100% + 0.35rem);
 	right: 0;
 	z-index: 10000;
-	width: min(32rem, 96vw);
-	max-width: 96vw;
+	width: min(26rem, calc(100vw - 1rem));
+	max-width: calc(100vw - 1rem);
 	overflow: visible;
 	background: transparent;
 	border: none;

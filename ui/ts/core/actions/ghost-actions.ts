@@ -2,19 +2,11 @@
  * @file ghost-actions.ts
  * @brief ゴースト管理・インストール・アンインストール・着せ替え・倍率設定モジュール (UKADOC準拠)
  */
+import { applyCharacterScaleToDom } from "../app-settings.js";
 import { AppConfig } from "../config.js";
-import { invoke, isTauriAvailable } from "../tauri-helper.js";
+import { invoke, isOverlayWindow, isTauriAvailable } from "../tauri-helper.js";
 
 export { installGhostFromMenuImpl } from "./ghost-install-action.js";
-
-const SCALE_MAP: Record<string, { width: string; height: string }> = {
-	"scale-50": { width: "100px", height: "200px" },
-	"scale-75": { width: "150px", height: "300px" },
-	"scale-100": { width: "200px", height: "400px" },
-	"scale-125": { width: "250px", height: "500px" },
-	"scale-150": { width: "300px", height: "600px" },
-	"scale-200": { width: "400px", height: "800px" },
-};
 
 export const ghostActions = {
 	showGhostInformation() {
@@ -201,32 +193,34 @@ export const ghostActions = {
 	},
 
 	applyShellScaleAction(action: string) {
+		const app =
+			this as unknown as import("../../../main.js").NanaiAndroidMascotApp;
 		const scalePercent = parseInt(action.replace("scale-", ""), 10) || 100;
-		const baseW = 200;
-		const baseH = 400;
-		const w = Math.round((baseW * scalePercent) / 100);
-		const h = Math.round((baseH * scalePercent) / 100);
-		const conf = SCALE_MAP[action] || { width: `${w}px`, height: `${h}px` };
-		const ghostDisplay = (
-			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-		).elements?.ghostDisplay;
-		if (ghostDisplay) {
-			ghostDisplay.style.width = conf.width;
-			ghostDisplay.style.height = conf.height;
+		if (app.settings) {
+			(app.settings as Record<string, unknown>).shellScale =
+				String(scalePercent);
+			(app as { saveSettings?: () => void }).saveSettings?.();
+		}
+		applyCharacterScaleToDom(app, scalePercent);
+		if (isOverlayWindow() && app.elements?.ghostDisplay) {
+			const fitW = Math.round(
+				Number.parseFloat(app.elements.ghostDisplay.style.width) || 180,
+			);
+			const fitH = Math.round(
+				Number.parseFloat(app.elements.ghostDisplay.style.height) || 320,
+			);
+			if (fitW > 0 && fitH > 0) {
+				void invoke("resize_overlay_window", {
+					width: fitW,
+					height: fitH,
+				}).catch(() => {});
+			}
 		}
 		if (isTauriAvailable()) {
 			invoke("set_character_scale", { scalePercent }).catch(() => {});
 		}
-		(
-			this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-		).showBalloon(`シェル倍率を ${scalePercent}% に変更しました`);
-		setTimeout(
-			() =>
-				(
-					this as unknown as import("../../../main.js").NanaiAndroidMascotApp
-				).hideBalloon(),
-			1500,
-		);
+		app.showBalloon(`シェル倍率を ${scalePercent}% に変更しました`);
+		setTimeout(() => app.hideBalloon(), 1500);
 	},
 
 	minimizeApp() {

@@ -341,6 +341,15 @@ export async function moveCurrentWindowBy(
 	origin: { x: number; y: number },
 ): Promise<void> {
 	if (!isTauriAvailable()) return;
+	if (isOverlayIpcAvailable() && gOverlay.__NANAI_OVERLAY_IPC__?.moveWindowBy) {
+		const cur = getOverlayWindowOrigin();
+		const dx = Math.round(origin.x + x - cur.x);
+		const dy = Math.round(origin.y + y - cur.y);
+		if (dx !== 0 || dy !== 0) {
+			gOverlay.__NANAI_OVERLAY_IPC__.moveWindowBy(dx, dy);
+		}
+		return;
+	}
 	try {
 		await getCurrentWindow().setPosition(
 			new PhysicalPosition(Math.round(origin.x + x), Math.round(origin.y + y)),
@@ -355,6 +364,9 @@ export async function getCurrentWindowPosition(): Promise<{
 	y: number;
 } | null> {
 	if (!isTauriAvailable()) return null;
+	if (isOverlayIpcAvailable()) {
+		return getOverlayWindowOrigin();
+	}
 	try {
 		const position = await getCurrentWindow().outerPosition();
 		return { x: position.x, y: position.y };

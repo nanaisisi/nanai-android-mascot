@@ -140,7 +140,10 @@ class NanaiForegroundService : Service() {
     mainHandler.post {
       if (visible) {
         ensureOverlayWindow()
-        overlayWebView?.visibility = View.VISIBLE
+        overlayWebView?.let {
+          it.visibility = View.VISIBLE
+          evalOverlayEvent(it, "overlay-sync-ghost", "{}")
+        }
       } else {
         overlayWebView?.visibility = View.GONE
         hidePopupSlot(menuSlot)

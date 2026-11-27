@@ -5,6 +5,10 @@ import {
 	isTauriAvailable,
 } from "../core/tauri-helper.js";
 import { ghostSurfaceMethods } from "../surface/ghost-surface.js";
+import {
+	hideLoadingBanner,
+	showLoadingBanner,
+} from "../ui/loading-banner-inline.js";
 import { ghostShioriMethods } from "./ghost-shiori.js";
 
 export interface GhostAssets {
@@ -138,8 +142,17 @@ export class GhostController {
 		try {
 			await this.scanGhosts();
 
+			let activeGhostName: string | null = null;
+			if (isTauriAvailable()) {
+				const active = await invoke<{ name?: string } | null>(
+					"get_current_ghost",
+				).catch(() => null);
+				activeGhostName = active?.name || null;
+			}
+
 			const targetGhostName =
 				this.app.initialGhostName ||
+				activeGhostName ||
 				AppConfig.state?.last_ghost ||
 				(localStorage.getItem(AppConfig.storageKeys.lastGhost)
 					? JSON.parse(
@@ -226,13 +239,11 @@ export class GhostController {
 		const startTime = Date.now();
 
 		// 【フェーズ 1: プリロードバナー表示 (完全待機)】
-		if (isTauriAvailable()) {
-			try {
-				console.log("👻 [selectGhost] invoking show_loading_banner_window");
-				await invoke("show_loading_banner_window", { ghostName: ghost.name });
-			} catch (e) {
-				console.warn("⚠️ show_loading_banner_window warning:", e);
-			}
+		try {
+			console.log("👻 [selectGhost] invoking showLoadingBanner");
+			await showLoadingBanner(ghost.name);
+		} catch (e) {
+			console.warn("⚠️ show_loading_banner_window warning:", e);
 		}
 
 		// バックグラウンドアセット先行プリロード
@@ -329,11 +340,9 @@ export class GhostController {
 		(
 			this.app as { syncMenuGhosts?: (scope?: number) => unknown }
 		)?.syncMenuGhosts?.(0);
-		if (isTauriAvailable()) {
-			try {
-				await invoke("hide_loading_banner_window");
-			} catch (_e) {}
-		}
+		try {
+			await hideLoadingBanner();
+		} catch (_e) {}
 	}
 
 	async selectShell(shellName: string) {

@@ -12,7 +12,7 @@ import { settingsMethods } from "../app-settings.js";
 import { updateMethods } from "../app-update.js";
 import { AppConfig, loadAppConfig } from "../config.js";
 import { InternalWindowManager } from "../internal-window-manager.js";
-import { invoke, isTauriAvailable } from "../tauri-helper.js";
+import { invoke, isTauriAvailable, listen } from "../tauri-helper.js";
 import { wasmBridge } from "../wasm-bridge.js";
 import { initUIEnvironment, scanBalloons, scanPlugins } from "./environment.js";
 import type { AppSettings } from "./types.js";
@@ -157,7 +157,7 @@ export class NanaiAndroidMascotApp {
 		this.ghostId = urlParams.get("ghost_id") || "main";
 		this.initialGhostName =
 			urlParams.get("ghost_name") ||
-			(search ? AppConfig.paths.fallbackGhostName : null);
+			(urlParams.get("ghost_id") ? AppConfig.paths.fallbackGhostName : null);
 
 		this.balloonThemeManager = new BalloonThemeManager(
 			this as unknown as ConstructorParameters<typeof BalloonThemeManager>[0],
@@ -260,6 +260,23 @@ export class NanaiAndroidMascotApp {
 		try {
 			this.startSecondTimer?.();
 		} catch (_e) {}
+
+		if (isTauriAvailable()) {
+			void listen("overlay-sync-ghost", async () => {
+				try {
+					const active = await invoke<{ name?: string } | null>(
+						"get_current_ghost",
+					).catch(() => null);
+					const activeName = active?.name;
+					if (
+						activeName &&
+						this.ghostController?.currentGhost?.name !== activeName
+					) {
+						await this.ghostController?.selectGhost?.(activeName);
+					}
+				} catch (_e) {}
+			});
+		}
 
 		console.log("✅ Nanai Android Mascot 初期化完了");
 	}

@@ -577,3 +577,100 @@ body.dark-mode .license-block {
 body.dark-mode .license-block h3 {
 	color: #64b5f6;
 }
+
+/* Android アプリ画面用 読み込みバナー */
+.android-loading-banner {
+	position: fixed;
+	bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 9500;
+	pointer-events: none;
+}
+
+.android-loading-banner[hidden] {
+	display: none;
+}
+
+.android-banner-box {
+	display: flex;
+	flex-direction: column;
+	width: min(296px, calc(100vw - 2rem));
+	height: 86px;
+	background: rgba(18, 24, 38, 0.95);
+	border: 1px solid rgba(80, 140, 220, 0.6);
+	border-radius: 6px;
+	box-shadow:
+		0 4px 16px rgba(0, 0, 0, 0.5),
+		inset 0 1px 0 rgba(255, 255, 255, 0.1);
+	box-sizing: border-box;
+	backdrop-filter: blur(8px);
+	color: #e0e8f5;
+	overflow: hidden;
+}
+
+.android-banner-top {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+	padding: 8px 12px 4px 12px;
+	height: 48px;
+	border-bottom: 1px solid rgba(80, 140, 220, 0.25);
+	box-sizing: border-box;
+}
+
+.android-banner-version-box {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.android-banner-app-title {
+	font-size: 10px;
+	letter-spacing: 0.05em;
+	color: #8aa4c8;
+	font-weight: 500;
+	text-transform: uppercase;
+}
+
+.android-banner-version {
+	font-size: 11px;
+	color: #bcd0ea;
+	font-family: Consolas, monospace;
+}
+
+.android-banner-status-badge {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	background: rgba(30, 45, 70, 0.6);
+	border: 1px solid rgba(80, 140, 220, 0.4);
+	padding: 4px 10px;
+	border-radius: 4px;
+}
+
+.android-banner-status-text {
+	font-size: 14px;
+	font-weight: bold;
+	letter-spacing: 0.15em;
+	color: #93c5fd;
+}
+
+.android-banner-bottom {
+	display: flex;
+	align-items: center;
+	padding: 0 12px;
+	height: 38px;
+	background: rgba(10, 15, 26, 0.6);
+	box-sizing: border-box;
+}
+
+.android-banner-ghost-name {
+	font-size: 13px;
+	font-weight: 600;
+	color: #ffffff;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

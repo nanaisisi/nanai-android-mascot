@@ -268,6 +268,20 @@ pub(crate) async fn dispatch_overlay_command(
                     .map_err(|e| format!("invalid send_shiori_event params: {}", e))?;
             to_json(commands::shiori_requests::send_shiori_event(state, params).await)
         }
+        "send_shiori_event_typed" => {
+            let event: String = parse_arg(&args, "event")?;
+            let references: Option<Vec<String>> = parse_opt_arg(&args, "references");
+            let ghost_name: Option<String> =
+                parse_opt_arg(&args, "ghostName").or_else(|| parse_opt_arg(&args, "ghost_name"));
+            let ghost_id: Option<String> =
+                parse_opt_arg(&args, "ghostId").or_else(|| parse_opt_arg(&args, "ghost_id"));
+            to_json(
+                commands::shiori_requests::send_shiori_event_typed(
+                    state, event, references, ghost_name, ghost_id,
+                )
+                .await,
+            )
+        }
         "send_shiori_notify" => {
             let params: commands::shiori_requests::SendShioriNotifyParams =
                 serde_json::from_value(args.get("params").cloned().unwrap_or_else(|| args.clone()))
@@ -283,6 +297,7 @@ pub(crate) async fn dispatch_overlay_command(
         "on_mouse_click" => to_json(commands::shiori_events::on_mouse_click().await),
         "on_second_change" => to_json(commands::shiori_events::on_second_change().await),
         "get_shiori_status" => to_json(commands::shiori_status::get_shiori_status(state).await),
+        "get_current_ghost" => to_json(commands::shiori_status::get_current_ghost(state).await),
         "request_overlay_permission" => {
             to_json(commands::android::request_overlay_permission().await)
         }

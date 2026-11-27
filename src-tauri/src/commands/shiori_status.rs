@@ -2,13 +2,16 @@ use crate::common::models::GhostInfo;
 use crate::common::state::AppState;
 use crate::ghost::scan::{ScanResult, scan_ghost_directory};
 
-/// 現在のゴースト情報を取得（簡易版）
+/// 現在のゴースト情報を取得
 #[tauri::command]
 pub(crate) async fn get_current_ghost(
-    _state: tauri::State<'_, AppState>,
+    state: tauri::State<'_, AppState>,
 ) -> Result<Option<GhostInfo>, String> {
-    // 実際にはゴーストが選択されていない場合はNoneを返す
-    Ok(None)
+    let name = state.current_ghost_name().lock().clone();
+    Ok(name.map(|name| GhostInfo {
+        name,
+        ..Default::default()
+    }))
 }
 
 /// すべてのゴースト情報を取得（簡易版）

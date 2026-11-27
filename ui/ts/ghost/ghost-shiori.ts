@@ -5,6 +5,7 @@
 
 import { recordScriptLog } from "../core/diagnostics/script-log.js";
 import { frontendLog, invoke, isTauriAvailable } from "../core/tauri-helper.js";
+import { hideLoadingBanner } from "../ui/loading-banner-inline.js";
 import { fromRustResponse } from "./shiori-protocol.js";
 
 export interface GhostShioriContext {
@@ -45,7 +46,7 @@ export const ghostShioriMethods = {
 			);
 
 			try {
-				await invoke("hide_loading_banner_window");
+				await hideLoadingBanner();
 			} catch (e) {
 				frontendLog(`⚠️ hide_loading_banner_window error: ${e}`, "warn");
 			}
@@ -178,7 +179,7 @@ export const ghostShioriMethods = {
 				"error",
 			);
 			if (isCurrentLoad()) {
-				invoke("hide_loading_banner_window").catch(() => {});
+				hideLoadingBanner().catch(() => {});
 			}
 		}
 	},

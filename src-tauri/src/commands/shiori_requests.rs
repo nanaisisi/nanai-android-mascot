@@ -30,12 +30,17 @@ pub(super) fn dispatch_request(
     request: &str,
     ghost_id: &str,
 ) -> Result<String, String> {
-    if ghost_id != "main" {
-        let engines = state.ghost_engines.lock();
-        if let Some(engine) = engines.get(ghost_id) {
-            return engine.request(request);
+    if !ghost_id.is_empty() && ghost_id != "main" {
+        {
+            let engines = state.ghost_engines.lock();
+            if let Some(engine) = engines.get(ghost_id) {
+                return engine.request(request);
+            }
         }
-        return Err("Ghost engine not found".to_string());
+        let is_current_main = state.current_ghost_name.lock().as_deref() == Some(ghost_id);
+        if !is_current_main {
+            return Err("Ghost engine not found".to_string());
+        }
     }
     let engine_lock = state.shiori_engine.lock();
     if let Some(ref engine) = *engine_lock {
